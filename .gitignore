@@ -13,5 +13,6 @@ data_analysis/parent-less_items
 data_analysis/dumpfiles
 data_analysis/wikidatawiki-20161114.rdf
 data_analysis/reduced_items
+data_analysis/reduced_classes
 # tools
 data_analysis/wdtk-client-0.7.0.jar

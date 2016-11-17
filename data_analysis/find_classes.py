@@ -4,7 +4,7 @@ this module uses the output of reduce_json_dump.
 import json
 import typing
 
-from data_analysis.config import REDUCED_JSON_DUMP_PATH, REDUCED_ROOT_CLASSES_JSON_DUMP_PATH
+from data_analysis.config import REDUCED_JSON_DUMP_PATH, REDUCED_CLASSES_JSON_DUMP_PATH
 import data_analysis.utils as utils
 
 BATCH_SIZE = 500
@@ -57,7 +57,7 @@ def write_classes(input_dump: str, output: str):
 
 
 def main():
-    write_classes(REDUCED_JSON_DUMP_PATH, REDUCED_ROOT_CLASSES_JSON_DUMP_PATH)
+    write_classes(REDUCED_JSON_DUMP_PATH, REDUCED_CLASSES_JSON_DUMP_PATH)
 
 if __name__ == '__main__':
     main()
