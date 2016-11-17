@@ -1,6 +1,8 @@
 import json
 import typing
 
+from data_analysis.constants import INSTANCE_OF, SUBCLASS_OF
+
 
 def get_json_dicts(file_path: str)->typing.Iterable[dict]:
     """
@@ -40,11 +42,11 @@ def get_english_label(entity: dict)->str:
 
 
 def get_instance_of_ids(entity: dict)->typing.Iterable[str]:
-    return get_item_property_ids('P31', entity)
+    return get_item_property_ids(INSTANCE_OF, entity)
 
 
 def get_subclass_of_ids(entity: dict)->typing.Iterable[str]:
-    return get_item_property_ids('P279', entity)
+    return get_item_property_ids(SUBCLASS_OF, entity)
 
 
 def get_item_property_ids(property_id: str, entity: dict):
