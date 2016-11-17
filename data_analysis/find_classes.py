@@ -10,23 +10,6 @@ import data_analysis.utils as utils
 BATCH_SIZE = 500
 
 
-class ReducedItemWrapper(object):
-    """
-    Used for set operations.
-    """
-    def __init__(self, item: dict):
-        self.item = item
-        self.id = item.get('id')
-
-    def __hash__(self):
-        return int(self.id[1:])
-
-    def __eq__(self, other):
-        if isinstance(other, ReducedItemWrapper):
-            return self.id == other.id
-        return False
-
-
 def get_class_ids(reduced_items: typing.Iterable[dict])->typing.Set[str]:
     """
     :param reduced_items:
