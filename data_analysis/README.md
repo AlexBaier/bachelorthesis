@@ -7,13 +7,15 @@ The results of the latest analysis will be presented in results.md.
 
 ## How to use?
 You need to download a JSON dump from [https://dumps.wikimedia.org/wikidatawiki/entities/]().
-Extract the JSON dump. Warning: In November 2016 the file had a size of ~100GB.
-In future releases it will only increase.
+Extract the JSON dump. (Warning: In November 2016 the file had a size of ~100GB.
+In future releases it will only increase.)
+
 Set the file paths in `config.py` to suit your needs.
 `JSON_DUMP_PATH`  should at least point to the current location
 of the downloaded JSON dump.
 
 You need to execute the scripts in the following order:
+
 1. `reduce_json_dump.py`
 2. `find_classes.py`
 3. `find_root_classes.py`
