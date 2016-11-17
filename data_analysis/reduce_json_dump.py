@@ -1,4 +1,3 @@
-# TODO: Produced a bug in line 1. Two JSON objects in one line.
 import itertools
 import json
 

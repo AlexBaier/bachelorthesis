@@ -12,12 +12,7 @@ def get_json_dicts(file_path: str)->typing.Iterable[dict]:
     with open(file_path) as f:
         for line in f:
             line = clean_line(line)
-            # Fix for two JSON objects in one line.
-            idx = line.find('}{')
-            if idx != -1:  # TODO: Fix issue in reduce_json_dump.py.
-                yield json.loads(line[0:idx+1])
-                yield json.loads(line[idx+1:])
-            elif is_not_square_bracket(line):
+            if is_not_square_bracket(line):
                 yield json.loads(line)
 
 
@@ -62,7 +57,7 @@ def batch_write(values: typing.Iterable[str], output: str, batch_size: int):
         print('begin writing to {}'.format(output))
         for idx, l in enumerate(values):
             batch.append(l)
-            if idx % batch_size == 0:
+            if idx > 0 and idx % batch_size == 0:
                 f.write('\n'.join(batch))
                 batch = list()
                 print('{} items already written'.format(idx))

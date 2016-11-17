@@ -8,8 +8,6 @@ __pycache__/
 
 # dumps
 data_analysis/latest-all.json
-data_analysis/parentless_items_id_label.csv
-data_analysis/parent-less_items
 data_analysis/dumpfiles
 data_analysis/wikidatawiki-20161114.rdf
 data_analysis/reduced_items
