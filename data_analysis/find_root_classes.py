@@ -1,5 +1,5 @@
 import json
-import typing
+from typing import Iterable
 
 import data_analysis.config as config
 from data_analysis.constants import INSTANCE_OF, SUBCLASS_OF
@@ -10,12 +10,12 @@ def is_parentless(reduced_class: dict)->bool:
     return not reduced_class.get(INSTANCE_OF) and not reduced_class.get(SUBCLASS_OF)
 
 
-def get_root_class_ids(reduced_classes: typing.Iterable[dict])->typing.Iterable[str]:
+def get_root_class_ids(reduced_classes: Iterable[dict])->Iterable[str]:
     return map(lambda c: c.get('id'),
                filter(is_parentless, reduced_classes))
 
 
-def get_root_classes(entities: typing.Iterable[dict], root_class_ids: typing.Iterable)->typing.Iterable[dict]:
+def get_root_classes(entities: Iterable[dict], root_class_ids: Iterable)->Iterable[dict]:
     root_class_ids = set(root_class_ids)
     return filter(lambda e: e.get('id') in root_class_ids, entities)
 

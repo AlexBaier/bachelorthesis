@@ -1,10 +1,10 @@
 import json
-import typing
+from typing import Iterable
 
 from data_analysis.constants import INSTANCE_OF, SUBCLASS_OF
 
 
-def get_json_dicts(file_path: str)->typing.Iterable[dict]:
+def get_json_dicts(file_path: str)->Iterable[dict]:
     """
     :param file_path: file_path to a JSON dump, which has only 1 object in each line.
     :return: Iterable containing dicts of Wikidata entities.
@@ -42,7 +42,7 @@ def get_english_label(entity: dict)->str:
     return entity.get('labels').get('en', {}).get('value', '')
 
 
-def get_instance_of_ids(entity: dict)->typing.Iterable[str]:
+def get_instance_of_ids(entity: dict)->Iterable[str]:
     """
     Returns an Iterable containing all IDs of the 'instance of' property of the supplied Wikidata entity.
     :param entity: Wikidata entity as dict.
@@ -51,7 +51,7 @@ def get_instance_of_ids(entity: dict)->typing.Iterable[str]:
     return get_item_property_ids(INSTANCE_OF, entity)
 
 
-def get_subclass_of_ids(entity: dict)->typing.Iterable[str]:
+def get_subclass_of_ids(entity: dict)->Iterable[str]:
     """
     Returns an Iterable containing all IDs of the 'subclass of' property of the supplied Wikidata entity.
     :param entity: Wikidata entity as dict.
@@ -60,14 +60,14 @@ def get_subclass_of_ids(entity: dict)->typing.Iterable[str]:
     return get_item_property_ids(SUBCLASS_OF, entity)
 
 
-def get_item_property_ids(property_id: str, entity: dict)->typing.Iterable[str]:
+def get_item_property_ids(property_id: str, entity: dict)->Iterable[str]:
     return map(lambda i: 'Q' + str(i),
                map(lambda e: e.get('mainsnak').get('datavalue').get('value').get('numeric-id'),
                    filter(lambda e: e.get('mainsnak').get('snaktype') == 'value',
                           entity.get('claims').get(property_id, list()))))
 
 
-def batch_write(lines: typing.Iterable[str], output: str, batch_size: int):
+def batch_write(lines: Iterable[str], output: str, batch_size: int):
     """
     Writes lines in batches to the supplied output file path.
     Writing in batches seems to be faster than writing each line separately.

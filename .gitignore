@@ -9,10 +9,10 @@ __pycache__/
 # dumps
 data_analysis/latest-all.json
 data_analysis/dumpfiles
-data_analysis/wikidatawiki-20161114.rdf
 data_analysis/reduced_items
 data_analysis/reduced_classes
 data_analysis/root_classes
+data_analysis/root_class_characteristics
 
 # tools
 data_analysis/wdtk-client-0.7.0.jar

@@ -2,19 +2,19 @@
 this module uses the output of reduce_json_dump.
 """
 import json
-import typing
+from typing import Iterable, Set
 
 import data_analysis.config as config
 from data_analysis.constants import INSTANCE_OF, SUBCLASS_OF
 import data_analysis.utils as utils
 
 
-def get_class_ids(reduced_items: typing.Iterable[dict])->typing.Set[str]:
+def get_class_ids(reduced_items: Iterable[dict])->Set[str]:
     """
     :param reduced_items:
     :return:
     """
-    classes = set()  # type: typing.Set[str]
+    classes = set()  # type: Set[str]
     for idx, item in enumerate(reduced_items):
         if not item.get(INSTANCE_OF) and item.get(SUBCLASS_OF):
             classes.add(item.get('id'))
@@ -26,7 +26,7 @@ def get_class_ids(reduced_items: typing.Iterable[dict])->typing.Set[str]:
     return classes
 
 
-def get_classes(reduced_items: typing.Iterable[dict], class_ids: typing.Set[str])->typing.Iterable[dict]:
+def get_classes(reduced_items: Iterable[dict], class_ids: Set[str])->Iterable[dict]:
     return filter(lambda i: i.get('id') in class_ids, reduced_items)
 
 
