@@ -12,7 +12,7 @@ The results of the latest analysis will be presented in results.md.
 * number of instances per root class
 * number of subclasses per root class
 * common properties of root classes
-* Wikimedia category (P910) of root classes
+* [topic's main category (P910)](https://www.wikidata.org/wiki/Property:P910]) of root classes
 * TODO: Add more
 
 ## How to extract root classes from the JSON dump?
