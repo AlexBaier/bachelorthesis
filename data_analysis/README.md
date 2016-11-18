@@ -1,13 +1,23 @@
 ## Purpose
-The main purpose of this package is to extract the root classes
-of the Wikidata JSON dump and then create statistics about the
-root classes.
+The purpose of this package is to identify and extract the root classes
+from the [Wikidata JSON dump](https://dumps.wikimedia.org/wikidatawiki/entities/).
+After the extraction the characteristics of the root classes are analyzed.
 
 The results of the latest analysis will be presented in results.md.
 
-## How to use?
+## Analyzed characteristics
+* number of classes
+* number of leaf classes
+* number of root classes
+* number of instances per root class
+* number of subclasses per root class
+* common properties of root classes
+* Wikimedia category (P910) of root classes
+* TODO: Add more
+
+## How to extract root classes from the JSON dump?
 You need to download a JSON dump from [https://dumps.wikimedia.org/wikidatawiki/entities/]().
-Extract the JSON dump. (Warning: In November 2016 the file had a size of ~100GB.
+Unpack the JSON dump. (Warning: In November 2016 the file had a size of ~100GB.
 In future releases it will only increase.)
 
 Set the file paths in `config.py` to suit your needs.
@@ -26,7 +36,10 @@ is neither optimized nor parallel, and because the JSON dump is huge.
 3 files will be created as result. Each one contains one JSON object per line.
 
 The JSON objects in `REDUCED_JSON_DUMP_PATH ` and `REDUCED_CLASSES_JSON_DUMP_PATH`
-are reduced representations of the original items in the following form:
+are reduced representations of the original items. They only contain the ID, label,
+and values of the [instance of (P31)](https://www.wikidata.org/wiki/Property:P31)
+and [subclass of (P279)](https://www.wikidata.org/wiki/Property:P279) properties of each item.
+The objects have the following format:
 ```json
 {
 "id": "Q123",
