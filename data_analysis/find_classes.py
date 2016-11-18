@@ -35,7 +35,7 @@ def write_classes(input_dump: str, output: str):
         classes = map(lambda c: json.dumps(c),
                       get_classes(utils.get_json_dicts(input_dump), class_ids))
 
-        utils.file_write(classes, output)
+        utils.batch_write(classes, output, config.BATCH_SIZE)
 
 
 def main():

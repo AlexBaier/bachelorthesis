@@ -25,7 +25,7 @@ def write_root_classes(json_dump: str, reduced_classes_dump: str, output: str):
     root_classes = map(lambda c: json.dumps(c),
                        get_root_classes(utils.get_json_dicts(json_dump), root_class_ids))
 
-    utils.file_write(root_classes, output)
+    utils.batch_write(root_classes, output, config.BATCH_SIZE)
 
 
 def main():

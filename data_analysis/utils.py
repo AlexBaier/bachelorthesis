@@ -13,8 +13,7 @@ def get_json_dicts(file_path: str)->typing.Iterable[dict]:
     with open(file_path) as f:
         for line in f:
             line = clean_line(line)
-            if is_not_square_bracket(line):
-                print(line)
+            if line and is_not_square_bracket(line):
                 yield json.loads(line)
 
 
@@ -53,11 +52,14 @@ def get_item_property_ids(property_id: str, entity: dict):
                           entity.get('claims').get(property_id, list()))))
 
 
-def file_write(values: typing.Iterable[str], output: str):
+def batch_write(values: typing.Iterable[str], output: str, batch_size):
     with open(output, mode='w') as f:
+        batch = list()
         print('begin writing to {}'.format(output))
         for idx, l in enumerate(values):
-            f.write(l + '\n')
-            if idx % config.BATCH_SIZE == 0:
+            batch.append(l)
+            if idx > 0 and idx % batch_size == 0:
+                f.write('\n'.join(batch) + '\n')
+                batch = list()
                 print('{} items already written'.format(idx))
         print('done')
