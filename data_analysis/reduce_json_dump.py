@@ -26,7 +26,7 @@ def write_reduced_json_lines(input_dump: str, output: str, limit: int=-1):
     if limit >= 0:
         reduced_json_strings = itertools.islice(reduced_json_strings, limit)
 
-    utils.batch_write(reduced_json_strings, output, config.BATCH_SIZE)
+    utils.file_write(reduced_json_strings, output)
 
 
 def main(output: str, limit: int=-1):

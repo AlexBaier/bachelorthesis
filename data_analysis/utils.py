@@ -1,6 +1,7 @@
 import json
 import typing
 
+import data_analysis.config as config
 from data_analysis.constants import INSTANCE_OF, SUBCLASS_OF
 
 
@@ -13,6 +14,7 @@ def get_json_dicts(file_path: str)->typing.Iterable[dict]:
         for line in f:
             line = clean_line(line)
             if is_not_square_bracket(line):
+                print(line)
                 yield json.loads(line)
 
 
@@ -51,15 +53,11 @@ def get_item_property_ids(property_id: str, entity: dict):
                           entity.get('claims').get(property_id, list()))))
 
 
-def batch_write(values: typing.Iterable[str], output: str, batch_size: int):
-    batch = list()
+def file_write(values: typing.Iterable[str], output: str):
     with open(output, mode='w') as f:
         print('begin writing to {}'.format(output))
         for idx, l in enumerate(values):
-            batch.append(l)
-            if idx > 0 and idx % batch_size == 0:
-                f.write('\n'.join(batch))
-                batch = list()
+            f.write(l + '\n')
+            if idx % config.BATCH_SIZE == 0:
                 print('{} items already written'.format(idx))
-        f.write('\n'.join(batch))
         print('done')
