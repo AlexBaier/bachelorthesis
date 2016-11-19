@@ -29,8 +29,8 @@ def write_reduced_json_lines(input_dump: str, output: str, limit: int=-1):
     utils.batch_write(reduced_json_strings, output, config.BATCH_SIZE)
 
 
-def main(output: str, limit: int=-1):
-    write_reduced_json_lines(config.JSON_DUMP_PATH, output, limit)
+def main(limit: int=-1):
+    write_reduced_json_lines(config.JSON_DUMP_PATH, config.REDUCED_JSON_DUMP_PATH, limit)
 
 if __name__ == '__main__':
-    main('reduced_items')
+    main()
