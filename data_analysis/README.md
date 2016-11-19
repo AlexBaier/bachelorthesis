@@ -29,11 +29,12 @@ You need to execute the scripts in the following order:
 1. `reduce_json_dump.py`
 2. `find_classes.py`
 3. `find_root_classes.py`
+4. `find_characteristics.py`
 
 The execution of these scripts will take some time, because the code
 is neither optimized nor parallel, and because the JSON dump is huge.
 
-3 files will be created as result. Each one contains one JSON object per line.
+4 files will be created as result. Each one contains one JSON object per line.
 
 The JSON objects in `REDUCED_JSON_DUMP_PATH ` and `REDUCED_CLASSES_JSON_DUMP_PATH`
 are reduced representations of the original items. They only contain the ID, label,
@@ -53,4 +54,23 @@ The JSON objects in `ROOT_CLASSES_JSON_DUMP_PATH` are exactly the same
 as in the original JSON dump, therefore they follow the format described
 in [https://www.mediawiki.org/wiki/Wikibase/DataModel/JSON]().
 
-TODO: Describe usage of statistical analysis tools, once implemented.
+The JSON objects in `ROOT_CLASS_CHARACTERISTICS_PATH` contain for
+the analysis relevant properties of the each root class. Especially 
+all [topic's main category (P910)](https://www.wikidata.org/wiki/Property:P910) IDs,
+all property IDs, all subclass IDs, and all instance IDs.
+The objects have the following format:
+```json
+{
+"id": "Q123",
+"label": "english label",
+ "P910": ["..."],
+ "properties": ["..."],
+ "subclasses": ["..."],
+ "instances": ["..."]
+}
+```
+
+After these extraction steps, the actual analysis can happen.
+
+TODO: Implement and then describe it.
+
