@@ -55,9 +55,9 @@ as in the original JSON dump, therefore they follow the format described
 in [https://www.mediawiki.org/wiki/Wikibase/DataModel/JSON]().
 
 The JSON objects in `ROOT_CLASS_CHARACTERISTICS_PATH` contain for
-the analysis relevant properties of the each root class. Especially 
-all [topic's main category (P910)](https://www.wikidata.org/wiki/Property:P910) IDs,
-all property IDs, all subclass IDs, and all instance IDs.
+the analysis relevant properties of each root class. These are 
+all [topics(P910)](https://www.wikidata.org/wiki/Property:P910),
+all properties, all subclasses, and all instances.
 The objects have the following format:
 ```json
 {
