@@ -13,7 +13,6 @@ data_analysis/reduced_items
 data_analysis/reduced_classes
 data_analysis/root_classes
 data_analysis/root_class_characteristics
-data_analysis/root_class_analysis.json
 
 # tools
 data_analysis/wdtk-client-0.7.0.jar
