@@ -72,5 +72,17 @@ The objects have the following format:
 
 After these extraction steps, the actual analysis can happen.
 
-TODO: Implement and then describe it.
+Run `analyze_characteristics.py`. The following statistics about root classes are created
+and written into a JSON file:
+
+* How many root classes were found? -> `"root class count"`
+* How many classes with a certain amount of properties? -> `"property count"`
+* How many classes with a certain amount of subclasses? -> `"subclass count"`
+* How many classes with a certain amount of instances? -> `"instance count"`
+* How often do certain properties occur in the classes? -> `"property frequencies"`
+* How often do certain [topics(P910)](https://www.wikidata.org/wiki/Property:P910) occur in the classes? 
+-> `"topic frequencies"`
+
+TODO: Write a script to represent these statistics as bar plots (histograms?).
+
 
