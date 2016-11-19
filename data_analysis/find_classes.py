@@ -5,7 +5,7 @@ import json
 from typing import Iterable, Set
 
 import data_analysis.config as config
-from data_analysis.constants import INSTANCE_OF, SUBCLASS_OF
+from data_analysis.constants import INSTANCE_OF, SUBCLASS_OF, ID
 import data_analysis.utils as utils
 
 
@@ -17,7 +17,7 @@ def get_class_ids(reduced_items: Iterable[dict])->Set[str]:
     classes = set()  # type: Set[str]
     for idx, item in enumerate(reduced_items):
         if not item.get(INSTANCE_OF) and item.get(SUBCLASS_OF):
-            classes.add(item.get('id'))
+            classes.add(item.get(ID))
             classes.update(item.get(SUBCLASS_OF))  # parent class of a class is a class
         elif item.get(INSTANCE_OF):
             classes.update(item.get(INSTANCE_OF))
@@ -27,7 +27,7 @@ def get_class_ids(reduced_items: Iterable[dict])->Set[str]:
 
 
 def get_classes(reduced_items: Iterable[dict], class_ids: Set[str])->Iterable[dict]:
-    return filter(lambda i: i.get('id') in class_ids, reduced_items)
+    return filter(lambda i: i.get(ID) in class_ids, reduced_items)
 
 
 def write_classes(input_dump: str, output: str):

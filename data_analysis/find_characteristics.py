@@ -3,12 +3,13 @@ from typing import Dict, Iterable, Set
 
 
 import data_analysis.config as config
-from data_analysis.constants import INSTANCE_OF, SUBCLASS_OF, TOPICS_MAIN_CATEGORY
+from data_analysis.constants import INSTANCE_OF, SUBCLASS_OF, \
+    TOPICS_MAIN_CATEGORY, SUBCLASSES, INSTANCES, PROPERTIES, ID, LABEL, CLAIMS
 import data_analysis.utils as utils
 
 
 def get_root_class_ids(root_classes: Iterable[dict])->Iterable[str]:
-    return map(lambda e: e.get('id'), root_classes)
+    return map(lambda e: e.get(ID), root_classes)
 
 
 def get_children(root_class_ids: Iterable[str], items: Iterable[dict])->Dict[str, Dict[str, Set[str]]]:
@@ -20,32 +21,32 @@ def get_children(root_class_ids: Iterable[str], items: Iterable[dict])->Dict[str
             if instance_of in root_class_ids:
                 if not instances.get(instance_of, None):
                     instances[instance_of] = set()
-                    instances[instance_of].add(item.get('id'))
+                    instances[instance_of].add(item.get(ID))
                 else:
-                    instances[instance_of].add(item.get('id'))
+                    instances[instance_of].add(item.get(ID))
         for subclass_of in item.get(SUBCLASS_OF):
             if subclass_of in root_class_ids:
                 if not subclasses.get(subclass_of, None):
                     subclasses[subclass_of] = set()
-                    subclasses[subclass_of].add(item.get('id'))
+                    subclasses[subclass_of].add(item.get(ID))
                 else:
-                    subclasses[subclass_of].add(item.get('id'))
-    return {'subclasses': subclasses, 'instances': instances}
+                    subclasses[subclass_of].add(item.get(ID))
+    return {SUBCLASSES: subclasses, INSTANCES: instances}
 
 
 def get_characteristics(root_classes: Iterable[dict], root_class_ids: Iterable[str], items: Iterable[dict])\
         ->Iterable[str]:
     children = get_children(root_class_ids, items)
-    subclasses = children.get('subclasses')
-    instances = children.get('instances')
+    subclasses = children.get(SUBCLASSES)
+    instances = children.get(INSTANCES)
     for root_class in root_classes:
         result = dict()
-        result['id'] = root_class.get('id')
-        result['label'] = utils.get_english_label(root_class)
+        result[ID] = root_class.get(ID)
+        result[LABEL] = utils.get_english_label(root_class)
         result[TOPICS_MAIN_CATEGORY] = list(utils.get_item_property_ids(TOPICS_MAIN_CATEGORY, root_class))
-        result['properties'] = list(root_class.get('claims').keys())
-        result['subclasses'] = list(subclasses.get(result.get('id'), set()))
-        result['instances'] = list(instances.get(result.get('id'), set()))
+        result[PROPERTIES] = list(root_class.get(CLAIMS).keys())
+        result[SUBCLASSES] = list(subclasses.get(result.get(ID), set()))
+        result[INSTANCES] = list(instances.get(result.get(ID), set()))
         yield json.dumps(result)
 
 

@@ -12,7 +12,7 @@ def analyze_characteristics(characteristics: Iterable[dict])->dict:
     property_counts = dict()  # type: Dict[int, int]
     subclass_counts = dict()  # type: Dict[int, int]
     instance_counts = dict()  # type: Dict[int, int]
-    property_frequencies = dict() # type: Dict[str, int]
+    property_frequencies = dict()  # type: Dict[str, int]
     topic_frequencies = dict()  # type: Dict[str, int]
     for ch in characteristics:
         property_num = len(ch.get(PROPERTIES))
@@ -37,7 +37,7 @@ def analyze_characteristics(characteristics: Iterable[dict])->dict:
     result['property counts'] = property_counts
     result['subclass counts'] = subclass_counts
     result['instance counts'] = instance_counts
-    result['property_frequencies'] = property_frequencies
+    result['property frequencies'] = property_frequencies
     result['topic frequencies'] = topic_frequencies
 
     return result

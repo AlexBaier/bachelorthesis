@@ -2,7 +2,7 @@ import json
 from typing import Iterable
 
 import data_analysis.config as config
-from data_analysis.constants import INSTANCE_OF, SUBCLASS_OF
+from data_analysis.constants import INSTANCE_OF, SUBCLASS_OF, ID
 import data_analysis.utils as utils
 
 
@@ -11,13 +11,13 @@ def is_parentless(reduced_class: dict)->bool:
 
 
 def get_root_class_ids(reduced_classes: Iterable[dict])->Iterable[str]:
-    return map(lambda c: c.get('id'),
+    return map(lambda c: c.get(ID),
                filter(is_parentless, reduced_classes))
 
 
 def get_root_classes(entities: Iterable[dict], root_class_ids: Iterable)->Iterable[dict]:
     root_class_ids = set(root_class_ids)
-    return filter(lambda e: e.get('id') in root_class_ids, entities)
+    return filter(lambda e: e.get(ID) in root_class_ids, entities)
 
 
 def write_root_classes(json_dump: str, reduced_classes_dump: str, output: str):

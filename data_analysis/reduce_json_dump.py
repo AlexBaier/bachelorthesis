@@ -2,14 +2,14 @@ import itertools
 import json
 
 import data_analysis.utils as utils
-from data_analysis.constants import INSTANCE_OF, SUBCLASS_OF
+from data_analysis.constants import INSTANCE_OF, SUBCLASS_OF, ID, LABEL
 import data_analysis.config as config
 
 
 def extract_taxonomic_relations(entity: dict)->dict:
     result = dict()
-    result['id'] = entity.get('id')
-    result['label'] = utils.get_english_label(entity)
+    result[ID] = entity.get(ID)
+    result[LABEL] = utils.get_english_label(entity)
     result[INSTANCE_OF] = list(utils.get_instance_of_ids(entity))
     result[SUBCLASS_OF] = list(utils.get_subclass_of_ids(entity))
 
