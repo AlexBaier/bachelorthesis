@@ -15,7 +15,7 @@ The results of the latest analysis will be presented in results.md.
 * [topic's main category (P910)](https://www.wikidata.org/wiki/Property:P910]) of root classes
 * TODO: Add more
 
-## How to extract root classes from the JSON dump?
+## How use the scripts?
 You need to download a JSON dump from [https://dumps.wikimedia.org/wikidatawiki/entities/]().
 Unpack the JSON dump. (Warning: In November 2016 the file had a size of ~100GB.
 In future releases it will only increase.)
@@ -30,6 +30,8 @@ You need to execute the scripts in the following order:
 2. `find_classes.py`
 3. `find_root_classes.py`
 4. `find_characteristics.py`
+
+Or you can `extract_root_classes.py` to execute all scripts at once.
 
 The execution of these scripts will take some time, because the code
 is neither optimized nor parallel, and because the JSON dump is huge.
@@ -83,6 +85,8 @@ and written into a JSON file:
 * How often do certain [topics(P910)](https://www.wikidata.org/wiki/Property:P910) occur in the classes? 
 -> `"topic frequencies"`
 
-TODO: Write a script to represent these statistics as bar plots (histograms?).
+Run `create_plots.py` to get a graphic representation of the analysis results.
+`topic frequencies` is omitted, because almost no classes share a common topic.
 
-
+See [results.md](https://github.com/AlexBaier/bachelorthesis/blob/master/data_analysis/results.md)
+to see a summary of the analysis.
