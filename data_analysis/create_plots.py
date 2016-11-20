@@ -1,5 +1,5 @@
-# TODO: make the figures better
 # TODO: save the figures with plt.savefig('.svg')
+import itertools
 import json
 from typing import List, Tuple
 
@@ -29,29 +29,62 @@ def main():
 
     print('number of root classes: {}'.format(root_class_count))
 
+    # property sum/number of classes figure
     plt.figure(1)
-    plt.bar([i[0] for i in property_counts], [i[1] for i in property_counts])
+    x = [i[0] for i in property_counts]
+    y = [i[1] for i in property_counts]
+    plt.bar(x, y)
+    # set x axis steps
+    plt.xticks(x)
+    plt.title('number of classes with specific amount of properties')
     plt.xlabel('sum of properties')
     plt.ylabel('number of classes')
+    # set values on bars
+    for i, v in enumerate(y):
+        plt.text(i, v, str(v), color='blue', fontweight='bold')
 
+    # subclass sum/number of classes figure
     plt.figure(2)
-    plt.bar([i[0] for i in subclass_counts], [i[1] for i in subclass_counts])
+    x = [i[0] for i in subclass_counts]
+    y = [i[1] for i in subclass_counts]
+    plt.xlim(0, len(x))
+    plt.bar(x, y)
+    plt.title('number of classes with a specific amount of subclasses')
     plt.xlabel('sum of subclasses')
     plt.ylabel('number of classes')
-    plt.show()
+    # set values on bars
+    for i, v in enumerate(y):
+        plt.text(i, v, str(v), color='blue', fontweight='bold')
 
+    # instance sum/number of classes figure
     plt.figure(3)
-    plt.bar([i[0] for i in instance_counts], [i[1] for i in instance_counts])
+    x = [i[0] for i in instance_counts]
+    y = [i[1] for i in instance_counts]
+    plt.xlim(0, 10)
+    plt.yticks(y[:6])
+    plt.bar(x, y)
+    plt.title('number of classes with specific amount of instances')
     plt.xlabel('sum of instances')
     plt.ylabel('number of classes')
-    plt.show()
+    for i, v in itertools.islice(enumerate(y), 10):
+        plt.text(i, v, str(v), color='blue', fontweight='bold')
 
-    plt.figure(3)
-    plt.bar([i[0] for i in instance_counts], [i[1] for i in instance_counts])
-    plt.xlabel('sum of instances')
-    plt.ylabel('number of classes')
-    plt.show()
+    # property/frequency figure
+    plt.figure(4)
+    limiter = 20
+    x_values = [i[0] for i in property_frequencies][:limiter]
+    x = list(range(0, len(x_values)))
+    y = [i[1] for i in property_frequencies][:limiter]
+    plt.xlim(0, limiter)
+    plt.xticks(x, x_values)
+    plt.bar(x, y)
+    plt.title('frequency of properties')
+    plt.xlabel('property')
+    plt.ylabel('occurrences')
+    for i, v in enumerate(y):
+        plt.text(i, v, str(v), color='blue', fontweight='bold')
 
+    plt.show()
 
 if __name__ == '__main__':
     main()
