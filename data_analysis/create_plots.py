@@ -25,7 +25,7 @@ def main():
     subclass_counts = sort_counts_as_tuples(analysis.get('subclass counts'))
     instance_counts = sort_counts_as_tuples(analysis.get('instance counts'))
     property_frequencies = sort_frequencies_as_tuples(analysis.get('property frequencies'))
-    topic_frequencies = sort_frequencies_as_tuples(analysis.get('topic frequencies'))
+    # topic_frequencies = sort_frequencies_as_tuples(analysis.get('topic frequencies'))
 
     print('number of root classes: {}'.format(root_class_count))
 
@@ -43,6 +43,8 @@ def main():
     for i, v in enumerate(y):
         plt.text(i, v, str(v), color='blue', fontweight='bold')
 
+    plt.savefig(config.PROPERTY_SUM_FIGURE_PATH)
+
     # subclass sum/number of classes figure
     plt.figure(2)
     x = [i[0] for i in subclass_counts]
@@ -55,6 +57,8 @@ def main():
     # set values on bars
     for i, v in enumerate(y):
         plt.text(i, v, str(v), color='blue', fontweight='bold')
+
+    plt.savefig(config.SUBCLASS_SUM_FIGURE_PATH)
 
     # instance sum/number of classes figure
     plt.figure(3)
@@ -69,9 +73,11 @@ def main():
     for i, v in itertools.islice(enumerate(y), 10):
         plt.text(i, v, str(v), color='blue', fontweight='bold')
 
+    plt.savefig(config.INSTANCE_SUM_FIGURE_PATH)
+
     # property/frequency figure
     plt.figure(4)
-    limiter = 20
+    limiter = 14
     x_values = [i[0] for i in property_frequencies][:limiter]
     x = list(range(0, len(x_values)))
     y = [i[1] for i in property_frequencies][:limiter]
@@ -84,9 +90,7 @@ def main():
     for i, v in enumerate(y):
         plt.text(i, v, str(v), color='blue', fontweight='bold')
 
-    plt.show()
+    plt.savefig(config.PROPERTY_FREQUENCY_FIGURE_PATH)
 
 if __name__ == '__main__':
     main()
-
-
