@@ -76,9 +76,9 @@ Run `analyze_characteristics.py`. The following statistics about root classes ar
 and written into a JSON file:
 
 * How many root classes were found? -> `"root class count"`
-* How many classes with a certain amount of properties? -> `"property count"`
-* How many classes with a certain amount of subclasses? -> `"subclass count"`
-* How many classes with a certain amount of instances? -> `"instance count"`
+* How many classes with a certain amount of properties? -> `"property counts"`
+* How many classes with a certain amount of subclasses? -> `"subclass counts"`
+* How many classes with a certain amount of instances? -> `"instance counts"`
 * How often do certain properties occur in the classes? -> `"property frequencies"`
 * How often do certain [topics(P910)](https://www.wikidata.org/wiki/Property:P910) occur in the classes? 
 -> `"topic frequencies"`
