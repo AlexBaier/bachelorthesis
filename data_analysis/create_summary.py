@@ -1,5 +1,6 @@
 # TODO: delete or refactor this.
 import json
+import itertools
 from typing import List, Tuple
 
 import data_analysis.config as config
@@ -11,8 +12,7 @@ def sort_frequencies_as_tuples(frequencies: dict)->List[Tuple[str, int]]:
 
 
 def main():
-    root_classes = utils.get_json_dicts(config.ROOT_CLASSES_JSON_DUMP_PATH)
-    characteristics = utils.get_json_dicts(config.ROOT_CLASS_CHARACTERISTICS_PATH)
+    chars1, chars2, chars3 = itertools.tee(utils.get_json_dicts(config.ROOT_CLASS_CHARACTERISTICS_PATH), 3)
     with open(config.ROOT_CLASS_ANALYSIS_PATH) as f:
         analysis = json.loads(f.readline())
 
@@ -21,8 +21,11 @@ def main():
     args = dict()
     args['root classes'] = analysis['root class count']
 
-    args['labelless classes'] = len(list(filter(lambda r: utils.get_english_label(r) == '', root_classes)))
+    args['labelless classes'] = len(list(filter(lambda r: r['label'] == '', chars1)))
     args['labeled classes'] = args['root classes'] - args['labelless classes']
+
+    args['no wiki'] = len(list(filter(lambda r: r['enwiki'] == '' and r['simplewiki'] == '', chars2)))
+    args['wiki'] = args['root classes'] - args['no wiki']
 
     args['zero properties'] = analysis['property counts']['0']
     args['one property'] = analysis['property counts']['1']
@@ -48,6 +51,9 @@ def main():
         '- without label: {labelless classes}\n' \
         '- with label: {labeled classes}\n' \
         '\n' \
+        '- with wiki (en or simple) article: {wiki}\n' \
+        '- without wiki (en or simple) article: {no wiki}\n' \
+        '\n' \
         '- with 0 properties: {zero properties}\n' \
         '- with 1 property: {one property}\n' \
         '- with more than 1 property: {more properties}\n' \
@@ -68,9 +74,9 @@ def main():
                               args['property {} occurrences'.format(i)]) for i in range(1, top_range+1)]) + '\n'
 
     output += '\n list of all root classes: \n'
-    for ch in characteristics:
-        output += '{}({}):properties: {}; subclasses: {}; instances: {}\n'.format(
-            ch.get('label'), ch.get('id'), ', '.join(ch.get('properties')),
+    for ch in chars3:
+        output += '{}({}):enwiki: {}, simplewiki: {}, properties: {}; subclasses: {}; instances: {}\n'.format(
+            ch.get('label'), ch.get('id'), ch.get('enwiki'), ch.get('simplewiki'), ' ,'.join(ch.get('properties')),
             ', '.join(ch.get('subclasses')), ', '.join(ch.get('instances'))
         )
 

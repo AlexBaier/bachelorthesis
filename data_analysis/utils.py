@@ -42,13 +42,16 @@ def get_english_label(entity: dict)->str:
     return entity.get('labels').get('en', dict()).get('value', '')
 
 
-def get_enwiki_title(entity: dict)->str:
+def get_wiki_title(entity: dict, wiki: str)->str:
     """
-    Get the Wikipedia article title of the provided Wikidata entity, if the entity has such an article.
+    Get the article title of the provided Wikidata entity of the specified Wikipedia.
+    If the entity has no article on the specified Wikipedia, or there is no such Wikipedia,
+    the empty string is returned.
     :param entity:
-    :return: enwiki title of entity.
+    :param wiki:
+    :return: Wikipedia title of entity.
     """
-    return entity.get('sitelinks', dict()).get('enwiki', dict()).get('title', '')
+    return entity.get('sitelinks', dict()).get(wiki, dict()).get('title', '')
 
 
 def get_instance_of_ids(entity: dict)->Iterable[str]:
