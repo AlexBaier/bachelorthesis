@@ -51,7 +51,7 @@ The 20 most frequent properties were ...
 Some bar graphs:
 
 
-![instance sum]
+<img src="https://github.com/AlexBaier/bachelorthesis/blob/master/data_analysis/output/instance_sum.svg"></img>
 
 
 ![subclass sum]
@@ -74,7 +74,7 @@ Some bar graphs:
 * classes with most instances
 * commons category occurences
 
-[instance sum]: https://github.com/AlexBaier/bachelorthesis/blob/master/data_analysis/output/instance_sum.svg
-[property sum]: https://github.com/AlexBaier/bachelorthesis/blob/master/data_analysis/output/property_sum.svg
-[subclass sum]: https://github.com/AlexBaier/bachelorthesis/blob/master/data_analysis/output/subclass_sum.svg
-[property frequency]: https://github.com/AlexBaier/bachelorthesis/blob/master/data_analysis/output/property_frequency.svg
+[instance sum]: https://github.com/AlexBaier/bachelorthesis/blob/master/data_analysis/output/instance_sum.png
+[property sum]: https://github.com/AlexBaier/bachelorthesis/blob/master/data_analysis/output/property_sum.png
+[subclass sum]: https://github.com/AlexBaier/bachelorthesis/blob/master/data_analysis/output/subclass_sum.png
+[property frequency]: https://github.com/AlexBaier/bachelorthesis/blob/master/data_analysis/output/property_frequency.png
