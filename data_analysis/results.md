@@ -51,6 +51,9 @@ The 20 most frequent properties were ...
 Some bar graphs:
 
 
+![instance sum]
+
+
 ![subclass sum]
 
 
