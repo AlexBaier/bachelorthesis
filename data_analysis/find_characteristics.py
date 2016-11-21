@@ -42,6 +42,7 @@ def get_characteristics(root_classes: Iterable[dict], root_class_ids: Iterable[s
     for root_class in root_classes:
         result = dict()
         result[ID] = root_class.get(ID)
+        result['enwiki'] = utils.get_enwiki_title(root_class)
         result[LABEL] = utils.get_english_label(root_class)
         result[TOPICS_MAIN_CATEGORY] = list(utils.get_item_property_ids(TOPICS_MAIN_CATEGORY, root_class))
         result[PROPERTIES] = list(root_class.get(CLAIMS).keys())

@@ -39,7 +39,16 @@ def get_english_label(entity: dict)->str:
     :param entity: Wikidata entity as dict.
     :return: English label of entity.
     """
-    return entity.get('labels').get('en', {}).get('value', '')
+    return entity.get('labels').get('en', dict()).get('value', '')
+
+
+def get_enwiki_title(entity: dict)->str:
+    """
+    Get the Wikipedia article title of the provided Wikidata entity, if the entity has such an article.
+    :param entity:
+    :return: enwiki title of entity.
+    """
+    return entity.get('sitelinks', dict()).get('enwiki', dict()).get('title', '')
 
 
 def get_instance_of_ids(entity: dict)->Iterable[str]:
