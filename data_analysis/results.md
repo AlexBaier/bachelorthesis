@@ -1,5 +1,7 @@
 # Results
 
+Analysis was executed on the Wikidata JSON dump of 2016-11-07.
+
 **7142** root classes were found in **1,217,733** classes.
 
 Out of these **7142** root classes, ...
