@@ -9,9 +9,9 @@ See [definitions.md](https://github.com/AlexBaier/bachelorthesis/blob/master/dat
 for the definitions of class and root class in context of this tool.
 
 ## How use the scripts?
-You need to download a JSON dump from [https://dumps.wikimedia.org/wikidatawiki/entities/]().
+You need to download a JSON dump from [https://dumps.wikimedia.org/wikidatawiki/entities/](https://dumps.wikimedia.org/wikidatawiki/entities/).
 Unpack the JSON dump. (Warning: In November 2016 the file had a size of ~100GB.
-In future releases it will only increase.)
+In future releases the size will only increase.)
 
 Set the file paths in `config.py` to suit your needs.
 `JSON_DUMP_PATH`  should at least point to the current location
@@ -50,14 +50,18 @@ as in the original JSON dump, therefore they follow the format described
 in [https://www.mediawiki.org/wiki/Wikibase/DataModel/JSON]().
 
 The JSON objects in `ROOT_CLASS_CHARACTERISTICS_PATH` contain for
-the analysis relevant properties of each root class. These are 
-all [topics(P910)](https://www.wikidata.org/wiki/Property:P910),
+the analysis relevant properties of each root class. These are
+the Wikidata ID, the English label,
+the [topics(P910)](https://www.wikidata.org/wiki/Property:P910),
+the English and Simple English Wikipedia title,
 all properties, all subclasses, and all instances.
 The objects have the following format:
 ```json
 {
 "id": "Q123",
 "label": "english label",
+"enwiki": "title",
+"simplewiki": "title",
  "P910": ["..."],
  "properties": ["..."],
  "subclasses": ["..."],
@@ -79,7 +83,7 @@ and written into a JSON file:
 -> `"topic frequencies"`
 
 Run `create_plots.py` to get a graphic representation of the analysis results.
-`topic frequencies` is omitted, because almost no classes share a common topic.
+`"topic frequencies"` is omitted, because almost no classes share a common topic.
 
 See [results.md](https://github.com/AlexBaier/bachelorthesis/blob/master/data_analysis/results.md)
 to see a summary of the analysis.
