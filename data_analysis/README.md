@@ -3,17 +3,10 @@ The purpose of this package is to identify and extract the root classes
 from the [Wikidata JSON dump](https://dumps.wikimedia.org/wikidatawiki/entities/).
 After the extraction the characteristics of the root classes are analyzed.
 
-The results of the latest analysis will be presented in results.md.
+The results of the latest analysis will be presented in [results.md](https://github.com/AlexBaier/bachelorthesis/blob/master/data_analysis/results.md).
 
-## Analyzed characteristics
-* number of classes
-* number of leaf classes
-* number of root classes
-* number of instances per root class
-* number of subclasses per root class
-* common properties of root classes
-* [topic's main category (P910)](https://www.wikidata.org/wiki/Property:P910]) of root classes
-* TODO: Add more
+See [definitions.md](https://github.com/AlexBaier/bachelorthesis/blob/master/data_analysis/definitions.md) 
+for the definitions of class and root class in context of this tool.
 
 ## How use the scripts?
 You need to download a JSON dump from [https://dumps.wikimedia.org/wikidatawiki/entities/]().
