@@ -16,7 +16,7 @@ def get_class_ids(reduced_items: Iterable[dict])->Set[str]:
     """
     classes = set()  # type: Set[str]
     for idx, item in enumerate(reduced_items):
-        if not item.get(INSTANCE_OF) and item.get(SUBCLASS_OF):
+        if item.get(SUBCLASS_OF):  # if an item has subclass of and instance of, it is still considered a class.
             classes.add(item.get(ID))
             classes.update(item.get(SUBCLASS_OF))  # parent class of a class is a class
         elif item.get(INSTANCE_OF):
