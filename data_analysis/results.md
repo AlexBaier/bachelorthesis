@@ -11,18 +11,21 @@ Out of these **7142** root classes, ...
 
 ---
 
+* **2.0077** properties per class on average.
 * **1949** have no properties.
 * **1654** have one property.
 * **3539** have more than one property.
 
 ---
 
+* **4.1530** instances per class on average.
 * **1789** have no instances.
 * **3450** have one instance.
 * **1903** have more than one instance.
 
 ---
 
+* **0.6782** subclasses per class on average.
 * **4797** have no subclasses.
 * **1663** have one subclass.
 * **682** have more than one subclass.

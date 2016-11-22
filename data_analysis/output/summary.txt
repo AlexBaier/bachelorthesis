@@ -8,14 +8,17 @@ root classes: 7142
 - with wiki (en or simple) article: 4590
 - without wiki (en or simple) article: 2552
 
+- average properties per class: 2.0077009241108934
 - with 0 properties: 1949
 - with 1 property: 1654
 - with more than 1 property: 3539
 
+- average instances per class: 4.153038364603752
 - with 0 instances: 1789
 - with 1 instance: 3450
 - with more than 1 instance: 1903
 
+- average subclasses per class: 0.678241388966676
 - with 0 subclasses: 4797
 - with 1 subclass: 1663
 - more than 1 subclass: 682

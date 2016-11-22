@@ -11,6 +11,15 @@ def sort_frequencies_as_tuples(frequencies: dict)->List[Tuple[str, int]]:
     return sorted(map(lambda t: (t[0], t[1]), frequencies.items()), key=lambda t: t[1], reverse=True)
 
 
+def average(counts: dict)->float:
+    a = 0
+    s = 0
+    for v, i in counts.items():
+        a += i
+        s += int(v) * i
+    return float(s)/a
+
+
 def main():
     chars1, chars2, chars3 = itertools.tee(utils.get_json_dicts(config.ROOT_CLASS_CHARACTERISTICS_PATH), 3)
     with open(config.ROOT_CLASS_ANALYSIS_PATH) as f:
@@ -27,14 +36,17 @@ def main():
     args['no wiki'] = len(list(filter(lambda r: r['enwiki'] == '' and r['simplewiki'] == '', chars2)))
     args['wiki'] = args['root classes'] - args['no wiki']
 
+    args['average properties'] = average(analysis['property counts'])
     args['zero properties'] = analysis['property counts']['0']
     args['one property'] = analysis['property counts']['1']
     args['more properties'] = args['root classes'] - args['zero properties'] - args['one property']
 
+    args['average instances'] = average(analysis['instance counts'])
     args['zero instances'] = analysis['instance counts']['0']
     args['one instance'] = analysis['instance counts']['1']
     args['more instances'] = args['root classes'] - args['zero instances'] - args['one instance']
 
+    args['average subclasses'] = average(analysis['subclass counts'])
     args['zero subclasses'] = analysis['subclass counts']['0']
     args['one subclass'] = analysis['subclass counts']['1']
     args['more subclasses'] = args['root classes'] - args['zero subclasses'] - args['one subclass']
@@ -54,14 +66,17 @@ def main():
         '- with wiki (en or simple) article: {wiki}\n' \
         '- without wiki (en or simple) article: {no wiki}\n' \
         '\n' \
+        '- average properties per class: {average properties}\n' \
         '- with 0 properties: {zero properties}\n' \
         '- with 1 property: {one property}\n' \
         '- with more than 1 property: {more properties}\n' \
         '\n' \
+        '- average instances per class: {average instances}\n' \
         '- with 0 instances: {zero instances}\n' \
         '- with 1 instance: {one instance}\n' \
         '- with more than 1 instance: {more instances}\n' \
         '\n' \
+        '- average subclasses per class: {average subclasses}\n' \
         '- with 0 subclasses: {zero subclasses}\n' \
         '- with 1 subclass: {one subclass}\n' \
         '- more than 1 subclass: {more subclasses}\n' \
