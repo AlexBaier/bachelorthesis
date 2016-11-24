@@ -33,6 +33,7 @@
 \maketitle
 
 \section*{Using Recurrent Neural Network for Learning Expressive Ontologies}
+\TODO{Some parts of this summary should be moved to the comparison of neural networks.}
 \cite{PetrucciGR16} describes a recurrent neural network with short-term memory capabilities through Gated Recursive Units for usage in ontology learning. It is argued that recurrent neural networks can handle this task,
 because they proved to do well in handling natural languages, and therefore should also be able to ''handle the typical syntactic structures of encyclopedic text''. \\
 The ontology learning process is described as transduction task. The typical structure of encyclopedic text is exploited by translating the text into a logical formula using a pipeline, which creates a formula template and a tagged sentence. These are combined to create a formula. \\
@@ -55,19 +56,28 @@ The ontology learning process is described as transduction task. The typical str
  \end{itemize}
 
 \section*{Recurrent neural network based language model}
-\cite{MikolovKBCK10} describes a simple recurrent network language based model and tests its performance for the task of speech recognition. It outperforms the typical n-gram model, but has a higher computational performance. Therefore this paper has no further relevance for problem of this work. But it should be noted, that this paper shows the power of recurrent neural networks in predicting contextual data and has the major advantage of having no limited size of context.
+\cite{MikolovKBCK10} describes a simple recurrent network language based model and tests its performance for 
+the task of speech recognition. It outperforms the typical n-gram model, but has a higher computational performance. Because speech recognition has only very few similarities to the concerned data of my work, 
+this paper has no further relevance for problem of this work. But it should be noted, that this paper shows the 
+power of recurrent neural networks in predicting contextual data and has the major advantage of having no limited 
+size of context.
 
 \section*{Taxonomy learning – factoring the structure of a taxonomy into a semantic classification decision}
-\cite{pekar2002tl}
+\cite{pekar2002tl} defines a tree-ascending algorithm, which calculates the taxonomic similarity between nearest 
+neighbors. Evaluation shows that the algorithm is good at choosing the correct class for a new word. A combination of tree-ascending and k-nearest-neighbors was developed, which slightly improved the results in finding the correct class.  Another algorithm, tree-descending, was shown to be less efficient than standard classifiers. \\
+The paper solves a similar problem to the problem of my work. The exploitation of the taxonomy for classification
+proves to be effective and should therefore be incorporated into the solution of the thesis' problem.
 
 \section*{Efficient Estimation of Word Representations in Vector Space}
 \cite{abs-1301-3781}
 
 \section*{Deep Neural Networks for Learning Graph Representations}
-\cite{CaoLX16} describes a deep neural network, which creates deep graph representation model, in which a low dimensional vector is created for each vertex in the graph. The method was tested on real datasets and outperformed some state-of-the-art systems. It is able to handle noisy data, which may be important for the task of this work.  The output of this network, the graph representations, can be used as input for other methods, e.g. supervised classification. Therefore this network could be used for transforming the taxonomy of Wikidata into a small-dimensional input format.
-
-\section*{Ontology Learning Part One --- on Discovering Taxonomic Relations from the Web}
-\cite{Maedche2003}
+\cite{CaoLX16} describes a deep neural network, which creates deep graph representation model, in which a low 
+dimensional vector is created for each vertex in the graph. The method was tested on real datasets and 
+outperformed some state-of-the-art systems. It is able to handle noisy data, which may be important for the task of 
+this work.  The output of this network, the graph representations, can be used as input for other methods, e.g. 
+supervised classification. Therefore this network could be used for transforming the taxonomy of Wikidata into a 
+small-dimensional input format.
 
 \section*{Supervised neural networks for the classification of structures}
 \cite{Sperduti1997} describes neural networks using generalized recursive neurons for the classification of structured patterns (e.g. concept graphs). The a-priori encoding of structures for use in the neural network has drawbacks. The authors propose the use a second neural network for encoding the structure, which is trained alongside the classification network. To solve this problem the generalized recursive neuron is introduced. An encoding network is constructed using this neurons. It creates a vector, which encodes the graph, and is finally fed into a feed-forward neural network for classification. \TODO{Read this paper again, I think misunderstood, what the network actually does.}
