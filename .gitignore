@@ -12,3 +12,10 @@ data_analysis/output/reduced_items
 data_analysis/output/reduced_classes
 data_analysis/output/root_classes
 data_analysis/output/root_class_characteristics
+
+# tex files
+*.aux
+*.bbl
+*.blg
+*.log
+*synctex.gz

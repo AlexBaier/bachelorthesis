@@ -1,0 +1,78 @@
+% !TEX TS-program = pdflatex
+% !TEX encoding = UTF-8 Unicode
+
+\documentclass[11pt]{scrartcl} % use larger type; default would be 10pt
+
+\usepackage[utf8]{inputenc} % set input encoding (not needed with XeLaTeX)
+
+%%% PAGE DIMENSIONS
+\usepackage{geometry} % to change the page dimensions
+\geometry{a4paper} % or letterpaper (US) or a5paper or....
+
+\usepackage{graphicx} % support the \includegraphics command and options
+
+ \usepackage[parfill]{parskip} % Activate to begin paragraphs with an empty line rather than an indent
+
+%%% PACKAGES
+\usepackage{booktabs} % for much better looking tables
+\usepackage{array} % for better arrays (eg matrices) in maths
+\usepackage{paralist} % very flexible & customisable lists (eg. enumerate/itemize, etc.)
+\usepackage{verbatim} % adds environment for commenting out blocks of text & for better verbatim
+\usepackage{subfig} % make it possible to include more than one captioned figure/table in a single float
+\usepackage{color}
+\usepackage{ulem}
+
+\newcounter{ToDoId}
+\newcommand{\TODO}[1]{\stepcounter{ToDoId}\textcolor{red}{\textbf{TODO \theToDoId: #1}}}
+
+\title{Summaries of Related work}
+\author{Alex Baier \\ abaier@uni-koblenz.de}
+
+
+\begin{document}
+\maketitle
+
+\section*{Using Recurrent Neural Network for Learning Expressive Ontologies}
+\cite{PetrucciGR16} describes a recurrent neural network with short-term memory capabilities through Gated Recursive Units for usage in ontology learning. It is argued that recurrent neural networks can handle this task,
+because they proved to do well in handling natural languages, and therefore should also be able to ''handle the typical syntactic structures of encyclopedic text''. \\
+The ontology learning process is described as transduction task. The typical structure of encyclopedic text is exploited by translating the text into a logical formula using a pipeline, which creates a formula template and a tagged sentence. These are combined to create a formula. \\
+ This pipeline is assembled by a combination of neural networks.
+ \begin{itemize}
+ \item Sentence tagging: single Recurrent Neural Network with Gated Recursive Units.
+ 	\begin{itemize}
+ 	\item Input: sentence in natural language, represented as n+1 symbol sequence. First n symbols are words.
+            	The last symbol is $<$EOS$>$, which indicates end of sequence. Each word has a mapping to an integer,
+            	which represents its position in the vocabulary. The input is then transformed into a sequence of 				context windows.
+	\item Output: Estimation of each tag to be the right one for k-th word. Predicted tag for k-th word is the one 	
+		with the highest probability.
+	\end{itemize}
+\item Sentence transduction: Recurrent Encoder-Decoder with Gated Recursive Units.
+	\begin{itemize}
+	\item Input: The same as in sentence tagging. But the context windowing is not executed.
+	\item Output: Set of all possible formula terms. Input and output sequences don't have the same length.
+	\end{itemize}
+\item Gated Recursive Unit provides both networks with a short-term memory effect.
+ \end{itemize}
+
+\section*{Recurrent neural network based language model}
+\cite{MikolovKBCK10} describes a simple recurrent network language based model and tests its performance for the task of speech recognition. It outperforms the typical n-gram model, but has a higher computational performance. Therefore this paper has no further relevance for problem of this work. But it should be noted, that this paper shows the power of recurrent neural networks in predicting contextual data and has the major advantage of having no limited size of context.
+
+\section*{Taxonomy learning – factoring the structure of a taxonomy into a semantic classification decision}
+\cite{pekar2002tl}
+
+\section*{Efficient Estimation of Word Representations in Vector Space}
+\cite{abs-1301-3781}
+
+\section*{Deep Neural Networks for Learning Graph Representations}
+\cite{CaoLX16} describes a deep neural network, which creates deep graph representation model, in which a low dimensional vector is created for each vertex in the graph. The method was tested on real datasets and outperformed some state-of-the-art systems. It is able to handle noisy data, which may be important for the task of this work.  The output of this network, the graph representations, can be used as input for other methods, e.g. supervised classification. Therefore this network could be used for transforming the taxonomy of Wikidata into a small-dimensional input format.
+
+\section*{Ontology Learning Part One --- on Discovering Taxonomic Relations from the Web}
+\cite{Maedche2003}
+
+\section*{Supervised neural networks for the classification of structures}
+\cite{Sperduti1997} describes neural networks using generalized recursive neurons for the classification of structured patterns (e.g. concept graphs). The a-priori encoding of structures for use in the neural network has drawbacks. The authors propose the use a second neural network for encoding the structure, which is trained alongside the classification network. To solve this problem the generalized recursive neuron is introduced. An encoding network is constructed using this neurons. It creates a vector, which encodes the graph, and is finally fed into a feed-forward neural network for classification. \TODO{Read this paper again, I think misunderstood, what the network actually does.}
+
+\bibliographystyle{plain}
+\bibliography{bibliography}
+
+\end{document}
