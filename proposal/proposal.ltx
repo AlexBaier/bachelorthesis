@@ -1,0 +1,90 @@
+% !TEX TS-program = pdflatex
+% !TEX encoding = UTF-8 Unicode
+
+\documentclass[11pt]{scrartcl} % use larger type; default would be 10pt
+
+\usepackage[utf8]{inputenc} % set input encoding (not needed with XeLaTeX)
+
+%%% PAGE DIMENSIONS
+\usepackage{geometry} % to change the page dimensions
+\geometry{a4paper} % or letterpaper (US) or a5paper or....
+
+\usepackage{graphicx} % support the \includegraphics command and options
+
+ \usepackage[parfill]{parskip} % Activate to begin paragraphs with an empty line rather than an indent
+
+%%% PACKAGES
+\usepackage{booktabs} % for much better looking tables
+\usepackage{array} % for better arrays (eg matrices) in maths
+\usepackage{paralist} % very flexible & customisable lists (eg. enumerate/itemize, etc.)
+\usepackage{verbatim} % adds environment for commenting out blocks of text & for better verbatim
+\usepackage{subfig} % make it possible to include more than one captioned figure/table in a single float
+\usepackage{color}
+\usepackage{ulem}
+
+\newcounter{ToDoId}
+\newcommand{\TODO}[1]{\stepcounter{ToDoId}\textcolor{red}{\textbf{TODO \theToDoId: #1}}}
+
+\title{Extending taxonomic relations of root classes in the Wikidata knowledge base with neural networks}
+\subtitle{Proposal for Bachelor thesis}
+\author{Alex Baier \\ abaier@uni-koblenz.de}
+
+
+\begin{document}
+\maketitle
+
+\section{Motivation}
+\TODO{Reorder the motivation. Explain all mentioned concepts, with a short sentence. Show example for Wikidata item and property.}
+Wikidata is a open, free and collaborative knowledge base by the Wikimedia foundation. 
+\TODO{Write something about the usage and purpose of Wikidata.}
+As of the 7th November 2016 Wikidata offers 24,438,781 entities \cite{WikidataStats}. 
+Entities are differentiated between items (e.g. Albert Einstein (Q937), linked data (Q515701), etc.) and properties (e.g.  educated at (P69), has  as part (P527), etc.).
+Of these 20 million entities 1,217,733 are classes, which form a taxonomy using the subclass of (P279) property. Like every other entity in the knowledge base, these classes are created by users (and bots), and are therefore incomplete and sometimes erroneous. This leads to an incomplete and erroneous taxonomy. One of the issues in the Wikidata taxonomy is the high amount of root classes, classes which have no parents and are therefore the highest level of abstraction in the taxonomy As of the 7th November 2016, 7142 root classes exist. The following are examples of root classes in Wikidata:
+\begin{itemize}
+\item Men's Junior European Volleyball Championship (Q169359)
+\item Women's Junior European Volleyball Championship (Q169956)
+\item \TODO{Add other root classes, which should not be root classes}
+\end{itemize}
+It can be seen with the first two examples, that both classes should share a parent class, which for example could be the European Volleyball Championship (Q6834). There are 355 other root classes with the property sport (P641), for which similar generalizations could be made. \\ \TODO{explain how the decision is not always easy.}\\
+\TODO{Explain why refining the taxonomy is useful and how it may help Wikidata.\\}
+At this time refining the taxonomy by generalizing existing root classes is a process done by human users.  For other problems like entity typing, tools exist to support the Wikidata community (e.g Wikidata Game \cite{WikidataGame}).\\
+A tool for suggesting possible parent classes for root classes could work similar to the mentioned Wikidata Game.
+To make such a tool possible, a method for finding generalizations of root classes has to be developed.\\
+\TODO{following sentence belongs to Related Work}
+Other approaches already exist, which solve similar problems, see for example \cite{pekar2002tl} which exploits the taxonomic structure of thesauri using the similarity of nearest neighbors to classify new words into its classes.\\
+The exploitation of neural networks, which have been shown to be very powerful and versatile \TODO{Do I need a reference for this?}, is an approach, which \TODO{is this even true?: currently has not been evaluated} for the task of taxonomy refinement. It may be prove useful to design and evaluate such a system to show, how neural networks may benefit the area of taxonomy learning.
+
+\section{Problem statement}
+\TODO{Add formal definition of the problem. Input, Output.}
+
+\section{Related works}
+\TODO{Add literature about neural networks, ontology learning.}
+
+\section{Methodology}
+\TODO{Order is not correct, rewrite this.}
+The main task of this work will be to develop a method for extending taxonomic relations of root classes based on neural networks. The task can be divided into the following subtasks: \\
+\\
+The root classes in the knowledge base have to be identified and analyzed. This should result in a comparison of
+similarities and characteristics of root classes in Wikidata. The purpose of this task is to identify, which data is available and how it is structured. \\ \\
+Two categories of to this challenge related work has to analyzed. The first category of related work is concerned
+with the topic of ontology and taxonomy learning. The second category is concerned with different applications of
+neural networks, and ways to represent complex data for usage in neural networks. Goal of this task should be
+to find an appropiate mapping of Wikidata root classes to feature vectors, which can be used by neural networks. \\ \\
+After the mapping of classes is defined, data can be collected per hand or possibly by crawling for training neural networks. The author will create a ground truth for the collected data. \\
+\\
+Finally different neural networks can be implemented and trained using existing libraries. The configurations
+of the networks will be improved by means of experimentation and literature review \TODO{Is "literature review" the right word?} until a small enough error in testing is achieved. \\ 
+\\
+The real data, all 7142 root classes, will be applied on the best performing network(s). The results will be reviewed by the author. If it is possible a survey with the Wikidata community will be executed. A (random?) subset of the results will be presented to the community, and the participants of the survey will be asked, whether they think the generated  suggestions of the network are accurate and could be entered into Wikidata. Such a survey would be really important to confirm the validity and relevance of this work.
+
+\section{Expected results}
+\TODO{What should I expect? NNs are powerful, so it is likely to work, if the right data is used.}
+
+\section{Time plan}
+
+\nocite{*}
+\bibliographystyle{plain}
+\bibliography{bibliography}
+
+
+\end{document}
