@@ -18,4 +18,5 @@ data_analysis/output/root_class_characteristics
 *.bbl
 *.blg
 *.log
-*synctex.gz
+*.synctex.gz
+*.toc
