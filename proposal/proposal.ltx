@@ -21,9 +21,16 @@
 \usepackage{subfig} % make it possible to include more than one captioned figure/table in a single float
 \usepackage{color}
 \usepackage{ulem}
+\usepackage{amsthm}
+\usepackage{amssymb}
 
 \newcounter{ToDoId}
 \newcommand{\TODO}[1]{\stepcounter{ToDoId}\textcolor{red}{\textbf{TODO \theToDoId: #1}}}
+
+\theoremstyle{definition}
+\newtheorem{definition}{Definition}
+\newtheorem*{problem}{Problem}
+
 
 \title{Extending taxonomic relations of root classes in the Wikidata knowledge base with neural networks}
 \subtitle{Proposal for Bachelor thesis}
@@ -55,7 +62,50 @@ Other approaches already exist, which solve similar problems, see for example \c
 The exploitation of neural networks, which have been shown to be very powerful and versatile \TODO{Do I need a reference for this?}, is an approach, which \TODO{is this even true?: currently has not been evaluated} for the task of taxonomy refinement. It may be prove useful to design and evaluate such a system to show, how neural networks may benefit the area of taxonomy learning.
 
 \section{Problem statement}
-\TODO{Add formal definition of the problem. Input, Output.}
+To define the problem following definitions are needed:
+\begin{definition}[Forest]
+A forest is a set of trees. Let $F$ be a forest, then $|F|$ is the number of trees in $F$.
+\end{definition}
+\begin{definition}[In-Tree, Root Node]
+An in-tree is a directed, complete, acyclic graph.  Additionally from each node in the in-tree a directed path to the root node can be found. It can be represented as a tuple $(N, E)$, where $N$ is a set of nodes of the tree and $E = \{(n_1, n_2) | n_1, n_2 \in N\}$ is a set of directed edges. A node in an in-tree is a root node , if it has no outgoing edges. There is only one root node in an in-tree. Let $T = (N, E)$ be an in-tree, then $root(T) \in N$ is the root node of $T$.
+\end{definition}
+\begin{definition}[Class]
+A class is a tuple $(id, label, Statements, Instances, wiki)$:
+	\begin{itemize}
+	\item $id \in \mathbb{N}$, which is a numerical Wikidata item ID;
+	\item $label$, which is the, to $id$ corresponding,  English label in Wikidata;
+	\item $Statements$ is a set of statements about the class;
+	\item $Instances \in P(\mathbb{N})$ is the set of numerical Wikidata item IDs, which are instances of the class;
+	\item $wiki$ is the, to the class corresponding, English Wikipedia article text.
+	\end{itemize}
+\end{definition}
+\begin{definition}[Statement]
+\end{definition}
+\begin{definition}[Class Hierarchy, Root Class]
+A class hierarchy is an in-tree, in which the nodes are classes. The directed edges describe the subclass-of
+relation between the child and the parent class. The root node in a class hierarchy is called root class.
+\end{definition}
+\begin{definition}[Taxonomy]
+A taxonomy is a forest of class hierarchies. The number of root classes in a taxonomy T is $|T|$.
+\end{definition}
+\begin{problem}
+Let $W_1$ be the taxonomy of Wikidata, where only labeled root classes are considered. 
+On 7th November 2016 the following state applies  $|W_1| = 5332$. \\
+$W_1$ is the input for the described problem. \\
+Let $W_2$ be the refined output taxonomy. \\
+After the refinement process the following should apply: $|W_2| \ll |W_1|$. This means the number of class 
+hierarchies in the Wikidata taxonomy is significantly reduced. \\
+\\
+The refinement process can be  reduced to the following smaller task: \\
+For a class hierarchy $H_1 \in W_1$ find a class $c \in H_2 \in W_1\setminus \{H_1\}$, which is an appropriate superclass for $r = root(H_1)$. \\
+Combine $H_1 = (N_1, E_1)$ and $H_2 = (N_2, E_2)$ to a hierarchy $H = (N_1 \cup N_2, E_1 \cup E_2 \cup \{ (r, 
+c) \}$. \\
+The output taxonomy is defined as follows: $W_2 = (\{ H \} \cup W_2) \setminus \{H_1, H_2 \}$. Accordingly $|W_2| = |W_1| - 1$ 
+follows.\\
+Repeating this smaller task will eventually yield $|W_2| \ll |W_1|$.\\
+\\
+The problem is therefore to develop a method, which finds an appropriate superclass for a root class given the complete surrounding taxonomy.
+\end{problem}
 
 \section{Related works}
 \TODO{Add literature about neural networks, ontology learning.}
