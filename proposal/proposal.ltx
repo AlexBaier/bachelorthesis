@@ -23,6 +23,8 @@
 \usepackage{ulem}
 \usepackage{amsthm}
 \usepackage{amssymb}
+\usepackage{graphicx}
+\usepackage{hyperref}
 
 \newcounter{ToDoId}
 \newcommand{\TODO}[1]{\stepcounter{ToDoId}\textcolor{red}{\textbf{TODO \theToDoId: #1}}}
@@ -45,25 +47,58 @@
 \maketitle
 
 \section{Motivation}
-\TODO{Reorder the motivation. Explain all mentioned concepts, with a short sentence. Show example for Wikidata item and property.}
-Wikidata is a open, free and collaborative knowledge base by the Wikimedia foundation. 
-\TODO{Write something about the usage and purpose of Wikidata.}
-As of the 7th November 2016 Wikidata offers 24,438,781 entities \cite{WikidataStats}. 
-Entities are differentiated between items (e.g. Albert Einstein (Q937), linked data (Q515701), etc.) and properties (e.g.  educated at (P69), has  as part (P527), etc.).
-Of these 20 million entities 1,217,733 are classes, which form a taxonomy using the subclass of (P279) property. Like every other entity in the knowledge base, these classes are created by users (and bots), and are therefore incomplete and sometimes erroneous. This leads to an incomplete and erroneous taxonomy. One of the issues in the Wikidata taxonomy is the high amount of root classes, classes which have no parents and are therefore the highest level of abstraction in the taxonomy As of the 7th November 2016, 7142 root classes exist. The following are examples of root classes in Wikidata:
-\begin{itemize}
-\item Men's Junior European Volleyball Championship (Q169359)
-\item Women's Junior European Volleyball Championship (Q169956)
-\item \TODO{Add other root classes, which should not be root classes}
-\end{itemize}
-It can be seen with the first two examples, that both classes should share a parent class, which for example could be the European Volleyball Championship (Q6834). There are 355 other root classes with the property sport (P641), for which similar generalizations could be made. \\ \TODO{explain how the decision is not always easy.}\\
-\TODO{Explain why refining the taxonomy is useful and how it may help Wikidata.\\}
-At this time refining the taxonomy by generalizing existing root classes is a process done by human users.  For other problems like entity typing, tools exist to support the Wikidata community (e.g Wikidata Game \cite{WikidataGame}).\\
-A tool for suggesting possible parent classes for root classes could work similar to the mentioned Wikidata Game.
-To make such a tool possible, a method for finding generalizations of root classes has to be developed.\\
-\TODO{following sentence belongs to Related Work}
-Other approaches already exist, which solve similar problems, see for example \cite{pekar2002tl} which exploits the taxonomic structure of thesauri using the similarity of nearest neighbors to classify new words into its classes.\\
-The exploitation of neural networks, which have been shown to be very powerful and versatile \TODO{Do I need a reference for this?}, is an approach, which \TODO{is this even true?: currently has not been evaluated} for the task of taxonomy refinement. It may be prove useful to design and evaluate such a system to show, how neural networks may benefit the area of taxonomy learning.
+Wikidata is an open, free, multilingual and collaborative knowledge base. It acts as a structured knowledge source for other Wikimedia projects. It tries to model the real world, meaning every concept, object, animal, person,etc., 
+therefore Wikidata can always be considered to be incomplete.  Wikidata is mostly edited and extended by humans, 
+which implies entries in Wikidata can be erroneous.
+On 7th November 2016 it contained 24,438,781 entities \cite{WikidataStats}. \\
+Most entities in Wikidata are items. Items consist of labels, aliases and descriptions in different languages. 
+Sitelinks connect items to their corresponding Wiki articles. Most importantly items are described by statements.
+Statements are in their simplest form a pair of property and value. They can be annotated with references and
+qualifiers. See figure~\ref{fig:Q42} for an example. \\
+\begin{figure}
+\centering
+\includegraphics[width=1.2\textwidth]{images/Q42.png}
+\caption{Graphic representing the datamodel in Wikidata with a statement group and opened reference;\\
+\url{https://commons.wikimedia.org/wiki/File:Graphic_representing_the_datamodel_in_Wikidata_with_a_statement_group_and_opened_reference.svg}}
+\label{fig:Q42}
+\end{figure}
+The other category of entities in Wikidata are properties. Properties are used to describe data values of items.
+A property always has a data type, which are for example item or date. 
+Two important properties are \textit{instance of (P31)} and \textit{subclass of (P279)}. The data type of both
+properties are item, which means they are used to connect two items with a subclass or instance relationship.\\
+The \textit{subclass of (P279)} property allows the creation of a taxonomy in Wikidata.
+Figure~ \ref{fig:taxonomy} shows a fragment of Wikidata's taxonomy. 
+It can, for example, be seen that \textit{electrical apparatus (Q2425052)} is the superclass of
+\textit{Computer (Q68)}, \textit{clock (Q376)}, and 4 other classes.
+\begin{figure}
+\centering
+\includegraphics[width=0.8\textwidth]{images/example_taxonomy.png}
+\caption{Fragment of Wikidata's taxonomy created with \cite{sergestratan}}
+\label{fig:taxonomy}
+\end{figure}
+Taxonomies like this can be used for different tasks. 
+\cite{pekar2002tl} for example develops a method of word classification in thesauri, which exploits the structure of
+taxonomies. Other uses may be found in information retrieval and reasoning. \\
+As of the 7th November 2016 over a million classes are present in this taxonomy. 
+A root class in a taxonomy is a class, which has no more generalizations.
+Root classes should therefore describe the most basic concepts. 
+For example \textit{entity (Q35120)} can be considered to most general class, 
+comparable to the Object class in Java. 
+According to this view, we would assume that a good taxonomy has only very few, possibly only one root class.\\
+At the current state (2016-11-07) Wikidata contains 7142 root classes, of which 5332 have an English label.
+There are many root classes for which we easily can find generalizations. 
+For example both
+\textit{Men's Junior European Volleyball Championship (Q169359)} and
+\textit{Women's Junior European Volleyball Championship (Q169956)} are root classes.
+By just looking at their labels we can find an appropriate superclass, 
+\textit{European Volleyball Championship (Q6834)}, for both of them.
+A superclass should be considered appropriate, if it is a generalization of the child class and
+also the most similar respectively nearest class to the child class.
+Tools, which solve this task, may help the Wikidata community in improving the existing taxonomy.
+Similar problems in the field of ontology and taxonomy learning are already well researched 
+(see section ''Related Work''). However neural networks are comparably scarcely applied in this research area.
+Neural networks have proven to be very powerful for other complex tasks, e.g. speech recognition \cite{MikolovKBCK10}. Accordingly it may be interesting to see, how neural networks can be used for 
+the task of refining the taxonomies of knowledge bases by reducing the number of root classes.
 
 \section{Problem statement}
 To define the problem following definitions are needed:
@@ -141,7 +176,7 @@ root class $r = root(W)$, the closest generalization of $r$.
 \end{problem}
 \TODO{Define what generalization means, what closest means?}
 
-\section{Related works}
+\section{Related work}
 \TODO{Add literature about neural networks, ontology learning.}
 
 \section{Methodology}
@@ -165,6 +200,8 @@ The real data, all 7142 root classes, will be applied on the best performing net
 \TODO{What should I expect? NNs are powerful, so it is likely to work, if the right data is used.}
 
 \section{Time plan}
+
+\listoffigures
 
 \nocite{*}
 \bibliographystyle{plain}
