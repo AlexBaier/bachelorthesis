@@ -11,7 +11,7 @@
 
 \usepackage{graphicx} % support the \includegraphics command and options
 
- \usepackage[parfill]{parskip} % Activate to begin paragraphs with an empty line rather than an indent
+ %\usepackage[parfill]{parskip} % Activate to begin paragraphs with an empty line rather than an indent
 
 %%% PACKAGES
 \usepackage{booktabs} % for much better looking tables
@@ -199,21 +199,29 @@ vectors as input. Therefore it is of interest to find methods, which are able to
 like taxonomies, as vectors. So the taxonomic structure can be exploited in further calculations.\\
 \\
 \cite{Sperduti1997} is an older paper, which develops neural networks using generalized recursive neurons
-for the classification of structured pattern (e.g. concept graphs). Because the encoding of structures
+for the classification of structured patterns (e.g. concept graphs). Because the encoding of structures
 has drawbacks for neural networks. The author proposes the use of another neural network, which
 encodes the structure into a vector, so it can be used in the feed-forward classification network.\\
-Like \cite{CaoLX16} the idea of encoding/representing the taxonomy as a vector, so it can be used
-in other specialized networks, seems to be a relevant concept. To represent each class as a vector
+Like \cite{CaoLX16} the idea of encoding/representing the taxonomy as a vector for further usage
+ seems to be a relevant concept. Representing each class as a vector
 will also allow a simpler definition of similarity between classes, using for example cosine similarity.\\
 \\
-\TODO{Add \cite{abs-1301-3781}.}\\
-\\
-\TODO{Add \cite{PetrucciGR16}.}\\
+\cite{PetrucciGR16} describes a recurrent neural network with short-term memory capabilities through Gated
+Recursive Units. The neural network is used for ontology learning, specifically creation of new formulas based
+on encyclopedic text. It is argued that recurrent networks are especially capable  for this task, because they
+proved to do well in handling natural languages. This is the case, because the architecture of recurrent
+neural networks allows the use of context and does most importantly not limit the size of the context window 
+\cite{MikolovKBCK10}, which is important for natural language prediction. The architecture of
+the developed network consists of two neural networks, with different tasks, sentence tagging and sentence
+transduction. Both outputs are then combined to create the resulting formula.\\
+This paper shows that recurrent networks are able to make semantic decisions about encyclopedic text,
+which is available for the given problem  in the form Wiki articles. Additionally the architecture of
+the paper's network show that is possibly to combine different neural networks to solve a complex problem.
 \\
 \TODO{Should I add other related works?}\\
 \\
 In conclusion the related work suggests a solution, which consists of multiple neural networks, which
-are connected in a series. In the first step possibly multiple networks will be used to
+are connected in a series. In the first step multiple networks will be used to
 represent the different aspects (taxonomic structure, Wiki article, statements, etc.) of the class
 as vectors, which then will be combined to one feature vector per class. In the following step
 a supervised classification method can be applied on the vector representations, which should
