@@ -128,6 +128,7 @@ A walk $P = (v_1, \ldots, v_n)$ is a path from $v_1$ to $v_n$, if $v_i \neq v_j$
 A directed graph $G$ is called acyclic graph, if there are no cycles in $G$.
 \end{definition}
 \begin{definition}[Statement]
+\TODO{Define statement.}
 \end{definition}
 \begin{definition}[Class]
 A class is a tuple $(id, label, Statements, Instances, wiki)$:
@@ -166,21 +167,60 @@ $|root(W_2)| \ll |root(W_1)|$.\\
 \\
 The refinement process can be  reduced to the following smaller task: \\
 Let $r \in root(W_1)$.\\
-Find a $c \in C$ with $\neg (c \subclassof r)$, so that $c$ is the closest appropriate generalization of $r$. \\
+Find a $c \in C$ with $\neg (c \subclassof r)$, so that $c$ is the most similar superclass of $r$. \\
 Connecting $r$ to $c$ with an edge produces the output taxonomy $W_2 = (C, S \cup \{ (r, c) \})$. 
 Accordingly $|root(W_2)| = |root(W_1)| - 1$ applies.\\
 Repeating this smaller task will eventually yield $|W_2| \ll |W_1|$.\\
 \\
 The problem can therefore be defined as developing a method, which finds, given a taxonomy $W=(C,S)$ and a 
-root class $r = root(W)$, the closest generalization of $r$.
+root class $r = root(W)$, the most similar superclass of $r$.
 \end{problem}
-\TODO{Define what generalization means, what closest means?}
+\TODO{Define similarity between classes. How? Many aspects to consider.}\\
+\TODO{Probably need to define neural networks.}
 
 \section{Related work}
-\TODO{Add literature about neural networks, ontology learning.}
+The research fields of ontology learning and neural networks are of interest to the proposed thesis.\\
+\\
+\cite{pekar2002tl} defines two algorithms, tree-descending and tree-ascending algorithm, which allow the semantic classification of words, using the taxonomic relations between words. Evaluation of the tree-ascending algorithm
+showed that it was better at predicting a superconcept for a correct class than the kNN method
+(k-nearest-neighbors).
+A combination of kNN and tree-ascending was also tested and was shown to be to some degree better than
+both kNN and tree-ascending.\\
+The problem of \cite{pekar2002tl} is similar to the described problem. Both try to solve a classification of
+data, which is not naturally in a vector representation: words and Wikidata classes. Also both have
+a taxonomy given, which can be exploited to make a better informed decision, because the taxonomy contains
+additional semantic information.\\
+\\
+\cite{CaoLX16} develops a deep neural network, which is able to create a graph representation model.
+Each vertex of the graph is represented as a low dimensional vector. The method was tested on real datasets
+and outperformed some state-of-the-art systems.\\
+The given problem will be solved with neural networks. Most existing neural networks are using
+vectors as input. Therefore it is of interest to find methods, which are able to represent graph structures,
+like taxonomies, as vectors. So the taxonomic structure can be exploited in further calculations.\\
+\\
+\cite{Sperduti1997} is an older paper, which develops neural networks using generalized recursive neurons
+for the classification of structured pattern (e.g. concept graphs). Because the encoding of structures
+has drawbacks for neural networks. The author proposes the use of another neural network, which
+encodes the structure into a vector, so it can be used in the feed-forward classification network.\\
+Like \cite{CaoLX16} the idea of encoding/representing the taxonomy as a vector, so it can be used
+in other specialized networks, seems to be a relevant concept. To represent each class as a vector
+will also allow a simpler definition of similarity between classes, using for example cosine similarity.\\
+\\
+\TODO{Add \cite{abs-1301-3781}.}\\
+\\
+\TODO{Add \cite{PetrucciGR16}.}\\
+\\
+\TODO{Should I add other related works?}\\
+\\
+In conclusion the related work suggests a solution, which consists of multiple neural networks, which
+are connected in a series. In the first step possibly multiple networks will be used to
+represent the different aspects (taxonomic structure, Wiki article, statements, etc.) of the class
+as vectors, which then will be combined to one feature vector per class. In the following step
+a supervised classification method can be applied on the vector representations, which should
+result in finding the most similar superclass of the entered class.
 
 \section{Methodology}
-\TODO{Order is not correct, rewrite this.}
+\TODO{Deprecated. Rewrite.}\\
 The main task of this work will be to develop a method for extending taxonomic relations of root classes based on neural networks. The task can be divided into the following subtasks: \\
 \\
 The root classes in the knowledge base have to be identified and analyzed. This should result in a comparison of
@@ -192,14 +232,16 @@ to find an appropiate mapping of Wikidata root classes to feature vectors, which
 After the mapping of classes is defined, data can be collected per hand or possibly by crawling for training neural networks. The author will create a ground truth for the collected data. \\
 \\
 Finally different neural networks can be implemented and trained using existing libraries. The configurations
-of the networks will be improved by means of experimentation and literature review \TODO{Is "literature review" the right word?} until a small enough error in testing is achieved. \\ 
+of the networks will be improved by means of experimentation and literature review until a small enough error in testing is achieved. \\ 
 \\
 The real data, all 7142 root classes, will be applied on the best performing network(s). The results will be reviewed by the author. If it is possible a survey with the Wikidata community will be executed. A (random?) subset of the results will be presented to the community, and the participants of the survey will be asked, whether they think the generated  suggestions of the network are accurate and could be entered into Wikidata. Such a survey would be really important to confirm the validity and relevance of this work.
 
 \section{Expected results}
-\TODO{What should I expect? NNs are powerful, so it is likely to work, if the right data is used.}
+\TODO{What should I expect? NNs are powerful, so it is likely to work, if the architecture is well designed
+and the chosen data is good.}
 
 \section{Time plan}
+\TODO{Add a time plan.}
 
 \listoffigures
 
