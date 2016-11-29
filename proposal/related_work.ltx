@@ -102,6 +102,32 @@ small-dimensional input format.
 \subsection{Supervised neural networks for the classification of structures}
 \cite{Sperduti1997} describes neural networks using generalized recursive neurons for the classification of structured patterns (e.g. concept graphs). The a-priori encoding of structures for use in the neural network has drawbacks. The authors propose the use a second neural network for encoding the structure, which is trained alongside the classification network. To solve this problem the generalized recursive neuron is introduced. An encoding network is constructed using this neurons. It creates a vector, which encodes the graph, and is finally fed into a feed-forward neural network for classification. \TODO{Read this paper again, I think misunderstood, what the network actually does.}
 
+\subsection{Neural Networks for Classification: A Survey}
+\cite{Zhang00neuralnetworks} reviews the topic neural networks for classification.
+Key issues and features of neural networks are discussed.
+Relevant for the thesis, the topic of feature variable selection is discussed.
+It is important to ''find the smallest set of features that can result in satisfactory predictive performance''.
+Different approaches are discussed. It is noted that linear limitations of popular methods like
+principle component analysis can be overcome by using neural networks to perform networks, because they
+are able to perform nonlinear PCA.
+
+\subsection{A Convolutional Neural Network for Modelling Sentences}
+\cite{KalchbrennerGB14} defines a convolutional neural network architecture called Dynamic
+Convolutional Neural Network. The network models sentences using combinations of pooling and convolution
+layers, which internally induce something akin to parse tree on the input sentences. The specific output
+of the network is based on its supervised training. For example classification of sentiments was tested
+on movie reviews and tweets. The network proved to be effective at these tasks.
+
+\subsection{DRAW: A Recurrent Neural Network For Image Generation}
+Deep Recurrent Attentive Writer (DRAW) is introduced by \cite{GregorDGW15}. It is an neural network
+architecture, which is able to generate images, by iteratively drawing and refining an image. 
+The architecture consists of an encoder network, used for compressing images during learning,
+and a decoder network that recreates the image after receiving a code. This type of architecture is
+called variational auto-encoders. IN DRAW both of these networks are recurrent, which means a sequence of code samples is exchanged between the networks. The image generation works in multiple steps, in which different
+parts of the image are generated. The decision on where to write and what code samples to read
+is made by the neural network. After a number a step an image is produced, which cannot be distinguished
+from real images. 
+
 \bibliographystyle{plain}
 \bibliography{bibliography}
 
