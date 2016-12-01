@@ -102,33 +102,13 @@ the task of refining the taxonomies of knowledge bases by reducing the number of
 
 \section{Problem statement}
 To define the problem following definitions are needed:
-\begin{definition}[Directed Graph]
-A graph G is an ordered pair $G=(V, E)$, where $V$ is a set of vertices, and $E = \{ (v_1, v_2) \mid v_1, v_2 \in V \}$ 
-is a set of ordered pairs called directed edges, connecting the the vertices.
-\end{definition}
-\begin{definition}[Predecessor, Successor]
-Let $G=(V, E)$ be a directed graph.\\
-$v_1 \in V$ is a predecessor of $v_2 \in V$, if there exists an edge so that $(v_1, v_2) \in E$.\\
-Let $v \in V$ be a vertice of G, then $pred(v) = \{ w \mid (w, v) \in E \}$ is the set of predecessors of $v$. \\
-$v_1 \in V$ is a successor of $v_2 \in V$, if there exists an edge so that $(v_2, v_1) \in E$.\\
-Let $v \in V$ be a vertice of G, then $succ(v) = \{ w \mid (v, w) \in E \}$ is the set of successors of $v$.
-\end{definition}
-\begin{definition}[Walk]
-Let $G = (V, E)$ be a directed graph. \\
-A walk $W$ of length $n \in \mathbb{N}$ is a sequence of vertices $W=(v_1,\ldots, v_n)$ with $v_1,\ldots, v_n \in V$, 
-so that $(v_i, v_{i+1}) \in E \; \forall i=1,\ldots,n-1$.
-\end{definition}
-\begin{definition}[Cycle]
-A walk $W=(v_1,\ldots, v_n)$ of length $n$ is called a cycle, if $v_1 = v_n$.
-\end{definition}
-\begin{definition}[Path]
-A walk $P = (v_1, \ldots, v_n)$ is a path from $v_1$ to $v_n$, if $v_i \neq v_j$ for all $i,j=1,\ldots,n$ with $i \neq j$.
-\end{definition}
-\begin{definition}[Acyclic Graph]
-A directed graph $G$ is called acyclic graph, if there are no cycles in $G$.
-\end{definition}
 \begin{definition}[Statement]
-\TODO{Define statement.}
+A statement is tuple $(pid, value)$:
+	\begin{itemize}
+	\item $pid \in \mathbb{N}$, which is a numerical Wikidata property ID;
+	\item $value$ depends on the data type corresponding with $pid$, in most cases it will be natural number,
+	representing a Wikidata item id. 
+	\end{itemize}
 \end{definition}
 \begin{definition}[Class]
 A class is a tuple $(id, label, Statements, Instances, wiki)$:
@@ -151,9 +131,14 @@ The transitive, ordered relation $\subclassof$ is defined.\\
 Let $c_1, c_2 \in C$. $c_1 \subclassof c_2$, if there is a path $P=(c_1, \ldots, c_2)$ from $c_1$ to $c_2$ in $T$.
 \end{definition}
 \begin{definition}[Root class]
+Let $out(r)$ be the set of all outgoing edges of $r$.
 Let $T=(C, S)$ be a taxonomy.\\
 $r \in C$ is called root class of $T$, if $|succ(r)| = 0$.\\
-$root(T) = \{r \in C \mid  |succ(r)| = 0\}$ is the set of all root classes in $T$.
+$root(T) = \{r \in C \mid  |out(r)| = 0\}$ is the set of all root classes in $T$.
+\end{definition}
+\begin{definition}
+Define a function $sim: Class \times Class \rightarrow (0,1)$ as the similarity between two classes.
+Two classes have high similarity if the output of the function is close to $1$. 
 \end{definition}
 Finally we can define our problem as the following task:
 \begin{problem}
@@ -175,8 +160,6 @@ Repeating this smaller task will eventually yield $|W_2| \ll |W_1|$.\\
 The problem can therefore be defined as developing a method, which finds, given a taxonomy $W=(C,S)$ and a 
 root class $r = root(W)$, the most similar superclass of $r$.
 \end{problem}
-\TODO{Define similarity between classes. How? Many aspects to consider.}\\
-\TODO{Probably need to define neural networks.}
 
 \section{Related work}
 The research fields of ontology learning and neural networks are of interest to the proposed thesis.\\
