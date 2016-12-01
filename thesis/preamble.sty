@@ -1,0 +1,31 @@
+\ProvidesPackage{preamble}
+
+\usepackage[english]{babel}% English and new German spelling
+\usepackage[utf8]{inputenc}% correct input encoding
+\usepackage[T1]{fontenc}% correct output encoding
+\usepackage{graphicx}% enhanced support for graphics
+\usepackage{tabularx}% more flexible tabular
+\usepackage{amsfonts}	% math fonts
+\usepackage{amssymb}	%math symbols
+\usepackage{amsmath}	% overall enhancements to math environment
+\usepackage{amsthm}%math theorems
+\usepackage{booktabs} % for much better looking tables
+\usepackage{array} % for better arrays (eg matrices) in maths
+\usepackage{paralist} % very flexible & customisable lists (eg. enumerate/itemize, etc.)
+\usepackage{verbatim} % adds environment for commenting out blocks of text & for better verbatim
+\usepackage{subfig} % make it possible to include more than one captioned figure/table in a single float
+\usepackage{color}%colors
+\usepackage{ulem}
+\usepackage{hyperref}
+
+\newcounter{ToDoId}
+\newcommand{\TODO}[1]{\stepcounter{ToDoId}\textcolor{red}{\textbf{TODO \theToDoId: #1}}}
+
+\newcommand{\subclassof}{
+\ensuremath{\vartriangleleft_{subclass}}
+}
+
+\theoremstyle{definition}
+\newtheorem{definition}{Definition}
+\newtheorem*{problem}{Problem}
+

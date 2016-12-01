@@ -1,0 +1,60 @@
+\documentclass[f,bachelor,binding,twoside,palatino]{WeSTthesis}
+% Please read the README.md file for additional information on the parameters and overall usage of WeSTthesis
+\usepackage{import}
+\usepackage{preamble}
+
+\author{Alex Baier}
+
+\title{Refining the taxonomy of Wikidata with neural networks}
+
+\degreecourse{Informatik}
+
+\firstreviewer{Prof. Dr. Steffen Staab}
+\firstreviewerinfo{Institute for Web Science and Technologies}
+
+\secondreviewer{Max Mustermann}
+\secondreviewerinfo{Institute for Web Science and Technologies}
+
+
+\begin{document}
+
+% optional: change document language from ngerman to english
+\selectlanguage{english}
+
+\maketitle %prints the cover page  an empty page if two-sided print
+\pagenumbering{roman}
+
+\tableofcontents
+
+\varclearpage
+
+% list of figures
+\listoffigures
+\varclearpage
+
+\pagenumbering{arabic}
+
+\section{Introduction}
+
+\section{Foundations}
+\import{./}{foundations.ltx}
+
+\section{Analysis of Wikidata's taxonomy}
+
+\section{Analysis and comparison of neural networks}
+
+\section{Architecture of neural network}
+
+\section{Implementation}
+\subsection{Collection of training data}
+\subsection{Implementation of network}
+\subsection{Training}
+
+\section{Evaluation}
+\subsection{Execution on all root classes}
+\subsection{Survey with Wikidata community}
+
+\nocite{*}
+\bibliographystyle{plain}
+\bibliography{bibliography}
+\end{document}
