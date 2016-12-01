@@ -3,8 +3,9 @@ __pycache__/
 *.py[cod]
 *$py.class
 
-# Pycharm dictionary
+# Pycharm
 .idea/dictionaries
+.idea/workspace.xml
 
 # dumps
 data_analysis/latest-all.json
@@ -17,6 +18,8 @@ data_analysis/output/root_class_characteristics
 *.aux
 *.bbl
 *.blg
+*.lof
 *.log
+*.out
 *.synctex.gz
 *.toc

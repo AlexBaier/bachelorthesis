@@ -180,75 +180,77 @@ root class $r = root(W)$, the most similar superclass of $r$.
 
 \section{Related work}
 The research fields of ontology learning and neural networks are of interest to the proposed thesis.\\
-\\
-\cite{pekar2002tl} defines two algorithms, tree-descending and tree-ascending algorithm, which allow the semantic classification of words, using the taxonomic relations between words. Evaluation of the tree-ascending algorithm
-showed that it was better at predicting a superconcept for a correct class than the kNN method
-(k-nearest-neighbors).
-A combination of kNN and tree-ascending was also tested and was shown to be to some degree better than
-both kNN and tree-ascending.\\
-The problem of \cite{pekar2002tl} is similar to the described problem. Both try to solve a classification of
-data, which is not naturally in a vector representation: words and Wikidata classes. Also both have
-a taxonomy given, which can be exploited to make a better informed decision, because the taxonomy contains
-additional semantic information.\\
-\\
-\cite{CaoLX16} develops a deep neural network, which is able to create a graph representation model.
-Each vertex of the graph is represented as a low dimensional vector. The method was tested on real datasets
-and outperformed some state-of-the-art systems.\\
-The given problem will be solved with neural networks. Most existing neural networks are using
-vectors as input. Therefore it is of interest to find methods, which are able to represent graph structures,
-like taxonomies, as vectors. So the taxonomic structure can be exploited in further calculations.\\
-\\
-\cite{Sperduti1997} is an older paper, which develops neural networks using generalized recursive neurons
-for the classification of structured patterns (e.g. concept graphs). Because the encoding of structures
-has drawbacks for neural networks. The author proposes the use of another neural network, which
-encodes the structure into a vector, so it can be used in the feed-forward classification network.\\
-Like \cite{CaoLX16} the idea of encoding/representing the taxonomy as a vector for further usage
- seems to be a relevant concept. Representing each class as a vector
-will also allow a simpler definition of similarity between classes, using for example cosine similarity.\\
-\\
-\cite{PetrucciGR16} describes a recurrent neural network with short-term memory capabilities through Gated
-Recursive Units. The neural network is used for ontology learning, specifically creation of new formulas based
-on encyclopedic text. It is argued that recurrent networks are especially capable  for this task, because they
-proved to do well in handling natural languages. This is the case, because the architecture of recurrent
-neural networks allows the use of context and does most importantly not limit the size of the context window 
-\cite{MikolovKBCK10}, which is important for natural language prediction. The architecture of
-the developed network consists of two neural networks, with different tasks, sentence tagging and sentence
-transduction. Both outputs are then combined to create the resulting formula.\\
-This paper shows that recurrent networks are able to make semantic decisions about encyclopedic text,
-which is available for the given problem  in the form Wiki articles. Additionally the architecture of
-the paper's network show that is possibly to combine different neural networks to solve a complex problem.
-\\
-\TODO{Should I add other related works?}\\
-\\
-In conclusion the related work suggests a solution, which consists of multiple neural networks, which
-are connected in a pipeline. In the first step multiple networks will be used to
-represent the different aspects (taxonomic structure, Wiki article, statements, etc.) of the class
-as vectors, which then will be combined to one feature vector per class. In the following step
-a supervised classification method can be applied on the vector representations, which should
-result in finding the most similar super class of the entered class.
+
+The topic of ontology learning is defined and analyzed in \cite{Maedche2001} by Maedche and Staab.
+Additionally a tool called \textit{OntoEdit} was developed in the process. \cite{Maedche2001} considers 
+a semi-automatic approach and divides the process of ontology learning into the following steps:\\
+\textbf{import/reuse} existing ontologies, \textbf{extract}
+major parts of target ontology, \textbf{prune} to adjust the ontology for its primary purpose, \textbf {refine}
+ontology to complete it at a fine granularity, and \textbf{apply} it on target application to validate 
+the results.\\
+The problem solved by this thesis belongs to the step \textbf{refine}. Even though different approaches
+for refinement are considered and implemented in the paper, the use of neural networks is not considered.\\
+
+\cite{pekar2002tl} by Pekar \& Staab define algorithms for classification, which exploit the structure of
+taxonomies. Distributional and taxonomic similarity measures used on nearest neighborsare used to make a 
+classification decision. These algorithms are applied on the classification of new words (instances) into thesauri. In 
+comparison the target of this thesis will be to improve the existing taxonomy. For this the closest generalizations
+of root classes have to be found. The similarity measures used in \cite{pekar2002tl} may prove useful
+for the defined problem.\\
+
+Both \cite{CaoLX16} and \cite{Sperduti1997} develop neural networks, deep neural network and recursive neuron
+network, which are able to encode graphs as vectors. It is proposed by both papers to use the generated
+vectors as input for classification methods. Because the networks are defined in such a way that
+semantic information of the graph is preserved to some degree, the vectors could be used for
+other task like measuring the similarity of classes based on their position in the taxonomy using for example
+cosine similarity.\\
+
+\cite{mikolov2013} by Mikolov et al. defines two neural network models, Continuous Bag-of-Words (CBOW) and
+Continuous Skip-Gram, which are able to create word vector representations. They capture the semantics
+of words very well and  preserve linear regularities between words. \cite{pekar2002tl} uses word representations
+based on counts with context words. It is possible that the use of newer word representation model like CBOW
+will also improve their classification method.\\
+
+A recurrent neural network model for ontology learning is described in \cite{PetrucciGR16} by Petrucci, Ghidini 
+\& Rospocher. Using encyclopedic text as input OWL formulas are created. The authors argue that their
+model should be effective, because neural networks have shown success in natural language processing tasks.
+At this time the described model is under evaluation, so it is not shown that the model will generate good
+results. Different subtasks of ontology learning are solved by the paper and by
+the proposed thesis. Additionally the thesis will contain an evaluation of the created model and it can be shown
+if neural networks are a sensible method for ontology learning. \\
+ 
+ In conclusion, for the task of ontology learning, especially the task of taxonomy refinement,
+ different methods already exist and have proven to work well. But most of these methods do not consider the use
+ of neural networks. In the proposed thesis, a solution for taxonomy refinement in a specific context will
+ be developed.
 
 \section{Methodology}
 For solving the defined problem with a neural network, the following methodology is proposed:\\
-\\
+
 First the current taxonomy of Wikidata needs to be analyzed. I should be answered, how many
 classes and especially root classes are available and what their characteristics are, e.g. number of instances and subclasses, how many and what kind of statements. This will allow a more focused search and analysis
 in the following step.\\
+
 The literature about neural networks needs be researched. Different neural network models will
 be analyzed and compared, regarding input, output, task and performance. Furthermore
 the neural networks should be compared to other solutions for the same tasks, so
 the decision to use neural networks can be motivated.\\
+
 This leads to the development of a new neural network architecture based on the researched networks,
 which is specialized to solve the defined problem. The decision made in the development will be justified based on
 the results of the previous steps.\\
+
 After the neural network is developed, the system needs to implemented and training data needs to be collected.
 The implemented network will be trained, and then tested. Reconfiguration of the network 
 and modification of training data will be repeated, until the test results are satisfactory.\\
+
 In the last step the neural network will be used on all identified root classes.
 An evaluation with the Wikidata community will be executed. In this evaluation participants
 will be asked to rate the results of the neural network. This will answer the question of how
 accurate the developed method is, and may identify problems, e.g. results are too general,
 a certain category of root classes could not be correctly classified at all.  The evaluation
 results will be analyzed and possible improvements for the network discussed.\\
+
 The evaluation with the Wikidata community is very important, because a tool based on
 the developed method should ideally be used by users to support the curation process in Wikidata.
 Therefore the community would need to agree with the results of the method, 
