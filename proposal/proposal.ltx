@@ -22,6 +22,7 @@
 \usepackage{color}
 \usepackage{ulem}
 \usepackage{amsthm}
+\usepackage{amsmath}
 \usepackage{amssymb}
 \usepackage{graphicx}
 \usepackage{hyperref}
@@ -47,33 +48,31 @@
 \maketitle
 
 \section{Motivation}
-Wikidata is an open, free, multilingual and collaborative knowledge base. It acts as a structured knowledge source for other Wikimedia projects. It tries to model the real world, meaning every concept, object, animal, person,etc., 
-therefore Wikidata can always be considered to be incomplete.  Wikidata is mostly edited and extended by humans, 
-which implies entries in Wikidata can be erroneous.
-On 7th November 2016 it contained 24,438,781 entities \cite{WikidataStats}. \\
+Wikidata is an open, free, multilingual and collaborative knowledge base. It is as a structured knowledge source for other Wikimedia projects. It tries to model the real world, meaning every concept, object, animal, person,etc.. We
+call these entities notorious entities. Wikidata is mostly edited and extended by humans, which in general
+improves the quality of entries compared to fully-automated systems, because different editors
+can validate and correct occurring errors.\\
 Most entities in Wikidata are items. Items consist of labels, aliases and descriptions in different languages. 
 Sitelinks connect items to their corresponding Wiki articles. Most importantly items are described by statements.
 Statements are in their simplest form a pair of property and value. They can be annotated with references and
-qualifiers. See figure~\ref{fig:Q42} for an example. \\
+qualifiers. See figure~\ref{fig:item} for an example. \\
 \begin{figure}
 \centering
-\includegraphics[width=1.2\textwidth]{images/Q42.png}
-\caption{Graphic representing the datamodel in Wikidata with a statement group and opened reference;\\
-\url{https://commons.wikimedia.org/wiki/File:Graphic_representing_the_datamodel_in_Wikidata_with_a_statement_group_and_opened_reference.svg}}
-\label{fig:Q42}
+\includegraphics[width=\textwidth]{images/item_example.png}
+\caption{photographic film (Q6239)}
+\label{fig:item}
 \end{figure}
-The other category of entities in Wikidata are properties. Properties are used to describe data values of items.
-A property always has a data type, which are for example item or date. 
-Two important properties are \textit{instance of (P31)} and \textit{subclass of (P279)}. The data type of both
-properties are item, which means they are used to connect two items with a subclass or instance relationship.\\
-The \textit{subclass of (P279)} property allows the creation of a taxonomy in Wikidata.
-Figure~ \ref{fig:taxonomy} shows a fragment of Wikidata's taxonomy. 
-It can, for example, be seen that \textit{electrical apparatus (Q2425052)} is the superclass of
-\textit{Computer (Q68)}, \textit{clock (Q376)}, and 4 other classes.
+An important property used to describe a Wikidata item is \textit{subclass of (P279)}. Items, which contain
+statements with this property, are classes, and the statement also points to a superclass, which is a generalization
+of the subclass. For example in Figure~\ref{fig:item} \textit{photographic film (Q6239)} is a subclass of
+\textit{data storage device (Q193395)}, \textit{Photo equipment (Q1439598)}, and \textit{ribbon (Q857421)}.
+With \textit{subclass of (P279)} a taxonomy can be created in Wikidata.
+Figure~\ref{fig:taxonomy} shows a fragment of Wikidata's taxonomy with a focus on the class 
+\textit{photographic film (Q6239)}.
 \begin{figure}
 \centering
-\includegraphics[width=0.8\textwidth]{images/example_taxonomy.png}
-\caption{Fragment of Wikidata's taxonomy created with \cite{sergestratan}}
+\includegraphics[width=\textwidth]{images/example_taxonomy.pdf}
+\caption{Fragment of Wikidata taxonomy with suggested improvement.}
 \label{fig:taxonomy}
 \end{figure}
 Taxonomies like this can be used for different tasks. 
@@ -82,26 +81,79 @@ taxonomies. Other uses may be found in information retrieval and reasoning. \\
 As of the 7th November 2016 over a million classes are present in this taxonomy. 
 A root class in a taxonomy is a class, which has no more generalizations.
 Root classes should therefore describe the most basic concepts. 
-For example \textit{entity (Q35120)} can be considered to most general class, 
-comparable to the Object class in Java. 
-According to this view, we would assume that a good taxonomy has only very few, possibly only one root class.\\
+According to this view, we would assume that a good taxonomy has only very few, possibly only one root class.
+The last remaining root class in Wikidata should be \textit{entity (Q35120)}.\\
 At the current state (2016-11-07) Wikidata contains 7142 root classes, of which 5332 have an English label.
-There are many root classes for which we easily can find generalizations. 
-For example both
-\textit{Men's Junior European Volleyball Championship (Q169359)} and
-\textit{Women's Junior European Volleyball Championship (Q169956)} are root classes.
-By just looking at their labels we can find an appropriate superclass, 
-\textit{European Volleyball Championship (Q6834)}, for both of them.
+There are many root classes for which we easily can find generalizations.
+Consider for example \textit{reversal film (Q166816)} in the taxonomy fragment of Figure~\ref{fig:taxonomy}.
+We can see that the class only has one subclass and is otherwise isolated in the taxonomy. 
+Based on an expert opinion or the associated Wikipedia article, we can easily identify 
+\textit{photographic film (Q6239)} as a possible superclass of \textit{reversal film (Q166816)}, as indicated by
+the red arrow.
 A superclass should be considered appropriate, if it is a generalization of the child class and
 also the most similar respectively nearest class to the child class.
+Even though it is possible to solve this task by hand, which is the current process in Wikidata, multiple
+obstacles prevent this process to be efficient. First the number of root classes is high, and identifying
+them is not directly supported by Wikidata. Additionally finding an appropriate superclass
+for a given class is a difficult task, because the number of potential solutions is very high.
 Tools, which solve this task, may help the Wikidata community in improving the existing taxonomy.
-Similar problems in the field of ontology and taxonomy learning are already well researched 
-(see section ''Related Work''). However neural networks are comparably scarcely applied in this research area.
-Neural networks have proven to be very powerful for other complex tasks, e.g. speech recognition \cite{MikolovKBCK10}. Accordingly it may be interesting to see, how neural networks can be used for 
-the task of refining the taxonomies of knowledge bases by reducing the number of root classes.
+Similar tasks in the field of ontology learning are already well researched. We propose the use of neural
+networks for solving this task, because the application of them in ontology learning is sparse in existing work,
+and as shown in Section~\ref{section:relatedwork} neural networks seem to be appropriate for the task.
 
-\section{Problem statement}
+\section{Preliminary data analysis}
+The taxonomy of Wikidata, containing $1217733$ classes, was analyzed. The following statistics about root
+classes were acquired:
+\begin{itemize}
+\item $7142$ root classes
+\item $5332$ root classes with English label
+\item $4590$ root classes with an English or Simple English Wikipedia article
+\item $\sim 2$ statement groups (properties) per root class on average (see Figure~\ref{fig:propertysum})
+\item $\sim 4.15$ instances per root class on average (see Figure~\ref{fig:instancesum})
+\item $\sim 0.68$ subclasses per root class on average (see Figure~\ref{fig:subclasssum})
+\end{itemize}
+The 5 most frequent properties in root classes are the following (see Figure~\ref{fig:property_frequency}):
+\begin{itemize}
+\item \textit{Freebase ID (P646)} with $3007$ occurrences
+\item \textit{topic's main category (P910)} with $2343$ occurrences
+\item \textit{Commons category (P373)} with $2012$ occurrences
+\item \textit{GND ID (P227)} with $744$ occurrences
+\item \textit{part of (P361)} with $672$ occurrences
+\end{itemize}
+
+\begin{figure}
+\centering
+\includegraphics[width=0.9\textwidth]{images/property_sum.png}
+\caption{number of classes with a specific amount of properties}
+\label{fig:propertysum}
+
+\includegraphics[width=0.9\textwidth]{images/instance_sum.png}
+\caption{number of classes with a specific amount of instances}
+\label{fig:instancesum}
+\end{figure}
+
+\begin{figure}
+\centering
+\includegraphics[width=0.9\textwidth]{images/subclass_sum.png}
+\caption{number of classes with a specific amount of subclasses}
+\label{fig:subclasssum}
+
+\includegraphics[width=0.9\textwidth]{images/property_frequency.png}
+\caption{frequency of properties}
+\label{fig:property_frequency}
+\end{figure}
+
+We can see that most root classes contain very few, if any, properties, and at the same time
+the properties, which can be found frequently, are mostly identifiers or Wikimedia categories.
+This leads to the conclusion that statements won't be of much use in refining the taxonomy,
+and other information needs to be used.
+Almost $75\%$ of the root classes are labeled and a significant amount have a corresponding Wikipedia article.
+Therefore we propose to only consider labeled classes for the in Section~\ref{section:problemstatement} defined
+problem. Accordingly the analysis has to be repeated for labeled root classes.
+
+\section{Problem statement}\label{section:problemstatement}
 To define the problem following definitions are needed:
+\\ \TODO{Just delete Statement, because analysis said that statements won't be of much use for solving the task.}
 \begin{definition}[Statement]
 A statement is tuple $(pid, value)$:
 	\begin{itemize}
@@ -125,6 +177,7 @@ A class is a tuple $(id, label, Statements, Instances, wiki)$:
 A taxonomy $T=(C, S)$ is a acyclic graph, where $C$ is a set of classes, and $S$ is a set of subclass-of relations
 between these classes.
 \end{definition}
+Because a class can have multiple superclasses, a tree structure is insufficient for modeling the taxonomy.
 \begin{definition}[Subclass Relation]
 Let $T=(C, S)$ be a taxonomy.\\
 The transitive, ordered relation $\subclassof$ is defined.\\
@@ -137,34 +190,27 @@ $r \in C$ is called root class of $T$, if $|succ(r)| = 0$.\\
 $root(T) = \{r \in C \mid  |out(r)| = 0\}$ is the set of all root classes in $T$.
 \end{definition}
 \begin{definition}
-Define a function $sim: Class \times Class \rightarrow (0,1)$ as the similarity between two classes.
+Define a function $sim: Class \times Class \mapsto (0,1)$ as the similarity between two classes.
 Two classes have high similarity if the output of the function is close to $1$. 
 \end{definition}
 Finally we can define our problem as the following task:
 \begin{problem}
-Let $W_1$ be the taxonomy of Wikidata, where only labeled root classes are considered. 
-On 7th November 2016 the following state applies  $|root(W_1)| = 5332$. \\
-$W_1 = (C, S)$ is the input for the described problem. \\
-Let $W_2$ be the refined output taxonomy. \\
-A refinement method is needed to significantly reduce the number of root classes in the Wikidata taxonomy. After 
-the refinement method is applied on $W_1$, which outputs $W_2$, the following should be true: 
-$|root(W_2)| \ll |root(W_1)|$.\\
+We simplify the taxonomy refinement task to the problem of finding the closest superclass for a given root class. \\
 \\
-The refinement process can be  reduced to the following smaller task: \\
-Let $r \in root(W_1)$.\\
-Find a $c \in C$ with $\neg (c \subclassof r)$, so that $c$ is the most similar super class of $r$. \\
-Connecting $r$ to $c$ with an edge produces the output taxonomy $W_2 = (C, S \cup \{ (r, c) \})$. 
-Accordingly $|root(W_2)| = |root(W_1)| - 1$ applies.\\
-Repeating this smaller task will eventually yield $|W_2| \ll |W_1|$.\\
-\\
-The problem can therefore be defined as developing a method, which finds, given a taxonomy $W=(C,S)$ and a 
-root class $r = root(W)$, the most similar superclass of $r$.
+Given the input $W=(C, S)$ a taxonomy and $r \in C$ a root class in $W$,\\
+find a function $f: Taxonomy \times Class \mapsto Class$, so that it produces\\
+an output $s = f(W, r)$, which fulfills $\neg (s \subclassof r)$ and $s = \underset{c \in C}{\max}(sim(c, r))$.
+
+
 \end{problem}
 
-\section{Related work}
-The research fields of ontology learning and neural networks are of interest to the proposed thesis.\\
+\section{Related work}\label{section:relatedwork}
+The related work for this thesis can be divided in two categories. First are papers, which try to solve similar
+tasks, and second is the topic of neural networks, which may be used to solve the defined problem.
 
-The topic of ontology learning is defined and analyzed in \cite{Maedche2001} by Maedche and Staab.
+\subsection{Similar tasks}
+
+ Maedche and Staab \cite{Maedche2001} define and analyze the topic of ontology learning.
 Additionally a tool called \textit{OntoEdit} was developed in the process. \cite{Maedche2001} considers 
 a semi-automatic approach and divides the process of ontology learning into the following steps:\\
 \textbf{import/reuse} existing ontologies, \textbf{extract}
@@ -175,11 +221,21 @@ The problem solved by this thesis belongs to the step \textbf{refine}. Even thou
 for refinement are considered and implemented in the paper, the use of neural networks is not considered.\\
 
 \cite{pekar2002tl} by Pekar \& Staab define algorithms for classification, which exploit the structure of
-taxonomies. Distributional and taxonomic similarity measures used on nearest neighborsare used to make a 
+taxonomies. Distributional and taxonomic similarity measures on nearest neighbors are used to make a 
 classification decision. These algorithms are applied on the classification of new words (instances) into thesauri. In 
 comparison the target of this thesis will be to improve the existing taxonomy. For this the closest generalizations
 of root classes have to be found. The similarity measures used in \cite{pekar2002tl} may prove useful
 for the defined problem.\\
+
+A recurrent neural network model for ontology learning is described in \cite{PetrucciGR16} by Petrucci, Ghidini 
+\& Rospocher. Using encyclopedic text as input OWL formulas are created. The authors argue that their
+model should be effective, because neural networks have shown success in natural language processing tasks.
+At this time the described model is under evaluation, so it is not shown that the model will generate good
+results. Different subtasks of ontology learning are solved by the paper and by
+the proposed thesis. Additionally the thesis will contain an evaluation of the created model and it can be shown
+if neural networks are a sensible method for ontology learning. \\
+
+\subsection{Neural networks}
 
 Both \cite{CaoLX16} and \cite{Sperduti1997} develop neural networks, deep neural network and recursive neuron
 network, which are able to encode graphs as vectors. It is proposed by both papers to use the generated
@@ -194,23 +250,17 @@ of words very well and  preserve linear regularities between words. \cite{pekar2
 based on counts with context words. It is possible that the use of newer word representation model like CBOW
 will also improve their classification method.\\
 
-A recurrent neural network model for ontology learning is described in \cite{PetrucciGR16} by Petrucci, Ghidini 
-\& Rospocher. Using encyclopedic text as input OWL formulas are created. The authors argue that their
-model should be effective, because neural networks have shown success in natural language processing tasks.
-At this time the described model is under evaluation, so it is not shown that the model will generate good
-results. Different subtasks of ontology learning are solved by the paper and by
-the proposed thesis. Additionally the thesis will contain an evaluation of the created model and it can be shown
-if neural networks are a sensible method for ontology learning. \\
- 
- In conclusion, for the task of ontology learning, especially the task of taxonomy refinement,
- different methods already exist and have proven to work well. But most of these methods do not consider the use
- of neural networks. In the proposed thesis, a solution for taxonomy refinement in a specific context will
- be developed.
+
+\subsection{Conclusion}
+
+For the specific task of taxonomy refinement we propose the use of neural networks, because they are able to handle structured  \cite{CaoLX16} as well as textual \cite{mikolov2013} data, which is available in
+the Wikidata taxonomy. Additionally neural networks have shown to be achieve better results in word similarity 
+\cite{CaoLX16} and speech recognition \cite{MikolovKBCK10} than  other methods .
 
 \section{Methodology}
 For solving the defined problem with a neural network, the following methodology is proposed:\\
 
-First the current taxonomy of Wikidata needs to be analyzed. I should be answered, how many
+First the current taxonomy of Wikidata needs to be analyzed. It should be answered, how many
 classes and especially root classes are available and what their characteristics are, e.g. number of instances and subclasses, how many and what kind of statements. This will allow a more focused search and analysis
 in the following step.\\
 
@@ -223,15 +273,27 @@ This leads to the development of a new neural network architecture based on the 
 which is specialized to solve the defined problem. The decision made in the development will be justified based on
 the results of the previous steps.\\
 
-After the neural network is developed, the system needs to implemented and training data needs to be collected.
+After the neural network is developed, the system needs to be  implemented and training data needs to be 
+collected.
 The implemented network will be trained, and then tested. Reconfiguration of the network 
 and modification of training data will be repeated, until the test results are satisfactory.\\
 
-In the last step the neural network will be used on all identified root classes.
-An evaluation with the Wikidata community will be executed. In this evaluation participants
-will be asked to rate the results of the neural network. This will answer the question of how
-accurate the developed method is, and may identify problems, e.g. results are too general,
-a certain category of root classes could not be correctly classified at all.  The evaluation
+In the last step the develop  base-line method and modified versions will be evaluated.
+One version will ignore the taxonomic structure, and the other methods will use different similarity measures.
+The evaluation will be based on a modified version of the taxonomy. A high \TODO{set a number} number of
+subclasses will be chosen, and their connection to their superclasses removed, effectively turning them
+into root classes. The methods will be applied on this subclasses and the correct result will be the
+original superclass. 
+The methods will be compared regarding precision, recall, $F_1$-score, direct-hit, and near-hit ratio, where near-hit 
+means that the result is the subclass or superclass of the correct class.
+This will identify the most suitable similarity measure for the given problem, 
+and show how relevant the taxonomic structure
+is for the decision making. The near-hit ratio will tell if the developed methods are able to identify the correct
+section of the taxonomy, and if this corresponds with the consideration of the taxonomic structure.\\
+Additionally an evaluation with the Wikidata community will be executed. 
+The best performing method of the previous evaluation will be applied on all current
+root classes. In this evaluation participants
+will be asked to rate the results.  The evaluation
 results will be analyzed and possible improvements for the network discussed.\\
 
 The evaluation with the Wikidata community is very important, because a tool based on
@@ -240,8 +302,25 @@ Therefore the community would need to agree with the results of the method,
 otherwise such a tool would serve no practical purpose. 
 
 \section{Expected results}
-\TODO{What should I expect? NNs are powerful, so it is likely to work, if the architecture is well designed
-and the chosen data is good.}
+The bachelor thesis will generate the following products:
+\begin{itemize}
+\item Statistics about Wikidata's taxonomy with focus on root classes
+\item Neural-network based algorithm for taxonomy refinement with multiple variations
+\item Training and test data sets for developed algorithm
+\item Evaluation regarding precision, recall, $F_1$-score, and near-hits of base-line algorithm and variations
+\item Survey with Wikidata community regarding relevance of developed algorithm
+\end{itemize}
+At the current time I expect the algorithm to consist of two neural networks. The first network being the
+Continuous Bag-of-Words (CBOW) by Mikolov et al. \cite{mikolov2013} , and the second being graph
+representation neural network (GRNN) like \cite{CaoLX16} or \cite{Sperduti1997}.
+CBOW will be trained on the Wikipedia articles of all classes, and GRNN will be trained on the Wikidata taxonomy.
+To find a superclass for a given class, the closest classes in the word and in the graph vector space
+will be identified and used in a classification method like k-nearest neighbors.\\
+\\
+If the evaluation shows that ignoring the taxonomic structure only slightly influences the quality
+of results, it may be a good decision to just remove the according part of the algorithm, which
+could greatly affect its runtime depending on the used network. 
+I assume that the choice of similarity measure could greatly influence the evaluation results.
 
 \section{Time plan}
 \TODO{Add a time plan.}
@@ -249,6 +328,7 @@ and the chosen data is good.}
 \listoffigures
 
 \nocite{*}
+
 \bibliographystyle{plain}
 \bibliography{bibliography}
 

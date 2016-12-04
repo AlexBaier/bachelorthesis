@@ -23,3 +23,7 @@ data_analysis/output/root_class_characteristics
 *.out
 *.synctex.gz
 *.toc
+
+# misc folder
+misc/*
+
