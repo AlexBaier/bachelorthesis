@@ -16,8 +16,9 @@ def sort_frequencies_as_tuples(frequencies: dict)->List[Tuple[str, int]]:
     return sorted(map(lambda t: (t[0], t[1]), frequencies.items()), key=lambda t: t[1], reverse=True)
 
 
-def main():
-    with open(config.ROOT_CLASS_ANALYSIS_PATH) as f:
+def create_plots(analysis_path: str, property_sum_fig: str, instance_sum_fig: str, subclass_sum_fig: str,
+                 property_frequency_fig: str):
+    with open(analysis_path) as f:
         analysis = json.loads(f.readline())
 
     root_class_count = analysis.get('root class count')
@@ -43,7 +44,7 @@ def main():
     for i, v in enumerate(y):
         plt.text(i, v, str(v), color='blue', fontweight='bold')
 
-    plt.savefig(config.PROPERTY_SUM_FIGURE_PATH)
+    plt.savefig(property_sum_fig)
 
     # subclass sum/number of classes figure
     plt.figure(2)
@@ -58,7 +59,7 @@ def main():
     for i, v in enumerate(y):
         plt.text(i, v, str(v), color='blue', fontweight='bold')
 
-    plt.savefig(config.SUBCLASS_SUM_FIGURE_PATH)
+    plt.savefig(subclass_sum_fig)
 
     # instance sum/number of classes figure
     plt.figure(3)
@@ -73,7 +74,7 @@ def main():
     for i, v in itertools.islice(enumerate(y), 10):
         plt.text(i, v, str(v), color='blue', fontweight='bold')
 
-    plt.savefig(config.INSTANCE_SUM_FIGURE_PATH)
+    plt.savefig(instance_sum_fig)
 
     # property/frequency figure
     plt.figure(4)
@@ -90,7 +91,12 @@ def main():
     for i, v in enumerate(y):
         plt.text(i, v, str(v), color='blue', fontweight='bold')
 
-    plt.savefig(config.PROPERTY_FREQUENCY_FIGURE_PATH)
+    plt.savefig(property_frequency_fig)
+
+
+def main():
+    create_plots(config.ROOT_CLASS_ANALYSIS_PATH, config.PROPERTY_SUM_FIGURE_PATH, config.INSTANCE_SUM_FIGURE_PATH,
+                 config.SUBCLASS_SUM_FIGURE_PATH, config.PROPERTY_FREQUENCY_FIGURE_PATH)
 
 if __name__ == '__main__':
     main()
