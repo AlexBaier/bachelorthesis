@@ -60,10 +60,21 @@ on target applications, which validates the results. These steps may be repeated
 The problem of the thesis belongs to the task of ontology refinement, because an ontology is already 
 provided. 
 
+\subsection{Ontology Learning from Text: A Look Back and into the Future}
+\cite{Wong2012}
+
+\section{Similarity}
+
+\subsection{An Information-Theoretic Definition of Similarity}
+\cite{Lin1998} proposes a definition for similarity, which is independent to a particular application.
+Similarity is seen as a function of the commonalities and differences of two objects. The similarity
+measure is derived from a number assumptions about similarities. The measure is applied on
+ordinal values, feature vectors, words, and semantic similarity in taxonomies. All applications
+shows that the defined measure produces results of similar quality to domain-specific measurements.
+
 \section{Neural networks}
 
 \subsection{Using Recurrent Neural Network for Learning Expressive Ontologies}
-\TODO{Some parts of this summary should be moved to the comparison of neural networks.}
 \cite{PetrucciGR16} describes a recurrent neural network with short-term memory capabilities through Gated Recursive Units for usage in ontology learning. It is argued that recurrent neural networks can handle this task,
 because they proved to do well in handling natural languages, and therefore should also be able to ''handle the typical syntactic structures of encyclopedic text''. \\
 The ontology learning process is described as transduction task. The typical structure of encyclopedic text is exploited by translating the text into a logical formula using a pipeline, which creates a formula template and a tagged sentence. These are combined to create a formula. \\
@@ -94,8 +105,14 @@ power of recurrent neural networks in predicting contextual data and not having 
 
 
 \subsection{Efficient Estimation of Word Representations in Vector Space}
-\cite{abs-1301-3781} proposes two new neural network architectures, which compute continuous vector representations of words. It is possible to use algebraic operations on such word vectors. An example, which is mentioned in the paper $vector(''King'') - vector(''Man'') + vector(''Woman'')$ results into a vector that is very close
-to the representation of the word \textit{Queen}. The paper tries to maximize the accuracy of such operations by developing their architectures to ''preserve the linear regularities among words''. The Continuous Bag-of-Words Model (CBOW) and the Continuous Skip-gram Model were developed. CBOW is similar to the Feedforward Neural Net Language Model. It predicts the current word based on its context. Continuous Skip-Gram in contrast predicts the words before and after the current word.\\
+\cite{mikolov2013} proposes two new neural network architectures, which compute continuous vector 
+representations of words. It is possible to use algebraic operations on such word vectors. An example, which is 
+mentioned in the paper $vector(''King'') - vector(''Man'') + vector(''Woman'')$ results into a vector that is very close
+to the representation of the word \textit{Queen}. The paper tries to maximize the accuracy of such operations by 
+developing their architectures to ''preserve the linear regularities among words''. The Continuous Bag-of-Words 
+Model (CBOW) and the Continuous Skip-gram Model were developed. CBOW is similar to the Feedforward Neural 
+Net Language Model. It predicts the current word based on its context. Continuous Skip-Gram in contrast predicts 
+the words before and after the current word.\\
 The results of different word vectors versions were compared by applying them to a similarity task. The proposed
 models are able to create word vectors with a higher syntactic and semantic accuracies than other existing models.
 
@@ -134,7 +151,16 @@ and a decoder network that recreates the image after receiving a code. This type
 called variational auto-encoders. IN DRAW both of these networks are recurrent, which means a sequence of code samples is exchanged between the networks. The image generation works in multiple steps, in which different
 parts of the image are generated. The decision on where to write and what code samples to read
 is made by the neural network. After a number a step an image is produced, which cannot be distinguished
-from real images. 
+from real images.
+
+\subsection{The Graph Neural Network Model}
+\cite{Scarselli2009}
+
+\subsection{On the expressive power of deep neural networks}
+\cite{Raghu2016}
+
+\subsection{Deep neural network language models}
+\cite{Arisoy2012}
 
 \bibliographystyle{plain}
 \bibliography{bibliography}
