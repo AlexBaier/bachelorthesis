@@ -310,12 +310,34 @@ The bachelor thesis will generate the following products:
 \item Evaluation regarding precision, recall, $F_1$-score, and near-hits of base-line algorithm and variations
 \item Survey with Wikidata community regarding relevance of developed algorithm
 \end{itemize}
-At the current time I expect the algorithm to consist of two neural networks. The first network being the
+At the current time I expect the algorithm to consist of two stages. In the first stage (mapping),
+the class will be represented as one, or multiple, vectors using neural networks. In the second stage (classification),
+a similarity-based classification method like k-nearest-neighbors or the, by Staab and Pekar \cite{pekar2002tl},  proposed algorithms can be used for finding the most similar superclass.\\
+The first approach (see Figure~\ref{fig:approach1}) consists of two neural networks, which will represent the class
+with two vectors.
+The first network being the
 Continuous Bag-of-Words (CBOW) by Mikolov et al. \cite{mikolov2013} , and the second being graph
-representation neural network (GRNN) like \cite{CaoLX16} or \cite{Sperduti1997}.
+representation neural network (GRNN), like the deep neural network by Cao et al. \cite{CaoLX16}.
 CBOW will be trained on the Wikipedia articles of all classes, and GRNN will be trained on the Wikidata taxonomy.
 To find a superclass for a given class, the closest classes in the word and in the graph vector space
 will be identified and used in a classification method like k-nearest neighbors.\\
+The second approach (see Figure~\ref{fig:approach2}) will only use CBOW to map the classes to word vectors.
+But the taxonomic structure will still be exploited by using for example tree-ascending+kNN \cite{pekar2002tl}
+in the classification stage.\\
+For both approaches it will be necessary to calculate the representation vectors for all classes in the taxonomy
+ahead of time, so the suggested classification methods can be used.
+\begin{figure}
+\centering
+\includegraphics[width=1.1\textwidth]{images/architecture_approach1.pdf}
+\caption{Solution using two neural networks \cite{mikolov2013} \cite{CaoLX16} and k-nearest neighbors for 
+classification.}
+\label{fig:approach1}
+\includegraphics[width=1.1\textwidth]{images/architecture_approach2.pdf}
+\caption{Solution using CBOW \cite{mikolov2013} for word representation and tree-ascending \cite{pekar2002tl} 
+for classification.}
+\label{fig:approach2}
+\end{figure}
+\\
 \\
 If the evaluation shows that ignoring the taxonomic structure only slightly influences the quality
 of results, it may be a good decision to just remove the according part of the algorithm, which
