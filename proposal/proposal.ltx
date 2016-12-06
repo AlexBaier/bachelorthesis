@@ -26,6 +26,7 @@
 \usepackage{amssymb}
 \usepackage{graphicx}
 \usepackage{hyperref}
+\usepackage{tabularx}
 
 \newcounter{ToDoId}
 \newcommand{\TODO}[1]{\stepcounter{ToDoId}\textcolor{red}{\textbf{TODO \theToDoId: #1}}}
@@ -325,7 +326,8 @@ The second approach (see Figure~\ref{fig:approach2}) will only use CBOW to map t
 But the taxonomic structure will still be exploited by using for example tree-ascending+kNN \cite{pekar2002tl}
 in the classification stage.\\
 For both approaches it will be necessary to calculate the representation vectors for all classes in the taxonomy
-ahead of time, so the suggested classification methods can be used.
+ahead of time, so the suggested classification methods can be used.\\
+\\
 \begin{figure}
 \centering
 \includegraphics[width=1.1\textwidth]{images/architecture_approach1.pdf}
@@ -337,15 +339,37 @@ classification.}
 for classification.}
 \label{fig:approach2}
 \end{figure}
-\\
-\\
 If the evaluation shows that ignoring the taxonomic structure only slightly influences the quality
 of results, it may be a good decision to just remove the according part of the algorithm, which
 could greatly affect its runtime depending on the used network. 
 I assume that the choice of similarity measure could greatly influence the evaluation results.
-
 \section{Time plan}
-\TODO{Add a time plan.}
+\begin{tabularx}{\textwidth}{lX}
+\textbf{Week}  & \textbf{Tasks} \\
+\textbf{1} & Taxonomy analysis. Start on foundations.\\
+\textbf{2} & Foundations: definitions, types of neural networks.  Start related work.\\
+\textbf{3} & Related work: ontology learning, similarity measures. Neural networks: Collect and prepare for next 
+week. \\
+\textbf{4} & Neural networks: analyze/ compare neural networks for task. Start development of algorithm.\\
+\textbf{5} &Develop base-line algorithm, and two variations. \\
+\textbf{6} & Learn how to use TensorFlow. Implement algorithms.\\
+\textbf{7} & Generate training and test data. Execute tests on algorithms. Calculate precision, recall, $F_1$, near-hit.
+\\
+\textbf{8} & Execute best performing algorithm on real taxonomy. Create survey for Wikidata community. Start 
+survey.\\
+\textbf{9} & Collect survey results at end of week. Write summary and introduction of thesis.\\
+\textbf{10} & Interpret survey results. Write future work.\\
+\textbf{11} & Create presentation. Refine thesis.\\
+\textbf{12} & Final polish for presentation and thesis.\\
+\end{tabularx}
+\\ \\
+The thesis will be written in parallel to the other tasks.
+The tasks of the first four weeks will be highly overlapping, as they consist mainly of literature research.
+The implementation phase, in week 6, could lead to delays due to my inexperience with the necessary libraries
+like TensorFlow. The survey, in week 9 and 10, also possesses the chance of delay or even failure, as it is dependent
+on the participation of the Wikidata community.
+The last three weeks will consist of creating the presentation and refining the thesis. This phase will also
+act as a buffer, if it comes to the aforementioned delays.
 
 \listoffigures
 
