@@ -7,7 +7,12 @@ import data_analysis.utils as utils
 
 
 def is_parentless(reduced_class: dict)->bool:
-    return not reduced_class.get(INSTANCE_OF) and not reduced_class.get(SUBCLASS_OF)
+    """
+    Returns true, if the class has no superclass, otherwise false.
+    :param reduced_class:
+    :return: boolean
+    """
+    return not reduced_class.get(SUBCLASS_OF)
 
 
 def get_root_class_ids(reduced_classes: Iterable[dict])->Iterable[str]:
