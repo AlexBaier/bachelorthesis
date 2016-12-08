@@ -2,7 +2,7 @@ import json
 from typing import Iterable
 
 import data_analysis.config as config
-from data_analysis.constants import INSTANCE_OF, SUBCLASS_OF, ID
+from data_analysis.constants import SUBCLASS_OF, ID
 import data_analysis.utils as utils
 
 

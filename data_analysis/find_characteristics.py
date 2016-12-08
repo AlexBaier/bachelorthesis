@@ -34,8 +34,7 @@ def get_children(root_class_ids: Iterable[str], items: Iterable[dict])->Dict[str
     return {SUBCLASSES: subclasses, INSTANCES: instances}
 
 
-def get_characteristics(root_classes: Iterable[dict], root_class_ids: Iterable[str], items: Iterable[dict])\
-        ->Iterable[str]:
+def get_characteristics(root_classes: Iterable[dict], root_class_ids: Iterable[str], items: Iterable[dict]):
     children = get_children(root_class_ids, items)
     subclasses = children.get(SUBCLASSES)
     instances = children.get(INSTANCES)
