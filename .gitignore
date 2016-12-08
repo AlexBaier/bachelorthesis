@@ -27,3 +27,6 @@ data_analysis/output/root_class_characteristics
 # misc folder
 misc/*
 
+# sparse matrix
+/data_analysis/output/idx_class_mapping.csv
+/data_analysis/output/sparse_taxonomy.csv

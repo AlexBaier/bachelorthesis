@@ -16,4 +16,7 @@ LABELED_SUBCLASS_SUM_FIGURE_PATH = 'output/labeled_subclass_sum.png'
 LABELED_INSTANCE_SUM_FIGURE_PATH = 'output/labeled_instance_sum.png'
 LABELED_PROPERTY_FREQUENCY_FIGURE_PATH = 'output/labeled_property_frequency.png'
 
+SPARSE_MATRIX_PATH = 'output/sparse_taxonomy.csv'
+CLASS_MAPPING_PATH = 'output/idx_class_mapping.csv'
+
 BATCH_SIZE = 1000
