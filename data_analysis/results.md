@@ -6,8 +6,8 @@ Analysis was executed on the Wikidata JSON dump of 2016-11-07.
 
 Out of these **14396** root classes, ...
 
-* **10132** have an English label.
-* **4264** have an English or Simple English Wikipedia article.
+* **12027** have an English label.
+* **10132** have an English or Simple English Wikipedia article.
 
 ---
 
