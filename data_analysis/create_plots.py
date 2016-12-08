@@ -36,12 +36,12 @@ def create_plots(analysis_path: str, property_sum_fig: str, instance_sum_fig: st
     y = [i[1] for i in property_counts]
     plt.bar(x, y)
     # set x axis steps
-    plt.xticks(x)
+    plt.xlim(0, 20)
     plt.title('number of classes with specific amount of properties')
     plt.xlabel('sum of properties')
     plt.ylabel('number of classes')
     # set values on bars
-    for i, v in enumerate(y):
+    for i, v in itertools.islice(enumerate(y), 20):
         plt.text(i, v, str(v), color='blue', fontweight='bold')
 
     plt.savefig(property_sum_fig)
@@ -50,13 +50,13 @@ def create_plots(analysis_path: str, property_sum_fig: str, instance_sum_fig: st
     plt.figure(2)
     x = [i[0] for i in subclass_counts]
     y = [i[1] for i in subclass_counts]
-    plt.xlim(0, len(x))
+    plt.xlim(0, 20)
     plt.bar(x, y)
     plt.title('number of classes with a specific amount of subclasses')
     plt.xlabel('sum of subclasses')
     plt.ylabel('number of classes')
     # set values on bars
-    for i, v in enumerate(y):
+    for i, v in itertools.islice(enumerate(y), 20):
         plt.text(i, v, str(v), color='blue', fontweight='bold')
 
     plt.savefig(subclass_sum_fig)
@@ -65,13 +65,13 @@ def create_plots(analysis_path: str, property_sum_fig: str, instance_sum_fig: st
     plt.figure(3)
     x = [i[0] for i in instance_counts]
     y = [i[1] for i in instance_counts]
-    plt.xlim(0, 10)
-    plt.yticks(y[:6])
+    plt.xlim(0, 20)
+    #plt.yticks(y[:6])
     plt.bar(x, y)
     plt.title('number of classes with specific amount of instances')
     plt.xlabel('sum of instances')
     plt.ylabel('number of classes')
-    for i, v in itertools.islice(enumerate(y), 10):
+    for i, v in itertools.islice(enumerate(y), 20):
         plt.text(i, v, str(v), color='blue', fontweight='bold')
 
     plt.savefig(instance_sum_fig)
