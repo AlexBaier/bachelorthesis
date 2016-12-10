@@ -1,4 +1,3 @@
-# TODO: save the figures with plt.savefig('.svg')
 import itertools
 import json
 from typing import List, Tuple

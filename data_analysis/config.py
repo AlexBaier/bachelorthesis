@@ -1,4 +1,4 @@
-JSON_DUMP_PATH = 'latest-all.json'
+JSON_DUMP_PATH = 'wikidata-20161205-all.json'
 REDUCED_JSON_DUMP_PATH = 'output/reduced_items'
 REDUCED_CLASSES_JSON_DUMP_PATH = 'output/reduced_classes'
 ROOT_CLASSES_JSON_DUMP_PATH = 'output/root_classes'

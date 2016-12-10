@@ -24,8 +24,6 @@ You need to execute the scripts in the following order:
 3. `find_root_classes.py`
 4. `find_characteristics.py`
 
-Or you can `extract_root_classes.py` to execute all scripts at once.
-
 The execution of these scripts will take some time, because the code
 is neither optimized nor parallel, and because the JSON dump is huge.
 
