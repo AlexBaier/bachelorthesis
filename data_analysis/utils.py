@@ -96,8 +96,10 @@ def batch_write(lines: Iterable[str], output: str, batch_size: int):
             batch.append(l)
             if idx > 0 and idx % batch_size == 0:
                 f.write('\n'.join(batch) + '\n')
-                batch = list()
+                print('{} items written'.format(len(batch)))
                 print('{} items already written'.format(idx))
+                batch = list()
+
         print('write last incomplete batch with {} lines'.format(len(batch)))
         f.write('\n'.join(batch) + '\n')
         print('done')

@@ -21,8 +21,7 @@ def get_class_ids(reduced_items: Iterable[dict])->Set[str]:
             classes.update(item.get(SUBCLASS_OF))  # parent class of a class is a class
         elif item.get(INSTANCE_OF):
             classes.update(item.get(INSTANCE_OF))
-        if idx % config.BATCH_SIZE == 0:
-            print('found {} classes in {} items'.format(len(classes), idx))
+    print('found {} classes'.format(len(list(classes))))
     return classes
 
 
@@ -32,10 +31,8 @@ def get_classes(reduced_items: Iterable[dict], class_ids: Set[str])->Iterable[di
 
 def write_classes(input_dump: str, output: str):
         class_ids = get_class_ids(utils.get_json_dicts(input_dump))
-        classes = map(lambda c: json.dumps(c),
-                      get_classes(utils.get_json_dicts(input_dump), class_ids))
-
-        utils.batch_write(classes, output, config.BATCH_SIZE)
+        classes = get_classes(utils.get_json_dicts(input_dump), class_ids)
+        utils.batch_write(map(lambda c: json.dumps(c), classes), output, config.BATCH_SIZE)
 
 
 def main():
