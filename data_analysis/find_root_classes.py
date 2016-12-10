@@ -16,8 +16,13 @@ def is_parentless(reduced_class: dict)->bool:
 
 
 def get_root_class_ids(reduced_classes: Iterable[dict])->Iterable[str]:
-    return map(lambda c: c.get(ID),
-               filter(is_parentless, reduced_classes))
+    root_class_ids = list()
+    for idx, c in enumerate(reduced_classes):
+        if is_parentless(c):
+            root_class_ids.append(c.get(ID))
+        if idx % 1000 == 0:
+            print('iterated {} classes'.format(idx))
+    return root_class_ids
 
 
 def get_root_classes(entities: Iterable[dict], root_class_ids: Iterable)->Iterable[dict]:
@@ -29,7 +34,6 @@ def write_root_classes(json_dump: str, reduced_classes_dump: str, output: str):
     root_class_ids = get_root_class_ids(utils.get_json_dicts(reduced_classes_dump))
     root_classes = map(lambda c: json.dumps(c),
                        get_root_classes(utils.get_json_dicts(json_dump), root_class_ids))
-
     utils.batch_write(root_classes, output, config.BATCH_SIZE)
 
 
