@@ -27,6 +27,8 @@
 \usepackage{graphicx}
 \usepackage{hyperref}
 \usepackage{tabularx}
+\usepackage[numbers]{natbib} % for citeauthor
+\usepackage{pgfgantt} % ganttchart
 
 \newcounter{ToDoId}
 \newcommand{\TODO}[1]{\stepcounter{ToDoId}\textcolor{red}{\textbf{TODO \theToDoId: #1}}}
@@ -77,7 +79,8 @@ Figure~\ref{fig:taxonomy} shows a fragment of Wikidata's taxonomy with a focus o
 \label{fig:taxonomy}
 \end{figure}
 Taxonomies like this can be used for different tasks. 
-\cite{pekar2002tl} for example develops a method of word classification in thesauri, which exploits the structure of
+\citeauthor{pekar2002tl} \cite{pekar2002tl} for example develop a method of word classification in thesauri, which 
+exploits the structure of
 taxonomies. Other uses may be found in information retrieval and reasoning. \\
 As of the 7th November 2016 over a million classes are present in this taxonomy. 
 A root class in a taxonomy is a class, which has no more generalizations.
@@ -102,59 +105,9 @@ Similar tasks in the field of ontology learning are already well researched. We 
 networks for solving this task, because the application of them in ontology learning is sparse in existing work,
 and as shown in Section~\ref{section:relatedwork} neural networks seem to be appropriate for the task.
 
-\section{Preliminary data analysis}
-The taxonomy of Wikidata, containing $1217733$ classes, was analyzed. The following statistics about root
-classes were acquired:
-\begin{itemize}
-\item $7142$ root classes
-\item $5332$ root classes with English label
-\item $4590$ root classes with an English or Simple English Wikipedia article
-\item $\sim 2$ statement groups (properties) per root class on average (see Figure~\ref{fig:propertysum})
-\item $\sim 4.15$ instances per root class on average (see Figure~\ref{fig:instancesum})
-\item $\sim 0.68$ subclasses per root class on average (see Figure~\ref{fig:subclasssum})
-\end{itemize}
-The 5 most frequent properties in root classes are the following (see Figure~\ref{fig:property_frequency}):
-\begin{itemize}
-\item \textit{Freebase ID (P646)} with $3007$ occurrences
-\item \textit{topic's main category (P910)} with $2343$ occurrences
-\item \textit{Commons category (P373)} with $2012$ occurrences
-\item \textit{GND ID (P227)} with $744$ occurrences
-\item \textit{part of (P361)} with $672$ occurrences
-\end{itemize}
-
-\begin{figure}
-\centering
-\includegraphics[width=0.9\textwidth]{images/property_sum.png}
-\caption{number of classes with a specific amount of properties}
-\label{fig:propertysum}
-
-\includegraphics[width=0.9\textwidth]{images/instance_sum.png}
-\caption{number of classes with a specific amount of instances}
-\label{fig:instancesum}
-\end{figure}
-
-\begin{figure}
-\centering
-\includegraphics[width=0.9\textwidth]{images/subclass_sum.png}
-\caption{number of classes with a specific amount of subclasses}
-\label{fig:subclasssum}
-
-\includegraphics[width=0.9\textwidth]{images/property_frequency.png}
-\caption{frequency of properties}
-\label{fig:property_frequency}
-\end{figure}
-
-We can see that most root classes contain very few, if any, properties, and at the same time
-the properties, which can be found frequently, are mostly identifiers or Wikimedia categories.
-This leads to the conclusion that statements won't be of much use in refining the taxonomy,
-and other information needs to be used.
-Almost $75\%$ of the root classes are labeled and a significant amount have a corresponding Wikipedia article.
-Therefore we propose to only consider labeled classes for the in Section~\ref{section:problemstatement} defined
-problem. Accordingly the analysis has to be repeated for labeled root classes.
-
 \section{Problem statement}\label{section:problemstatement}
 To define the problem following definitions are needed:
-\\ \TODO{Just delete Statement, because analysis said that statements won't be of much use for solving the task.}
+\\ \TODO{Redefine statement and class.}
 \begin{definition}[Statement]
 A statement is tuple $(pid, value)$:
 	\begin{itemize}
@@ -164,6 +117,7 @@ A statement is tuple $(pid, value)$:
 	\end{itemize}
 \end{definition}
 \begin{definition}[Class]
+\label{def:class}
 A class is a tuple $(id, label, Statements, Instances, wiki)$:
 	\begin{itemize}
 	\item $id \in \mathbb{N}$, which is a numerical Wikidata item ID;
@@ -211,25 +165,24 @@ tasks, and second is the topic of neural networks, which may be used to solve th
 
 \subsection{Similar tasks}
 
- Maedche and Staab \cite{Maedche2001} define and analyze the topic of ontology learning.
+ \citeauthor{Maedche2001} \cite{Maedche2001} define and analyze the topic of ontology learning.
 Additionally a tool called \textit{OntoEdit} was developed in the process. \cite{Maedche2001} considers 
 a semi-automatic approach and divides the process of ontology learning into the following steps:\\
 \textbf{import/reuse} existing ontologies, \textbf{extract}
 major parts of target ontology, \textbf{prune} to adjust the ontology for its primary purpose, \textbf {refine}
 ontology to complete it at a fine granularity, and \textbf{apply} it on target application to validate 
 the results.\\
-The problem solved by this thesis belongs to the step \textbf{refine}. Even though different approaches
-for refinement are considered and implemented in the paper, the use of neural networks is not considered.\\
+The problem solved by this thesis belongs to the step \textbf{refine}.\\
 
-\cite{pekar2002tl} by Pekar \& Staab define algorithms for classification, which exploit the structure of
+\citeauthor{pekar2002tl} \cite{pekar2002tl} define algorithms for classification, which exploit the structure of
 taxonomies. Distributional and taxonomic similarity measures on nearest neighbors are used to make a 
 classification decision. These algorithms are applied on the classification of new words (instances) into thesauri. In 
 comparison the target of this thesis will be to improve the existing taxonomy. For this the closest generalizations
-of root classes have to be found. The similarity measures used in \cite{pekar2002tl} may prove useful
-for the defined problem.\\
+of root classes have to be found. The algorithms used by \citeauthor{pekar2002tl} \cite{pekar2002tl} may prove 
+useful for the defined problem.\\
 
-A recurrent neural network model for ontology learning is described in \cite{PetrucciGR16} by Petrucci, Ghidini 
-\& Rospocher. Using encyclopedic text as input OWL formulas are created. The authors argue that their
+\citeauthor{PetrucciGR16} \cite{PetrucciGR16} describe a recurrent neural network model for ontology learning. 
+Using encyclopedic text as input OWL formulas are created. The authors argue that their
 model should be effective, because neural networks have shown success in natural language processing tasks.
 At this time the described model is under evaluation, so it is not shown that the model will generate good
 results. Different subtasks of ontology learning are solved by the paper and by
@@ -238,25 +191,87 @@ if neural networks are a sensible method for ontology learning. \\
 
 \subsection{Neural networks}
 
-Both \cite{CaoLX16} and \cite{Sperduti1997} develop neural networks, deep neural network and recursive neuron
+\citeauthor{CaoLX16} \cite{CaoLX16} and \citeauthor{Sperduti1997} \cite{Sperduti1997} develop neural networks, 
+deep neural network and recursive neuron
 network, which are able to encode graphs as vectors. It is proposed by both papers to use the generated
 vectors as input for classification methods. Because the networks are defined in such a way that
 semantic information of the graph is preserved to some degree, the vectors could be used for
 other task like measuring the similarity of classes based on their position in the taxonomy using for example
 cosine similarity.\\
 
-\cite{mikolov2013} by Mikolov et al. defines two neural network models, Continuous Bag-of-Words (CBOW) and
+\citeauthor{mikolov2013} \cite{mikolov2013} define two neural network models, Continuous Bag-of-Words (CBOW) 
+and
 Continuous Skip-Gram, which are able to create word vector representations. They capture the semantics
-of words very well and  preserve linear regularities between words. \cite{pekar2002tl} uses word representations
+of words very well and  preserve linear regularities between words. \citeauthor{pekar2002tl} \cite{pekar2002tl} use 
+word representations
 based on counts with context words. It is possible that the use of newer word representation model like CBOW
 will also improve their classification method.\\
 
+\TODO{add \cite{Doan2002} \cite{Rodriguez2003}}
 
-\subsection{Conclusion}
+\section{Preliminary data analysis}
+Wikidata does not inherently differ between entities and classes. Therefore it is necessary to define, how
+classes and root classes can be identified in Wikidata. In Wikidata an entity is a class, if it has instances or has subclasses or is a subclass.
+A root class is a class, which is not the subclass of any other class.
+It has to be noted that the results of this definition may not be completely accurate,
+because Wikidata does not enforce how the $instance of (P31)$ and $subclass of (P279)$ are to be used.
+However Wikidata is constantly curated by editors and the number of misused properties should be low, therefore 
+we can assume that the percentage of misidentified classes is also low.\\
+The taxonomy of Wikidata, containing $1299276$ classes, was analyzed. The following statistics about root
+classes were acquired:
+\begin{itemize}
+\item $16148$ root classes
+\item $13624$ root classes with English label
+\item $11438$ root classes with an English or Simple English Wikipedia article
+\item $\sim 4.8$ statement groups (properties) per root class on average (see Figure~\ref{fig:propertysum})
+\item $\sim 4.69$ instances per root class on average (see Figure~\ref{fig:instancesum})
+\item $\sim 0.86$ subclasses per root class on average (see Figure~\ref{fig:subclasssum})
+\end{itemize}
+The 5 most frequent properties in root classes are the following (see Figure~\ref{fig:property_frequency}):
+\begin{itemize}
+\item \textit{instance of (P31)} with $8687$ occurrences
+\item \textit{Freebase ID (P646)} with $7221$ occurrences
+\item \textit{topic's main category (P910)} with $6243$ occurrences
+\item \textit{Commons category (P373)} with $6183$ occurrences
+\item \textit{image (P18)} with $2367$ occurrences
+\end{itemize}
 
-For the specific task of taxonomy refinement we propose the use of neural networks, because they are able to handle structured  \cite{CaoLX16} as well as textual \cite{mikolov2013} data, which is available in
-the Wikidata taxonomy. Additionally neural networks have shown to be achieve better results in word similarity 
-\cite{CaoLX16} and speech recognition \cite{MikolovKBCK10} than  other methods .
+\begin{figure}
+\centering
+\includegraphics[width=0.9\textwidth]{images/property_sum.png}
+\caption{number of classes with a specific amount of properties}
+\label{fig:propertysum}
+
+\includegraphics[width=0.9\textwidth]{images/instance_sum.png}
+\caption{number of classes with a specific amount of instances}
+\label{fig:instancesum}
+\end{figure}
+
+\begin{figure}
+\centering
+\includegraphics[width=0.9\textwidth]{images/subclass_sum.png}
+\caption{number of classes with a specific amount of subclasses}
+\label{fig:subclasssum}
+
+\includegraphics[width=0.9\textwidth]{images/property_frequency.png}
+\caption{frequency of properties}
+\label{fig:property_frequency}
+\end{figure}
+
+It can be seen that classes in Wikidata are used by editors mainly  for the purpose of grouping instances  to a 
+concept, because the average root class has $\sim 5$ instances and $\sim 70\%$ have instances.
+The taxonomy itself is underdeveloped, as most root classes have less than 1 subclass, and the number
+of root classes is high.\\
+This means that taxonomy-based approaches \cite{pekar2002tl} may not work well. But approaches from ontology 
+mapping using semantic similarity \cite{Doan2002} \cite{Rodriguez2003} could be used,
+because they exploit the instances of a class as a mean to find similar concepts.\\
+Because most classes have labels and also corresponding Wikipedia articles, another possible approach could be the 
+use of word vector models \cite{Mikolov2013}. The Wikipedia articles would ensure that each label will
+at least occur once in some context.\\
+Based on this observations it is proposed that the set of  root classes is reduced to
+the set of labeled root classes with at least one instance, 
+so that all observed classes fulfill basic requirements, which can be exploited by the new algorithms.
+Therefore the analysis needs to be repeated on this reduced set.
 
 \section{Methodology}
 For solving the defined problem with a neural network, the following methodology is proposed:\\
@@ -274,11 +289,14 @@ This leads to the development of a new neural network architecture based on the 
 which is specialized to solve the defined problem. The decision made in the development will be justified based on
 the results of the previous steps.\\
 
+\TODO{More specific}
 After the neural network is developed, the system needs to be  implemented and training data needs to be 
 collected.
 The implemented network will be trained, and then tested. Reconfiguration of the network 
 and modification of training data will be repeated, until the test results are satisfactory.\\
 
+\TODO{Compare 3 different evaluation approaches. Expert-curated ground truth, automatically generated
+ground truth, community agreement}
 In the last step the develop  base-line method and modified versions will be evaluated.
 One version will ignore the taxonomic structure, and the other methods will use different similarity measures.
 The evaluation will be based on a modified version of the taxonomy. A high \TODO{set a number} number of
@@ -291,16 +309,10 @@ This will identify the most suitable similarity measure for the given problem,
 and show how relevant the taxonomic structure
 is for the decision making. The near-hit ratio will tell if the developed methods are able to identify the correct
 section of the taxonomy, and if this corresponds with the consideration of the taxonomic structure.\\
-Additionally an evaluation with the Wikidata community will be executed. 
 The best performing method of the previous evaluation will be applied on all current
 root classes. In this evaluation participants
 will be asked to rate the results.  The evaluation
-results will be analyzed and possible improvements for the network discussed.\\
-
-The evaluation with the Wikidata community is very important, because a tool based on
-the developed method should ideally be used by users to support the curation process in Wikidata.
-Therefore the community would need to agree with the results of the method, 
-otherwise such a tool would serve no practical purpose. 
+results will be analyzed and possible improvements for the network discussed.
 
 \section{Expected results}
 The bachelor thesis will generate the following products:
@@ -343,39 +355,66 @@ If the evaluation shows that ignoring the taxonomic structure only slightly infl
 of results, it may be a good decision to just remove the according part of the algorithm, which
 could greatly affect its runtime depending on the used network. 
 I assume that the choice of similarity measure could greatly influence the evaluation results.
+
 \section{Time plan}
-\begin{tabularx}{\textwidth}{lX}
-\textbf{Week}  & \textbf{Tasks} \\
-\textbf{1} & Taxonomy analysis. Start on foundations.\\
-\textbf{2} & Foundations: definitions, types of neural networks.  Start related work.\\
-\textbf{3} & Related work: ontology learning, similarity measures. Neural networks: Collect and prepare for next 
-week. \\
-\textbf{4} & Neural networks: analyze/ compare neural networks for task. Start development of algorithm.\\
-\textbf{5} &Develop base-line algorithm, and two variations. \\
-\textbf{6} & Learn how to use TensorFlow. Implement algorithms.\\
-\textbf{7} & Generate training and test data. Execute tests on algorithms. Calculate precision, recall, $F_1$, near-hit.
-\\
-\textbf{8} & Execute best performing algorithm on real taxonomy. Create survey for Wikidata community. Start 
-survey.\\
-\textbf{9} & Collect survey results at end of week. Write summary and introduction of thesis.\\
-\textbf{10} & Interpret survey results. Write future work.\\
-\textbf{11} & Create presentation. Refine thesis.\\
-\textbf{12} & Final polish for presentation and thesis.\\
-\end{tabularx}
-\\ \\
-The thesis will be written in parallel to the other tasks.
-The tasks of the first four weeks will be highly overlapping, as they consist mainly of literature research.
-The implementation phase, in week 6, could lead to delays due to my inexperience with the necessary libraries
-like TensorFlow. The survey, in week 9 and 10, also possesses the chance of delay or even failure, as it is dependent
-on the participation of the Wikidata community.
-The last three weeks will consist of creating the presentation and refining the thesis. This phase will also
-act as a buffer, if it comes to the aforementioned delays.
+
+The following outline is proposed for the thesis:
+\begin{enumerate}[1.]
+\item Foundations: definitions; problem statement; types of neural networks
+\item Taxonomy analysis: statistics about classes and root classes in Wikidata
+\item Related work: ontology learning; similarity measures; neural network models
+\item Comparison of neural networks: compare input, output, task, type and suitability of different models for the 
+given task
+\item Development of new algorithms: design new baseline-algorithm and variations; justify design decisions based 
+on previous sections
+\item Evaluation: explain evaluation method; evaluate/compare baseline-algorithm and variations
+\end{enumerate}
+The thesis will be written in parallel to the design and implementation of the solution. The first phase consists
+of research of related work and an analysis of the Wikidata taxonomy. In the second phase a baseline-algorithm
+and variations of it are designed and developed using the results of the previous phase. In the next phase
+test data is collected and the evaluation of the algorithms executed. The evaluation results will be 
+visualized and interpreted. Finally the summary, introduction, and conclusion of the thesis will be written
+and a presentation prepared.
+
+See the following Gantt chart for the time plan \ref{fig:timeplan}:
+\begin{figure}
+\begin{ganttchart}[vgrid={*1{draw=black!20, line width=.75pt}}, x unit=0.05\textwidth]{1}{12}
+\gantttitle{Time plan for bachelor thesis (in weeks)}{12}\\
+\gantttitlelist{1,...,12}{1}\\
+\ganttgroup{Foundations, Sections 1-4}{1}{5}\\
+\ganttbar[name=RelWork]{Research related work}{1}{3}\\
+\ganttbar[name=NN]{Compare neural networks}{1}{3}\\
+\ganttbar[name=TaxAn]{Analyze taxonomy}{1}{1}\\
+\ganttgroup{Algorithms, Sections 5}{4}{8}\\
+\ganttbar[name=Design]{Design algorithms}{4}{5}\\
+\ganttbar[name=Impl]{Implement algorithms}{6}{8}\\
+\ganttbar[name=Tensor]{Learn Tensorflow}{5}{5}\\
+\ganttgroup{Evaluation, Section 6}{8}{10}\\
+\ganttbar[name=Eval]{Evaluate algorithms}{9}{9}\\
+\ganttbar[name=Data]{Create test data}{8}{8}\\
+\ganttgroup{Summary, Introduction, Conclusion}{10}{11}\\
+\ganttbar[name=SIC]{Write missing parts}{10}{11}\\
+\ganttbar[name=Pres]{Prepare presentation}{11}{12}
+
+\ganttlink{TaxAn}{Design}
+\ganttlink{RelWork}{Design}
+\ganttlink{NN}{Design}
+\ganttlink{Design}{Impl}
+\ganttlink{Tensor}{Impl}
+\ganttlink{Impl}{Eval}
+\ganttlink{Data}{Eval}
+\ganttlink{Eval}{SIC}
+\ganttlink{Eval}{Pres}
+\end{ganttchart}
+\caption{time plan}
+\label{fig:timeplan}
+\end{figure}
 
 \listoffigures
 
 \nocite{*}
 
-\bibliographystyle{plain}
+\bibliographystyle{plainnat}
 \bibliography{bibliography}
 
 

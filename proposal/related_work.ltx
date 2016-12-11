@@ -21,6 +21,7 @@
 \usepackage{subfig} % make it possible to include more than one captioned figure/table in a single float
 \usepackage{color}
 \usepackage{ulem}
+\usepackage[numbers]{natbib}
 
 \newcounter{ToDoId}
 \newcommand{\TODO}[1]{\stepcounter{ToDoId}\textcolor{red}{\textbf{TODO \theToDoId: #1}}}
@@ -44,7 +45,8 @@ The paper solves a similar problem to the problem of my work. The exploitation o
 proves to be effective and should therefore be incorporated into the solution of the thesis' problem.
 
 \subsection{Ontology Enrichment by Discovering Multi-Relational Association Rules from Ontological Knowledge Bases}
-The algorithm presented in \cite{dAmatoSTMG16} discovers relational association rules expressed SWRL, which
+The algorithm presented by \citeauthor{dAmatoSTMG16} \cite{dAmatoSTMG16} 
+discovers relational association rules expressed SWRL, which
 allows the discovered rules to be directly integrated into the ontology and increase its expressiveness. This is done
 by detecting hidden patterns in a populated ontological knowledge base, and then obtaining relational association 
 rules from these pattern.\\
@@ -63,6 +65,16 @@ provided.
 \subsection{Ontology Learning from Text: A Look Back and into the Future}
 \cite{Wong2012}
 
+
+\subsection{Determining semantic similarity among entity classes from different ontologies}
+\cite{Rodriguez2003}
+
+\subsection{Learning to map between ontologies on the semantic web}
+\citeauthor{Doan2002} \cite{Doan2002} describe GLUE, a system using machine learning techniques for ontology 
+learning. A concept is modeled as a set of instances. Three semantic similarity measures for concepts 
+are defined, the Jaccard  coefficient, the ''most-specific-parent'' similarity, and the ''most-general-child'' similarity.
+The system takes as input two taxonomies with data instances and returns mappings for both entered ontologies.
+
 \section{Similarity}
 
 \subsection{An Information-Theoretic Definition of Similarity}
@@ -71,6 +83,11 @@ Similarity is seen as a function of the commonalities and differences of two obj
 measure is derived from a number assumptions about similarities. The measure is applied on
 ordinal values, feature vectors, words, and semantic similarity in taxonomies. All applications
 shows that the defined measure produces results of similar quality to domain-specific measurements.
+
+\subsection{A k-nearest neighbor based algorithm for multi-label classification}
+\cite{Zhang2015}
+
+\subsection{Concept Similarity Matching Based on Semantic Distance}
 
 \section{Neural networks}
 
@@ -105,7 +122,8 @@ power of recurrent neural networks in predicting contextual data and not having 
 
 
 \subsection{Efficient Estimation of Word Representations in Vector Space}
-\cite{mikolov2013} proposes two new neural network architectures, which compute continuous vector 
+\citeauthor{mikolov2013} \cite{mikolov2013} propose two new neural network architectures, which compute 
+continuous vector 
 representations of words. It is possible to use algebraic operations on such word vectors. An example, which is 
 mentioned in the paper $vector(''King'') - vector(''Man'') + vector(''Woman'')$ results into a vector that is very close
 to the representation of the word \textit{Queen}. The paper tries to maximize the accuracy of such operations by 
@@ -114,7 +132,10 @@ Model (CBOW) and the Continuous Skip-gram Model were developed. CBOW is similar 
 Net Language Model. It predicts the current word based on its context. Continuous Skip-Gram in contrast predicts 
 the words before and after the current word.\\
 The results of different word vectors versions were compared by applying them to a similarity task. The proposed
-models are able to create word vectors with a higher syntactic and semantic accuracies than other existing models.
+models are able to create word vectors with a higher syntactic and semantic accuracies than other existing models.\\
+On the project page \cite{word2vec} of \textit{word2vec} the authors claim that while CBOW is faster than 
+Skip-gram,  Skip-gram is better for infrequent words. Therefore it stands to reason that for the defined
+problem Skip-gram may be better suited than CBOW.
 
 \subsection{Deep Neural Networks for Learning Graph Representations}
 \cite{CaoLX16} describes a deep neural network, which creates deep graph representation model, in which a low 
@@ -154,15 +175,27 @@ is made by the neural network. After a number a step an image is produced, which
 from real images.
 
 \subsection{The Graph Neural Network Model}
-\cite{Scarselli2009}
+\cite{Scarselli2009} develops a recursive neural network for graph classification. 
+\TODO{This type of network seems to be to complex.} 
 
 \subsection{On the expressive power of deep neural networks}
-\cite{Raghu2016}
+\cite{Raghu2016} researches the the effect of depth and width of neural networks on different measures
+for expressivity.
+It is discovered that the measures, which are number of transitions, activation patterns, and number of dichotomies,
+are connected exponentially to the depth, but not width, of the network. 
+A fourth measure called trajectory length is defined, to which the other three measures are directly proportional.
+The trajectory length grows exponentially with the depth of the network.
+Additionally it is shown that the expressive power of a layer is dependent on the number of remaining layers 
+in the network.
+
 
 \subsection{Deep neural network language models}
 \cite{Arisoy2012}
 
-\bibliographystyle{plain}
+\subsection{Learning Convolutional Neural Networks for Graphs}
+\cite{Niepert16}
+
+\bibliographystyle{plainnat}
 \bibliography{bibliography}
 
 \end{document}
