@@ -42,8 +42,8 @@
 \newtheorem*{problem}{Problem}
 
 
-\title{Refinement of the Wikidata taxonomy with neural networks}
-\subtitle{Proposal for Bachelor thesis}
+\title{Proposal: Enrichment of ontological taxonomies using a neural network approach}
+\subtitle{Case study: Wikidata }
 \author{Alex Baier \\ abaier@uni-koblenz.de}
 
 
@@ -107,29 +107,44 @@ and as shown in Section~\ref{section:relatedwork} neural networks seem to be app
 
 \section{Problem statement}\label{section:problemstatement}
 To define the problem following definitions are needed:
-\\ \TODO{Redefine statement and class.}
-\begin{definition}[Statement]
-A statement is tuple $(pid, value)$:
+\begin{definition}[Item]
+An entity is a tuple $(id, description)$:
 	\begin{itemize}
-	\item $pid \in \mathbb{N}$, which is a numerical Wikidata property ID;
-	\item $value$ depends on the data type corresponding with $pid$, in most cases it will be natural number,
-	representing a Wikidata item id. 
+	\item $id \in \mathbb{N}$ is the numerical item ID;
+	\item $description=(label, aliases, summary, statements, wiki)$
+		\begin{itemize}
+		\item $label \in String$ is the English label of the item;
+		\item $aliases \in \mathcal{P}(String)$ is the set of English synonyms for the label;
+		\item $summary \in String$ is a short sentence describing the item;
+		\item $statements \in \mathcal{P}(Statement)$ is the set of statements of the item.
+		\end{itemize}
 	\end{itemize}
 \end{definition}
+\begin{definition}[Statement]
+A statement is a tuple (itemid, pid, value, refs, qualifiers):
+\begin{itemize}
+\item $itemid \in \mathbb{N}$ is a numerical item ID, to which the statement belongs;
+\item $pid \in \mathbb{N}$ is a numerical property ID;
+\item $value$ is either a constant value like string, int, etc., or another item;
+\item $refs$ is a set of references, storing the source of information for the statement;
+\item $qualifiers$ is a set of qualifiers, which further specifies the statement.
+\end{itemize}
+If the qualifiers and references are not needed, a statement can be shortened to a triple
+$(itemid, pid, value)$, similar to semantic triples in RDF.
+\end{definition}
+Because references and qualifiers are not used in the definition or solution of the problem, they will not
+be defined.
 \begin{definition}[Class]
 \label{def:class}
-A class is a tuple $(id, label, Statements, Instances, wiki)$:
+A class in Wikidata is technically an entity. But a class is also described by its instances, therefore a class
+can be represented as the tuple $(id, description, instances)$:
 	\begin{itemize}
-	\item $id \in \mathbb{N}$, which is a numerical Wikidata item ID;
-	\item $label$, which is the, to $id$ corresponding,  English label in Wikidata;
-	\item $Statements$ is a set of statements about the class;
-	\item $Instances \in \mathcal{P}(\mathbb{N})$ is the set of numerical Wikidata item IDs, which are instances of 
-	the class;
-	\item $wiki$ is the, to the class corresponding, English Wikipedia article text.
+	\item $instances \in \mathcal{P}(\mathbb{N})$ is the set of numerical item IDs, which are instances of 
+	the class.
 	\end{itemize}
 \end{definition}
 \begin{definition}[Taxonomy]
-A taxonomy $T=(C, S)$ is a acyclic graph, where $C$ is a set of classes, and $S$ is a set of subclass-of relations
+A taxonomy $T=(C, S)$ is an acyclic graph, where $C$ is a set of classes, and $S$ is a set of subclass-of relations
 between these classes.
 \end{definition}
 Because a class can have multiple superclasses, a tree structure is insufficient for modeling the taxonomy.
@@ -145,8 +160,9 @@ $r \in C$ is called root class of $T$, if $|succ(r)| = 0$.\\
 $root(T) = \{r \in C \mid  |out(r)| = 0\}$ is the set of all root classes in $T$.
 \end{definition}
 \begin{definition}
-Define a function $sim: Class \times Class \mapsto (0,1)$ as the similarity between two classes.
+Define a function $sim: Class \times Class \mapsto [0,1]$ as the similarity between two classes.
 Two classes have high similarity if the output of the function is close to $1$. 
+$sim(c_1, c_2) = 1$ is only the case, if $c_1$ and $c_2$ are identical.
 \end{definition}
 Finally we can define our problem as the following task:
 \begin{problem}
@@ -178,8 +194,9 @@ The problem solved by this thesis belongs to the step \textbf{refine}.\\
 taxonomies. Distributional and taxonomic similarity measures on nearest neighbors are used to make a 
 classification decision. These algorithms are applied on the classification of new words (instances) into thesauri. In 
 comparison the target of this thesis will be to improve the existing taxonomy. For this the closest generalizations
-of root classes have to be found. The algorithms used by \citeauthor{pekar2002tl} \cite{pekar2002tl} may prove 
-useful for the defined problem.\\
+of root classes have to be found. The algorithms used by \citeauthor{pekar2002tl} may prove 
+useful for the defined problem, if the root classes of Wikidata are parts of the bigger components in 
+the taxonomy graph, so that a taxonomic structure can be exploited.\\
 
 \citeauthor{PetrucciGR16} \cite{PetrucciGR16} describe a recurrent neural network model for ontology learning. 
 Using encyclopedic text as input OWL formulas are created. The authors argue that their
@@ -188,6 +205,29 @@ At this time the described model is under evaluation, so it is not shown that th
 results. Different subtasks of ontology learning are solved by the paper and by
 the proposed thesis. Additionally the thesis will contain an evaluation of the created model and it can be shown
 if neural networks are a sensible method for ontology learning. \\
+
+\citeauthor{Doan2002} \cite{Doan2002} describe a system for ontology mapping called GLUE, which uses
+machine learning techniques.  Three probabilistic distribution-based similarity measures are defined.
+The measures are used to compare concepts of the two ontologies on a semantic level.
+The GLUE system takes two taxonomies as input and produces mappings for both taxonomies.
+Different similarity measures can be used interchangeably in the system. GLUE is evaluated with the Jacard 
+coefficient as similarity function. The system shows to have a high matching accuracy.\\
+The defined measures are
+the Jaccard coefficient, which describes an exact similarity, the ''most-specific-parent'' similarity, 
+and the ''most-general-child'' similarity. Especially the ''most-specific-parent'' similarity for concepts seems to
+fit the thesis' problem well, as the optimal solution for the defined problem is to the most similar, therefore most
+specific, superclass/parent class for a given class. \\
+
+\citeauthor{Rodriguez2003} \cite{Rodriguez2003} describes different matching using semantic similarity
+between entity classes from different ontologies. The following three measures are shown.
+Word matching compares the number of common and different words in the synonym sets (aliases in Wikidata) of 
+entity classes.
+Feature matching uses common and different characteristics between the entities of the classes.
+Information content defines the similarity as degree of informativeness of the immediate superconcept
+that subsumes the two concepts being compared.\\
+For the task of the thesis, word matching and feature matching are relevant, as Wikidata offers aliases for
+word matching, and it will be shown in Section~\ref{section:data} that classes in Wikidata have on average about 
+$5$ entities, which is relevant for feature matching.
 
 \subsection{Neural networks}
 
@@ -207,9 +247,7 @@ word representations
 based on counts with context words. It is possible that the use of newer word representation model like CBOW
 will also improve their classification method.\\
 
-\TODO{add \cite{Doan2002} \cite{Rodriguez2003}}
-
-\section{Preliminary data analysis}
+\section{Preliminary data analysis} \label{section:data}
 Wikidata does not inherently differ between entities and classes. Therefore it is necessary to define, how
 classes and root classes can be identified in Wikidata. In Wikidata an entity is a class, if it has instances or has subclasses or is a subclass.
 A root class is a class, which is not the subclass of any other class.
@@ -266,7 +304,7 @@ This means that taxonomy-based approaches \cite{pekar2002tl} may not work well. 
 mapping using semantic similarity \cite{Doan2002} \cite{Rodriguez2003} could be used,
 because they exploit the instances of a class as a mean to find similar concepts.\\
 Because most classes have labels and also corresponding Wikipedia articles, another possible approach could be the 
-use of word vector models \cite{Mikolov2013}. The Wikipedia articles would ensure that each label will
+use of word vector models \cite{mikolov2013}. The Wikipedia articles would ensure that each label will
 at least occur once in some context.\\
 Based on this observations it is proposed that the set of  root classes is reduced to
 the set of labeled root classes with at least one instance, 
@@ -276,43 +314,57 @@ Therefore the analysis needs to be repeated on this reduced set.
 \section{Methodology}
 For solving the defined problem with a neural network, the following methodology is proposed:\\
 
+\subsection{Taxonomy analysis}
 First the current taxonomy of Wikidata needs to be analyzed. It should be answered, how many
 classes and especially root classes are available and what their characteristics are, e.g. number of instances and subclasses, how many and what kind of statements. This will allow a more focused search and analysis
-in the following step.\\
+in the following step.
 
+\subsection{Comparison of neural networks}
 The literature about neural networks needs be researched. Different neural network models will
 be analyzed and compared, regarding input, output, task and performance. Furthermore
 the neural networks should be compared to other solutions for the same tasks, so
-the decision to use neural networks can be motivated.\\
+the decision to use neural networks can be motivated.
 
-This leads to the development of a new neural network architecture based on the researched networks,
-which is specialized to solve the defined problem. The decision made in the development will be justified based on
-the results of the previous steps.\\
+\subsection{Development of a neural network-based algorithm}
+This leads to the development of a new algorithm using neural networks, which solves the defined problem.
+The algorithm should try to exploit the different aspects of the knowledge provided by Wikidata.
+After the baseline-algorithm is developed at least one variation should also be implemented,
+which ignores a certain aspect of the provided knowledge, or uses a different similarity measure.
 
-\TODO{More specific}
-After the neural network is developed, the system needs to be  implemented and training data needs to be 
-collected.
-The implemented network will be trained, and then tested. Reconfiguration of the network 
-and modification of training data will be repeated, until the test results are satisfactory.\\
-
-\TODO{Compare 3 different evaluation approaches. Expert-curated ground truth, automatically generated
-ground truth, community agreement}
-In the last step the develop  base-line method and modified versions will be evaluated.
-One version will ignore the taxonomic structure, and the other methods will use different similarity measures.
-The evaluation will be based on a modified version of the taxonomy. A high \TODO{set a number} number of
-subclasses will be chosen, and their connection to their superclasses removed, effectively turning them
-into root classes. The methods will be applied on this subclasses and the correct result will be the
-original superclass. 
-The methods will be compared regarding precision, recall, $F_1$-score, direct-hit, and near-hit ratio, where near-hit 
-means that the result is the subclass or superclass of the correct class.
-This will identify the most suitable similarity measure for the given problem, 
-and show how relevant the taxonomic structure
-is for the decision making. The near-hit ratio will tell if the developed methods are able to identify the correct
-section of the taxonomy, and if this corresponds with the consideration of the taxonomic structure.\\
-The best performing method of the previous evaluation will be applied on all current
-root classes. In this evaluation participants
-will be asked to rate the results.  The evaluation
-results will be analyzed and possible improvements for the network discussed.
+\subsection{Evaluation}
+In the last step the baseline algorithm and its variations will be evaluated.\\
+Variations of the baseline-algorithm should only use information provided directly by Wikidata, instead
+of also exploiting the encyclopedic text provided by Wikidata.
+Other variations should use different measures of similarity for finding the most similar superclass.\\
+There are two purposes to the evaluation. Firstly, the evaluation will show if the developed algorithm
+is able to solve the problem. And secondly, the evaluation of the variations will show, which measures
+are better suited for the task, and if it is necessary to include additional data, which is not provided by Wikidata
+to get good results.\\
+Two different approaches for evaluation are proposed.
+For both approaches a ground truth for testing needs to be created, 
+which consists of pairs of root classes and their correct superclasses. \\
+In the first approach, the ground truth
+will be created by group of experts via for example crowdsourcing. 
+In this case the subset of used root classes will be taken from the set of root classes in the current taxonomy.\\
+ In the second case, the ground truth will be automatically generated. It can be assumed,
+that the subclass relations in the current taxonomy are valid. Therefore for a set of non-root classes in
+the taxonomy the subclass relation to their superclasses will be removed, and the removed relation
+used as ground truth. The modified taxonomy will be used in the algorithms. \\
+For these evaluations, the percision, recall, $F_1$-score, direct-hit ratio, and near-hit ratio
+will be calculated for all versions of the algorithm.\\ 
+The first approach should generate a better ground truth, and the application of the algorithms
+on the unmodified taxonomy is a more realistic testing scenario than the second approach using
+a modified taxonomy. But the first approach also requires the participation of voluntary experts,
+which would require a high time investment, because the experts need to be found and motivated to participate
+in the task.\\
+In comparison the second approach can be executed by a single person, because the ground truth already exists.
+For this approach the quality of the ground truth varies depending on the number of editors for
+the chosen classes. The number of edits of a class correlates directly to its quality,
+because a high number of edits implies that many different users reached an agreement about
+the values of a class. Therefore it is possible to create a good ground truth with this approach
+by choosing only classes, which have a certain threshold of edits.\\
+For the evaluation in the thesis, the second evaluation approach will be used, because it requires less time
+and should provide accurate results. 
 
 \section{Expected results}
 The bachelor thesis will generate the following products:
@@ -321,7 +373,6 @@ The bachelor thesis will generate the following products:
 \item Neural-network based algorithm for taxonomy refinement with multiple variations
 \item Training and test data sets for developed algorithm
 \item Evaluation regarding precision, recall, $F_1$-score, and near-hits of base-line algorithm and variations
-\item Survey with Wikidata community regarding relevance of developed algorithm
 \end{itemize}
 At the current time I expect the algorithm to consist of two stages. In the first stage (mapping),
 the class will be represented as one, or multiple, vectors using neural networks. In the second stage (classification),
