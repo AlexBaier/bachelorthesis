@@ -90,7 +90,11 @@ ordinal values, feature vectors, words, and semantic similarity in taxonomies. A
 shows that the defined measure produces results of similar quality to domain-specific measurements.
 
 \subsection{A k-nearest neighbor based algorithm for multi-label classification}
-\citeauthor{Zhang2015} \cite{Zhang2015}
+\citeauthor{Zhang2015} \cite{Zhang2015} defines a lazy multi-label classification algorithm based
+on k-nearest neighbors.\\
+Multi-label classification may be relevant for thesis as each class can have multiple superclasses.
+k-nearest neighbors algorithms use distance or similarities measures to find the k-nearest neighbors
+and to assign weights to each neighbor based on its distance/similarity to the input vector.
 
 \section{Neural networks}
 
@@ -193,7 +197,13 @@ in the network.
 
 
 \subsection{Deep neural network language models}
-\cite{Arisoy2012}
+\citeauthor{Arisoy2012} \cite{Arisoy2012} shows that deep neural network language models show significant
+improvements to single hidden layer NNLM. The notion of word similarity is missing in n-gram language models,
+because of their discrete nature. In comparison NNLM represent words as continuous vectors, it is estimated
+that therefore words that are semantically similar will also be in similar locations in the continuous vector space.
+The DDNLM is a feed-forward deep neural network. It is tested on textual and acoustic data, and works well.
+It is shown that training time is mainly based on the number of units in the network but less so on
+the number of hidden layers. The training takes 3 days on an 8-core CPU machine.
 
 \subsection{Learning Convolutional Neural Networks for Graphs}
 \cite{Niepert16}

@@ -242,10 +242,12 @@ cosine similarity.\\
 \citeauthor{mikolov2013} \cite{mikolov2013} define two neural network models, Continuous Bag-of-Words (CBOW) 
 and
 Continuous Skip-Gram, which are able to create word vector representations. They capture the semantics
-of words very well and  preserve linear regularities between words. \citeauthor{pekar2002tl} \cite{pekar2002tl} use 
-word representations
-based on counts with context words. It is possible that the use of newer word representation model like CBOW
-will also improve their classification method.\\
+of words very well and  preserve linear regularities between words. 
+In comparison to discrete word vectors, for example used by \citeauthor{pekar2002tl} \cite{pekar2002tl},
+\citeauthor{Arisoy2012} \cite{Arisoy2012} state that continuous word vectors have a better notion of similarity,
+which means that semantically close words are also close in the continuous word vector space. 
+Therefore the use of newer neural network language models could serve to improve older classification algorithms,
+like tree-ascending+kNN \cite{pekar2002tl}.
 
 \section{Preliminary data analysis} \label{section:data}
 Wikidata does not inherently differ between entities and classes. Therefore it is necessary to define, how
