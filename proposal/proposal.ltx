@@ -143,11 +143,13 @@ can be represented as the tuple $(id, description, instances)$:
 	the class.
 	\end{itemize}
 \end{definition}
+\citeauthor{Wong2012} \cite{Wong2012} describes taxonomies as ''controlled vocabulary organized into a 
+hierarchical or parent-child structure''. Typically a hierarchical structure can be defined as a tree, but
+because a class can have multiple superclasses, a tree structure is insufficient for modeling the taxonomy.
 \begin{definition}[Taxonomy]
-A taxonomy $T=(C, S)$ is an acyclic graph, where $C$ is a set of classes, and $S$ is a set of subclass-of relations
-between these classes.
+A taxonomy $T=(C, S)$ is an acyclic graph, where $C$ is a set of classes, and $S$ is the set of edges, describing
+subclass-of relations between these classes.
 \end{definition}
-Because a class can have multiple superclasses, a tree structure is insufficient for modeling the taxonomy.
 \begin{definition}[Subclass Relation]
 Let $T=(C, S)$ be a taxonomy.\\
 The transitive, ordered relation $\subclassof$ is defined.\\
