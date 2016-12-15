@@ -323,8 +323,9 @@ For solving the defined problem with a neural network, the following methodology
 
 \subsection{Taxonomy analysis}
 First the current taxonomy of Wikidata needs to be analyzed. It should be answered, how many
-classes and especially root classes are available and what their characteristics are, e.g. number of instances and subclasses, how many and what kind of statements. This will allow a more focused search and analysis
-in the following step.
+classes and especially root classes are available and what their characteristics are, e.g. number of instances and subclasses, how many and what kind of statements. Additionally the analysis shall be repeated on the
+subset of labeled root classes with instances, as proposed in Section~\ref{section:data}.
+This will allow a more focused search and analysis in the following step. 
 
 \subsection{Comparison of neural networks}
 The literature about neural networks needs be researched. Different neural network models will
@@ -335,12 +336,12 @@ the decision to use neural networks can be motivated.
 \subsection{Development of a neural network-based algorithm}
 This leads to the development of a new algorithm using neural networks, which solves the defined problem.
 The algorithm should try to exploit the different aspects of the knowledge provided by Wikidata.
-After the baseline-algorithm is developed at least one variation should also be implemented,
+After the baseline algorithm is developed at least one variation should also be implemented,
 which ignores a certain aspect of the provided knowledge, or uses a different similarity measure.
 
 \subsection{Evaluation}
 In the last step the baseline algorithm and its variations will be evaluated.\\
-Variations of the baseline-algorithm should only use information provided directly by Wikidata, instead
+Variations of the baseline algorithm should only use information provided directly by Wikidata, instead
 of also exploiting the encyclopedic text provided by Wikidata.
 Other variations should use different measures of similarity for finding the most similar superclass.\\
 There are two purposes to the evaluation. Firstly, the evaluation will show if the developed algorithm
@@ -381,38 +382,34 @@ The bachelor thesis will generate the following products:
 \item Training and test data sets for developed algorithm
 \item Evaluation regarding precision, recall, $F_1$-score, and near-hits of base-line algorithm and variations
 \end{itemize}
-At the current time I expect the algorithm to consist of two stages. In the first stage (mapping),
-the class will be represented as one, or multiple, vectors using neural networks. In the second stage (classification),
-a similarity-based classification method like k-nearest-neighbors or the, by Staab and Pekar \cite{pekar2002tl},  proposed algorithms can be used for finding the most similar superclass.\\
-The first approach (see Figure~\ref{fig:approach1}) consists of two neural networks, which will represent the class
-with two vectors.
-The first network being the
-Continuous Bag-of-Words (CBOW) by Mikolov et al. \cite{mikolov2013} , and the second being graph
-representation neural network (GRNN), like the deep neural network by Cao et al. \cite{CaoLX16}.
-CBOW will be trained on the Wikipedia articles of all classes, and GRNN will be trained on the Wikidata taxonomy.
-To find a superclass for a given class, the closest classes in the word and in the graph vector space
-will be identified and used in a classification method like k-nearest neighbors.\\
-The second approach (see Figure~\ref{fig:approach2}) will only use CBOW to map the classes to word vectors.
-But the taxonomic structure will still be exploited by using for example tree-ascending+kNN \cite{pekar2002tl}
-in the classification stage.\\
-For both approaches it will be necessary to calculate the representation vectors for all classes in the taxonomy
-ahead of time, so the suggested classification methods can be used.\\
-\\
+At the current time I expect the algorithm to use a neural network language model (NNLM). Different models
+based on feed-forward \cite{mikolov2013}, deep  \cite{Arisoy2012} or recurrent \cite{MikolovKBCK10}
+neural networks exist. These models map classes to continuous word vectors, which can effectively
+be used in similarity tasks, as stated by \citeauthor{Arisoy2012} and \citeauthor{mikolov2013}.
+Of these models, \textit{word2vec} by \citeauthor{mikolov2013}, 
+which includes CBOW and Continuous Skip-gram, seems to be a well-proven solution, 
+as it is part of  important software libraries for machine learning like TensorFlow and DeepLearning4J.\\
+The information encoded in the classes and instances of the knowledge will be translated to text. Statements
+can be represented as three word sentences. The text can then be used as training data for the NNLM.
+Because the sentences are very short and only contain semantic information, there is almost no noise in
+the data and the context window of the model can be very small, which reduces the required training time.\\
+For word vector pairs the similarity will be computed and stored in a similarity matrix, this will allow faster
+computation in the classification. An appropriate similarity function for high-dimensional continuous vectors
+needs to be researched for this task. \\ 
+For finding the most similar superclass, a similarity-based classification method like k-nearest-neighbors will be used.\\
+Figure~\ref{fig:algorithm} is a model of the described baseline algorithm. It is only necessary to execute 
+the methods outside of the red circle once to train the model and generate the similarity matrix and vector space.
+After this step, the classification can be executed repeatedly for different inputs without retraining the model.\\
 \begin{figure}
 \centering
-\includegraphics[width=1.1\textwidth]{images/architecture_approach1.pdf}
-\caption{Solution using two neural networks \cite{mikolov2013} \cite{CaoLX16} and k-nearest neighbors for 
-classification.}
-\label{fig:approach1}
-\includegraphics[width=1.1\textwidth]{images/architecture_approach2.pdf}
-\caption{Solution using CBOW \cite{mikolov2013} for word representation and tree-ascending \cite{pekar2002tl} 
-for classification.}
-\label{fig:approach2}
+\includegraphics[width=1.1\textwidth]{images/algorithm_ideas.pdf}
+\caption{Baseline algorithm}
+\label{fig:algorithm}
 \end{figure}
-If the evaluation shows that ignoring the taxonomic structure only slightly influences the quality
-of results, it may be a good decision to just remove the according part of the algorithm, which
-could greatly affect its runtime depending on the used network. 
-I assume that the choice of similarity measure could greatly influence the evaluation results.
+A variation of the baseline is proposed, which uses the encyclopedic text provided by Wikipedia for training. 
+Evaluation will show, whether the generated Wikidata data set or  the bigger Wikipedia natural
+text data set will train the better model.\\
+Other variations could be used to compare the performance of different similarity functions and classification methods.
 
 \section{Time plan}
 
@@ -423,18 +420,17 @@ The following outline is proposed for the thesis:
 \item Related work: ontology learning; similarity measures; neural network models
 \item Comparison of neural networks: compare input, output, task, type and suitability of different models for the 
 given task
-\item Development of new algorithms: design new baseline-algorithm and variations; justify design decisions based 
+\item Development of new algorithms: design new baseline algorithm and variations; justify design decisions based 
 on previous sections
-\item Evaluation: explain evaluation method; evaluate/compare baseline-algorithm and variations
+\item Evaluation: explain evaluation method; evaluate/compare baseline algorithm and variations
 \end{enumerate}
 The thesis will be written in parallel to the design and implementation of the solution. The first phase consists
-of research of related work and an analysis of the Wikidata taxonomy. In the second phase a baseline-algorithm
+of research of related work and an analysis of the Wikidata taxonomy. In the second phase a baseline algorithm
 and variations of it are designed and developed using the results of the previous phase. In the next phase
 test data is collected and the evaluation of the algorithms executed. The evaluation results will be 
 visualized and interpreted. Finally the summary, introduction, and conclusion of the thesis will be written
-and a presentation prepared.
-
-See the following Gantt chart for the time plan \ref{fig:timeplan}:
+and a presentation prepared.\\
+See Figure~\ref{fig:timeplan} for a Gantt chart of the time plan. 
 \begin{figure}
 \begin{ganttchart}[vgrid={*1{draw=black!20, line width=.75pt}}, x unit=0.05\textwidth]{1}{12}
 \gantttitle{Time plan for bachelor thesis (in weeks)}{12}\\
