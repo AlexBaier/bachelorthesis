@@ -108,7 +108,7 @@ and as shown in Section~\ref{section:relatedwork} neural networks seem to be app
 \section{Problem statement}\label{section:problemstatement}
 To define the problem following definitions are needed:
 \begin{definition}[Item]
-An entity is a tuple $(id, description)$:
+An item is a tuple $(id, description)$:
 	\begin{itemize}
 	\item $id \in \mathbb{N}$ is the numerical item ID;
 	\item $description=(label, aliases, summary, statements, wiki)$
@@ -130,18 +130,21 @@ A statement is a tuple (itemid, pid, value, refs, qualifiers):
 \item $qualifiers$ is a set of qualifiers, which further specifies the statement.
 \end{itemize}
 If the qualifiers and references are not needed, a statement can be shortened to a triple
-$(itemid, pid, value)$, similar to semantic triples in RDF.
-\end{definition}
+$(itemid, pid, value)$, similar to semantic triples in RDF.\\
 Because references and qualifiers are not used in the definition or solution of the problem, they will not
 be defined.
+\end{definition}
+A class in Wikidata is represented as an item. However for example \citeauthor{Doan2002} \cite{Doan2002}
+model classes as a set of its instances. This is also supported by a W3C recommendation \cite{w3cowl2004},
+which allows classes to be defined as an enumeration of instances.
 \begin{definition}[Class]
 \label{def:class}
-A class in Wikidata is technically an entity. But a class is also described by its instances, therefore a class
-can be represented as the tuple $(id, description, instances)$:
+A class can be represented as the tuple $(id, description, instances)$:
 	\begin{itemize}
 	\item $instances \in \mathcal{P}(\mathbb{N})$ is the set of numerical item IDs, which are instances of 
 	the class.
 	\end{itemize}
+$id$ and $description$ are identical to the definition of Item.
 \end{definition}
 \citeauthor{Wong2012} \cite{Wong2012} describes taxonomies as ''controlled vocabulary organized into a 
 hierarchical or parent-child structure''. Typically a hierarchical structure can be defined as a tree, but
@@ -467,7 +470,26 @@ See the following Gantt chart for the time plan \ref{fig:timeplan}:
 
 \listoffigures
 
-\nocite{*}
+
+\nocite{PetrucciGR16}
+\nocite{MikolovKBCK10}
+\nocite{pekar2002tl}
+\nocite{mikolov2013}
+\nocite{CaoLX16}
+\nocite{Sperduti1997}
+\nocite{Maedche2001}
+\nocite{dAmatoSTMG16}
+\nocite{Wong2012}
+\nocite{Zhang00neuralnetworks}
+\nocite{Arisoy2012}
+\nocite{Raghu2016}
+\nocite{Scarselli2009}
+\nocite{Niepert16}
+\nocite{Zhang2015}
+\nocite{Rodriguez2003}
+\nocite{Doan2002}
+\nocite{Weber2000}
+\nocite{w3cowl2004}
 
 \bibliographystyle{plainnat}
 \bibliography{bibliography}
