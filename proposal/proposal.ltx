@@ -51,14 +51,14 @@
 \maketitle
 
 \section{Motivation}
-Wikidata is an open, free, multilingual and collaborative knowledge base. It is as a structured knowledge source for other Wikimedia projects. It tries to model the real world, meaning every concept, object, animal, person,etc.. We
+Wikidata is an open, free, multilingual and collaborative knowledge base. It is a structured knowledge source for other Wikimedia projects. It tries to model the real world, meaning every concept, object, animal, person, etc.. We
 call these entities notorious entities. Wikidata is mostly edited and extended by humans, which in general
 improves the quality of entries compared to fully-automated systems, because different editors
 can validate and correct occurring errors.\\
 Most entities in Wikidata are items. Items consist of labels, aliases and descriptions in different languages. 
 Sitelinks connect items to their corresponding Wiki articles. Most importantly items are described by statements.
 Statements are in their simplest form a pair of property and value. They can be annotated with references and
-qualifiers. See figure~\ref{fig:item} for an example. \\
+qualifiers. See figure~\ref{fig:item}. \\
 \begin{figure}
 \centering
 \includegraphics[width=\textwidth]{images/item_example.png}
@@ -198,7 +198,7 @@ The problem solved by this thesis belongs to the step \textbf{refine}.\\
 \citeauthor{pekar2002tl} \cite{pekar2002tl} define algorithms for classification, which exploit the structure of
 taxonomies. Distributional and taxonomic similarity measures on nearest neighbors are used to make a 
 classification decision. These algorithms are applied on the classification of new words (instances) into thesauri. In 
-comparison the target of this thesis will be to improve the existing taxonomy. For this the closest generalizations
+comparison the aim of this thesis will be to improve the existing taxonomy. For this the closest generalizations
 of root classes have to be found. The algorithms used by \citeauthor{pekar2002tl} may prove 
 useful for the defined problem, if the root classes of Wikidata are parts of the bigger components in 
 the taxonomy graph, so that a taxonomic structure can be exploited.\\
@@ -206,10 +206,11 @@ the taxonomy graph, so that a taxonomic structure can be exploited.\\
 \citeauthor{PetrucciGR16} \cite{PetrucciGR16} describe a recurrent neural network model for ontology learning. 
 Using encyclopedic text as input OWL formulas are created. The authors argue that their
 model should be effective, because neural networks have shown success in natural language processing tasks.
-At this time the described model is under evaluation, so it is not shown that the model will generate good
-results. Different subtasks of ontology learning are solved by the paper and by
-the proposed thesis. Additionally the thesis will contain an evaluation of the created model and it can be shown
-if neural networks are a sensible method for ontology learning. \\
+At this time, an evaluation of the model has not been executed, therefore it has not been shown if the neural
+network model provides good results for ontology learning. \\
+Even though different subtasks of ontology learning are solved by the paper and by
+the proposed thesis, an evaluation of the thesis' solution can show 
+if neural networks are a sensible approach for ontology learning. \\
 
 \citeauthor{Doan2002} \cite{Doan2002} describe a system for ontology mapping called GLUE, which uses
 machine learning techniques.  Three probabilistic distribution-based similarity measures are defined.
@@ -225,11 +226,13 @@ specific, superclass/parent class for a given class. \\
 
 \citeauthor{Rodriguez2003} \cite{Rodriguez2003} describes different matching using semantic similarity
 between entity classes from different ontologies. The following three measures are shown.
-Word matching compares the number of common and different words in the synonym sets (aliases in Wikidata) of 
+\begin{itemize}
+\item Word matching compares the number of common and different words in the synonym sets (aliases in Wikidata) of 
 entity classes.
-Feature matching uses common and different characteristics between the entities of the classes.
-Information content defines the similarity as degree of informativeness of the immediate superconcept
-that subsumes the two concepts being compared.\\
+\item Feature matching uses common and different characteristics between the entities of the classes.
+\item Information content defines the similarity as degree of informativeness of the immediate superconcept
+that subsumes the two concepts being compared.
+\end{itemize}
 For the task of the thesis, word matching and feature matching are relevant, as Wikidata offers aliases for
 word matching, and it will be shown in Section~\ref{section:data} that classes in Wikidata have on average about 
 $5$ entities, which is relevant for feature matching.
@@ -241,7 +244,7 @@ deep neural network and recursive neuron
 network, which are able to encode graphs as vectors. It is proposed by both papers to use the generated
 vectors as input for classification methods. Because the networks are defined in such a way that
 semantic information of the graph is preserved to some degree, the vectors could be used for
-other task like measuring the similarity of classes based on their position in the taxonomy using for example
+other tasks like measuring the similarity of classes based on their position in the taxonomy using for example
 cosine similarity.\\
 
 \citeauthor{mikolov2013} \cite{mikolov2013} define two neural network models, Continuous Bag-of-Words (CBOW) 
@@ -328,7 +331,7 @@ subset of labeled root classes with instances, as proposed in Section~\ref{secti
 This will allow a more focused search and analysis in the following step. 
 
 \subsection{Comparison of neural networks}
-The literature about neural networks needs be researched. Different neural network models will
+The literature about neural networks needs to be researched. Different neural network models will
 be analyzed and compared, regarding input, output, task and performance. Furthermore
 the neural networks should be compared to other solutions for the same tasks, so
 the decision to use neural networks can be motivated.
@@ -364,7 +367,7 @@ The first approach should generate a better ground truth, and the application of
 on the unmodified taxonomy is a more realistic testing scenario than the second approach using
 a modified taxonomy. But the first approach also requires the participation of voluntary experts,
 which would require a high time investment, because the experts need to be found and motivated to participate
-in the task.\\
+in the ground truth creation.\\
 In comparison the second approach can be executed by a single person, because the ground truth already exists.
 For this approach the quality of the ground truth varies depending on the number of editors for
 the chosen classes. The number of edits of a class correlates directly to its quality,
