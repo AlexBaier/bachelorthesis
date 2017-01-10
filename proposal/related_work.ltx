@@ -224,6 +224,22 @@ the number of hidden layers. The training takes 3 days on an 8-core CPU machine.
 \subsection{Learning Convolutional Neural Networks for Graphs}
 \cite{Niepert16}
 
+
+\section{Word embeddings}
+
+\subsection{Improving Distributional Similarity with Lessons Learned from Word Embeddings}
+\citeauthor{Levy2015} \cite{Levy2015} analyze 4 different models for word embeddings. The ''predictive'' 
+word embedding models,
+Skip-Grams with Negative Sampling (SGNS) and Global Vectors (GloVe), are analyzed and compared to ''count-based'' 
+models. It is shown that the quality of
+results has a higher correlation to the correct choice of hyper-parameters than the choice of algorithm.
+The important hyper-parameters are introduced. Evaluation shows the most beneficial configurations for
+the models. SGNS is recommended, because it is faster and more memory efficient than the other methods
+and produces generally good results. 
+
+\subsection{GloVe: Global Vectors for Word Representation}
+\citeauthor {pennington2014} \cite{pennington2014} introduce Global Vectors (GloVe) a word embedding model.
+
 \bibliographystyle{plainnat}
 \bibliography{bibliography}
 

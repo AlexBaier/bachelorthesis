@@ -87,7 +87,7 @@ A root class in a taxonomy is a class, which has no more generalizations.
 Root classes should therefore describe the most basic concepts. 
 According to this view, we would assume that a good taxonomy has only very few, possibly only one root class.
 The last remaining root class in Wikidata should be \textit{entity (Q35120)}.\\
-At the current state (2016-11-07) Wikidata contains 7142 root classes, of which 5332 have an English label.
+At the current state (2016-11-07) Wikidata contains 16148 root classes, of which 13624 have an English label.
 There are many root classes for which we easily can find generalizations.
 Consider for example \textit{reversal film (Q166816)} in the taxonomy fragment of Figure~\ref{fig:taxonomy}.
 We can see that the class only has one subclass and is otherwise isolated in the taxonomy. 
@@ -262,10 +262,10 @@ Wikidata does not inherently differ between entities and classes. Therefore it i
 classes and root classes can be identified in Wikidata. In Wikidata an entity is a class, if it has instances or has subclasses or is a subclass.
 A root class is a class, which is not the subclass of any other class.
 It has to be noted that the results of this definition may not be completely accurate,
-because Wikidata does not enforce how the $instance of (P31)$ and $subclass of (P279)$ are to be used.
+because Wikidata does not enforce how the \textit{instance of (P31)} and \textit{subclass of (P279)} are to be used.
 However Wikidata is constantly curated by editors and the number of misused properties should be low, therefore 
 we can assume that the percentage of misidentified classes is also low.\\
-The taxonomy of Wikidata, containing $1299276$ classes, was analyzed. The following statistics about root
+The taxonomy of Wikidata (2016-11-07), containing $1299276$ classes, was analyzed. The following statistics about root
 classes were acquired:
 \begin{itemize}
 \item $16148$ root classes
@@ -355,9 +355,10 @@ Two different approaches for evaluation are proposed.
 For both approaches a ground truth for testing needs to be created, 
 which consists of pairs of root classes and their correct superclasses. \\
 In the first approach, the ground truth
-will be created by group of experts via for example crowdsourcing. 
+will be created by group of experts. 
 In this case the subset of used root classes will be taken from the set of root classes in the current taxonomy.\\
- In the second case, the ground truth will be automatically generated. It can be assumed,
+ In the second case, the current status of Wikidata will be used as ground truth. 
+A set of classes will be chosen by the author. For these classes, it can be assumed,
 that the subclass relations in the current taxonomy are valid. Therefore for a set of non-root classes in
 the taxonomy the subclass relation to their superclasses will be removed, and the removed relation
 used as ground truth. The modified taxonomy will be used in the algorithms. \\
