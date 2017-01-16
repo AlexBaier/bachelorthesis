@@ -1,7 +1,7 @@
 % !TEX TS-program = pdflatex
 % !TEX encoding = UTF-8 Unicode
 
-\documentclass[11pt]{scrartcl} % use larger type; default would be 10pt
+\documentclass{scrartcl} % use larger type; default would be 10pt
 
 \usepackage[utf8]{inputenc} % set input encoding (not needed with XeLaTeX)
 
@@ -30,11 +30,6 @@
 \usepackage[numbers]{natbib} % for citeauthor
 
 
-\theoremstyle{definition}
-\newtheorem{definition}{Definition}
-\newtheorem*{problem}{Problem}
-
-
 \title{Outline}
 \author{Alex Baier \\ abaier@uni-koblenz.de}
 
@@ -42,82 +37,95 @@
 \begin{document}
 \maketitle
 
-\tableofcontents
-
 \section{Introduction}
+Motivation. Related work. Solution. Evaluation.
 
 \section{Foundations}
 
 \subsection{Wikidata}
 
 \subsection{Taxonomy}
-
-\subsubsection{Ontology}
-\subsubsection{Directed graph}
-\subsubsection{Walks and paths}
-\subsubsection{Cycles}
-\subsubsection{Acyclic graph}
-\subsubsection{Class}
-\subsubsection{Statement}
-\subsubsection{Taxonomy}
-\subsubsection{Subclass-of relation}
+\begin{itemize}
+\item Ontology\\
+	\citeauthor{Cimiano2009} \cite{Cimiano2009}
+\item Taxonomy\\
+	\citeauthor{Cimiano2009} \cite{Cimiano2009}
+\item Connected taxonomy (maybe: consistent taxonomy)
+\item Root class
+\item Unlinked class
+\item Problem statement
+\end{itemize}
 
 \subsection{Similarity}
+\begin{itemize}
+\item semantic similarity e.g. distributional similarity \\
+	\citeauthor{Lin1998} \cite{Lin1998} \\
+	\citeauthor{Rodriguez2003} \cite{Rodriguez2003}
+\item geometrical similarity e.g. distance based-similarity, cosine similarity
+\end{itemize}
 
-\subsubsection{Notion}
-\subsubsection{Semantic similarity}
-\subsubsection{Vector similarity}
-
-\subsection{Neural networks}
+\subsection{Similarity-based classification}
+\citeauthor{Chen2009} \cite{Chen2009}\\
+\citeauthor{Zhang2015} \cite{Zhang2015}
 
 \subsection{Text processing}
+\begin{itemize}
+\item N-Gram \\
+	\citeauthor{Jurafsky2014} \cite{Jurafsky2014}
+\item Skip-Gram \\
+	\citeauthor{Guthrie2006} \cite{Guthrie2006}
+\item Counting-based word representations \\ 
+	\citeauthor{Levy2015} \cite{Levy2015}
+\item Predictive word representations \\
+	\citeauthor{Levy2015} \cite{Levy2015}
+\end{itemize}
 
-\subsubsection{Bag-of-words}
-\subsubsection{N-gram}
-\subsubsection{Skip-gram}
-\subsubsection{Count-based word embeddings}
-\subsubsection{Predictive word embeddings}
+\section{Ontology learning}
+General concepts. Classification of considered problem in the task of ontology learning. Related work.\\
+\citeauthor{Cimiano2009} \cite{Cimiano2009}\\
+\citeauthor{Wong2012} \cite{Wong2012}\\
+\citeauthor{dAmato16} \cite{dAmato16}\\
+\citeauthor{Petrucci16} \cite{Petrucci16}
 
-\section{Comparison of neural networks}
+\section{Neural networks}
+Notion of neural networks will be introduced.
 
-\subsection{Neural network language models}
-\subsubsection{Continuous Bag-of-Words}
-\subsubsection{Skip-gram with negative sampling}
-\subsubsection{?GloVe?}
+\subsection{Recursive neural networks for graph representation}
+\citeauthor{Scarselli2009} \cite{Scarselli2009}
+\subsection{Deep neural networks for graph representation}
+\citeauthor{Cao2016} \cite{Cao2016} \\
+\citeauthor{Raghu2016} \cite{Raghu2016}
+\subsection{Continuous Bag-of-Words}
+\citeauthor{Mikolov2013} \cite{Mikolov2013}
+\subsection{Skip-gram with negative sampling}
+\citeauthor{Mikolov2013} \cite{Mikolov2013}\\
+\citeauthor{Levy2015} \cite{Levy2015}\\
+\citeauthor{Goldberg14} \cite{Goldberg14}
 
-\subsection{Neural networks for graph representations}
-\subsubsection{Recursive neural networks}
-\subsubsection{Deep neural networks}
+\subsection{Comparison}
 
 \section{Algorithm}
 
-\subsection{Baseline algorithm}
+\subsection{Baseline}
+\begin{itemize}
+\item Hyper parameters
+\item Training data
+\end{itemize}
 
-\subsection{Skip-gram model}
-
-\subsubsection{Hyper-parameters}
-\subsubsection{Training}
-
-
-\subsection{k-nearest-neighbors}
-
-\subsubsection{Similarity measure}
-\subsubsection{Inclusion of taxonomy}
-
-\subsection{Variations of baseline algorithm}
+\subsection{Supplementing with other resources}
+e.g. Wikipedia
 
 \section{Evaluation}
 
-\subsection{Generation of ground truth}
+\subsection{Method}
+\citeauthor{Dellschaft2006} \cite{Dellschaft2006}
 
-\subsection{Method used}
+\subsection{Generation of gold standard}
 
 \subsection{Results}
 
-\section{Conclusion}
-
 \bibliographystyle{plainnat}
-\bibliography{bibliography}
+\bibliography{/home/alex/PycharmProjects/thesis/thesis/bibliography}
 
 
 \end{document}

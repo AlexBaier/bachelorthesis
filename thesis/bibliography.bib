@@ -1,42 +1,5 @@
-@article{PetrucciGR16,
-  author    = {Giulio Petrucci and
-               Chiara Ghidini and
-               Marco Rospocher},
-  title     = {Using Recurrent Neural Network for Learning Expressive Ontologies},
-  journal   = {CoRR},
-  volume    = {abs/1607.04110},
-  year      = {2016},
-  url       = {http://arxiv.org/abs/1607.04110},
-  timestamp = {Tue, 02 Aug 2016 12:59:27 +0200},
-  biburl    = {http://dblp.uni-trier.de/rec/bib/journals/corr/PetrucciGR16},
-  bibsource = {dblp computer science bibliography, http://dblp.org}
-}
-@inproceedings{MikolovKBCK10,
-  author    = {Tomas Mikolov and
-               Martin Karafi{\'{a}}t and
-               Luk{\'{a}}s Burget and
-               Jan Cernock{\'{y}} and
-               Sanjeev Khudanpur},
-  title     = {Recurrent neural network based language model},
-  booktitle = {{INTERSPEECH} 2010, 11th Annual Conference of the International Speech
-               Communication Association, Makuhari, Chiba, Japan, September 26-30,
-               2010},
-  pages     = {1045--1048},
-  year      = {2010},
-  url       = {http://www.isca-speech.org/archive/interspeech_2010/i10_1045.html},
-  timestamp = {Thu, 09 Apr 2015 14:27:21 +0200},
-  biburl    = {http://dblp.uni-trier.de/rec/bib/conf/interspeech/MikolovKBCK10},
-  bibsource = {dblp computer science bibliography, http://dblp.org}
-}
-@Inproceedings{pekar2002tl,
-	booktitle = {Proceedings of the 19th Conference on Computational Linguistics, COLING-2002, August 24 - September 1, 2002 , Taipei, Taiwan, 2002},
-	title = {Taxonomy Learning - Factoring the structure of a taxonomy into a semantic classification decision},
-	year = {2002},
-	type = {Inproceedings},
-	author = {Viktor Pekar and Steffen Staab},
-	evastar_pdf = {2002_34_Pekar_Taxonomy_Learni_1.pdf}
-}
-@article{abs-1301-3781,
+% Word embeddings main paper
+@article{Mikolov2013,
   author    = {Tomas Mikolov and
                Kai Chen and
                Greg Corrado and
@@ -50,7 +13,45 @@
   biburl    = {http://dblp.uni-trier.de/rec/bib/journals/corr/abs-1301-3781},
   bibsource = {dblp computer science bibliography, http://dblp.org}
 }
-@inproceedings{CaoLX16,
+% Hyper-parameters for different word embeddings
+@article{Levy2015,
+	author = {Levy, Omer  and Goldberg, Yoav  and Dagan, Ido },
+	title = {Improving Distributional Similarity with Lessons Learned from Word Embeddings},
+	journal = {Transactions of the Association for Computational Linguistics},
+	volume = {3},
+	year = {2015},
+	keywords = {},
+	abstract = {Recent trends suggest that neural-network-inspired word embedding models outperform traditional count-based distributional models on word similarity and analogy detection tasks. We reveal that much of the performance gains of word embeddings are due to certain system design choices and hyperparameter optimizations, rather than the embedding algorithms themselves. Furthermore, we show that these modifications can be transferred to traditional distributional models, yielding similar gains. In contrast to prior reports, we observe mostly local or insignificant performance differences between the methods, with no global advantage to any single approach over the others.},
+	issn = {2307-387X},
+	url = {https://transacl.org/ojs/index.php/tacl/article/view/570},
+	pages = {211--225}
+}
+% explanation for skip-gram model
+@article{Goldberg14,
+  author    = {Yoav Goldberg and
+               Omer Levy},
+  title     = {word2vec Explained: deriving Mikolov et al.'s negative-sampling word-embedding
+               method},
+  journal   = {CoRR},
+  volume    = {abs/1402.3722},
+  year      = {2014},
+  url       = {http://arxiv.org/abs/1402.3722},
+  timestamp = {Wed, 05 Mar 2014 14:43:44 +0100},
+  biburl    = {http://dblp.uni-trier.de/rec/bib/journals/corr/GoldbergL14},
+  bibsource = {dblp computer science bibliography, http://dblp.org}
+}
+% more on Skip-gram modeling
+@inproceedings{Guthrie2006,
+  address = {Genoa, Italy},
+  author = {Guthrie, David and Allison, Ben and Liu, W. and Guthrie, Louise and Wilks, Yorick},
+  booktitle = {Proceedings of the Fifth international Conference on Language Resources and Evaluation (LREC-2006)},
+  interhash = {7bed3d3ef712b3ddbe0e3ec5795135b2},
+  intrahash = {da23a4932aeebf077c236f9bf65d0298},
+  title = {A Closer Look at Skip-gram Modelling},
+  year = 2006
+}
+% deep neural network for graph representation
+@inproceedings{Cao2016,
   added-at = {2016-04-21T00:00:00.000+0200},
   author = {Cao, Shaosheng and Lu, Wei and Xu, Qiongkai},
   biburl = {http://www.bibsonomy.org/bibtex/2fe0553a0f56deb89f08675922c74c693/dblp},
@@ -64,60 +65,63 @@
   publisher = {AAAI Press},
   timestamp = {2016-04-22T11:37:42.000+0200},
   title = {Deep Neural Networks for Learning Graph Representations.},
-  url = {http://dblp.uni-trier.de/db/conf/aaai/aaai2016.html#CaoLX16},
+  url = {http://dblp.uni-trier.de/db/conf/aaai/aaai2016.html\#CaoLX16},
   year = 2016
 }
-@Inbook{Maedche2003,
-author="Maedche, Alexander
-and Pekar, Viktor
-and Staab, Steffen",
-editor="Zhong, Ning
-and Liu, Jiming
-and Yao, Yiyu",
-title="Ontology Learning Part One --- on Discovering Taxonomic Relations from the Web",
-bookTitle="Web Intelligence",
-year="2003",
-publisher="Springer Berlin Heidelberg",
-address="Berlin, Heidelberg",
-pages="301--319",
-isbn="978-3-662-05320-1",
-doi="10.1007/978-3-662-05320-1_14",
-url="http://dx.doi.org/10.1007/978-3-662-05320-1_14"
+% deep neural networks
+@ARTICLE{Raghu2016,
+   author = {{Raghu}, M. and {Poole}, B. and {Kleinberg}, J. and {Ganguli}, S. and 
+	{Sohl-Dickstein}, J.},
+    title = "{On the expressive power of deep neural networks}",
+  journal = {ArXiv e-prints},
+archivePrefix = "arXiv",
+   eprint = {1606.05336},
+ primaryClass = "stat.ML",
+ keywords = {Statistics - Machine Learning, Computer Science - Artificial Intelligence, Computer Science - Learning},
+     year = 2016,
+    month = jun,
+   adsurl = {http://adsabs.harvard.edu/abs/2016arXiv160605336R},
+  adsnote = {Provided by the SAO/NASA Astrophysics Data System}
 }
-@article{Sperduti1997,
-author = {Sperduti, Alessandro and Starita, Antonina},
-doi = {10.1109/72.572108},
-issn = {10459227},
+% recursive neural network
+@article{Scarselli2009,
+author = {Scarselli, F. and Gori, M. and {Ah Chung Tsoi} and Hagenbuchner, M. and Monfardini, G.},
+doi = {10.1109/TNN.2008.2005605},
+issn = {1045-9227},
 journal = {IEEE Transactions on Neural Networks},
-keywords = {Classification of graphs,Gradient methods,Graph theory,Learning systems,Recurrent neural networks,Structured domains,Supervised classification},
-month = {may},
-number = {3},
-pages = {714--735},
-pmid = {18255672},
-title = {{Supervised neural networks for the classification of structures}},
-url = {http://ieeexplore.ieee.org/document/572108/},
-volume = {8},
-year = {1997}
+month = {jan},
+number = {1},
+pages = {61--80},
+title = {{The Graph Neural Network Model}},
+url = {http://ieeexplore.ieee.org/document/4700287/},
+volume = {20},
+year = {2009}
 }
-@article{Maedche2001,
- author = {Maedche, Alexander and Staab, Steffen},
- title = {Ontology Learning for the Semantic Web},
- journal = {IEEE Intelligent Systems},
- issue_date = {March 2001},
- volume = {16},
- number = {2},
- month = mar,
- year = {2001},
- issn = {1541-1672},
- pages = {72--79},
- numpages = {8},
- url = {http://dx.doi.org/10.1109/5254.920602},
- doi = {10.1109/5254.920602},
- acmid = {630627},
- publisher = {IEEE Educational Activities Department},
- address = {Piscataway, NJ, USA},
-} 
-@inproceedings{dAmatoSTMG16,
+% intro to ontology learning
+@incollection{Cimiano2009,
+  abstract = {Ontology learning techniques serve the purpose of supporting an ontology
+engineer in the task of creating and maintaining an ontology. In this chapter, we present a comprehensive and concise introduction to the field of ontology learning.
+We present a generic architecture for ontology learning systems and discuss its main components. In addition, we introduce the main problems and challenges addressed in the field and give an overview of the most important methods applied. We conclude with a brief discussion of advanced issues which pose interesting challenges to the state-of-the-art.},
+  added-at = {2011-01-17T10:16:48.000+0100},
+  author = {Cimiano, P. and Mädche, A. and Staab, S. and Völker, J.},
+  biburl = {https://www.bibsonomy.org/bibtex/2f9f8bb0af1a8a514c270f83237313ac7/hotho},
+  booktitle = {Handbook on Ontologies},
+  description = {DOI 10.1007/978-3-540-92673-3},
+  edition = {2nd revised edition},
+  editor = {Staab, S. and Studer, R.},
+  interhash = {5387f28040285a086ab706bc33e7d7af},
+  intrahash = {f9f8bb0af1a8a514c270f83237313ac7},
+  keywords = {learning ontology},
+  pages = {245--267},
+  publisher = {Springer},
+  series = {International Handbooks on Information Systems},
+  timestamp = {2011-01-17T10:16:49.000+0100},
+  title = {Ontology Learning},
+  url = {http://www.uni-koblenz.de/~staab/Research/Publications/2009/handbookEdition2/ontology-learning-handbook2.pdf},
+  year = 2009
+}
+% ontology learning related work
+@inproceedings{dAmato16,
   added-at = {2016-06-06T00:00:00.000+0200},
   author = {d'Amato, Claudia and Staab, Steffen and Tettamanzi, Andrea G. B. and Minh, Tran Duc and Gandon, Fabien L.},
   biburl = {https://www.bibsonomy.org/bibtex/2383bd3c8b3d0a42649eaa145d4ada382/dblp},
@@ -132,9 +136,10 @@ year = {1997}
   publisher = {ACM},
   timestamp = {2016-06-07T11:38:58.000+0200},
   title = {Ontology enrichment by discovering multi-relational association rules from ontological knowledge bases.},
-  url = {http://dblp.uni-trier.de/db/conf/sac/sac2016.html#dAmatoSTMG16},
+  url = {http://dblp.uni-trier.de/db/conf/sac/sac2016.html\#dAmatoSTMG16},
   year = 2016
 }
+% ontology learning from text
 @article{Wong2012,
  author = {Wong, Wilson and Liu, Wei and Bennamoun, Mohammed},
  title = {Ontology Learning from Text: A Look Back and into the Future},
@@ -154,68 +159,109 @@ year = {1997}
  publisher = {ACM},
  address = {New York, NY, USA},
  keywords = {Ontology learning, application of ontologies, concept discovery, semantic relation acquisition, term recognition},
-} 
-@online{WikidataStats,
-	title={Wikidata Statistics},
-	url={\url{https://tools.wmflabs.org/wikidata-todo/stats.php}},
-	note={\url{https://tools.wmflabs.org/wikidata-todo/stats.php}},
-           urldate={2016-11-21}
 }
-@online{WikidataGame,
-	title={Wikidata Game},
-	url={\url{https://tools.wmflabs.org/wikidata-game/}},
-	note={\url{https://tools.wmflabs.org/wikidata-game/}},
-	urldate={2016-11-21}
-}
-@online{sergestratan,
-	author={Serge Stratan},
-	title={Wikidata Taxonomy Browser (beta)},
-	url={\url{http://sergestratan.bitbucket.org/}},
-	note={\url{http://sergestratan.bitbucket.org/}},
-	urldate={2016-11-27}
-}
-@INPROCEEDINGS{Zhang00neuralnetworks,
-    author = {Guoqiang Peter Zhang},
-    title = {Neural networks for classification: a survey},
-    booktitle = {and Cybernetics - Part C: Applications and Reviews},
-    year = {2000}
-}
-@article{KalchbrennerGB14,
-  author    = {Nal Kalchbrenner and
-               Edward Grefenstette and
-               Phil Blunsom},
-  title     = {A Convolutional Neural Network for Modelling Sentences},
+% neural network for ontology learning
+@article{Petrucci16,
+  author    = {Giulio Petrucci and
+               Chiara Ghidini and
+               Marco Rospocher},
+  title     = {Using Recurrent Neural Network for Learning Expressive Ontologies},
   journal   = {CoRR},
-  volume    = {abs/1404.2188},
-  year      = {2014},
-  url       = {http://arxiv.org/abs/1404.2188},
-  timestamp = {Thu, 01 May 2014 14:56:20 +0200},
-  biburl    = {http://dblp.uni-trier.de/rec/bib/journals/corr/KalchbrennerGB14}
+  volume    = {abs/1607.04110},
+  year      = {2016},
+  url       = {http://arxiv.org/abs/1607.04110},
+  timestamp = {Tue, 02 Aug 2016 12:59:27 +0200},
+  biburl    = {http://dblp.uni-trier.de/rec/bib/journals/corr/PetrucciGR16},
+  bibsource = {dblp computer science bibliography, http://dblp.org}
 }
-@article{GregorDGW15,
-  author    = {Karol Gregor and
-               Ivo Danihelka and
-               Alex Graves and
-               Daan Wierstra},
-  title     = {{DRAW:} {A} Recurrent Neural Network For Image Generation},
-  journal   = {CoRR},
-  volume    = {abs/1502.04623},
-  year      = {2015},
-  url       = {http://arxiv.org/abs/1502.04623},
-  timestamp = {Mon, 02 Mar 2015 14:17:34 +0100},
-  biburl    = {http://dblp.uni-trier.de/rec/bib/journals/corr/GregorDGW15},
-}
-@inproceedings{Arisoy:2012:DNN:2390940.2390943,
- author = {Arisoy, Ebru and Sainath, Tara N. and Kingsbury, Brian and Ramabhadran, Bhuvana},
- title = {Deep Neural Network Language Models},
- booktitle = {Proceedings of the NAACL-HLT 2012 Workshop: Will We Ever Really Replace the N-gram Model? On the Future of Language Modeling for HLT},
- series = {WLM '12},
- year = {2012},
- location = {Montreal, Canada},
- pages = {20--28},
+% similarity (semantic)
+@inproceedings{Lin1998,
+ author = {Lin, Dekang},
+ title = {An Information-Theoretic Definition of Similarity},
+ booktitle = {Proceedings of the Fifteenth International Conference on Machine Learning},
+ series = {ICML '98},
+ year = {1998},
+ isbn = {1-55860-556-8},
+ pages = {296--304},
  numpages = {9},
- url = {http://dl.acm.org/citation.cfm?id=2390940.2390943},
- acmid = {2390943},
- publisher = {Association for Computational Linguistics},
- address = {Stroudsburg, PA, USA},
+ url = {http://dl.acm.org/citation.cfm?id=645527.657297},
+ acmid = {657297},
+ publisher = {Morgan Kaufmann Publishers Inc.},
+ address = {San Francisco, CA, USA},
+}
+% ontology mapping, similarity
+@article{Rodriguez2003,
+ author = {Rodr\'{\i}guez, M. Andrea and Egenhofer, Max J.},
+ title = {Determining Semantic Similarity Among Entity Classes from Different Ontologies},
+ journal = {IEEE Trans. on Knowl. and Data Eng.},
+ issue_date = {February 2003},
+ volume = {15},
+ number = {2},
+ month = feb,
+ year = {2003},
+ issn = {1041-4347},
+ pages = {442--456},
+ numpages = {15},
+ url = {http://dx.doi.org/10.1109/TKDE.2003.1185844},
+ doi = {10.1109/TKDE.2003.1185844},
+ acmid = {642948},
+ publisher = {IEEE Educational Activities Department},
+ address = {Piscataway, NJ, USA},
+ keywords = {Semantic similarity, ontology integration, information integration, semantic interoperability, semantic matching.},
 } 
+% multi-label kNN
+@inproceedings{Zhang2015,
+    author = {Zhang, Min-Ling and Zhou, Zhi-Hua},
+    citeulike-article-id = {1164920},
+    citeulike-linkout-0 = {http://ieeexplore.ieee.org/xpls/abs\_all.jsp?arnumber=1547385},
+    journal = {IEEE International Conference on Granular Computing},
+    organization = {The IEEE Computational Intelligence Society},
+    pages = {718--721 Vol. 2},
+    posted-at = {2011-03-21 06:26:51},
+    priority = {2},
+    title = {{A k-Nearest Neighbor Based Algorithm for Multi-label Classification}},
+    url = {http://ieeexplore.ieee.org/xpls/abs\_all.jsp?arnumber=1547385},
+    volume = {2},
+    year = {2005}
+}
+% similarity-based classification
+@article{Chen2009,
+ author = {Chen, Yihua and Garcia, Eric K. and Gupta, Maya R. and Rahimi, Ali and Cazzanti, Luca},
+ title = {Similarity-based Classification: Concepts and Algorithms},
+ journal = {J. Mach. Learn. Res.},
+ issue_date = {12/1/2009},
+ volume = {10},
+ month = jun,
+ year = {2009},
+ issn = {1532-4435},
+ pages = {747--776},
+ numpages = {30},
+ url = {http://dl.acm.org/citation.cfm?id=1577069.1577096},
+ acmid = {1577096},
+ publisher = {JMLR.org},
+} 
+% evaluation
+@inproceedings{Dellschaft2006,
+ author = {Dellschaft, Klaas and Staab, Steffen},
+ title = {On How to Perform a Gold Standard Based Evaluation of Ontology Learning},
+ booktitle = {Proceedings of the 5th International Conference on The Semantic Web},
+ series = {ISWC'06},
+ year = {2006},
+ isbn = {3-540-49029-9, 978-3-540-49029-6},
+ location = {Athens, GA},
+ pages = {228--241},
+ numpages = {14},
+ url = {http://dx.doi.org/10.1007/11926078_17},
+ doi = {10.1007/11926078_17},
+ acmid = {2127063},
+ publisher = {Springer-Verlag},
+ address = {Berlin, Heidelberg},
+}
+% about n-grams
+@incollection{Jurafsky2014,
+author = {Jurafsky, Daniel and Martin, James H.},
+booktitle = {Speech and Language Processing},
+chapter = {N-Grams},
+title = {{N-Grams}},
+year = {2014}
+}
