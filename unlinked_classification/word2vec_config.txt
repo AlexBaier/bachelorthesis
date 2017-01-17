@@ -3,7 +3,6 @@ sg=1                # use skip-gram
 size=300            # dimensionality of feature vector
 window=2            # size of context window
 alpha=0.025         # initial learning rate, currently default
-seed=1              # seed for rng, currently default
 min_count=2         # ignore words with lower frequency
 max_vocab_size=None # limit vocabulary size, no limit
 sample=1e-5         # treshold for which higher-frequency words are downsampled, Levy et al.
