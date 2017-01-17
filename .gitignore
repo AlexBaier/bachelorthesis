@@ -16,6 +16,9 @@ data_analysis/output/reduced_classes
 data_analysis/output/root_classes
 data_analysis/output/root_class_characteristics
 
+# algorithm out- and input
+algorithm/data/*
+
 # tex files
 *.aux
 *.bbl

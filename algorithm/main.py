@@ -1,4 +1,5 @@
 import logging
+import time
 
 import gensim
 
@@ -39,6 +40,7 @@ class SpecificWordTrim(object):
 
 
 def main():
+    start_time = time.strftime("%Y%m%d-%H%M%S")
     sentences = WikidataSentences('text.txt', 3)
     class_ids = list()
     rule = SpecificWordTrim(include=class_ids, exclude=list()).get_rule()
@@ -60,8 +62,15 @@ def main():
     logging.log(level=logging.INFO, msg='Completed training model.')
     model.delete_temporary_training_data(replace_word_vectors_with_normalized=True)
     logging.log(level=logging.INFO, msg='Attempting to store model.')
-    model.save('gensim_model')
-
+    model.save('data/standard_model_' + start_time)
+    logging.log(level=logging.INFO, msg='Attempt generating similarity matrix.')
+    with open('data/standard_similarity_matrix_' + start_time + '.csv', mode='w') as f:
+        f.write(','.join(class_ids) + '\n')
+        for c1 in class_ids:
+            c1_sim = list()
+            for c2 in class_ids:
+                c1_sim.append(model.similarity(c1, c2))
+            f.write(','.join(c1_sim) + '\n')
 
 if __name__ == '__main__':
     main()
