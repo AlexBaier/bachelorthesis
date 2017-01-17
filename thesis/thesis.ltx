@@ -5,7 +5,7 @@
 
 \author{Alex Baier}
 
-\title{Refining the taxonomy of Wikidata with neural networks}
+\title{Enrichment of ontological taxonomies using a neural network approach}
 
 \degreecourse{Informatik}
 
@@ -35,26 +35,100 @@
 \pagenumbering{arabic}
 
 \section{Introduction}
+Motivation. Related work. Solution. Evaluation.
 
 \section{Foundations}
-\import{./}{foundations.ltx}
 
-\section{Analysis of Wikidata's taxonomy}
+\subsection{Wikidata}
+\fullcite{Galarraga2016}
 
-\section{Analysis and comparison of neural networks}
+\subsection{Taxonomy}
+\begin{itemize}
+\item Ontology\\
+	\fullcite{Cimiano2009}\\
+	Galarraga2016
+\item Taxonomy\\
+	\fullcite{Cimiano2009}\\
+	Galarraga2016
+\item Connected taxonomy (maybe: consistent taxonomy)
+\item Root class
+\item Unlinked class
+\item Problem statement
+\end{itemize}
 
-\section{Architecture of neural network}
+\subsection{Similarity}
+\begin{itemize}
+\item semantic similarity e.g. distributional similarity \\
+	\fullcite{Lin1998} \\
+	\fullcite{Rodriguez2003}
+\item geometrical similarity e.g. distance based-similarity, cosine similarity
+\end{itemize}
 
-\section{Implementation}
-\subsection{Collection of training data}
-\subsection{Implementation of network}
-\subsection{Training}
+\subsection{Similarity-based classification}
+\fullcite{Chen2009}\\
+\fullcite{Zhang2015}
+
+\subsection{Text processing}
+\begin{itemize}
+\item N-Gram \\
+	\fullcite{Jurafsky2014}
+\item Skip-Gram \\
+	\fullcite{Guthrie2006}
+\item Counting-based word representations \\ 
+	\fullcite{Levy2015}
+\item Predictive word representations \\
+	\fullcite{Levy2015}
+\end{itemize}
+
+\section{Ontology learning}
+General concepts. Classification of considered problem in the task of ontology learning. Related work.\\
+\fullcite{Cimiano2009}\\
+\fullcite{Wong2012}\\
+\fullcite{dAmato16}\\
+\fullcite{Petrucci16}\\
+\fullcite{Fu2014}
+
+\section{Neural networks}
+Notion of neural networks will be introduced.
+
+\subsection{Recursive neural networks for graph representation}
+\fullcite{Scarselli2009}
+\subsection{Deep neural networks for graph representation}
+\fullcite{Cao2016} \\
+\fullcite{Raghu2016}
+\subsection{Continuous Bag-of-Words}
+\fullcite{Mikolov2013}
+\subsection{Skip-gram with negative sampling}
+\fullcite{Mikolov2013}\\
+\fullcite{Levy2015}\\
+\fullcite{Goldberg14}
+
+\subsection{Comparison}
+
+\section{Algorithm}
+
+\subsection{Baseline}
+\begin{itemize}
+\item Hyper parameters
+\item Training data
+\end{itemize}
+
+\subsection{Supplementing with other resources}
+e.g. Wikipedia
 
 \section{Evaluation}
-\subsection{Execution on all root classes}
-\subsection{Survey with Wikidata community}
+
+\subsection{Method}
+\citeauthor{Dellschaft2006} \cite{Dellschaft2006}
+
+\subsection{Generation of gold standard}
+
+\subsection{Results}
+
+\import{./}{foundations.ltx}
+
 
 \nocite{*}
-\bibliographystyle{plain}
+\bibliographystyle{plainnat}
 \bibliography{bibliography}
 \end{document}

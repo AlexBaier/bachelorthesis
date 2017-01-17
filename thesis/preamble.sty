@@ -17,13 +17,10 @@
 \usepackage{color}%colors
 \usepackage{ulem}
 \usepackage{hyperref}
+\usepackage[numbers]{natbib} % for citeauthor
 
-\newcounter{ToDoId}
-\newcommand{\TODO}[1]{\stepcounter{ToDoId}\textcolor{red}{\textbf{TODO \theToDoId: #1}}}
-
-\newcommand{\subclassof}{
-\ensuremath{\vartriangleleft_{subclass}}
-}
+% fullcite/1: cite both author and numeric code of reference
+\newcommand{\fullcite}[1]{\citeauthor{#1} \cite{#1}}
 
 \theoremstyle{definition}
 \newtheorem{definition}{Definition}
