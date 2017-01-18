@@ -3,6 +3,8 @@ import time
 
 import gensim
 
+import data_analysis.utils as utils
+
 logging.basicConfig(format='%(asctime)s : %(levelname)s : %(message)s', level=logging.INFO)
 
 
@@ -41,8 +43,9 @@ class SpecificWordTrim(object):
 
 def main():
     start_time = time.strftime("%Y%m%d-%H%M%S")
-    sentences = WikidataSentences('text.txt', 3)
-    class_ids = list()
+    sentences = WikidataSentences('algorithm/data/text.txt', 3)
+    class_ids = list(map(lambda j: j['id'], utils.get_json_dicts('/home/alex/PycharmProjects/thesis/data_analysis/output/reduced_classes')))
+    logging.log(level=logging.INFO, msg='number of classes: {}'.format(len(class_ids)))
     rule = SpecificWordTrim(include=class_ids, exclude=list()).get_rule()
     # Configuration partially based on Levy2015.
     model = gensim.models.Word2Vec(
@@ -52,7 +55,7 @@ def main():
         window=2,               # context window
         alpha=0.025,            # initial learning rate
         min_count=2,            # minimum number of word occurrences
-        max_vocab_size=4e6,     # limited vocabulary size => approx 5GB memory usage
+        max_vocab_size=3e6,     # limited vocabulary size => approx 5GB memory usage
         sample=1e-05,           # threshold for down-sampling higher-frequency words
         hs=0,                   # use downsampling
         negative=20,            # noise words, try 20
@@ -62,15 +65,7 @@ def main():
     logging.log(level=logging.INFO, msg='Completed training model.')
     model.delete_temporary_training_data(replace_word_vectors_with_normalized=True)
     logging.log(level=logging.INFO, msg='Attempting to store model.')
-    model.save('data/standard_model_' + start_time)
-    logging.log(level=logging.INFO, msg='Attempt generating similarity matrix.')
-    with open('data/standard_similarity_matrix_' + start_time + '.csv', mode='w') as f:
-        f.write(','.join(class_ids) + '\n')
-        for c1 in class_ids:
-            c1_sim = list()
-            for c2 in class_ids:
-                c1_sim.append(model.similarity(c1, c2))
-            f.write(','.join(c1_sim) + '\n')
+    model.save('algorithm/data/standard_model_' + start_time)
 
 if __name__ == '__main__':
     main()

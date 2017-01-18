@@ -43,52 +43,75 @@ Motivation. Related work. Solution. Evaluation.
 \section{Foundations}
 
 \subsection{Wikidata}
+What is Wikidata? Collaborative, people-driven, etc..
+Open World Assumption.\\
+What is an entity? What are statements? References? Qualifiers?\\
+Informal explanation of taxonomy in the use case of Wikidata. \\
+Show problems in Wikidata's taxonomy.\\
+\citeauthor{Galarraga2016} \cite{Galarraga2016}
 
 \subsection{Taxonomy}
 \begin{itemize}
 \item Ontology\\
-	\citeauthor{Cimiano2009} \cite{Cimiano2009}
+	\citeauthor{Cimiano2009} \cite{Cimiano2009}\\
+	\citeauthor{Galarraga2016} \cite{Galarraga2016}
 \item Taxonomy\\
-	\citeauthor{Cimiano2009} \cite{Cimiano2009}
-\item Connected taxonomy (maybe: consistent taxonomy)
+	\citeauthor{Cimiano2009} \cite{Cimiano2009}\\
+	\citeauthor{Galarraga2016} \cite{Galarraga2016}
+\item Unconnected taxonomy as in the case of Wikidata
 \item Root class
 \item Unlinked class
-\item Problem statement
+\item Problem statement\\
+	challenge: potentially very high number of target classes
 \end{itemize}
 
 \subsection{Similarity}
 \begin{itemize}
-\item semantic similarity e.g. distributional similarity \\
+\item semantic similarity e.g. distributional, feature-based \\
 	\citeauthor{Lin1998} \cite{Lin1998} \\
 	\citeauthor{Rodriguez2003} \cite{Rodriguez2003}
-\item geometrical similarity e.g. distance based-similarity, cosine similarity
+\item geometrical similarity e.g. distance based, cosine
 \end{itemize}
 
 \subsection{Similarity-based classification}
+kNN. Maybe SVM, which is not appropriate for the task at hand, because the number of target classes is too high.
 \citeauthor{Chen2009} \cite{Chen2009}\\
 \citeauthor{Zhang2015} \cite{Zhang2015}
 
 \subsection{Text processing}
 \begin{itemize}
 \item N-Gram \\
+	What is an N-Gram? how can it be used?
 	\citeauthor{Jurafsky2014} \cite{Jurafsky2014}
 \item Skip-Gram \\
+	What is a Skip-Gram? Benefits in comparison to N-Grams.
 	\citeauthor{Guthrie2006} \cite{Guthrie2006}
-\item Counting-based word representations \\ 
+\item Counting-based word representations \\
+	Short explanation is sufficient.
 	\citeauthor{Levy2015} \cite{Levy2015}
 \item Predictive word representations \\
+	Shortly mention models by \citeauthor{Mikolov2013}. Maybe mention GloVe too.
 	\citeauthor{Levy2015} \cite{Levy2015}
 \end{itemize}
 
+\section{Analysis of the Wikidata taxonomy}
+How can classes and unlinked classes be recognized in Wikidata?
+Analyze whole taxonomy. Identify ''relevant'' unlinked classes. Repeat analysis for these classes.
+Summarize important observations.
+
 \section{Ontology learning}
-General concepts. Classification of considered problem in the task of ontology learning. Related work.\\
+General concepts. Tasks in ontology learning. Classification of considered problem in the task of ontology learning.
+Solutions for similar problems. \\
 \citeauthor{Cimiano2009} \cite{Cimiano2009}\\
 \citeauthor{Wong2012} \cite{Wong2012}\\
 \citeauthor{dAmato16} \cite{dAmato16}\\
-\citeauthor{Petrucci16} \cite{Petrucci16}
+\citeauthor{Petrucci16} \cite{Petrucci16}\\
+\citeauthor{Fu2014} \cite{Fu2014}
 
 \section{Neural networks}
-Notion of neural networks will be introduced.
+Notion of neural networks will be introduced.\\
+Show a schematic for every model.\\
+Purpose of specific NN. How can it be used for the task at hand? What are problems with the NN?
 
 \subsection{Recursive neural networks for graph representation}
 \citeauthor{Scarselli2009} \cite{Scarselli2009}
@@ -103,17 +126,32 @@ Notion of neural networks will be introduced.
 \citeauthor{Goldberg14} \cite{Goldberg14}
 
 \subsection{Comparison}
+Make a decision, which NN will be used for solving the task. Skip-gram with negative sampling.
 
 \section{Algorithm}
+Do I need to explain the actual implementation in detail? It is really not that interesting.
 
+\subsection{Challenges}
+Identify and summarize the challenges of the task.\\
+High number of target classes. Big amount of possibly usable data, what is relevant, what is not?
 \subsection{Baseline}
 \begin{itemize}
-\item Hyper parameters
-\item Training data
+\item Architecture\\
+	Using word embeddings of classes in kNN\\
+	How does this solve the problem definition?
+	How are the challenges addressed?
+\item Hyper parameters\\
+	configuration of the model, explain decision\\
+	\citeauthor{Levy2015} \cite{Levy2015}
+\item Training data\\
+	mapping relevant Wikidata entities to a textual representation
 \end{itemize}
 
-\subsection{Supplementing with other resources}
-e.g. Wikipedia
+\subsection{Variation 1}
+supplement training data with Wikipedia, what are possible advantages? More data, Wikipedia contains ''soft'' 
+information? which cannot be represented in Wikidata. what are disadvantages? Wikipedia contains ''noise'' unlike 
+Wikidata, training will take much longer. How to combine embeddings of Wikidata and Wikipedia? just appending,
+other options?
 
 \section{Evaluation}
 
@@ -121,8 +159,16 @@ e.g. Wikipedia
 \citeauthor{Dellschaft2006} \cite{Dellschaft2006}
 
 \subsection{Generation of gold standard}
+pick number (tbd) of random linked classes. the distribution of instances, subclasses, properties per class should
+similar to the repeated analysis of the observed unlinked classes. remove the subclass properties of the chosen classes.
+also generate a new set of training data, which reflects the changes, and train the model on this modified data.
 
 \subsection{Results}
+compare baseline algorithm and variation(s). do the results match with my expectations? if not why could
+this be? mention training and execution time of the algorithms. 
+
+\section{Conclusion}
+what was learned? can the developed solution be used in practical application? what about future work?
 
 \bibliographystyle{plainnat}
 \bibliography{/home/alex/PycharmProjects/thesis/thesis/bibliography}
