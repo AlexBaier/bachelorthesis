@@ -17,7 +17,7 @@ data_analysis/output/root_classes
 data_analysis/output/root_class_characteristics
 
 # algorithm out- and input
-algorithm/data/*
+data/*
 
 # tex files
 *.aux
