@@ -1,6 +1,9 @@
 
 \subsection{Wikidata}
-\fullcite{Galarraga2016}
+\textbf{TODO: Define entity in Wikidata, how are classes identified, etc.}
+\fullcite{Galarraga2016}\\
+Wikidata is a open, collaborative and user-driven knowledge base. Its main purpose is to serve as a structural knowledge store for other
+Wikimedia projects like Wikipedia.
 
 \subsection{Taxonomy}
 \begin{itemize}
@@ -15,12 +18,73 @@
 \item Unlinked class
 \item Problem statement
 \end{itemize}
-\begin{definition}
+\textbf{TODO: General notion of ontology and taxonomy}\\
+\fullcite{Cimiano2006} defines ontology, which includes the taxonomy, as follows:\\
+``
+	\begin{definition*}[Ontology]\label{Ontology}
+		An \textnormal{ontology} is a structure
+		\begin{equation*} 
+			\mathcal{O} := (C, \taxon, R, \relsig, \relhier, \mathcal{A}, \attsig, \mathcal{T})
+		\end{equation*}
+		consisting of
+		\begin{itemize}
+			\item four disjoint sets $C$, $R$, $\mathcal{A}$, and $\mathcal{T}$ whose elements are called \textnormal{concept identifiers}, 
+				\textnormal{relation identifiers}, \textnormal{attribute identifiers} and \textnormal{data types}, respectively,
+			\item a semi-upper latice $\taxon$ on $C$ with top element $\rootc$, called \textnormal{concept hierarchy} or \textnormal{taxonomy},
+			\item a function $\relsig: R \rightarrow C^+$ called \textnormal{relation signature},
+			\item a partial order $\relhier$ on $R$, called \textnormal{relation hierarchy}, where $r_1 \relhier r_2$ implies $\abs{\relsig (r_1)} = \abs{\relsig (r_2)}$ and
+				$\proj{i}{\relsig (r_1)} \taxon \proj{i}{\relsig (r_2)}$, for each $1 \le i \le \abs{\relsig (r_1)}$, and
+			\item a function $\attsig : \mathcal{A} \rightarrow C \times \mathcal{T}$, called \textnormal{attribute signature},
+			\item a set $\mathcal{T}$ of datatypes such as strings, integers, etc.
+		\end{itemize}
+	\end{definition*}
+	Hereby, $\proj{i}{t}$ is the i-th component of tuple $t$. [...] Further, a semi-upper lattice $\le$ fulfills the following conditions:
+	\begin{align*}
+		&\forall x x \le x \: \text{(reflexive)} \\
+		&\forall x \forall y (x \le y \land y \le x \implies x = y) \: \text{(anti-symmetric)} \\
+		&\forall x \forall y \forall z (x \le y \land y \le z \implies x \le z) \: \text{(transitive)}\\
+		&\forall x x \le top \: \text{(top element)}\\
+		&\forall x \forall y \exists z (z \ge \land z \ge y \land \forall w (w \ge x \land w \ge y \implies w \ge z)) \: \text{(supremum)}
+	\end{align*}
+	So every two elements have a unique most specific supremum.
+''\\
+
+A taxonomy can be modeled as a semi-upper lattice. This induces two important assumptions about the structure and to some degree completeness of the
+observed taxonomies. First, there is only one \textit{root class}, top element of the lattice, of which every other class is (transitively) a subclass. Second,
+because of the supremum property, the taxonomy is fully connected, which means each class, but the root class, has a superclass.
+Wikidata's taxonomy does therefore not fulfill the definition by \fullcite{Cimiano2006}, as it is not fully connected.\\
+In the following, new definitions will presented, which attempt to model an incomplete taxonomy based on the already presented data model and structure of Wikidata.
+First, basic concepts of graphs will be introduced.
+\begin{definition}[Directed graph]\label{directed graph}
+	A \textnormal{directed graph} G is an ordered pair $G=(V, E)$, where $V$ is a set of vertices, and $E = \{ (v_1, v_2) \mid v_1, v_2 \in V \}$ 
+	is a set of ordered pairs called directed edges, connecting the the vertices.
 \end{definition}
-A taxonomy is defined as a upper semilattice (\fullcite{Cimiano2006}). This induces that for every two classes
-in the taxonomy there is a most specific supremum, in other words two classes share an unique closest superclass.
-Therefore the taxonomy is fully connected, if represented as an acyclic graph.\\
-Wikidata's taxonomy does not fulfill this definition, as its taxonomy graph is disconnected.
+\begin{definition}[Predecessor]\label{predecessor}
+Let $G=(V, E)$ be a directed graph.
+$v_1 \in V$ is a \textnormal{predecessor} of $v_2 \in V$, if there exists an edge so that $(v_1, v_2) \in E$.
+Let $v \in V$ be a vertice of G, then $pred(v) = \{ w \mid (w, v) \in E \}$ is the set of predecessors of $v$.
+\end{definition}
+\begin{definition}[Successor]\label{successor}
+$v_1 \in V$ is a \textnormal{successor} of $v_2 \in V$, if there exists an edge so that $(v_2, v_1) \in E$.
+Let $v \in V$ be a vertice of G, then $succ(v) = \{ w \mid (v, w) \in E \}$ is the set of successors of $v$.
+\end{definition}
+\begin{definition}[Walk]\label{walk}
+Let $G = (V, E)$ be a directed graph.
+A \textnormal{walk} $W$ of length $n \in \mathbb{N}$ is a sequence of vertices $W=(v_1,\ldots, v_n)$ with $v_1,\ldots, v_n \in V$, 
+so that $(v_i, v_{i+1}) \in E \; \forall i=1,\ldots,n-1$.
+\end{definition}
+\begin{definition}[Cycle]\label{cycle}
+A walk $W=(v_1,\ldots, v_n)$ of length $n$ is called a \textnormal{cycle}, if $v_1 = v_n$.
+\end{definition}
+\begin{definition}[Directed acyclic graph]\label{acyclic directed graph}
+A directed graph $G$ is called \textnormal{directed acyclic graph}, if there are no cycles in $G$.
+\end{definition}
+In Wikidata, a class can have multiple superclasses, therefore a tree structure is not sufficient to model the taxonomy.
+However a directed acyclic graph, can model the taxonomy. The acyclic constraint is necessary to ensure that no class is transitively a subclass of itself.
+\begin{definition}[Taxonomy]
+A \textnormal{taxonomy} $T=(C, S)$ is a directed  acyclic graph, where $C$ is a set of \textnormal{class identifiers}, 
+and $S$ is the set of edges, which describe the \textnormal{subclass-of relation}  between two classes. such that $c_1$ is the subclass of $c_2$, if $(c_1, c_2) \in S$.
+\end{definition}
 
 \subsection{Similarity}
 \begin{itemize}

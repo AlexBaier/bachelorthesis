@@ -22,7 +22,23 @@
 % fullcite/1: cite both author and numeric code of reference
 \newcommand{\fullcite}[1]{\citeauthor{#1} \cite{#1}}
 
-\theoremstyle{definition}
+% taxonomy or concept hierarchy
+\newcommand{\taxon}{\le_C}
+% relation signature
+\newcommand{\relsig}{\sigma_R}
+% relation hierarchy
+\newcommand{\relhier}{\le_R}
+% attribute signature
+\newcommand{\attsig}{\sigma_\mathcal{A}}
+% root class
+\newcommand{\rootc}{root_C}
+
+% absolute value
+\newcommand{\abs}[1]{\lvert #1 \rvert}
+% projection
+\newcommand{\proj}[2]{\pi_#1(#2)}
+
+\theoremstyle{plain}
 \newtheorem{definition}{Definition}
-\newtheorem*{problem}{Problem}
+\newtheorem*{definition*}{Definition}
 
