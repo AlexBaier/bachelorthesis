@@ -30,7 +30,7 @@ Wikimedia projects like Wikipedia.
 		\begin{itemize}
 			\item four disjoint sets $C$, $R$, $\mathcal{A}$, and $\mathcal{T}$ whose elements are called \textnormal{concept identifiers}, 
 				\textnormal{relation identifiers}, \textnormal{attribute identifiers} and \textnormal{data types}, respectively,
-			\item a semi-upper latice $\taxon$ on $C$ with top element $\rootc$, called \textnormal{concept hierarchy} or \textnormal{taxonomy},
+			\item a semi-upper latice $\taxon$ on $C$ with top element $\rootc$, called \textnormal{concept hierarchy} or \textnormal{taxonomy},	
 			\item a function $\relsig: R \rightarrow C^+$ called \textnormal{relation signature},
 			\item a partial order $\relhier$ on $R$, called \textnormal{relation hierarchy}, where $r_1 \relhier r_2$ implies $\abs{\relsig (r_1)} = \abs{\relsig (r_2)}$ and
 				$\proj{i}{\relsig (r_1)} \taxon \proj{i}{\relsig (r_2)}$, for each $1 \le i \le \abs{\relsig (r_1)}$, and
@@ -70,8 +70,8 @@ Let $v \in V$ be a vertice of G, then $succ(v) = \{ w \mid (v, w) \in E \}$ is t
 \end{definition}
 \begin{definition}[Walk]\label{walk}
 Let $G = (V, E)$ be a directed graph.
-A \textnormal{walk} $W$ of length $n \in \mathbb{N}$ is a sequence of vertices $W=(v_1,\ldots, v_n)$ with $v_1,\ldots, v_n \in V$, 
-so that $(v_i, v_{i+1}) \in E \; \forall i=1,\ldots,n-1$.
+A \textnormal{walk} $W$ of length $n \in \mathbb{N}$ is a sequence of vertices $W=(v_1,\ldots, v_n)$ with $v_1,\ldots, 
+v_n \in V$,  so that $(v_i, v_{i+1}) \in E \; \forall i=1,\ldots,n-1$.
 \end{definition}
 \begin{definition}[Cycle]\label{cycle}
 A walk $W=(v_1,\ldots, v_n)$ of length $n$ is called a \textnormal{cycle}, if $v_1 = v_n$.
@@ -84,6 +84,12 @@ However a directed acyclic graph, can model the taxonomy. The acyclic constraint
 \begin{definition}[Taxonomy]
 A \textnormal{taxonomy} $T=(C, S)$ is a directed  acyclic graph, where $C$ is a set of \textnormal{class identifiers}, 
 and $S$ is the set of edges, which describe the \textnormal{subclass-of relation}  between two classes. such that $c_1$ is the subclass of $c_2$, if $(c_1, c_2) \in S$.
+\end{definition}
+\begin{definition}[Subclass-of relation]\label{subclass of}
+The transitive binary relation $\subclassof{T}$ on the taxonomy $T=(C, S)$ represents the subclass relationship
+of two classes in $T$. Given $c_1, c_2 \in C$, $c_1 \subclassof{T} c_2$, if there is a walk $W=(c_1, \ldots, c_2)$ with length 
+$n \ge 1$, which connects $c_1$ and $c_2$. \subclassof{T} is transitive,  $\forall c_1, c_2, c_3 \in C:
+c_1 \subclassof{T} c_2 \land c_2 \subclassof{T} c_3 \implies c_1 \subclassof{T} c_3$.
 \end{definition}
 
 \subsection{Similarity}

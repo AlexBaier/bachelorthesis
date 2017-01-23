@@ -23,15 +23,19 @@
 \newcommand{\fullcite}[1]{\citeauthor{#1} \cite{#1}}
 
 % taxonomy or concept hierarchy
-\newcommand{\taxon}{\le_C}
+\newcommand{\taxon}{\ensuremath{\\le_C}}
 % relation signature
-\newcommand{\relsig}{\sigma_R}
+\newcommand{\relsig}{\ensuremath{\\sigma_R}}
 % relation hierarchy
-\newcommand{\relhier}{\le_R}
+\newcommand{\relhier}{\ensuremath{\\le_R}}
 % attribute signature
-\newcommand{\attsig}{\sigma_\mathcal{A}}
+\newcommand{\attsig}{\ensuremath{\\sigma_\mathcal{A}}}
 % root class
-\newcommand{\rootc}{root_C}
+\newcommand{\rootc}{\ensuremath{\root_C}}
+% subclass of relation
+\newcommand{\subclassof}[1]{
+\ensuremath{\vartriangleleft_#1}
+}
 
 % absolute value
 \newcommand{\abs}[1]{\lvert #1 \rvert}
