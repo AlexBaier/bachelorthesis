@@ -8,9 +8,6 @@ __pycache__/
 .idea/workspace.xml
 
 # dumps
-data_analysis/wikidata-20161205-all.json.bz2
-data_analysis/wikidata-20161205-all.json
-data_analysis/wikidata-20161107-all.json
 data_analysis/output/reduced_items
 data_analysis/output/reduced_classes
 data_analysis/output/root_classes

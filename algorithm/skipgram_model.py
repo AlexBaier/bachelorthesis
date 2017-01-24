@@ -44,13 +44,21 @@ class TrainedStoredModel(object):
     def __init__(self, model_path: str):
         self.__model = gensim.models.Word2Vec.load(model_path)  # type: gensim.models.Word2Vec
 
-    def write_similarity_matrix(self, words: List[str], output_path: str):
-        with open(output_path, mode='w') as f:
-            for word1 in words:
-                row = list()
-                for word2 in words:
-                    row.append(str(self.__model.similarity(word1, word2).item()))
-                f.write(','.join(row) + '\n')
+    def write_similarity_matrix(self, words: List[str], output_path: str, sparse: bool=False):
+        if not sparse:
+            with open(output_path, mode='w') as f:
+                for word1 in words:
+                    row = list()
+                    for word2 in words:
+                        row.append(str(self.__model.similarity(word1, word2).item()))
+                    f.write(','.join(row) + '\n')
+        else:
+            # Remember which pairs where already computed.
+            computed_pairs = set()
+            with open(output_path, mode='w') as f:
+                for word1 in words:
+                    for word2 in words:
+                        pass
 
 
 # TODO: functions shouldn't do 2 tasks

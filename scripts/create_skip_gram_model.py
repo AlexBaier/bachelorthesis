@@ -1,7 +1,7 @@
 import time
 
 import algorithm.skipgram_model as sgm
-import data_analysis.utils as utils
+import data_analysis.dumpio as dumpio
 
 
 def main():
@@ -17,7 +17,7 @@ def main():
         'negative': 20,  # noise words, try 20
         'iter': 5  # iterations over training corpus
     }
-    cids = list(map(lambda j: j['id'], utils.get_json_dicts('../data_analysis/output/reduced_classes')))
+    cids = list(map(lambda j: j['id'], dumpio.JSONDumpReader('../data_analysis/output/reduced_classes')))
     sgm.train_and_store_skip_gram_model(config=config, required_words=cids,
                                         training_path=training_path, output_path=output_path)
 
