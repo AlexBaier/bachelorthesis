@@ -10,7 +10,9 @@ def main():
     unlinked_class_ids = pipe.DataPipe.read_json_dump(unlinked_class_dump_path).map(get_id).to_set()
     entities = pipe.DataPipe.read_json_dump(entity_dump_path).to_iterable()
     to_characteristic = ce.to_characteristic(unlinked_class_ids, entities)
-    pipe.DataPipe.read_json_dump(unlinked_class_dump_path).map(to_characteristic).write(unlinked_characteristic_dump_path)
+    to_dict = lambda ch: ch.to_dict()
+    pipe.DataPipe.read_json_dump(unlinked_class_dump_path).map(to_characteristic).map(to_dict)\
+        .write(unlinked_characteristic_dump_path)
 
 if __name__ == '__main__':
     main()

@@ -14,6 +14,16 @@ class ClassCharacteristic(object):
         self.instances = instances
         self.subclasses = subclasses
 
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'label': self.label,
+            'enwiki': self.enwiki,
+            'properties': self.properties,
+            'instances': self.instances,
+            'subclasses': self.subclasses
+        }
+
 
 def get_class_ids(entities: Iterable[dict])->Set[str]:
     """
@@ -48,7 +58,7 @@ def is_unlinked_class(c: dict)->bool:
     return not list(utils.get_subclass_of_ids(c))
 
 
-def get_class_children(entities: Iterable, class_ids: Set[str])->Tuple[Dict[str, List[str]]]:
+def get_class_children(entities: Iterable, class_ids: Set[str])->Tuple[Dict[str, List[str]], Dict[str, List[str]]]:
     """
     :param entities:
     :param class_ids: Set of class IDs, whose children should be retrieved.
@@ -65,9 +75,9 @@ def get_class_children(entities: Iterable, class_ids: Set[str])->Tuple[Dict[str,
                 instances[instance_of].append(e['id'])
         for subclass_of in utils.get_instance_of_ids(e):
             if not class_ids or subclass_of in class_ids:
-                if not instances.get(subclass_of, None):
+                if not subclasses.get(subclass_of, None):
                     subclasses[subclass_of] = list()
-                subclasses[subclass_of] = e['id']
+                subclasses[subclass_of].append(e['id'])
     return instances, subclasses
 
 
@@ -84,9 +94,41 @@ def to_characteristic(class_ids: Set[str], entities: Iterable[dict])->Callable[[
             cid=c['id'],
             label=utils.get_english_label(c),
             enwiki=utils.get_wiki_title(c, 'enwiki'),
-            properties=c['claims'].keys(),
-            instances=instances[c['id']],
-            subclasses=subclasses[c['id']]
+            properties=list(c['claims'].keys()),
+            instances=instances.get(c['id'], list()),
+            subclasses=subclasses.get(c['id'], list())
         )
 
     return __to_characteristic
+
+
+def analyze_characteristics(characteristics: Iterable[dict])->dict:
+    result = dict()
+    root_class_count = 0
+    property_counts = dict()  # type: Dict[int, int]
+    subclass_counts = dict()  # type: Dict[int, int]
+    instance_counts = dict()  # type: Dict[int, int]
+    property_frequencies = dict()  # type: Dict[str, int]
+    for ch in characteristics:
+        property_num = len(ch['properties'])
+        subclass_num = len(ch['subclasses'])
+        instance_num = len(ch['instances'])
+        # count number of analyzed root classes
+        root_class_count += 1
+        # count number of root classes with a specific number of properties
+        property_counts[property_num] = property_counts.get(property_num, 0) + 1
+        # count number of root classes with a specific number of subclasses
+        subclass_counts[subclass_num] = subclass_counts.get(subclass_num, 0) + 1
+        # count number of root classes with a specific number of instances
+        instance_counts[instance_num] = instance_counts.get(instance_num, 0) + 1
+        # count frequency of properties in root classes
+        for prop in ch['properties']:
+            property_frequencies[prop] = property_frequencies.get(prop, 0) + 1
+
+    result['root class count'] = root_class_count
+    result['property counts'] = property_counts
+    result['subclass counts'] = subclass_counts
+    result['instance counts'] = instance_counts
+    result['property frequencies'] = property_frequencies
+
+    return result
