@@ -5,7 +5,9 @@
 Wikidata is a open, collaborative and user-driven knowledge base. Its main purpose is to serve as a structural knowledge store for other
 Wikimedia projects like Wikipedia.
 
-\subsection{Taxonomy}
+
+\subsection{Taxonomy and problem definition}
+\textbf{TODO: maybe separate taxonomy and problem definition in to two sections?}
 \begin{itemize}
 \item Ontology\\
 	\fullcite{Cimiano2006}\\
@@ -62,11 +64,11 @@ First, basic concepts of graphs will be introduced.
 \begin{definition}[Predecessor]\label{predecessor}
 Let $G=(V, E)$ be a directed graph.
 $v_1 \in V$ is a \textnormal{predecessor} of $v_2 \in V$, if there exists an edge so that $(v_1, v_2) \in E$.
-Let $v \in V$ be a vertice of G, then $pred(v) = \{ w \mid (w, v) \in E \}$ is the set of predecessors of $v$.
+Let $v \in V$ be a vertice of G, then $pred_G(v) = \{ w \mid (w, v) \in E \}$ is the set of predecessors of $v$.
 \end{definition}
 \begin{definition}[Successor]\label{successor}
 $v_1 \in V$ is a \textnormal{successor} of $v_2 \in V$, if there exists an edge so that $(v_2, v_1) \in E$.
-Let $v \in V$ be a vertice of G, then $succ(v) = \{ w \mid (v, w) \in E \}$ is the set of successors of $v$.
+Let $v \in V$ be a vertice of G, then $succ_G(v) = \{ w \mid (v, w) \in E \}$ is the set of successors of $v$.
 \end{definition}
 \begin{definition}[Walk]\label{walk}
 Let $G = (V, E)$ be a directed graph.
@@ -91,6 +93,43 @@ of two classes in $T$. Given $c_1, c_2 \in C$, $c_1 \subclassof{T} c_2$, if ther
 $n \ge 1$, which connects $c_1$ and $c_2$. \subclassof{T} is transitive,  $\forall c_1, c_2, c_3 \in C:
 c_1 \subclassof{T} c_2 \land c_2 \subclassof{T} c_3 \implies c_1 \subclassof{T} c_3$.
 \end{definition}
+If the taxonomy defined by \fullcite{Cimiano2006} is mapped on this graph-based taxonomy model, the following
+assumption is true, for $T=(C,S)$: \[ \abs{\{  c \in C \mid \neg \exists s \in C: c \subclassof{T} s \}} = 1 \]
+Only one class in this taxonomy has no superclasses. This class is called \textit{root class}. However
+in the case of Wikidata, this assumption does not hold true. The following state is the case:
+\[ \abs{\{  c \in C \mid \neg \exists s \in C: c \subclassof{T} s \}} > 1 \]
+There are classes other than the root class, which also have no superclasses. These classes will be called
+\textit{unlinked classes}.
+\begin{definition}[Root class]\label{root class}
+Given a taxonomy $T=(C, S)$, the \textnormal{root class} $root_T$ is a specific, predefined class with no superclasses in 
+$T$. For $root_T$, $\abs{succ_T(root_T)} = 0$ applies.
+\end{definition}
+\begin{definition}[Unlinked class]\label{unlinked class}
+Given a taxonomy $T=(C,S)$ with a root class $root_T$, a class $u \in C$ is called \textnormal{unlinked class},
+if $u \neq root_T \land \abs{succ_T(u)} = 0$.
+\end{definition}
+In Wikidata the root class is \textit{entity (Q35120)}, described as something that exists. \textbf{TODO:
+can i cite the Wikidata discussion, where it is said that entity is considered the root node?}
+The task of this thesis is the classification of unlinked classes in Wikidata. In other words a function
+is needed, which given an unlinked class $u$ of a taxonomy $T = (C, S)$ with a root class $root_T$,
+find an appropriate superclass for $T$. \fullcite{Doan2002} suggests that for the task of placing a class
+into an appropriate position in $T$,
+either finding the most similar class, most specific superclass, or most general subclasses of $u$,
+are sensible approaches.
+This induces that the appropriate superclass for an unlinked class $u$ is either the most similar class $c \in T$,
+or one of the superclasses of $succ_T(c)$.
+Therefore we can define the problem, as follows:
+\begin{definition}[Problem definition]\label{problem definition}
+Given a taxonomy $T = (C, S)$ with root class $root_T$ and a similarity function $sim$ over $T$,
+find a function $f$, which, given an unlinked class $u \in C$, returns a class $s = f(u)$, fulfilling the following
+criteria:
+\textbf{TODO: define as the parents of the most similar class? for example german would be similar to english,
+therefore the superclass for german should be language and not english}
+\begin{align}
+& \neg (s \subclassof{T} u) \: \textnormal{no child} \label{no child}\\
+& s = \underset{c \in C}{\max(sim(u, s))} \: \textnormal{most similar class} \label{most similar class}
+\end{align}
+\end{definition}
 
 \subsection{Similarity}
 \begin{itemize}
@@ -99,10 +138,35 @@ c_1 \subclassof{T} c_2 \land c_2 \subclassof{T} c_3 \implies c_1 \subclassof{T} 
 	\fullcite{Rodriguez2003}
 \item geometrical similarity e.g. distance based-similarity, cosine similarity
 \end{itemize}
+For the task of ontology learning \cite{Hazman2011} as well as classification, e.g. k-nearest-neighbors,
+the concept of similarity is of importance. A basic intuition of similarity is for example given by 
+\fullcite{Lin1998}. Similarity is related to the commonalities and differences between two objects.
+More commonalities implies higher similarity. Vice versa, more differences implies lower similarity.
+Two identical objects should have the maximum similarity. In addition, only identical objects should be
+able to achieve maximum similarity. Typically, similarity can be defined as a binary function, which
+maps two objects to a value in the interval $[0, 1]$. A value of $1$ represents identical input objects.
+For this thesis, semantic and vector similarity measures will be used.\\
+Vector similarity.\\
+Semantic similarity measures are needed when comparing structures, which cannot be sufficiently represented
+as vectors. These are for example words and classes in ontologies \textbf{citations needed}.
+\fullcite{Rodriguez2003} develops a semantic similarity measure for comparing entity classes in ontologies.
+Entity
 
 \subsection{Similarity-based classification}
 \fullcite{Chen2009}\\
-\fullcite{Zhang2015}
+\fullcite{Zhang2015}\\
+
+\textbf{Explain how kNN works.}
+\begin{figure}
+\centering
+\includegraphics[width=0.5\textwidth]{images/knn_example.pdf}
+\caption{Example for k-nearest neighbors for 3 classes with k=4 and k=10.}
+\label{fig:kNN example}
+\end{figure}
+Nearest-neighbors classification is a lazy method, as it does not require training before testing.
+This is useful for applications with high amounts of data, large numbers of classes, and changing data \cite{Zhang2015}.
+For the considered use case of classification in Wikidata, these are very important strengths,
+as the number of classes in the taxonomy is very high and Wikidata is being constantly edited.
 
 \subsection{Text processing}
 \begin{itemize}
