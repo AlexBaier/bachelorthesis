@@ -104,7 +104,8 @@ def to_characteristic(class_ids: Set[str], entities: Iterable[dict])->Callable[[
 
 def analyze_characteristics(characteristics: Iterable[dict])->dict:
     result = dict()
-    root_class_count = 0
+    unlinked_class_count = 0
+    labeled_count = 0
     property_counts = dict()  # type: Dict[int, int]
     subclass_counts = dict()  # type: Dict[int, int]
     instance_counts = dict()  # type: Dict[int, int]
@@ -113,8 +114,10 @@ def analyze_characteristics(characteristics: Iterable[dict])->dict:
         property_num = len(ch['properties'])
         subclass_num = len(ch['subclasses'])
         instance_num = len(ch['instances'])
-        # count number of analyzed root classes
-        root_class_count += 1
+        # count number of analyzed classes
+        unlinked_class_count += 1
+        # count number of labeled classes
+        labeled_count += 1 if ch['label'] else 0
         # count number of root classes with a specific number of properties
         property_counts[property_num] = property_counts.get(property_num, 0) + 1
         # count number of root classes with a specific number of subclasses
@@ -125,7 +128,8 @@ def analyze_characteristics(characteristics: Iterable[dict])->dict:
         for prop in ch['properties']:
             property_frequencies[prop] = property_frequencies.get(prop, 0) + 1
 
-    result['root class count'] = root_class_count
+    result['unlinked class count'] = unlinked_class_count
+    result['labeled class count'] = labeled_count
     result['property counts'] = property_counts
     result['subclass counts'] = subclass_counts
     result['instance counts'] = instance_counts
