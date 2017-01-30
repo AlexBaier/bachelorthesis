@@ -4,24 +4,33 @@
 \fullcite{Galarraga2016}\\
 Wikidata is a open, collaborative and user-driven knowledge base. Its main purpose is to serve as a structural knowledge store for other
 Wikimedia projects like Wikipedia.
+\begin{figure}
+\centering
+\includegraphics[width=\textwidth]{images/foundations/item_example.png}
+\caption{Example of Wikidata class: photographic film (Q6239)}
+\label{fig:class example}
+\end{figure}
 
 
-\subsection{Taxonomy and problem definition}
-\textbf{TODO: maybe separate taxonomy and problem definition in to two sections?}
-\begin{itemize}
-\item Ontology\\
-	\fullcite{Cimiano2006}\\
-	\fullcite{Galarraga2016}
-\item Taxonomy\\
-	\fullcite{Cimiano2006}\\
-	\fullcite{Galarraga2016}\\
-\item Connected taxonomy (maybe: consistent taxonomy)
-\item Root class
-\item Unlinked class
-\item Problem statement
-\end{itemize}
-\textbf{TODO: General notion of ontology and taxonomy}\\
-\fullcite{Cimiano2006} defines ontology, which includes the taxonomy, as follows:\\
+\subsection{Taxonomy}
+
+\textit{Ontologies} are sets of concepts and relations, which formally define how knowledge can be related and ordered in a context. Additionally it is possible for ontologies to
+contain axioms used for validation and constraint enforcement. In comparison, a knowledge base like Wikidata can be seen as an instantiation of such an ontology,
+since every knowledge base has to be conceptualized by an ontology \cite{Wong2012}. Different types of ontologies can grouped by their level of formality and expressiveness.
+\fullcite{Wong2012} differentiates ontologies as lightweight and heavyweight ontologies (see Figure~\ref{fig:ontology spectrum}). 
+\textit{Taxonomies} are concept or class hierarchies.
+They typically represent a parent-child structure, which can be formalized with a single relationship called for example \textit{subclass-of} in the case of Wikidata.
+The observed taxonomy in Wikidata belongs to the category of lightweight ontologies, specifically \textit{principled, informal hierarchies}, 
+as the only enforced rule for the subclass-of relation is that it should connect two entities \cite{WikidataP279}.
+\begin{figure}
+\centering
+\includegraphics[width=\textwidth]{images/foundations/wong2012_spectrum_of_ontology_kinds.png}
+\caption{The spectrum of ontology kinds. \cite{Wong2012}}
+\label{fig:ontology spectrum}
+\end{figure}
+
+For the purpose of developing a formal definition of the thesis' problem statement the notion of taxonomy needs to be formalized.
+\fullcite{Cimiano2006} defines a heavyweight ontology, which includes a taxonomy, as follows:\\
 ``
 	\begin{definition*}[Ontology]\label{Ontology}
 		An \textnormal{ontology} is a structure
@@ -108,28 +117,9 @@ $T$. For $root_T$, $\abs{succ_T(root_T)} = 0$ applies.
 Given a taxonomy $T=(C,S)$ with a root class $root_T$, a class $u \in C$ is called \textnormal{unlinked class},
 if $u \neq root_T \land \abs{succ_T(u)} = 0$.
 \end{definition}
-In Wikidata the root class is \textit{entity (Q35120)}, described as something that exists. \textbf{TODO:
-can i cite the Wikidata discussion, where it is said that entity is considered the root node?}
-The task of this thesis is the classification of unlinked classes in Wikidata. In other words a function
-is needed, which given an unlinked class $u$ of a taxonomy $T = (C, S)$ with a root class $root_T$,
-find an appropriate superclass for $T$. \fullcite{Doan2002} suggests that for the task of placing a class
-into an appropriate position in $T$,
-either finding the most similar class, most specific superclass, or most general subclasses of $u$,
-are sensible approaches.
-This induces that the appropriate superclass for an unlinked class $u$ is either the most similar class $c \in T$,
-or one of the superclasses of $succ_T(c)$.
-Therefore we can define the problem, as follows:
-\begin{definition}[Problem definition]\label{problem definition}
-Given a taxonomy $T = (C, S)$ with root class $root_T$ and a similarity function $sim$ over $T$,
-find a function $f$, which, given an unlinked class $u \in C$, returns a class $s = f(u)$, fulfilling the following
-criteria:
-\textbf{TODO: define as the parents of the most similar class? for example german would be similar to english,
-therefore the superclass for german should be language and not english}
-\begin{align}
-& \neg (s \subclassof{T} u) \: \textnormal{no child} \label{no child}\\
-& s = \underset{c \in C}{\max(sim(u, s))} \: \textnormal{most similar class} \label{most similar class}
-\end{align}
-\end{definition}
+In Wikidata, the root class is \textit{entity (Q35120)} \cite{WikidataQ35120}. 
+All other classes, which are not subclasses of \textit{entity (Q35120)}, are therefore either unlinked classes, or subclasses of unlinked classes.
+\textbf{TODO: Something is missing here maybe. The problem statement could follow here, but the required definition of similarity is missing. Maybe switch the order of similarity and taxonomy.}
 
 \subsection{Similarity}
 \begin{itemize}
@@ -159,7 +149,7 @@ Entity
 \textbf{Explain how kNN works.}
 \begin{figure}
 \centering
-\includegraphics[width=0.5\textwidth]{images/knn_example.pdf}
+\includegraphics[width=0.5\textwidth]{images/foundations/knn_example.pdf}
 \caption{Example for k-nearest neighbors for 3 classes with k=4 and k=10.}
 \label{fig:kNN example}
 \end{figure}
@@ -179,3 +169,25 @@ as the number of classes in the taxonomy is very high and Wikidata is being cons
 \item Predictive word representations \\
 	\fullcite{Levy2015}
 \end{itemize}
+
+\subsection{Problem statement}
+The task of this thesis is the classification of unlinked classes in Wikidata. In other words a function
+is needed, which given an unlinked class $u$ of a taxonomy $T = (C, S)$ with a root class $root_T$,
+find an appropriate superclass for $T$. \fullcite{Doan2002} suggests that for the task of placing a class
+into an appropriate position in $T$,
+either finding the most similar class, most specific superclass, or most general subclasses of $u$,
+are sensible approaches.
+This induces that the appropriate superclass for an unlinked class $u$ is either the most similar class $c \in T$,
+or one of the superclasses of $succ_T(c)$.
+Therefore we can define the problem, as follows:
+\begin{definition}[Problem definition]\label{problem definition}
+Given a taxonomy $T = (C, S)$ with root class $root_T$ and a similarity function $sim$ over $T$,
+find a function $f$, which, given an unlinked class $u \in C$, returns a class $s = f(u)$, fulfilling the following
+criteria:
+\textbf{TODO: define as the parents of the most similar class? for example german would be similar to english,
+therefore the superclass for german should be language and not english}
+\begin{align}
+& \neg (s \subclassof{T} u) \: \textnormal{no child} \label{no child}\\
+& s = \underset{c \in C}{\max(sim(u, s))} \: \textnormal{most similar class} \label{most similar class}
+\end{align}
+\end{definition}
