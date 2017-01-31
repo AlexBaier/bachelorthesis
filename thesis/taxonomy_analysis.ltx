@@ -1,28 +1,50 @@
+For the task of developing an algorithm, which takes unlinked classes as input, it is necessary to know,
+what information the classes carry and if there are certain patterns among the classes.
+For this purpose an analysis of the taxonomy needs to be carried out, which may answer questions.
+Additionally other knowledge can be gained through this knowledge.
+
+The taxonomy contained in the Wikidata dump of \dumpdate was analyzed.
+Classes were recognized as defined in Section~\ref{section:wikidata}. 
+Unlinked classes were identified by checking whether a class does not have the \textit{subclass of (P279)} property.
+The taxonomy contained a total of $1299501$ classes at this time.
+
+First, the state of the taxonomy was captured in regards to the root class \entity{}.
+$1260842$ classes are currently subclasses of \entity{}.
+$97\%$ of all classes are  therefore nodes in the same graph component as the root class.
+This implies a high agreement in the Wikidata community on which class is considered root,
+and thereby also supports the modeling decision made in Section~\ref{section:taxonomy},
+which assumes that a taxonomy only has one root, and this root is \entity{} in Wikidata.
+
+Second, the characteristics of all unlinked classes and the root class were analyzed.
+This set contains a total of $16373$ classes.
 \begin{figure}
 \centering
 \includegraphics[width=\textwidth]{images/taxonomy_analysis/unlinked_property_count.png}
 \caption{Percentage of unlinked classes with a specific amount of unique properties. Wikidata (2016-11-07)}
 \label{fig:unlinked property count}
 \includegraphics[width=\textwidth]{images/taxonomy_analysis/unlinked_instance_count.png}
-\caption{Percentage of unlinked classes with a specific amount of instances. Wikidata (2016-11-07)}
+\caption{Percentage of unlinked classes with a specific amount of instances. Wikidata (\dumpdate)}
 \label{fig:unlinked instance count}
 \end{figure}
 \begin{figure}
 \centering
 \includegraphics[width=\textwidth]{images/taxonomy_analysis/unlinked_subclass_count.png}
-\caption{Percentage of unlinked classes with a specific amount of subclasses. Wikidata (2016-11-07)}
+\caption{Percentage of unlinked classes with a specific amount of subclasses. Wikidata (\dumpdate)}
 \label{fig:unlinked subclass count}
 \includegraphics[width=\textwidth]{images/taxonomy_analysis/unlinked_property_frequency.png}
-\caption{Frequency of properties in unlinked classes. Wikidata (2016-11-07)}
+\caption{Frequency of properties in unlinked classes. Wikidata (\dumpdate)}
 \label{fig:unlinked property frequency}
 \end{figure}
+
+Following this argument, the subset of labeled, instantiated and unlinked classes was analyzed.
+This set contains a total of $5776$ classes.
 \begin{figure}
 \centering
 \includegraphics[width=\textwidth]{images/taxonomy_analysis/unlinked_labeled_instantiated_property_count.png}
-\caption{Percentage of unlinked, labeled, instantiated classes with a specific amount of unique properties. Wikidata (2016-11-07)}
+\caption{Percentage of unlinked, labeled, instantiated classes with a specific amount of unique properties. Wikidata (\dumpdate)}
 \label{fig:unlinked labeled instantiated property count}
 \includegraphics[width=\textwidth]{images/taxonomy_analysis/unlinked_labeled_instantiated_instance_count.png}
-\caption{Percentage of unlinked, labeled, instantiated classes with a specific amount of instances. Wikidata (2016-11-07))}
+\caption{Percentage of unlinked, labeled, instantiated classes with a specific amount of instances. Wikidata (\dumpdate))}
 \label{figunlinked labeled instantiated instance count}
 \end{figure}
 \begin{figure}
@@ -31,6 +53,6 @@
 \caption{Percentage of unlinked, labeled, instantiated classes with a specific amount of subclasses. Wikidata (2016-11-07)}
 \label{fig:unlinked labeled instantiated subclass count}
 \includegraphics[width=\textwidth]{images/taxonomy_analysis/unlinked_labeled_instantiated_property_frequency.png}
-\caption{Frequency of properties in unlinked, labeled, instantiated classes. Wikidata (2016-11-07))}
+\caption{Frequency of properties in unlinked, labeled, instantiated classes. Wikidata (\dumpdate))}
 \label{figunlinked labeled instantiated property frequency}
 \end{figure}

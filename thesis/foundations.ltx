@@ -1,5 +1,5 @@
 
-\subsection{Wikidata}
+\subsection{Wikidata}\label{section:wikidata}
 \textbf{TODO: Define entity in Wikidata, how are classes identified, etc.}
 \fullcite{Galarraga2016}\\
 Wikidata is a open, collaborative and user-driven knowledge base. Its main purpose is to serve as a structural knowledge store for other
@@ -12,7 +12,7 @@ Wikimedia projects like Wikipedia.
 \end{figure}
 
 
-\subsection{Taxonomy}
+\subsection{Taxonomy}\label{section:taxonomy}
 
 \textit{Ontologies} are sets of concepts and relations, which formally define how knowledge can be related and ordered in a context. Additionally it is possible for ontologies to
 contain axioms used for validation and constraint enforcement. In comparison, a knowledge base like Wikidata can be seen as an instantiation of such an ontology,
@@ -117,8 +117,8 @@ $T$. For $root_T$, $\abs{succ_T(root_T)} = 0$ applies.
 Given a taxonomy $T=(C,S)$ with a root class $root_T$, a class $u \in C$ is called \textnormal{unlinked class},
 if $u \neq root_T \land \abs{succ_T(u)} = 0$.
 \end{definition}
-In Wikidata, the root class is \textit{entity (Q35120)} \cite{WikidataQ35120}. 
-All other classes, which are not subclasses of \textit{entity (Q35120)}, are therefore either unlinked classes, or subclasses of unlinked classes.
+In Wikidata, the root class is \entity{} \cite{WikidataQ35120}. 
+All other classes, which are not subclasses of \entity{}, are therefore either unlinked classes, or subclasses of unlinked classes.
 \textbf{TODO: Something is missing here maybe. The problem statement could follow here, but the required definition of similarity is missing. Maybe switch the order of similarity and taxonomy.}
 
 \subsection{Similarity}

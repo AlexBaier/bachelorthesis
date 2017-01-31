@@ -18,6 +18,7 @@
 \usepackage{ulem}
 \usepackage{hyperref}
 \usepackage[numbers]{natbib} % for citeauthor
+\usepackage[yyyymmdd]{datetime} % for writing dates
 
 % fullcite/1: cite both author and numeric code of reference
 \newcommand{\fullcite}[1]{\citeauthor{#1} \cite{#1}}
@@ -41,6 +42,11 @@
 \newcommand{\abs}[1]{\lvert #1 \rvert}
 % projection
 \newcommand{\proj}[2]{\pi_#1(#2)}
+
+% date of dump
+\newcommand{\dumpdate}{\formatdate{7}{11}{2016}}
+% entity
+\newcommand{\entity}{\textit{entity (Q35120)}}
 
 \theoremstyle{plain}
 \newtheorem{definition}{Definition}
