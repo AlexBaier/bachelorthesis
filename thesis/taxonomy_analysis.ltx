@@ -1,58 +1,102 @@
 For the task of developing an algorithm, which takes unlinked classes as input, it is necessary to know,
 what information the classes carry and if there are certain patterns among the classes.
 For this purpose an analysis of the taxonomy needs to be carried out, which may answer questions.
-Additionally other knowledge can be gained through this knowledge.
-
-The taxonomy contained in the Wikidata dump of \dumpdate was analyzed.
+Additionally other knowledge can be gained through the analysis.
+\bigbreak
+The taxonomy contained in the Wikidata dump of \dumpdate{} was analyzed.
 Classes were recognized as defined in Section~\ref{section:wikidata}. 
 Unlinked classes were identified by checking whether a class does not have the \textit{subclass of (P279)} property.
 The taxonomy contained a total of $1299501$ classes at this time.
-
-First, the state of the taxonomy was captured in regards to the root class \entity{}.
+\bigbreak
+The state of the taxonomy was captured in regards to the root class \entity{}.
 $1260842$ classes are currently subclasses of \entity{}.
 $97\%$ of all classes are  therefore nodes in the same graph component as the root class.
 This implies a high agreement in the Wikidata community on which class is considered root,
 and thereby also supports the modeling decision made in Section~\ref{section:taxonomy},
 which assumes that a taxonomy only has one root, and this root is \entity{} in Wikidata.
+\textbf{Last sentences of this paragraph are mostly interesting trivia, but have currently no further use.}
+The longest shortest distance between the root and a leaf class is $20$. 
+The classes \textit{Q639064}, \textit{Q15978631} and \textit{Q151055} fulfill this characteristics. 
+Each of them is subclass of \textit{Homo (Q171283)}. 
+\bigbreak
+The characteristics of all unlinked classes and the root class were analyzed.
+This set contains a total of $16373$ classes. $13807$ classes have an English label
+and $11534$ classes have a corresponding English Wikipedia page.
+Regarding the  number of unique properties (or statement groups) per class 
+(see Figure~\ref{fig:unlinked property count}) the median is $3$ and the average is $\approx 4.8$.
+Combined with the analyzed unique property frequency (see Figure~\ref{fig:unlinked property frequency}),
+it can be seen that many unlinked classes are linked to other knowledge bases, e.g. Freebase or GND, using an identifier.
+ Another  observation is that $901$ of the unlinked classes have properties related to taxons,
+ which is a, to some degree, separate taxonomy in Wikidata, created with properties like
+ \textit{taxon name (P225)}, \textit{parent taxon (P171)}, etc.
+ 
+Most unlinked classes have only $0$ to $1$ instances, the median is $1$ and the average
+is $\approx 4.65$ instances per class (see Figure~\ref{fig:unlinked instance count}).
+There are however outliers with big numbers of instances, which skew the average number of instances per class.
+This may for example imply, that classes are created mainly for the purpose of grouping newly created
+instances.
 
-Second, the characteristics of all unlinked classes and the root class were analyzed.
-This set contains a total of $16373$ classes.
+The median and average for subclasses per class are $0$ and $\approx 0.85$ respectively 
+(see Figure~\ref{fig:unlinked subclass count}). This implies that the graph components of
+the unlinked classes are very small, and in most cases contain only the respective unlinked class.
+ 
 \begin{figure}
 \centering
 \includegraphics[width=\textwidth]{images/taxonomy_analysis/unlinked_property_count.png}
-\caption{Percentage of unlinked classes with a specific amount of unique properties. Wikidata (2016-11-07)}
+\caption{Percentage of unlinked classes with a specific amount of unique properties. Wikidata (\dumpdate{})}
 \label{fig:unlinked property count}
 \includegraphics[width=\textwidth]{images/taxonomy_analysis/unlinked_instance_count.png}
-\caption{Percentage of unlinked classes with a specific amount of instances. Wikidata (\dumpdate)}
+\caption{Percentage of unlinked classes with a specific amount of instances. Wikidata (\dumpdate{})}
 \label{fig:unlinked instance count}
 \end{figure}
 \begin{figure}
 \centering
 \includegraphics[width=\textwidth]{images/taxonomy_analysis/unlinked_subclass_count.png}
-\caption{Percentage of unlinked classes with a specific amount of subclasses. Wikidata (\dumpdate)}
+\caption{Percentage of unlinked classes with a specific amount of subclasses. Wikidata (\dumpdate{})}
 \label{fig:unlinked subclass count}
 \includegraphics[width=\textwidth]{images/taxonomy_analysis/unlinked_property_frequency.png}
-\caption{Frequency of properties in unlinked classes. Wikidata (\dumpdate)}
+\caption{Frequency of properties in unlinked classes. Wikidata (\dumpdate{})}
 \label{fig:unlinked property frequency}
 \end{figure}
 
+The question has to be asked,  whether an algorithm should try to handle the complete set of
+unlinked classes, or only a specific subset, which fulfills certain requirements.
+The answer depends on what information such an algorithm requires as input.
+The full set of unlinked classes is problematic for use in an algorithm as there are few shared characteristics
+over all classes.
+$\approx 16\%$ of classes are not labeled and $\approx 31.4\%$ of classes have no instances.
+Both labels and instances are useful characteristics for a class to have.
+The label allows the recognition of the class in natural text and also ensures that the class in the context of
+Wikidata was already curated, as the label is typically the first attribute, which is added by users \ref{WikidataLabeling}.
+Instances represent classes and thereby describe them. For example, \fullcite{Rodriguez2003} use
+instances  to compute semantic similarity between classes.
+Therefore, I propose to only consider the set of classes, which have a label in the English language 
+and at least $1$ instance, as input for the algorithm.
+\bigbreak
 Following this argument, the subset of labeled, instantiated and unlinked classes was analyzed.
-This set contains a total of $5776$ classes.
+This set contains a total of $9157$ classes.
 \begin{figure}
 \centering
 \includegraphics[width=\textwidth]{images/taxonomy_analysis/unlinked_labeled_instantiated_property_count.png}
-\caption{Percentage of unlinked, labeled, instantiated classes with a specific amount of unique properties. Wikidata (\dumpdate)}
+\caption{Percentage of unlinked, labeled, instantiated classes with a specific amount of unique properties. Wikidata (\dumpdate{})}
 \label{fig:unlinked labeled instantiated property count}
 \includegraphics[width=\textwidth]{images/taxonomy_analysis/unlinked_labeled_instantiated_instance_count.png}
-\caption{Percentage of unlinked, labeled, instantiated classes with a specific amount of instances. Wikidata (\dumpdate))}
+\caption{Percentage of unlinked, labeled, instantiated classes with a specific amount of instances. Wikidata (\dumpdate{}))}
 \label{figunlinked labeled instantiated instance count}
 \end{figure}
 \begin{figure}
 \centering
 \includegraphics[width=\textwidth]{images/taxonomy_analysis/unlinked_labeled_instantiated_subclass_count.png}
-\caption{Percentage of unlinked, labeled, instantiated classes with a specific amount of subclasses. Wikidata (2016-11-07)}
+\caption{Percentage of unlinked, labeled, instantiated classes with a specific amount of subclasses. Wikidata 
+(\dumpdate{})}
 \label{fig:unlinked labeled instantiated subclass count}
 \includegraphics[width=\textwidth]{images/taxonomy_analysis/unlinked_labeled_instantiated_property_frequency.png}
-\caption{Frequency of properties in unlinked, labeled, instantiated classes. Wikidata (\dumpdate))}
+\caption{Frequency of properties in unlinked, labeled, instantiated classes. Wikidata (\dumpdate{}))}
 \label{figunlinked labeled instantiated property frequency}
 \end{figure}
+
+\textbf{TODO: final conclusion}
+The fact that most classes are linked to 
+other knowledge bases and Wikipedia articles would allow an algorithm to supplement
+the structured information provided by Wikidata with additional information
+gathered from these resources. 

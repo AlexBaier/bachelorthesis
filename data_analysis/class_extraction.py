@@ -68,12 +68,12 @@ def get_class_children(entities: Iterable, class_ids: Set[str])->Tuple[Dict[str,
     instances = dict()
     subclasses = dict()
     for e in entities:
-        for instance_of in utils.get_subclass_of_ids(e):
+        for instance_of in utils.get_instance_of_ids(e):
             if not class_ids or instance_of in class_ids:
                 if not instances.get(instance_of, None):
                     instances[instance_of] = list()
                 instances[instance_of].append(e['id'])
-        for subclass_of in utils.get_instance_of_ids(e):
+        for subclass_of in utils.get_subclass_of_ids(e):
             if not class_ids or subclass_of in class_ids:
                 if not subclasses.get(subclass_of, None):
                     subclasses[subclass_of] = list()
@@ -105,6 +105,7 @@ def to_characteristic(class_ids: Set[str], entities: Iterable[dict])->Callable[[
 def analyze_characteristics(characteristics: Iterable[dict])->dict:
     result = dict()
     unlinked_class_count = 0
+    enwiki_count = 0
     labeled_count = 0
     property_counts = dict()  # type: Dict[int, int]
     subclass_counts = dict()  # type: Dict[int, int]
@@ -116,6 +117,8 @@ def analyze_characteristics(characteristics: Iterable[dict])->dict:
         instance_num = len(ch['instances'])
         # count number of analyzed classes
         unlinked_class_count += 1
+        # count number of classes with enwiki
+        enwiki_count += 1 if ch['enwiki'] else 0
         # count number of labeled classes
         labeled_count += 1 if ch['label'] else 0
         # count number of root classes with a specific number of properties
@@ -129,6 +132,7 @@ def analyze_characteristics(characteristics: Iterable[dict])->dict:
             property_frequencies[prop] = property_frequencies.get(prop, 0) + 1
 
     result['unlinked class count'] = unlinked_class_count
+    result['enwiki count'] = enwiki_count
     result['labeled class count'] = labeled_count
     result['property counts'] = property_counts
     result['subclass counts'] = subclass_counts

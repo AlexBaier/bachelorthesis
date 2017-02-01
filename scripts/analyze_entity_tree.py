@@ -12,6 +12,8 @@ def main():
         class_count += 1
     print('contained classes:', class_count - hist[-1])
     print('not contained classes:', hist[-1])
+    m = max(id2layer.values())
+    print('longest shortest paths:', list(filter(lambda i: i[1] == m, id2layer.items())))
 
     perc_hist = dict()
     for k, v in hist.items():
