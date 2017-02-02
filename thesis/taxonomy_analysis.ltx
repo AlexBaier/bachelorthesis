@@ -1,19 +1,25 @@
+\textbf{TODO: maybe separate this section into subsections}
 For the task of developing an algorithm, which takes unlinked classes as input, it is necessary to know,
 what information the classes carry and if there are certain patterns among the classes.
 For this purpose an analysis of the taxonomy needs to be carried out, which may answer questions.
-Additionally other knowledge can be gained through the analysis.
 \bigbreak
 The taxonomy contained in the Wikidata dump of \dumpdate{} was analyzed.
 Classes were recognized as defined in Section~\ref{section:wikidata}. 
 Unlinked classes were identified by checking whether a class does not have the \textit{subclass of (P279)} property.
 The taxonomy contained a total of $1299501$ classes at this time.
 \bigbreak
-The state of the taxonomy was captured in regards to the root class \entity{}.
+The state of the taxonomy was captured in regards to the root class \entity{} (see Figure~\ref{fig:root distance}).
 $1260842$ classes are currently subclasses of \entity{}.
-$97\%$ of all classes are  therefore nodes in the same graph component as the root class.
+$97\%$ of all classes are  therefore nodes in the root taxonomy.
 This implies a high agreement in the Wikidata community on which class is considered root,
 and thereby also supports the modeling decision made in Section~\ref{section:taxonomy},
 which assumes that a taxonomy only has one root, and this root is \entity{} in Wikidata.
+\begin{figure}
+\centering
+\includegraphics[width=\textwidth]{images/taxonomy_analysis/distance_to_root.png}
+\caption{Distance of subclasses to root class \entity{}. Wikidata (\dumpdate{})}
+\label{fig:root distance}
+\end{figure}
 \textbf{Last sentences of this paragraph are mostly interesting trivia, but have currently no further use.}
 The longest shortest distance between the root and a leaf class is $20$. 
 The classes \textit{Q639064}, \textit{Q15978631} and \textit{Q151055} fulfill this characteristics. 
@@ -22,10 +28,12 @@ Each of them is subclass of \textit{Homo (Q171283)}.
 The characteristics of all unlinked classes and the root class were analyzed.
 This set contains a total of $16373$ classes. $13807$ classes have an English label
 and $11534$ classes have a corresponding English Wikipedia page.
+
 Regarding the  number of unique properties (or statement groups) per class 
 (see Figure~\ref{fig:unlinked property count}) the median is $3$ and the average is $\approx 4.8$.
 Combined with the analyzed unique property frequency (see Figure~\ref{fig:unlinked property frequency}),
-it can be seen that many unlinked classes are linked to other knowledge bases, e.g. Freebase or GND, using an identifier.
+it can be seen that many unlinked classes are linked to other knowledge bases and taxonomies
+, e.g. Freebase or GND, using an identifier.
  Another  observation is that $901$ of the unlinked classes have properties related to taxons,
  which is a, to some degree, separate taxonomy in Wikidata, created with properties like
  \textit{taxon name (P225)}, \textit{parent taxon (P171)}, etc.
@@ -45,18 +53,18 @@ the unlinked classes are very small, and in most cases contain only the respecti
 \includegraphics[width=\textwidth]{images/taxonomy_analysis/unlinked_property_count.png}
 \caption{Percentage of unlinked classes with a specific amount of unique properties. Wikidata (\dumpdate{})}
 \label{fig:unlinked property count}
+\includegraphics[width=\textwidth]{images/taxonomy_analysis/unlinked_property_frequency.png}
+\caption{Frequency of properties in unlinked classes. Wikidata (\dumpdate{})}
+\label{fig:unlinked property frequency}
+\end{figure}
+\begin{figure}
 \includegraphics[width=\textwidth]{images/taxonomy_analysis/unlinked_instance_count.png}
 \caption{Percentage of unlinked classes with a specific amount of instances. Wikidata (\dumpdate{})}
 \label{fig:unlinked instance count}
-\end{figure}
-\begin{figure}
 \centering
 \includegraphics[width=\textwidth]{images/taxonomy_analysis/unlinked_subclass_count.png}
 \caption{Percentage of unlinked classes with a specific amount of subclasses. Wikidata (\dumpdate{})}
 \label{fig:unlinked subclass count}
-\includegraphics[width=\textwidth]{images/taxonomy_analysis/unlinked_property_frequency.png}
-\caption{Frequency of properties in unlinked classes. Wikidata (\dumpdate{})}
-\label{fig:unlinked property frequency}
 \end{figure}
 
 The question has to be asked,  whether an algorithm should try to handle the complete set of
@@ -72,31 +80,66 @@ Instances represent classes and thereby describe them. For example, \fullcite{Ro
 instances  to compute semantic similarity between classes.
 Therefore, I propose to only consider the set of classes, which have a label in the English language 
 and at least $1$ instance, as input for the algorithm.
+\textbf{TODO: Find a short name or acronym for this subset.}
 \bigbreak
 Following this argument, the subset of labeled, instantiated and unlinked classes was analyzed.
-This set contains a total of $9157$ classes.
+This set contains a total of $9157$ classes. $7557$ classes have an English Wikipedia page, which is 
+$\approx 82.5\%$ of all analyzed classes in the subset, and an increase of $\approx 12\%$ in comparison 
+to the full set of unlinked classes.
+
+The average of unique properties per class increases from $4.8$ to $5.5$, while the median remains at $3$
+(see Figure~\ref{fig:unlinked labeled instantiated property count}).
+The frequency of different properties appearing in classes however is more distributed 
+(see Figure~\ref{fig:unlinked labeled instantiated property frequency}).
+This implies that the classes of this subset are related to different topics, and share only few commonalities.
+
+As expected the average of instances per class increased to $\approx 7.37$ from $\approx 4.65$.
+However the median is still $1$ (see Figure~\ref{fig:unlinked labeled instantiated instance count}).
+$\approx 59\%$ of classes have only $1$ instance.
+
+At the same time the average of subclasses per class halved to $\approx 0.4$ 
+(see Figure~\ref{fig:unlinked labeled instantiated subclass count}). 
+\textbf{can i just do such an assumption? the data supports it a bit, but i am not searching for counterclaims.
+and the assumption is not directly relevant to the thesis.}
+Combined with the 
+unchanged median of $1$ instance per class, supports the assumption, that classes are mainly
+created for the purpose of grouping instances. While the extension of the taxonomy by connecting
+the newly created class to the main component of the taxonomy is \textbf{vernachlaessigt}.
+
 \begin{figure}
 \centering
 \includegraphics[width=\textwidth]{images/taxonomy_analysis/unlinked_labeled_instantiated_property_count.png}
 \caption{Percentage of unlinked, labeled, instantiated classes with a specific amount of unique properties. Wikidata (\dumpdate{})}
 \label{fig:unlinked labeled instantiated property count}
-\includegraphics[width=\textwidth]{images/taxonomy_analysis/unlinked_labeled_instantiated_instance_count.png}
-\caption{Percentage of unlinked, labeled, instantiated classes with a specific amount of instances. Wikidata (\dumpdate{}))}
-\label{figunlinked labeled instantiated instance count}
+\includegraphics[width=\textwidth]{images/taxonomy_analysis/unlinked_labeled_instantiated_property_frequency.png}
+\caption{Frequency of properties in unlinked, labeled, instantiated classes. Wikidata (\dumpdate{}))}
+\label{fig:unlinked labeled instantiated property frequency}
 \end{figure}
 \begin{figure}
 \centering
+\includegraphics[width=\textwidth]{images/taxonomy_analysis/unlinked_labeled_instantiated_instance_count.png}
+\caption{Percentage of unlinked, labeled, instantiated classes with a specific amount of instances. Wikidata (\dumpdate{}))}
+\label{fig:unlinked labeled instantiated instance count}
 \includegraphics[width=\textwidth]{images/taxonomy_analysis/unlinked_labeled_instantiated_subclass_count.png}
 \caption{Percentage of unlinked, labeled, instantiated classes with a specific amount of subclasses. Wikidata 
 (\dumpdate{})}
 \label{fig:unlinked labeled instantiated subclass count}
-\includegraphics[width=\textwidth]{images/taxonomy_analysis/unlinked_labeled_instantiated_property_frequency.png}
-\caption{Frequency of properties in unlinked, labeled, instantiated classes. Wikidata (\dumpdate{}))}
-\label{figunlinked labeled instantiated property frequency}
 \end{figure}
 
-\textbf{TODO: final conclusion}
-The fact that most classes are linked to 
-other knowledge bases and Wikipedia articles would allow an algorithm to supplement
-the structured information provided by Wikidata with additional information
-gathered from these resources. 
+The classes of the subset have, on average, a better level of description, more unique properties and instances,
+than the full set of unlinked classes. Between these classes the number of commonalities
+is lower, because the same properties occur not as frequently for different classes.
+The lack of commonalties between unlinked classes is not very problematic, as the algorithm
+would not compare unlinked classes with each other but with classes in the root taxonomy.
+\bigbreak
+After completing the analysis, it can be seen that \entity{} is the root class of the taxonomy,
+and Wikidata's taxonomy is in a good state, since $97\%$ of classes are part of the root taxonomy.
+\textbf{TODO: not sure if i can just say that it is in a good state}
+Unlinked classes share few commonalities, and as shown above, a percentage of classes lack even
+basic information like a label. 
+For developing an algorithm it is necessary to set a baseline, of what can be expected from the input.
+In this case, input is required to be labeled and have at least one instance.
+The benefit of this specific restriction is, that a basic level of descriptiveness can be assumed for
+every class. A label additionally allows supplementing the information, provided by Wikidata, to
+be supplemented with natural text sources, like Wikipedia, since it is now possible to recognize
+occurrences of the class in text.

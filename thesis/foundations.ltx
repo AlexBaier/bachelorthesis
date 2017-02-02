@@ -92,6 +92,11 @@ A directed graph $G$ is called \textnormal{directed acyclic graph}, if there are
 \end{definition}
 In Wikidata, a class can have multiple superclasses, therefore a tree structure is not sufficient to model the taxonomy.
 However a directed acyclic graph, can model the taxonomy. The acyclic constraint is necessary to ensure that no class is transitively a subclass of itself.
+\textbf{TODO: define}
+\begin{definition}[Connectedness]
+\end{definition}
+\begin{definition}[Component]
+\end{definition}
 \begin{definition}[Taxonomy]
 A \textnormal{taxonomy} $T=(C, S)$ is a directed  acyclic graph, where $C$ is a set of \textnormal{class identifiers}, 
 and $S$ is the set of edges, which describe the \textnormal{subclass-of relation}  between two classes. such that $c_1$ is the subclass of $c_2$, if $(c_1, c_2) \in S$.
@@ -119,7 +124,9 @@ if $u \neq root_T \land \abs{succ_T(u)} = 0$.
 \end{definition}
 In Wikidata, the root class is \entity{} \cite{WikidataQ35120}. 
 All other classes, which are not subclasses of \entity{}, are therefore either unlinked classes, or subclasses of unlinked classes.
-\textbf{TODO: Something is missing here maybe. The problem statement could follow here, but the required definition of similarity is missing. Maybe switch the order of similarity and taxonomy.}
+In Section~\ref{section:taxonomy analysis}, it will be shown that the Wikidata taxonomy graph is not fully
+connected. But the component, which contains root class \entity{}, contains $97\%$ of all classes.
+This component will be referred to as \textit{root taxonomy} in later sections.
 
 \subsection{Similarity}
 \begin{itemize}
@@ -135,7 +142,8 @@ More commonalities implies higher similarity. Vice versa, more differences impli
 Two identical objects should have the maximum similarity. In addition, only identical objects should be
 able to achieve maximum similarity. Typically, similarity can be defined as a binary function, which
 maps two objects to a value in the interval $[0, 1]$. A value of $1$ represents identical input objects.
-For this thesis, semantic and vector similarity measures will be used.\\
+For this thesis, semantic and vector similarity measures will be used.
+\textbf{TODO: example for Commonalities, Differences}\\
 Vector similarity.\\
 Semantic similarity measures are needed when comparing structures, which cannot be sufficiently represented
 as vectors. These are for example words and classes in ontologies \textbf{citations needed}.

@@ -1,9 +1,5 @@
 from typing import List, Dict
 
-import numpy
-import scipy
-from scipy import sparse
-
 import data_analysis.dumpio as dumpio
 import data_analysis.utils as utils
 
