@@ -28,7 +28,7 @@ Additionally, references can be used for statements to include its source. See F
 
 Following, the terms of item and statement are defined in the context of Wikidata.
 \begin{definition}[Item]\label{definition:item}
-An item is a tuple $(\mathit{id},  \mathit{label}, \mathit{aliases}, \mathit{description}, \mathit{sitelinks})$:
+An\textnormal{item} is a tuple $(\mathit{id},  \mathit{label}, \mathit{aliases}, \mathit{description}, \mathit{sitelinks})$:
 	\begin{itemize}
 	\item $\mathit{id} \in \mathbb{N}$ is the numerical item ID;
 	\item $\mathit{label} \in \mathit{String}$ is the English label of the item;
@@ -39,7 +39,7 @@ An item is a tuple $(\mathit{id},  \mathit{label}, \mathit{aliases}, \mathit{des
 	\end{itemize}
 \end{definition}
 \begin{definition}[Statement]
-A statement is a tuple $(\mathit{itemid}, \mathit{pid}, \mathit{value}, \mathit{refs}, \mathit{qualifiers})$:
+A \textnormal{statement} is a tuple $(\mathit{itemid}, \mathit{pid}, \mathit{value}, \mathit{refs}, \mathit{qualifiers})$:
 \begin{itemize}
 \item $\mathit{itemid} \in \mathbb{N}$ is a numerical item ID, to which the statement belongs;
 \item $\mathit{pid} \in \mathbb{N}$ is a numerical property ID;
@@ -55,7 +55,7 @@ A class is any item, which has instances, subclasses or is the subclass of anoth
 In Wikidata, the properties \textit{instance of (P31)} and \textit{subclass of (P279)} exist, which describe this relation between items.
 Therefore to identify whether an item is a class, it needs to be checked, whether the items fulfills any of the three above criteria.
 \begin{definition}[Class]
-Given a set of items $I$ and a set of statements $R$. $c = (\mathit{classid}, \_, \_, \_, \_)  \in I$ is a class, if at least one of the following assertions are true:
+Given a set of items $I$ and a set of statements $R$. $c = (\mathit{classid}, \_, \_, \_, \_)  \in I$ is a \textnormal{class}, if at least one of the following assertions are true:
 \begin{align*}
 &\exists i=(\mathit{instanceid}, \_, \_, \_, \_) \in I \; \exists s=(\mathit{itemid}, \mathit{pid}, \mathit{value}, \_, \_) \in R :  \\
 &\phantom{\exists i=(\mathit{instanceid}, \_, \_, \_, \_) \in I} \mathit{instanceid} = \mathit{itemid} \land \mathit{pid} = 31 \land \mathit{value} = \mathit{classid} \: 
@@ -128,6 +128,9 @@ First, basic concepts of graphs will be introduced.
 	A \textnormal{directed graph} G is an ordered pair $G=(V, E)$, where $V$ is a set of vertices, and $E = \{ (v_1, v_2) \mid v_1, v_2 \in V \}$ 
 	is a set of ordered pairs called directed edges, connecting the the vertices.
 \end{definition}
+\begin{definition}{Subgraph}
+Let $G=(V, E)$ and $H=(W, F)$ be directed graphs. $H$ is called \textnormal{subgraph} of $G$, if $W \subseteq V$ and $F \subseteq E$.
+\end{definition}
 \begin{definition}[Predecessor]\label{predecessor}
 Let $G=(V, E)$ be a directed graph.
 $v_1 \in V$ is a \textnormal{predecessor} of $v_2 \in V$, if there exists an edge so that $(v_1, v_2) \in E$.
@@ -142,6 +145,16 @@ Let $G = (V, E)$ be a directed graph.
 A \textnormal{walk} $W$ of length $n \in \mathbb{N}$ is a sequence of vertices $W=(v_1,\ldots, v_n)$ with $v_1,\ldots, 
 v_n \in V$,  so that $(v_i, v_{i+1}) \in E \; \forall i=1,\ldots,n-1$.
 \end{definition}
+\begin{definition}[Connected (Vertice)]
+Let $G=(V, E)$ be a directed graph. Vertices $u,v \in V$ are \textnormal{connected}, if $u = v$, or $u \neq v$ and there is walk between $u$ and $v$ or $v$ and $u$.
+\end{definition}
+\begin{definition}[Connected (Directed graph)]
+Let $G$ be a directed graph. $G$ is \textnormal{connected}, if every pair of vertices in $G$ are connected.
+\end{definition}
+\begin{definition}[Component]
+Let $G$ and $H$ be directed graphs. $H$ is a \textnormal{component} of $G$, if $H$ is a connected subgraph of $G$ and $H$ is not subgraph of another connected subgraph of $G$,
+which has more vertices or edges than $H$.
+\end{definition}
 \begin{definition}[Cycle]\label{cycle}
 A walk $W=(v_1,\ldots, v_n)$ of length $n$ is called a \textnormal{cycle}, if $v_1 = v_n$.
 \end{definition}
@@ -150,11 +163,6 @@ A directed graph $G$ is called \textnormal{directed acyclic graph}, if there are
 \end{definition}
 In Wikidata, a class can have multiple superclasses, therefore a tree structure is not sufficient to model the taxonomy.
 However a directed acyclic graph, can model the taxonomy. The acyclic constraint is necessary to ensure that no class is transitively a subclass of itself.
-\textbf{TODO: define}
-\begin{definition}[Connectedness]
-\end{definition}
-\begin{definition}[Component]
-\end{definition}
 \begin{definition}[Taxonomy]
 A \textnormal{taxonomy} $T=(C, S)$ is a directed  acyclic graph, where $C$ is a set of \textnormal{class identifiers}, 
 and $S$ is the set of edges, which describe the \textnormal{subclass-of relation}  between two classes. such that $c_1$ is the subclass of $c_2$, if $(c_1, c_2) \in S$.
@@ -183,7 +191,7 @@ if $u \neq root_T \land \abs{succ_T(u)} = 0$.
 In Wikidata, the root class is \entity{} \cite{WikidataQ35120}. 
 All other classes, which are not subclasses of \entity{}, are therefore either unlinked classes, or subclasses of unlinked classes.
 In Section~\ref{section:taxonomy analysis}, it will be shown that the Wikidata taxonomy graph is not fully
-connected. But the component, which contains root class \entity{}, contains $97\%$ of all classes.
+connected. But the component, which contains the root class \entity{}, contains $97\%$ of all classes.
 This component will be referred to as \textit{root taxonomy} in later sections.
 
 % Similarity
@@ -199,15 +207,23 @@ the concept of similarity is of importance. A basic intuition of similarity is f
 \fullcite{Lin1998}. Similarity is related to the commonalities and differences between two objects.
 More commonalities implies higher similarity. Vice versa, more differences implies lower similarity.
 Two identical objects should have the maximum similarity. In addition, only identical objects should be
-able to achieve maximum similarity. Typically, similarity can be defined as a binary function, which
-maps two objects to a value in the interval $[0, 1]$. A value of $1$ represents identical input objects.
-For this thesis, semantic and vector similarity measures will be used.
-\textbf{TODO: example for Commonalities, Differences}\\
-Vector similarity.\\
-Semantic similarity measures are needed when comparing structures, which cannot be sufficiently represented
-as vectors. These are for example words and classes in ontologies \textbf{citations needed}.
+able to achieve maximum similarity. A similarity measure computes the similarity between two objects \cite{Weber2000}:
+\begin{definition}[Similarity measure]
+$\mathit{sim}: O \times O \mapsto [ 0, 1 ]$ is called \textnormal{similarity measure} for a set of objects $O$.
+\end{definition}
+A similarity of $1$ implies identical objects and a similarity of $0$ implies that there are no commonalities between the input objects.
+
+\textbf{TODO: Whole paragraph needs citations}
+In ontology learning, semantic similarity is used to great effect . 
+Semantic similarity compares the semantic content of objects or documents . This can be achieved by comparing which features
+can be found in both objects (commonalities) and which features are unique to the compared objects (differences).
 \fullcite{Rodriguez2003} develops a semantic similarity measure for comparing entity classes in ontologies.
-Entity
+\textbf{Write}
+
+Similarity between vectors can be computed by calculating their distance \cite{Weber2000}.
+\textbf{Write}
+
+
 
 % Problem statement 
 \subsection{Problem statement}

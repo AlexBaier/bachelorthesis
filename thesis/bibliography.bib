@@ -256,6 +256,16 @@ year = {2014}
  publisher = {Morgan Kaufmann Publishers Inc.},
  address = {San Francisco, CA, USA},
 }
+% vector similarity
+@phdthesis{Weber2000,
+abstract = {For a large variety of multimedia applications, similarity search provides an effective tool to find relevant information. A common implementation of similarity search transforms the objects into high-dimensional feature vectors. Searching for the most similar object to a given reference object then corresponds to finding the nearest neighbor (NN) in the feature space. Although a large number of algorithms provide efficient solutions for the NN-search problem in low-dimensional spaces, none of the proposed methods provides satisfactory response times for high-dimensional spaces as required for similarity retrieval in multimedia collections. A first contribution of this work is to formally show that all hierarchical organization finally degenerate to traversing the entire structure to find the nearest neighbor. We further show practically that a brute-force scan through the vector data outperforms such organizations already for low feature space dimensionalities in the order of 5. For NN-searches in high-dimensional spaces, we typically observe that a linear method performs faster than hierarchical approaches by more than a factor of 10. As a second contribution, we propose a new indexing method optimized for high-dimensional spaces. The so-called vector approximation file (VA-File) neither clusters data points nor maintains them in a hierarchical structure. Rather, its approach is to approximate the vectors with a quantization scheme and to use mainly these small approximations for the search. Experiments confirm the superiority over hierarchical structures for highdimensional data (i.e. more than 10 dimensions). Furthermore, we provide in-depth analysis of the method and investigate the influence of various parameters on the search efficiency. However, the method is still linear in the number of vectors and in the number of dimensions. As a consequence, it may not allow interactive-time retrieval for large collections if the dimensionality of the feature space is very large ({\textgreater} 100). Therefore, our third contribution is to extend the VA-File method towards faster evaluation schemes. The first approach trades result quality for response time, i.e. we allow for a relatively small error in the result in trade of reduced execution costs. The second approach deploys parallel resources to speedup query evaluation. We describe an evaluation scheme for a parallel version of the VA-File on a cluster of workstations. A further and important contribution of this work relates to quality aspects of NN-search. Recently, it was argued that high-dimensionality prohibits meaningful applications of NN-search. Our investigations, however, revealed that NN-search indeed makes sense, both from a theoretical point of view, and a practical point of view.},
+author = {Weber, Roger},
+pages = {210},
+school = {SWISS FEDERAL INSTITUTE OF TECHNOLOGY ZURICH},
+title = {{Similarity Search in High-Dimensional Vector Spaces}},
+year = {2000}
+}
+
 % ontology mapping, similarity
 @article{Rodriguez2003,
  author = {Rodr\'{\i}guez, M. Andrea and Egenhofer, Max J.},
