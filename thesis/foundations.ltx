@@ -1,9 +1,24 @@
-
+% Wikidata
 \subsection{Wikidata}\label{section:wikidata}
-\textbf{TODO: Define entity in Wikidata, how are classes identified, etc.}
-\fullcite{Galarraga2016}\\
-Wikidata is a open, collaborative and user-driven knowledge base. Its main purpose is to serve as a structural knowledge store for other
-Wikimedia projects like Wikipedia.
+Wikidata is an open, free, multilingual and collaborative knowledge base. It is a structured knowledge source for other Wikimedia projects. 
+It tries to model the real world, meaning every concept, object, animal, person, etc.
+Wikidata is mostly edited and extended by humans, which in general improves the quality of entries compared to fully-automated systems, 
+because different editors can validate and correct occurring errors.
+However, Wikidata, like most knowledge bases, is incomplete and therefore has to be operated under the \textit{Open World Assumption} (OWA).
+OWA states that if a statement is not contained in a knowledge base, it is not necessarily false but rather unknown \cite{Galarraga2016}.
+
+In Wikidata items and properties exist. Items are the aforementioned concepts, objects, etc. While properties are used to make claims about
+items, e.g. \textit{photographic film (Q6293)} is a \textit{subclass of (P279)} \textit{data storage device (Q193395)} (see Figure~\ref{fig:class example}).
+Each item and property has an unique identifier, which starts with the letter Q for items and the letter P for properties and is followed by a numeric code.
+The identifiers in Wikidata are essential to avoid ambiguity and to make items and properties multilingual.
+
+Items consist of labels, aliases and descriptions in different languages. 
+Sitelinks connect items to their corresponding pages of Wikimedia projects like Wikipedia articles.
+Most importantly item are described by statements. 
+Statements are in their simplest form a pair of property and value, assigned to a specific item. A value is either a literal value or another item.
+It should be noted that an item can have multiple statements with the same property. The set of statements with the same property is called statement group.
+Statements can be annotated with qualifiers, which specify the context of the statement, e.g. population at a certain point of time.
+Additionally, references can be used for statements to include its source. See Figure~\ref{fig:class example} for an example of a Wikidata item.
 \begin{figure}
 \centering
 \includegraphics[width=\textwidth]{images/foundations/item_example.png}
@@ -11,7 +26,50 @@ Wikimedia projects like Wikipedia.
 \label{fig:class example}
 \end{figure}
 
+Following, the terms of item and statement are defined in the context of Wikidata.
+\begin{definition}[Item]\label{definition:item}
+An item is a tuple $(\mathit{id},  \mathit{label}, \mathit{aliases}, \mathit{description}, \mathit{sitelinks})$:
+	\begin{itemize}
+	\item $\mathit{id} \in \mathbb{N}$ is the numerical item ID;
+	\item $\mathit{label} \in \mathit{String}$ is the English label of the item;
+	\item $\mathit{aliases} \in \mathcal{P}(\mathit{String})$ is the set of English synonyms for the label;
+	\item $\mathit{description} \in \mathit{String}$ is a short sentence describing the item;
+	\item $\mathit{sitelinks} \in \mathit{String} \times \mathit{String}$ is a set of tuples $(\mathit{site}, \mathit{title})$, where $\mathit{site}$ refers to a specific site of the Wikimedia
+	 projects, e.g. enwiki, and $\mathit{title}$ is the corresponding article title of the item on this site.
+	\end{itemize}
+\end{definition}
+\begin{definition}[Statement]
+A statement is a tuple $(\mathit{itemid}, \mathit{pid}, \mathit{value}, \mathit{refs}, \mathit{qualifiers})$:
+\begin{itemize}
+\item $\mathit{itemid} \in \mathbb{N}$ is a numerical item ID, to which the statement belongs;
+\item $\mathit{pid} \in \mathbb{N}$ is a numerical property ID;
+\item $\mathit{value}$ is either a constant value like string, int, etc., or an item ID;
+\item $\mathit{refs}$ is a set of references, containing the source of information for the statement;
+\item $\mathit{qualifiers}$ is a set of qualifiers, which further specifies the statement.
+\end{itemize}
+\end{definition}
+In Wikidata, there is no strict distinction between classes and instances. Both groups are represented as items.
+This leads to the issue, that recognizing, whether an item is a class or instance is not trivial.
+Based on which statements connect two items, a distinction can be made.
+A class is any item, which has instances, subclasses or is the subclass of another class.
+In Wikidata, the properties \textit{instance of (P31)} and \textit{subclass of (P279)} exist, which describe this relation between items.
+Therefore to identify whether an item is a class, it needs to be checked, whether the items fulfills any of the three above criteria.
+\begin{definition}[Class]
+Given a set of items $I$ and a set of statements $R$. $c = (\mathit{classid}, \_, \_, \_, \_)  \in I$ is a class, if at least one of the following assertions are true:
+\begin{align*}
+&\exists i=(\mathit{instanceid}, \_, \_, \_, \_) \in I \; \exists s=(\mathit{itemid}, \mathit{pid}, \mathit{value}, \_, \_) \in R :  \\
+&\phantom{\exists i=(\mathit{instanceid}, \_, \_, \_, \_) \in I} \mathit{instanceid} = \mathit{itemid} \land \mathit{pid} = 31 \land \mathit{value} = \mathit{classid} \: 
+	\textnormal{(has instance)}\\
+&\exists s=(\mathit{itemid}, \mathit{pid}, \_, \_, \_) \in I: \mathit{itemid} = \mathit{classid} \land \mathit{pid} = 279 \: \textnormal{(is subclass)}\\
+&\exists i=(subclassid, \_, \_, \_, \_) \in I \; \exists s=(itemid, pid, value, \_, \_) \in R : \\
+&\phantom{\exists i=(\mathit{subclassid}, \_, \_, \_, \_)\in I } \mathit{itemid} = \mathit{subclassid} \land \mathit{pid} = 279 \land \mathit{value} = \mathit{classid} \: 
+	\textnormal{(has subclass)}
+\end{align*}
+\end{definition}
+$\_$ is used as an anonymous placeholder, for the purpose of not naming unused elements in tuples.
+For example, \textit{photographic film (Q6293)} (Figure~\ref{fig:class example}) is a class, because it is the subclass of three other classes.
 
+% Taxonomy
 \subsection{Taxonomy}\label{section:taxonomy}
 
 \textit{Ontologies} are sets of concepts and relations, which formally define how knowledge can be related and ordered in a context. Additionally it is possible for ontologies to
@@ -51,7 +109,7 @@ For the purpose of developing a formal definition of the thesis' problem stateme
 	\end{definition*}
 	Hereby, $\proj{i}{t}$ is the i-th component of tuple $t$. [...] Further, a semi-upper lattice $\le$ fulfills the following conditions:
 	\begin{align*}
-		&\forall x x \le x \: \text{(reflexive)} \\
+		&\forall x (x \le x) \: \text{(reflexive)} \\
 		&\forall x \forall y (x \le y \land y \le x \implies x = y) \: \text{(anti-symmetric)} \\
 		&\forall x \forall y \forall z (x \le y \land y \le z \implies x \le z) \: \text{(transitive)}\\
 		&\forall x x \le top \: \text{(top element)}\\
@@ -128,6 +186,7 @@ In Section~\ref{section:taxonomy analysis}, it will be shown that the Wikidata t
 connected. But the component, which contains root class \entity{}, contains $97\%$ of all classes.
 This component will be referred to as \textit{root taxonomy} in later sections.
 
+% Similarity
 \subsection{Similarity}
 \begin{itemize}
 \item semantic similarity e.g. distributional similarity \\
@@ -150,34 +209,7 @@ as vectors. These are for example words and classes in ontologies \textbf{citati
 \fullcite{Rodriguez2003} develops a semantic similarity measure for comparing entity classes in ontologies.
 Entity
 
-\subsection{Similarity-based classification}
-\fullcite{Chen2009}\\
-\fullcite{Zhang2015}\\
-
-\textbf{Explain how kNN works.}
-\begin{figure}
-\centering
-\includegraphics[width=0.5\textwidth]{images/foundations/knn_example.pdf}
-\caption{Example for k-nearest neighbors for 3 classes with k=4 and k=10.}
-\label{fig:kNN example}
-\end{figure}
-Nearest-neighbors classification is a lazy method, as it does not require training before testing.
-This is useful for applications with high amounts of data, large numbers of classes, and changing data \cite{Zhang2015}.
-For the considered use case of classification in Wikidata, these are very important strengths,
-as the number of classes in the taxonomy is very high and Wikidata is being constantly edited.
-
-\subsection{Text processing}
-\begin{itemize}
-\item N-Gram \\
-	\fullcite{Jurafsky2014}
-\item Skip-Gram \\
-	\fullcite{Guthrie2006}
-\item Counting-based word representations \\ 
-	\fullcite{Levy2015}
-\item Predictive word representations \\
-	\fullcite{Levy2015}
-\end{itemize}
-
+% Problem statement 
 \subsection{Problem statement}
 The task of this thesis is the classification of unlinked classes in Wikidata. In other words a function
 is needed, which given an unlinked class $u$ of a taxonomy $T = (C, S)$ with a root class $root_T$,
@@ -199,3 +231,37 @@ therefore the superclass for german should be language and not english}
 & s = \underset{c \in C}{\max(sim(u, s))} \: \textnormal{most similar class} \label{most similar class}
 \end{align}
 \end{definition}
+
+% Similarity-based classification
+\subsection{k-nearest-neighbors classification}
+\fullcite{Chen2009}\\
+\fullcite{Zhang2015}\\
+Based on the characteristics of the classification problem, described by the problem statement, and the challenges attached to it,
+the k-nearest-neighbor algorithm seems like an appropriate tool for solving the task. 
+
+\textbf{Explain how kNN works.}
+\begin{figure}
+\centering
+\includegraphics[width=0.5\textwidth]{images/foundations/knn_example.pdf}
+\caption{Example for k-nearest neighbors for 3 classes with k=4 and k=10.}
+\label{fig:kNN example}
+\end{figure}
+Nearest-neighbors classification is a lazy method, as it does not require training before testing.
+This is useful for applications with high amounts of data, large numbers of classes, and changing data \cite{Zhang2015}.
+For the considered use case of classification in Wikidata, these are very important strengths,
+as the number of classes in the taxonomy is very high and Wikidata is being constantly edited.
+
+% Language models (not needed specific language model will be introduced in neural networks
+% \subsection{Language models}
+%\begin{itemize}
+%\item N-Gram \\
+%	\fullcite{Jurafsky2014}
+%\item Skip-Gram \\
+%	\fullcite{Guthrie2006}
+%\item Counting-based word representations \\ 
+%	\fullcite{Levy2015}
+%\item Predictive word representations \\
+%	\fullcite{Levy2015}
+%\end{itemize}
+%A neural language model is used by the algorithm, developed in this thesis.
+%Language models are used to assign a probability for a word occurring in a certain context.
