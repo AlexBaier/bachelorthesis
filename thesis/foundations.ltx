@@ -174,10 +174,15 @@ $n \ge 1$, which connects $c_1$ and $c_2$. \subclassof{T} is transitive,  $\fora
 c_1 \subclassof{T} c_2 \land c_2 \subclassof{T} c_3 \implies c_1 \subclassof{T} c_3$.
 \end{definition}
 If the taxonomy defined by \fullcite{Cimiano2006} is mapped on this graph-based taxonomy model, the following
-assumption is true, for $T=(C,S)$: \[ \abs{\{  c \in C \mid \neg \exists s \in C: c \subclassof{T} s \}} = 1 \]
+assumption is true, for $T=(C,S)$: 
+\begin{align}
+ \abs{\{  c \in C \mid \neg \exists s \in C: c \subclassof{T} s \}} = 1
+ \end{align}
 Only one class in this taxonomy has no superclasses. This class is called \textit{root class}. However
 in the case of Wikidata, this assumption does not hold true. The following state is the case:
-\[ \abs{\{  c \in C \mid \neg \exists s \in C: c \subclassof{T} s \}} > 1 \]
+\begin{align}
+\abs{\{  c \in C \mid \neg \exists s \in C: c \subclassof{T} s \}} > 
+\end{align}
 There are classes other than the root class, which also have no superclasses. These classes will be called
 \textit{unlinked classes}.
 \begin{definition}[Root class]\label{root class}
@@ -233,51 +238,83 @@ find an appropriate superclass for $T$. \fullcite{Doan2002} suggests that for th
 into an appropriate position in $T$,
 either finding the most similar class, most specific superclass, or most general subclasses of $u$,
 are sensible approaches.
-This induces that the appropriate superclass for an unlinked class $u$ is either the most similar class $c \in T$,
-or one of the superclasses of $succ_T(c)$.
+This induces that the appropriate superclass for an unlinked class $u$ is the superclass of the most
+similar class to $u$.
 Therefore we can define the problem, as follows:
 \begin{definition}[Problem definition]\label{problem definition}
 Given a taxonomy $T = (C, S)$ with root class $root_T$ and a similarity function $sim$ over $T$,
-find a function $f$, which, given an unlinked class $u \in C$, returns a class $s = f(u)$, fulfilling the following
-criteria:
-\textbf{TODO: define as the parents of the most similar class? for example german would be similar to english,
-therefore the superclass for german should be language and not english}
+find a function $f: \mathbb{N} \mapsto \mathcal{P}(\mathbb{N})$, 
+which, given an unlinked class $u \in C$, returns a set of classes $P = f(u)$, 
+fulfilling the following criteria:
 \begin{align}
-& \neg (s \subclassof{T} u) \: \textnormal{no child} \label{no child}\\
-& s = \underset{c \in C}{\max(sim(u, s))} \: \textnormal{most similar class} \label{most similar class}
+& \neg(\forall p \in S: p \subclassof{T} u \: \textnormal{no children} \label{no children}\\
+& = \mathit{succ}(\underset{c \in C}{\max(sim(u, s))}) \: \textnormal{superclasses of most similar classes} 
+\label{most similar class}
 \end{align}
 \end{definition}
+Because it is possible for a class to have multiple superclasses, it is necessary to define $f$ in such a way,
+that it returns a set of classes. Therefore the described problem is a multi-label classification problem.
+
+The stated problem induces several challenges, which will be listed here, but addressed in later sections.
+
+\begin{enumerate}
+\item \textbf{Multi-label classification}. Algorithms for classification typically map entered objects to one label 
+\textbf{TODO:Reference}.
+It has to be decided whether the solution will be simplified to assign one superclass per input,
+or attempt multi-label classification.
+\item \textbf{High number of labels}. An entered, unlinked class has to be assigned to a class in the root taxonomy.
+The only restricting condition is that the chosen class cannot be a subclass of the unlinked class.
+As shown in Section~\ref{section:taxonomy analysis} $97\%$ of $12999501$ classes are part of the root
+taxonomy. Classification like SVM or neural networks are usually used for classification with a small number of labels.
+SVM is for example a binary classification method. A classification method, which is able to handle over a million
+of labels, has to be found.
+\item \textbf{Representation of items}. Items in Wikidata are structured information, similar to nodes in RDF graphs.
+Items are nodes and statements can be simplified to triples of $(\mathit{itemid}, \mathit{pid}, \mathit{value}$.
+As motivated in Section~\ref{section:introduction}, the solution should exploit the apparent power of
+neural networks. Neural networks, which are introduced in Section~\ref{section:neural networks},
+require input to be represented as vectors. Therefore it will be necessary to map items to vectors.
+\end{enumerate}
 
 % Similarity-based classification
 \subsection{k-nearest-neighbors classification}
 \fullcite{Chen2009}\\
 \fullcite{Zhang2015}\\
 Based on the characteristics of the classification problem, described by the problem statement, and the challenges attached to it,
-the k-nearest-neighbor algorithm seems like an appropriate tool for solving the task. 
+the k-nearest-neighbor algorithm (kNN) seems like an appropriate tool for solving the task.
+Nearest-neighbors classification is a lazy method, as it does not require training before testing.
+This is useful for applications with high amounts of data, large numbers of classes, and changing data \cite{Zhang2005}.
+For the considered use case of classification in Wikidata, these are very important strengths,
+as the number of classes in the taxonomy is very high and Wikidata is being constantly edited.
 
-\textbf{Explain how kNN works.}
+k-nearest-neighbors is a distance- or similarity-based classification method,
+which maps its input to a single label.
+This means, that kNN, given an input $u$ only requires the distance or similarity between $u$ and
+all training samples. Additional knowledge about the structure or content of the data is not required.
+
 \begin{figure}
 \centering
 \includegraphics[width=0.5\textwidth]{images/foundations/knn_example.pdf}
 \caption{Example for k-nearest neighbors for 3 classes with k=4 and k=10.}
 \label{fig:kNN example}
 \end{figure}
-Nearest-neighbors classification is a lazy method, as it does not require training before testing.
-This is useful for applications with high amounts of data, large numbers of classes, and changing data \cite{Zhang2015}.
-For the considered use case of classification in Wikidata, these are very important strengths,
-as the number of classes in the taxonomy is very high and Wikidata is being constantly edited.
 
-% Language models (not needed specific language model will be introduced in neural networks
-% \subsection{Language models}
-%\begin{itemize}
-%\item N-Gram \\
-%	\fullcite{Jurafsky2014}
-%\item Skip-Gram \\
-%	\fullcite{Guthrie2006}
-%\item Counting-based word representations \\ 
-%	\fullcite{Levy2015}
-%\item Predictive word representations \\
-%	\fullcite{Levy2015}
-%\end{itemize}
-%A neural language model is used by the algorithm, developed in this thesis.
-%Language models are used to assign a probability for a word occurring in a certain context.
+\begin{algorithm}[weighted kNN]
+Let $O$ be a specific set of objects, e.g. $\mathbb{R}^n$, with a similarity measure $\mathit{sim}$.
+Let $n \in mathbb{N}$ be the number of labels. 
+Let $T = \{\(o_i, l_i)\}$ with $i=0,\dots,m-1$ and be the set of training samples with $m$ samples, where $o_i \in O$
+is an object and $l_i \in [0, n-1]$ is its corresponding class.
+Let $u \in O$ be an unclassified object.
+\textbf{TODO: insert missing definitions}
+\begin{enumerate}
+\item Find the set $K$ of $k$ nearest neighbors to $u$ in $T$. 
+$K = \{ \}$ 
+\item Each item $k \in K$ a weight is assigned based on its similarity to $u$.
+$w_k = \textit{sim}(k, u)/sum(sim(o_j, u))$.
+\item Each item votes for its label using its weight. The label which has the highest vote score is assigned as label to $u$.
+$l$
+\end{enumerate}
+\end{algorithm}
+
+The task defined in this thesis can be considered a multi-label classification problem.
+\fullcite{Zhang2015} developed a multi-label nearest neighbor algorithm, which is based on kNN.
+\textbf{TODO: explain it}
