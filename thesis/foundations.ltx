@@ -122,45 +122,9 @@ A taxonomy can be modeled as a semi-upper lattice. This induces two important as
 observed taxonomies. First, there is only one \textit{root class}, top element of the lattice, of which every other class is (transitively) a subclass. Second,
 because of the supremum property, the taxonomy is fully connected, which means each class, but the root class, has a superclass.
 Wikidata's taxonomy does therefore not fulfill the definition by \fullcite{Cimiano2006}, as it is not fully connected.\\
-In the following, new definitions will presented, which attempt to model an incomplete taxonomy based on the already presented data model and structure of Wikidata.
-First, basic concepts of graphs will be introduced.
-\begin{definition}[Directed graph]\label{directed graph}
-	A \textnormal{directed graph} G is an ordered pair $G=(V, E)$, where $V$ is a set of vertices, and $E = \{ (v_1, v_2) \mid v_1, v_2 \in V \}$ 
-	is a set of ordered pairs called directed edges, connecting the the vertices.
-\end{definition}
-\begin{definition}{Subgraph}
-Let $G=(V, E)$ and $H=(W, F)$ be directed graphs. $H$ is called \textnormal{subgraph} of $G$, if $W \subseteq V$ and $F \subseteq E$.
-\end{definition}
-\begin{definition}[Predecessor]\label{predecessor}
-Let $G=(V, E)$ be a directed graph.
-$v_1 \in V$ is a \textnormal{predecessor} of $v_2 \in V$, if there exists an edge so that $(v_1, v_2) \in E$.
-Let $v \in V$ be a vertice of G, then $pred_G(v) = \{ w \mid (w, v) \in E \}$ is the set of predecessors of $v$.
-\end{definition}
-\begin{definition}[Successor]\label{successor}
-$v_1 \in V$ is a \textnormal{successor} of $v_2 \in V$, if there exists an edge so that $(v_2, v_1) \in E$.
-Let $v \in V$ be a vertice of G, then $succ_G(v) = \{ w \mid (v, w) \in E \}$ is the set of successors of $v$.
-\end{definition}
-\begin{definition}[Walk]\label{walk}
-Let $G = (V, E)$ be a directed graph.
-A \textnormal{walk} $W$ of length $n \in \mathbb{N}$ is a sequence of vertices $W=(v_1,\ldots, v_n)$ with $v_1,\ldots, 
-v_n \in V$,  so that $(v_i, v_{i+1}) \in E \; \forall i=1,\ldots,n-1$.
-\end{definition}
-\begin{definition}[Connected (Vertice)]
-Let $G=(V, E)$ be a directed graph. Vertices $u,v \in V$ are \textnormal{connected}, if $u = v$, or $u \neq v$ and there is walk between $u$ and $v$ or $v$ and $u$.
-\end{definition}
-\begin{definition}[Connected (Directed graph)]
-Let $G$ be a directed graph. $G$ is \textnormal{connected}, if every pair of vertices in $G$ are connected.
-\end{definition}
-\begin{definition}[Component]
-Let $G$ and $H$ be directed graphs. $H$ is a \textnormal{component} of $G$, if $H$ is a connected subgraph of $G$ and $H$ is not subgraph of another connected subgraph of $G$,
-which has more vertices or edges than $H$.
-\end{definition}
-\begin{definition}[Cycle]\label{cycle}
-A walk $W=(v_1,\ldots, v_n)$ of length $n$ is called a \textnormal{cycle}, if $v_1 = v_n$.
-\end{definition}
-\begin{definition}[Directed acyclic graph]\label{acyclic directed graph}
-A directed graph $G$ is called \textnormal{directed acyclic graph}, if there are no cycles in $G$.
-\end{definition}
+In the following, definitions wil bel presented, which attempt to model an incomplete taxonomy based on the already presented data model and structure of Wikidata.
+Refer to Appendix~\ref{section:graphs} for the necessary definitions on graphs.
+
 In Wikidata, a class can have multiple superclasses, therefore a tree structure is not sufficient to model the taxonomy.
 However a directed acyclic graph, can model the taxonomy. The acyclic constraint is necessary to ensure that no class is transitively a subclass of itself.
 \begin{definition}[Taxonomy]
