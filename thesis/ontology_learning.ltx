@@ -1,6 +1,58 @@
 General concepts. Classification of considered problem in the task of ontology learning. Related work.\\
-\fullcite{Cimiano2009}\\
-\fullcite{Wong2012}\\
-\fullcite{dAmato16}\\
-\fullcite{Petrucci16}\\
-\fullcite{Fu2014}\\
+
+\fullcite{Petrucci16} neural network for ontology learning\\
+\fullcite{Fu2014} word embeddings for word hierarchies \\
+\fullcite{Hazman2011} Survey on ontology learning \\
+\fullcite{Cimiano2009} Ontology learning intro \\
+\fullcite{Maedche2001} OntoEdit \\
+\fullcite{Wong2012} Ontology learning from text \\
+
+Manually building ontologies is an expensive, tedious and error-prone process \cite{Hazman2011}.
+\fullcite{Maedche2001} recognize that the manual construction of ontologies results in a \textit{knowledge acquisition bottleneck}.
+The field of \textit{ontology learning (OL)} supports ontology engineer in this process by providing ontology learning techniques in the form
+of tools like \textit{OntoEdit} \cite{Maedche2001}. The process of OL can be divided into different subtasks. OL tools consist of
+different components, which automatically or semi-automatically support this process.
+The process of ontology learning and the components of a generic OL architecture are summarized and the task of the thesis is categorized.
+Following, basic algorithms for learning taxonomic relations are summarized. 
+Both subsections are based on work by \fullcite{Cimiano2009}, \fullcite{Maedche2001}, and \fullcite{Hazman2011}.
+Finally, related work, which exploit neural networks are analyzed and compared to the thesis' task. 
+The novelty and additional benefits of this work are justified.
+
+\subsection{Process and architecture for ontology learning}
+
+\subsection{Approaches for learning taxonomic relations}
+A subgroup of algorithms for ontology learning is concerned with learning taxonomic relations.
+The following approaches, categorized by \fullcite{Cimiano2009}, use text as input.
+
+\textit{Lexico-syntactic patterns} are word patterns in patterns, which are used to identify hypernym-hyponym pairs (superclass-subclass pairs) in natural text.
+For example, such a pattern is 
+\begin{align*}
+\mathit{NP}_{\mathit{hyper}} \: \textnormal{such as} \: \{  \mathit{NP}_\mathit{hypo} , \}^*  \:  \{ ( \textnormal{and} \mid  \textnormal{or} ) \} \: \mathit{NP}_\mathit{hypo}
+\end{align*},
+where $\mathit{NP}$ stands for noun phrase, and $\mathit{NP}_\mathit{hyper}$ is a hypernym or superclass, while $\mathit{NP}_\mathit{hypo}$ are hyponyms or subclasses.
+These patterns provide reasonable results, but the manual creation of patterns is involve ''high''\textbf{not really high, but it could be automatized} cost and time investments \cite{Wong2012}.
+
+\textit{Clustering} uses some measure of similarity to organize objects into groups. This can be achieved by representing the words or terms as vectors \cite{Cimiano2005},
+on which different distance or similarity measures can be applied. Clustering methods can be categorized to three different types.
+Agglomerative clustering initializes each term as its own cluster and merges in each step the most similar terms into one cluster.
+Divisive clustering approaches the problem the opposite way by starting with a single cluster, containing all words, and then dividing them into smaller groups.
+Both of these approaches generate  hierarchies, agglomerative bottom-up and divisive top-down \textbf{maybe not say that or formulate it another way}.
+
+\textit{Phrase analysis} analyses noun phrases directly. It is assumed that nouns, which have additional modifiers are subclasses of the noun without modifiers.
+For example, this could be applied on the labeled unlinked classes of Wikidata. For example the classes
+\textit{Men's Junior European Volleyball Championship (Q169359)}
+and  \textit{Women's Junior European Volleyball Championship (Q169956)}  could be subclasses of \textit{European Volleyball Championship (Q6834)}.
+In this case, phrase analysis interprets \textit{Men's Junior} and \textit{Women's Junior} as modifiers, which denote these classes as specialization to \textit{Q6834}.
+
+\textit{Classification}-based approaches can be used, when a taxonomy is already present. In this case, classification can be used to add unclassified concepts
+to the existing hierarchy. Challenging with this task is that a taxonomy typically contains a large amount of classes and therefore classification
+methods like SVM are not suited for the task. Specific algorithms, which only consider, a subset of relevant classes are necessary to carry out an efficient classification.
+For example, \fullcite{Pekar2002} solves this problem by exploiting the taxonomy's tree structure using tree-ascending or tree-descending algorithms.
+
+The algorithm developed by this thesis uses a classification-based approach, since a large taxonomy is already given.
+Instead of exploiting the hierarchic structure of the taxonomy, a variant of k-nearest-neighbors is used to address the "high number of labels" problem 
+(mentioned in Section~\ref{section:problem statement}).
+
+\subsection{Ontology learning using neural networks}
+
+

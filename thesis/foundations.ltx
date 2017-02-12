@@ -72,8 +72,11 @@ For example, \textit{photographic film (Q6293)} (Figure~\ref{fig:class example})
 % Taxonomy
 \subsection{Taxonomy}\label{section:taxonomy}
 
-\textit{Ontologies} are sets of concepts and relations, which formally define how knowledge can be related and ordered in a context. Additionally it is possible for ontologies to
-contain axioms used for validation and constraint enforcement. In comparison, a knowledge base like Wikidata can be seen as an instantiation of such an ontology,
+``\textit{Ontologies} are (meta)data schemas, 
+providing a controlled vocabulary of concepts, each with an explicitly defined and machine processable semantics'' \cite{Maedche2001}. Additionally it is possible for ontologies to
+contain axioms used for validation and constraint enforcement. Ontologies enable the modeling and sharing of knowledge in a specific domain and support
+the knowledge exchange via web by extending syntactic to semantic interoperability \cite{Hazman2011}.
+In comparison, a knowledge base like Wikidata can be seen as an instantiation of such an ontology,
 since every knowledge base has to be conceptualized by an ontology \cite{Wong2012}. Different types of ontologies can grouped by their level of formality and expressiveness.
 \fullcite{Wong2012} differentiates ontologies as lightweight and heavyweight ontologies (see Figure~\ref{fig:ontology spectrum}). 
 \textit{Taxonomies} are concept or class hierarchies.
@@ -195,7 +198,7 @@ Similarity between vectors can be computed by calculating their distance \cite{W
 
 
 % Problem statement 
-\subsection{Problem statement}
+\subsection{Problem statement}\label{section:problem statement}
 The task of this thesis is the classification of unlinked classes in Wikidata. In other words a function
 is needed, which given an unlinked class $u$ of a taxonomy $T = (C, S)$ with a root class $root_T$,
 find an appropriate superclass for $T$. \fullcite{Doan2002} suggests that for the task of placing a class
@@ -240,9 +243,9 @@ require input to be represented as vectors. Therefore it will be necessary to ma
 \end{enumerate}
 
 % Similarity-based classification
-\subsection{k-nearest-neighbors classification}
+\subsection{k-nearest-neighbors classification}\label{section:knn}
 \fullcite{Chen2009}\\
-\fullcite{Zhang2015}\\
+\fullcite{Zhang2005}\\
 Based on the characteristics of the classification problem, described by the problem statement, and the challenges attached to it,
 the k-nearest-neighbor algorithm (kNN) seems like an appropriate tool for solving the task.
 Nearest-neighbors classification is a lazy method, as it does not require training before testing.
@@ -264,7 +267,7 @@ all training samples. Additional knowledge about the structure or content of the
 
 \begin{algorithm}[weighted kNN]
 Let $O$ be a specific set of objects, e.g. $\mathbb{R}^n$, with a similarity measure $\mathit{sim}$.
-Let $n \in mathbb{N}$ be the number of labels. 
+Let $n \in \mathbb{N}$ be the number of labels. 
 Let $T = \{(o_i, l_i)\}$ with $i=0,\dots,m-1$ and be the set of training samples with $m$ samples, where $o_i \in O$
 is an object and $l_i \in [0, n-1]$ is its corresponding class.
 Let $u \in O$ be an unclassified object.
@@ -280,5 +283,5 @@ $l$
 \end{algorithm}
 
 The task defined in this thesis can be considered a multi-label classification problem.
-\fullcite{Zhang2015} developed a multi-label nearest neighbor algorithm, which is based on kNN.
+\fullcite{Zhang2005} developed a multi-label nearest neighbor algorithm, which is based on kNN.
 \textbf{TODO: explain it}
