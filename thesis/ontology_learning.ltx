@@ -8,17 +8,49 @@ General concepts. Classification of considered problem in the task of ontology l
 \fullcite{Wong2012} Ontology learning from text \\
 
 Manually building ontologies is an expensive, tedious and error-prone process \cite{Hazman2011}.
-\fullcite{Maedche2001} recognize that the manual construction of ontologies results in a \textit{knowledge acquisition bottleneck}.
-The field of \textit{ontology learning (OL)} supports ontology engineer in this process by providing ontology learning techniques in the form
+\fullcite{Maedche2001} recognize that the manual construction of ontologies results in a \textit{knowledge acquisition bottleneck},
+which motivates the research into the field of \textit{ontology learning (OL)}.
+The field of ontology learning supports ontology engineers in the construction and maintenance of ontologies by providing OL techniques in the form
 of tools like \textit{OntoEdit} \cite{Maedche2001}. The process of OL can be divided into different subtasks. OL tools consist of
-different components, which automatically or semi-automatically support this process.
+different components, which automatically or semi-automatically support this process. The field of ontology learning
+exploits different research fields like natural language processing, machine learning, ontology engineering, etc. \cite{Cimiano2009}.
+
 The process of ontology learning and the components of a generic OL architecture are summarized and the task of the thesis is categorized.
 Following, basic algorithms for learning taxonomic relations are summarized. 
 Both subsections are based on work by \fullcite{Cimiano2009}, \fullcite{Maedche2001}, and \fullcite{Hazman2011}.
-Finally, related work, which exploit neural networks are analyzed and compared to the thesis' task. 
+Finally, related work, which exploits neural networks, is analyzed and compared to the thesis' task. 
 The novelty and additional benefits of this work are justified.
 
 \subsection{Process and architecture for ontology learning}
+The process of ontology learning can be divided into subtasks. \fullcite{Maedche2001} define a ontology learning cycle, consisting of the following steps:
+\begin{enumerate}
+\item \textit{Import/Reuse} is the merging of existing structures and mapping between the structures and the target ontology.
+\item \textit{Extraction} defines the modeling of the target ontology by feeding from web documents.
+\item \textit{Prune} takes the generated model and adjusts the ontology to its purpose.
+\item \textit{Refine} completes the ontology at a fine granularity.
+\item \textit{Apply} applies the resulting ontology on its target application. This serves as a measure of validation.
+\end{enumerate}
+These 5 steps can be repeated as often as necessary to include additional domains and updating it with new content.
+The thesis' task can be categorized to the \textit{Refine} step, as its goal is to improve the completeness of an existing ontology.
+
+\fullcite{Cimiano2009} introduces a generic ontology learning architecture and its major components. The described tool is semi-automatic, meaning
+that it support an ontology engineer rather than fully automatizing the process of ontology construction and maintenance.
+The architecture consists of the following components:
+\begin{enumerate}
+\item \textit{Ontology management component} provides an interface between the ontology and learning algorithms.
+	Learned concepts, relations and axioms should be added to the ontology using this component.
+	It is also used for manipulating the ontology.
+	More specifically, for the importing, browsing, modification, versioning and evolution of ontologies.
+\item \textit{Coordination component} is the user interface, which should allow the ontology engineer to choose input data, learning and resource processing methods.
+\item \textit{Resource processing component} allows the discovery, import, analysis and transformation of unstructured, semi-structured and structured input.
+	For this purpose the component needs different natural language processing components to parse and analyze input on different levels, word to sentence-level.  
+\item \textit{Algorithm library component} contains the algorithms, which are applied for the purpose of ontology learning. These algorithms are generic
+	standard machine learning methods, as well as specialized OL methods. Additionally, different similarity and collocation measures should be available.
+\end{enumerate}
+In the context of Wikidata, there exists no single comprehensive OL tool. However, in the \textbf{Wikidata technology space???} different tools exist,
+which mainly support the task of refining and maintaining the current ontology.
+For example, \fullcite{Stratan2016} develops a taxonomy browser for Wikidata, which is able to evaluate the quality of the taxonomy by detecting different types 
+of cycles, redundancies, errors and unlinked classes. This tool is an ontology learning component, as it provides the ability to browse and evaluate the ontology of Wikidata.
 
 \subsection{Approaches for learning taxonomic relations}
 A subgroup of algorithms for ontology learning is concerned with learning taxonomic relations.
