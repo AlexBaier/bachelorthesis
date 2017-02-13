@@ -38,125 +38,136 @@
 \maketitle
 
 \section{Introduction}
-Motivation. Related work. Solution. Evaluation.
+\begin{itemize}
+\item Motivation
+\item Related work
+\item Novelty/Challenges
+\begin{itemize}
+\item application of neural word embeddings in OL
+\item large number of classes
+\end{itemize}
+\item Solution
+\item Results
+\item Overview
+\end{itemize}
 
 \section{Foundations}
 
 \subsection{Wikidata}
-What is Wikidata? Collaborative, people-driven, etc..
-Open World Assumption.\\
-What is an entity? What are statements? References? Qualifiers?\\
-Informal explanation of taxonomy in the use case of Wikidata. \\
-Show problems in Wikidata's taxonomy.\\
-\citeauthor{Galarraga2016} \cite{Galarraga2016}
+\begin{itemize}
+\item What is Wikidata?
+\item Items
+\item Statements
+\item Difference between class and instance
+\end{itemize}
 
 \subsection{Taxonomy}
 \begin{itemize}
-\item Ontology\\
-	\citeauthor{Cimiano2009} \cite{Cimiano2009}\\
-	\citeauthor{Galarraga2016} \cite{Galarraga2016}
-\item Taxonomy\\
-	\citeauthor{Cimiano2009} \cite{Cimiano2009}\\
-	\citeauthor{Galarraga2016} \cite{Galarraga2016}
-\item Unconnected taxonomy as in the case of Wikidata
-\item Root class
-\item Unlinked class
-\item Problem statement\\
-	challenge: potentially very high number of target classes
+\item Notion of ontology and taxonomy
+\item Definition of taxonomy
+\item Unlinked vs. root classes
 \end{itemize}
 
-\subsection{Similarity}
+\subsection{Similarity measures}
 \begin{itemize}
-\item semantic similarity e.g. distributional, feature-based \\
-	\citeauthor{Lin1998} \cite{Lin1998} \\
-	\citeauthor{Rodriguez2003} \cite{Rodriguez2003}
-\item geometrical similarity e.g. distance based, cosine
+\item Information-theoretical notion of similarity (commonalities, differences)
+\item Vector similarity: distance-based, cosine
+\item Semantic similarity
 \end{itemize}
 
-\subsection{Similarity-based classification}
-kNN. Maybe SVM, which is not appropriate for the task at hand, because the number of target classes is too high.
-\citeauthor{Chen2009} \cite{Chen2009}\\
-\citeauthor{Zhang2015} \cite{Zhang2015}
-
-\subsection{Text processing}
+\subsection{Problem statement}
 \begin{itemize}
-\item N-Gram \\
-	What is an N-Gram? how can it be used?
-	\citeauthor{Jurafsky2014} \cite{Jurafsky2014}
-\item Skip-Gram \\
-	What is a Skip-Gram? Benefits in comparison to N-Grams.
-	\citeauthor{Guthrie2006} \cite{Guthrie2006}
-\item Counting-based word representations \\
-	Short explanation is sufficient.
-	\citeauthor{Levy2015} \cite{Levy2015}
-\item Predictive word representations \\
-	Shortly mention models by \citeauthor{Mikolov2013}. Maybe mention GloVe too.
-	\citeauthor{Levy2015} \cite{Levy2015}
+\item Definition of problem
+\item Challenges
 \end{itemize}
 
-\section{Analysis of the Wikidata taxonomy}
-How can classes and unlinked classes be recognized in Wikidata?
-Analyze whole taxonomy. Identify ''relevant'' unlinked classes. Repeat analysis for these classes.
-Summarize important observations.
-
-\section{Ontology learning}
-General concepts. Tasks in ontology learning. Classification of considered problem in the task of ontology learning.
-Solutions for similar problems. \\
-\citeauthor{Cimiano2009} \cite{Cimiano2009}\\
-\citeauthor{Wong2012} \cite{Wong2012}\\
-\citeauthor{dAmato16} \cite{dAmato16}\\
-\citeauthor{Petrucci16} \cite{Petrucci16}\\
-\citeauthor{Fu2014} \cite{Fu2014}
+\subsection{k-nearest-neighbors classification}
+\begin{itemize}
+\item What is kNN?
+\item How is it suited to the problem?
+\item Formal description for weighted single-label kNN
+\item Multi-label kNN
+\item How can it be applied to the problem? Make Wikidata items comparable via similarity measure.
+\end{itemize}
 
 \section{Neural networks}
-Notion of neural networks will be introduced.\\
-Show a schematic for every model.\\
-Purpose of specific NN. How can it be used for the task at hand? What are problems with the NN?
+Answer question, how neural networks are suited to represent Wikidata items as vectors.
+This will allow it to apply similarity measures and therefore solve the problem.
 
-\subsection{Recursive neural networks for graph representation}
-\citeauthor{Scarselli2009} \cite{Scarselli2009}
-\subsection{Deep neural networks for graph representation}
-\citeauthor{Cao2016} \cite{Cao2016} \\
-\citeauthor{Raghu2016} \cite{Raghu2016}
-\subsection{Continuous Bag-of-Words}
-\citeauthor{Mikolov2013} \cite{Mikolov2013}
-\subsection{Skip-gram with negative sampling}
-\citeauthor{Mikolov2013} \cite{Mikolov2013}\\
-\citeauthor{Levy2015} \cite{Levy2015}\\
-\citeauthor{Goldberg14} \cite{Goldberg14}
-
-\subsection{Comparison}
-Make a decision, which NN will be used for solving the task. Skip-gram with negative sampling.
-
-\section{Algorithm}
-Do I need to explain the actual implementation in detail? It is really not that interesting.
-
-\subsection{Challenges}
-Identify and summarize the challenges of the task.\\
-High number of target classes. Big amount of possibly usable data, what is relevant, what is not?
-\subsection{Baseline}
+\subsection{Feedforward neural network with backpropagation using gradient descent}
 \begin{itemize}
-\item Architecture\\
-	Using word embeddings of classes in kNN\\
-	How does this solve the problem definition?
-	How are the challenges addressed?
-\item Hyper parameters\\
-	configuration of the model, explain decision\\
-	\citeauthor{Levy2015} \cite{Levy2015}
-\item Training data\\
-	mapping relevant Wikidata entities to a textual representation
+\item Introduce neural network on simple model
+\item Use simple classification or regression problem as example
 \end{itemize}
 
-\subsection{Variation 1}
-supplement training data with Wikipedia, what are possible advantages? More data, Wikipedia contains ''soft'' 
-information? which cannot be represented in Wikidata. what are disadvantages? Wikipedia contains ''noise'' unlike 
-Wikidata, training will take much longer. How to combine embeddings of Wikidata and Wikipedia? just appending,
-other options?
+\subsection{Deep neural networks for graph representation}
+
+\subsection{Word2Vec}
+\begin{itemize}
+\item N-grams, Skip-grams
+\item CBOW
+\item Skip-gram
+\item about hyperparameters
+\end{itemize}
+
+\subsection{RDF2Vec}
+
+\subsection{Comparison}
+
+\section{Ontology learning}
+What is ontology learning and why is it interesting?
+
+\subsection{Process and architecture for ontology learning}
+
+\subsection{Approaches for learning taxonomic relations}
+
+\subsection{Ontology learning using neural networks}
+
+\section{Analysis of the Wikidata taxonomy}
+
+\subsection{Root taxonomy}
+
+\subsection{Unlinked classes}
+
+\subsection{Labeled, instantiated, unlinked classes}
+\textbf{Find an acronym for this set}
+\begin{itemize}
+\item Reasons for reducing the input set.
+\item Compare results to unlinked classes
+\end{itemize}
+
+\section{Combined algorithm}
+
+\subsection{Baseline}
+Skip-gram using Wikidata statement triples as input sentences + ml-kNN.
+
+\begin{itemize}
+\item Model of algorithm
+\item How are the challenges solved?
+\item Choice of hyperparameters
+\end{itemize}
+
+\subsection{Variation: RDF2Vec}
+Skip-gram using graph walk to create input sentences from Wikidata + ml-kNN.
+\begin{itemize}
+\item What is added/changed?
+\item Model of algorithm
+\item Possible benefits/deficits
+\end{itemize}
+
+\subsection{Variation: Wikipedia}
+Skip-gram using Wikidata statement triples as input sentences.
+Skip-gram using Wikipedia as input.
+Combine word embeddings of both NNs to one embedding and apply ml-kNN.
+\begin{itemize}
+\item What is added/changed?
+\item Model of algorithm
+\item Possible benefits/deficits
+\end{itemize}
 
 \section{Evaluation}
 
 \subsection{Method}
-\citeauthor{Dellschaft2006} \cite{Dellschaft2006}
 
 \subsection{Generation of gold standard}
 pick number (tbd) of random linked classes. the distribution of instances, subclasses, properties per class should
@@ -169,9 +180,5 @@ this be? mention training and execution time of the algorithms.
 
 \section{Conclusion}
 what was learned? can the developed solution be used in practical application? what about future work?
-
-\bibliographystyle{plainnat}
-\bibliography{/home/alex/PycharmProjects/thesis/thesis/bibliography}
-
 
 \end{document}
