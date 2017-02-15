@@ -85,6 +85,35 @@ The algorithm developed by this thesis uses a classification-based approach, sin
 Instead of exploiting the hierarchic structure of the taxonomy, a variant of k-nearest-neighbors is used to address the "high number of labels" problem 
 (mentioned in Section~\ref{section:problem statement}).
 
-\subsection{Ontology learning using neural networks}
+\subsection{Related work}
+\fullcite{Fu2014} develop a method to construct semantic hierarchies given a hyponym (subclass) 
+and a list of corresponding superclasses. The solution uses neural word embeddings generated with
+the Skip-gram model \cite{Mikolov2013}, which was presented in Section~\ref{section:word2vec}.
+Using the linguistic regularities of these word embeddings, \citeauthor{Fu2014} train a linear projection
+on existing sets of hypernym-hyponym pairs. A linear projection is used instead of an offset, because
+it was observed that the subclass-of relation is too complex to be represented as a simple offset.
+The embeddings are trained on a 30 million Chinese sentence corpus. And the projection is trained
+on  $15247$ hypernym-hyponym word pairs. The handpicked testing data consists of
+$418$ entities and their hypernyms. The method achieves an F-score of $73.74\%$ on a manually labeled dataset,
+and outperforms existing state-of-the-art methods.
+\textbf{A bit skeptical about these really good evaluation results. 
+The test set is not very big, maybe it was just chosen right?}
+
+\fullcite{Petrucci16} develop a recurrent neural network for ontology learning.
+The purpose of the work is a first step to verify whether neural networks are able to 
+support the ontology learning process.
+The task solved by the specific network is the translation of encyclopedic text to logical formulas.
+This task is divided into the task of sentence transduction, identify logical structure 
+and generate corresponding formula template,
+and sentence tagging, identifying the roles of words in the input sentence.
+The tagged sentence can then be mapped \textbf{unto (is this a real word?)} the generated formula template.
+This is achieved by the use of a  recurrent neural network for sentence tagging and a
+recurrent encoder-decoder for sentence transduction. Both are supported by gated recursive units,
+which provide a short-term-memory effect. The developed network is, at this time, under evaluation.
+Therefore, no statement about the effectiveness of recursive neural networks for the task of ontology
+learning can be made based on the paper.
+
+
+\textbf{TODO: Interpret related work in context of this thesis.}
 
 

@@ -1,0 +1,68 @@
+Word embeddings are vector representations of words.
+
+\subsection{Introduction to neural networks}
+Notion of neural networks will be introduced.
+
+\subsection{Word2Vec}\label{section:word2vec}
+\fullcite{Mikolov2013}\\
+\fullcite{Levy2015}\\
+\fullcite{Goldberg14}\\
+suitable for capturing linear structures \cite{Cao2016}\\
+\fullcite{Mikolov2013} introduce two neural network language models, Continuous Bag-of-Words
+and Skip-gram, which have proven to be very effective at creating word embeddings.
+The generated word embeddings of both models encode the semantics and linguistic regularities of
+words.
+Words, which are semantically close, are also close in the word embedding vector space.
+Calculating the offset between words makes it possible to answer more complex semantic questions.
+It is possible to answer more complex questions than similarity about the relationship between words.
+For example, the question ''What is the word that is similar to \textit{small}
+ in the same sense as \textit{biggest} is similar to \textit{big}?''
+can be answered by calculating the offset between \textit{big} and \textit{biggest} and adding the vector
+of \textit{small} to it: $\mathit{vector}(\textnormal{''biggest''})-\mathit{vector}(\textnormal{''big''})
++\mathit{vector}(\textnormal{''small''})$ \cite{Mikolov2013}.
+
+Continuous Bag-of-Words (CBOW) is a feedforward network with one hidden layer.
+The model is trained for the task of predicting a given word $w$ based on its context $c$.
+
+A $k$-skip-$n$-gram for a sentence $w_1 \dots w_n$ is defined as follows \textbf{cite Guthrie}:
+\textbf{TODO: add indizes to sum}
+\begin{align}
+\{ w_{i_1}, w_{i_2}, \dots , w_{i_n} \mid \Sigma i_j - i_{j-1} < k \}
+\end{align}
+
+The skip-gram model solves the opposite task to CBOW.
+The target word is now the input and the model is trained to predict its context.
+
+
+\subsection{RDF2Vec}\label{section:rdf2vec}
+combination of Word2Vec and graph walking, which can be found in dnn for gr\\
+\fullcite{Ristoski2016} propose two approaches to create embeddings for entities in RDF graphs,
+graph walks and Weisfeiler-Lehman subtree RDF graph kernels.
+Both approaches create linear sequences from the RDF graph, which then are applied
+on the CBOW and Skip-gram models with negative sampling (see Section~\ref{section:word2vec}).
+
+Given an undirected, weighted graph $G=(V, E)$, graph walk will generate all graph walks $P_v$ of depth $d$
+starting in vertex $v$, for all vertices $v \in V$. Breadth-first search is used for generating the graph walks.
+This results in a set of sequences of the format $v_i \rightarrow e_{ij} \rightarrow v_j \rightarrow \dots$, where
+$v_i, v_j \in V$ and $e_{ij} \in E$. \textbf{TODO: finish this explanation}
+
+\textbf{it will be fun to explain the second approach}
+
+\subsection{Deep neural networks for graph representation}
+\fullcite{Cao2016} deep neural networks for graph representation \\
+\fullcite{Raghu2016} expressivity of deep neural networks \\
+The idea of representing semantic objects like words or vertices, which was already explored in the previous
+section, can applied similarly to graphs.
+\fullcite{Cao2016} develop a deep neural network for graph representation.
+Based on the idea of generating linear sequences of vertices using a graph walk approach like DeepWalk \textbf{cite}
+or similar to the previously presented RDF2Vec \textbf{cite}.
+\citeauthor{Cao2016} develop a random surfing model similar to Google's PageRank using a
+teleportation probability $\alpha$, which indicates the chance to return to the starting vertice and restarting
+the process. The random surfing generates a probabilistic co-occurrence matrix,
+which contains the probabilities to reach a certain vertex after a determined amount of steps.
+The advantage of random surfing instead of random walking is the fact, that linear sequences have
+finite lengths and can therefore fail to capture relevant contextual information.
+
+
+
+\subsection{Comparison}

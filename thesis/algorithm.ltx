@@ -1,0 +1,87 @@
+\subsection{Components}
+The combined algorithm will use a Word2Vec model to generate word embeddings, which
+then can be used in a classification task.
+This leads to the identification of three main components. These main components
+will be implemented by a baseline algorithm and for each variation an improvement is proposed,
+which in general replaces one of the components.
+The data flow and input/output between the components is visualized in Figure~\ref{fig:algorithm data flow}
+\begin{figure}
+\centering
+\includegraphics[width=\textwidth]{images/algorithm/combined_algorithm_components.pdf}
+\caption{Data flow between components}
+\label{fig:algorithm data flow}
+\end{figure}
+\begin{enumerate}
+\item \textbf{Wikidata2Sequence}. 
+For the task of generating word embeddings the Skip-gram model with negative sampling will be used.
+As mentioned in Section~\ref{section:word2vec}, both Word2Vec models require a linear sequence of words as input.
+Wikidata's highly interlinked structure is more alike to an RDF graph \cite{Erxleben2014}. 
+Therefore the first required component for the algorithm is a mapping from Wikidata to word sequences.
+The output of this method is required to be at least one sequence of words, which is called sentence.
+Therefore multiple sentences represent a text. Each word in the sequence has to be either a Wikidata item
+or property ID, or the data type for a literal value (e.g. replace all strings with \textit{string}).
+
+\item \textbf{Word2Vec}. The Skip-gram model with negative sampling (SGNS)
+will be used in every variation of the algorithm.
+It has been proven through theoretic analysis as well as experiments that SGNS creates very effective
+word embeddings, if its hyperparameters are chosen well. \textbf{TODO: citations}
+
+\item \textbf{Classification}. The final component of the algorithm is a classification method.
+The word embeddings produced by SGNS group similar words close to each other and
+preserve linguistic regularities. 
+kNN can exploit the first characteristic using a similarity or distance measure.
+The second characteristic can be exploited by computing the vector offset
+or learning a linear projection representing the subclass-of relationship between two classes
+\cite{Fu2014}.
+For the purpose of evaluation each classification component should have the same output,
+this will allow a comparison between the different variations of the algorithm.
+Therefore each classification method will output the Wikidata ID (e.g. Q35120) of the most likely superclass.
+\end{enumerate}
+
+Wikidata2Sequence and Word2Vec are executed once to compute the word embeddings of
+the corresponding Wikidata dump.
+The classification method will then be trained on the word embeddings and can
+be applied repeatedly to unlinked classes.
+
+\subsection{Baseline}
+The baseline algorithm uses a very basic Wikidata2Sequence component and simple weighted kNN 
+for classification. If not otherwise mentioned, the variations will use the same hyperparameters and
+components as the baseline algorithm. 
+\begin{enumerate}
+\item \textbf{Wikidata2Sequence}. Trivial sentences will be generated from statements.
+Each statement can be transformed to a triple $(\mathit{itemid}, \mathit{pid}, \mathit{value})$,
+where value is either another item ID or a data type.
+\textbf{Insert example.}
+
+\item \textbf{Word2Vec}. As mentioned above a Skip-gram model with negative sampling will be used.
+Based on \textbf{cite levy?} and \textbf{cite mikolov} the following hyperparameters have been proven to be effective in
+the task of creating word embeddings and are therefore used:
+\begin{itemize}
+\item \textbf{TODO: add hyperparameters}
+\end{itemize}
+
+\item \textbf{Classification}. A weighted kNN will be used for the classification task. Each neighbor
+votes for all of its superclasses with the same weighted vote. \textbf{Which distance or similarity measure
+will be used to identify the k nearest neighbors.}
+The weight of each vote is based on its similarity to the input class.
+\textbf{TODO: What is k?}
+\end{enumerate}
+
+\subsection{Variation: Graph walk}
+A graph walk, developed by \fullcite{Ristoski2016} and explained in Section~\ref{section:rdf2vec}
+can be used for generating longer sentences instead of triple sentences. 
+The longer sequences are able to better capture contextual information than three word sentences.
+This is achieved by creating paths of a depth $d$, starting from each class.
+Evaluation of RDF2Vec shows that  Skip-gram and CBOW both produce better word embeddings this way 
+\cite{Ristoski2016}..
+Therefore it is expected that graph walk will also improve the performance of this algorithm.
+\textbf{TODO: choice of hyperparameters}
+
+\subsection{Variation: Vector offset}
+
+\subsection{Variation: Linear projection}
+
+\subsection{Variation: Wikipedia}
+
+\subsection{Implementation details}
+\textbf{Is this section necessary?}

@@ -1,13 +1,13 @@
-\textbf{TODO: maybe separate this section into subsections}
 For the task of developing an algorithm, which takes unlinked classes as input, it is necessary to know,
 what information the classes carry and if there are certain patterns among the classes.
 For this purpose an analysis of the taxonomy needs to be carried out, which may answer questions.
-\bigbreak
+
 The taxonomy contained in the Wikidata dump of \dumpdate{} was analyzed.
 Classes were recognized as defined in Section~\ref{section:wikidata}. 
 Unlinked classes were identified by checking whether a class does not have the \textit{subclass of (P279)} property.
 The taxonomy contained a total of $1299501$ classes at this time.
-\bigbreak
+
+\subsection{Root taxonomy}
 The state of the taxonomy was captured in regards to the root class \entity{} (see Figure~\ref{fig:root distance}).
 $1260842$ classes are currently subclasses of \entity{}.
 $97\%$ of all classes are  therefore nodes in the root taxonomy.
@@ -24,7 +24,8 @@ which assumes that a taxonomy only has one root, and this root is \entity{} in W
 The longest shortest distance between the root and a leaf class is $20$. 
 The classes \textit{Q639064}, \textit{Q15978631} and \textit{Q151055} fulfill this characteristics. 
 Each of them is subclass of \textit{Homo (Q171283)}. 
-\bigbreak
+
+\subsection{Unlinked classes}
 The characteristics of all unlinked classes and the root class were analyzed.
 This set contains a total of $16373$ classes. $13807$ classes have an English label
 and $11534$ classes have a corresponding English Wikipedia page.
@@ -80,8 +81,8 @@ Instances represent classes and thereby describe them. For example, \fullcite{Ro
 instances  to compute semantic similarity between classes.
 Therefore, I propose to only consider the set of classes, which have a label in the English language 
 and at least $1$ instance, as input for the algorithm.
-\textbf{TODO: Find a short name or acronym for this subset.}
-\bigbreak
+
+\subsection{Labeled, instantiated, unlinked classes}
 Following this argument, the subset of labeled, instantiated and unlinked classes was analyzed.
 This set contains a total of $9157$ classes. $7557$ classes have an English Wikipedia page, which is 
 $\approx 82.5\%$ of all analyzed classes in the subset, and an increase of $\approx 12\%$ in comparison 
@@ -131,7 +132,8 @@ than the full set of unlinked classes. Between these classes the number of commo
 is lower, because the same properties occur not as frequently for different classes.
 The lack of commonalties between unlinked classes is not very problematic, as the algorithm
 would not compare unlinked classes with each other but with classes in the root taxonomy.
-\bigbreak
+
+\subsection{Discussion (TODO: new subsection title)}
 After completing the analysis, it can be seen that \entity{} is the root class of the taxonomy,
 and Wikidata's taxonomy is in a good state, since $97\%$ of classes are part of the root taxonomy.
 \textbf{TODO: not sure if i can just say that it is in a good state}
