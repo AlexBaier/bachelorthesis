@@ -16,7 +16,8 @@ def main():
     logging.log(level=logging.INFO, msg='node count: {}'.format(len(nodes)))
     gen = GraphWalkSentences(
         nodes,
-        8,  # RDF2Vec uses 8, 4 is used for runtime
+        4,  # RDF2Vec: depth = 4
+        200,  # RDF2Vec: max walks per vertice = 200
         edge_store_path
     )
     logging.log(level=logging.INFO, msg='initialized graph walk sentence gen')

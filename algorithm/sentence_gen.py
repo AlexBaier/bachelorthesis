@@ -38,15 +38,17 @@ class GraphWalkSentences(Wikidata2Sequence):
     """
     GraphWalk has exponential runtime.
     """
-    def __init__(self, vertices: List[str], depth: int, edge_store_path: str):
+    def __init__(self, vertices: List[str], depth: int, max_walks_per_v: int, edge_store_path: str):
         self.__vertices = vertices  # type: List[str]
         self.__depth = depth  # type: int
+        self.__max_walks = max_walks_per_v  # type: int
         self.__edge_store = sqlite3.connect(edge_store_path)
 
     def get_sequences(self)->Iterable[List[str]]:
         def __get_sequences():
             l = len(self.__vertices)
             for idx, v in enumerate(self.__vertices):
+                # TODO: optimize breadth-first search
                 active_paths_from_v = self.__get_out_edges(v)
                 finished_paths_from_v = list()
                 current_depth = 1
@@ -62,10 +64,13 @@ class GraphWalkSentences(Wikidata2Sequence):
                         finished_paths_from_v.append(current_path)
                     else:
                         for edge in out_edges:
-                            new_path = current_path.copy()
-                            new_path.append(edge[1])
-                            new_path.append(edge[2])
-                            active_paths_from_v.append(new_path)
+                            if len(active_paths_from_v) + len(finished_paths_from_v) < self.__max_walks:
+                                new_path = current_path.copy()
+                                new_path.append(edge[1])
+                                new_path.append(edge[2])
+                                active_paths_from_v.append(new_path)
+                            else:
+                                break
                     current_depth += 1
                 finished_paths_from_v.extend(active_paths_from_v)
                 logging.log(level=logging.INFO, msg='{} paths discovered from {}'.format(len(finished_paths_from_v), v))
