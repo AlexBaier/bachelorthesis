@@ -3,7 +3,7 @@ import logging
 import typing
 
 
-class JSONDumpReader(object):
+class JSONDumpReader(typing.Iterator[dict]):
 
     def __init__(self, dump_path: str):
         self.__dump_path = dump_path
