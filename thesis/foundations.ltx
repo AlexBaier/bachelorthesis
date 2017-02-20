@@ -167,7 +167,7 @@ connected. But the component, which contains the root class \entity{}, contains 
 This component will be referred to as \textit{root taxonomy} in later sections.
 
 % Similarity
-\subsection{Similarity}
+\subsection{Similarity}\label{section:similarity}
 \begin{itemize}
 \item semantic similarity e.g. distributional similarity \\
 	\fullcite{Lin1998} \\
@@ -181,7 +181,7 @@ More commonalities implies higher similarity. Vice versa, more differences impli
 Two identical objects should have the maximum similarity. In addition, only identical objects should be
 able to achieve maximum similarity. A similarity measure computes the similarity between two objects \cite{Weber2000}:
 \begin{definition}[Similarity measure]
-$\mathit{sim}: O \times O \mapsto [ 0, 1 ]$ is called \textnormal{similarity measure} for a set of objects $O$.
+$\mathit{sim}: \Omega \times \Omega \mapsto [ 0, 1 ]$ is called \textnormal{similarity measure} for a set of objects $\Omega$.
 \end{definition}
 A similarity of $1$ implies identical objects and a similarity of $0$ implies that there are no commonalities between the input objects.
 
@@ -244,19 +244,16 @@ require input to be represented as vectors. Therefore it will be necessary to ma
 
 % Similarity-based classification
 \subsection{k-nearest-neighbors classification}\label{section:knn}
-\fullcite{Chen2009}\\
-\fullcite{Zhang2005}\\
 Based on the characteristics of the classification problem, described by the problem statement, and the challenges attached to it,
 the k-nearest-neighbor algorithm (kNN) seems like an appropriate tool for solving the task.
 Nearest-neighbors classification is a lazy method, as it does not require training before testing.
-This is useful for applications with high amounts of data, large numbers of classes, and changing data \cite{Zhang2005}.
+This is useful for applications with high amounts of data, large numbers of classes, and changing data \cite{Zhang2005} \cite{Chen2009}.
 For the considered use case of classification in Wikidata, these are very important strengths,
 as the number of classes in the taxonomy is very high and Wikidata is being constantly edited.
 
-k-nearest-neighbors is a distance- or similarity-based classification method,
-which maps its input to a single label.
-This means, that kNN, given an input $u$ only requires the distance or similarity between $u$ and
-all training samples. Additional knowledge about the structure or content of the data is not required.
+k-nearest-neighbors can be defined as a similarity-based classification method.
+kNN uses a pairwise similarity or distance measure (see Section~\ref{section:similarity}).
+Access to the features of the classified objects is therefore not required \cite{Chen2009}.
 
 \begin{figure}
 \centering
@@ -265,23 +262,32 @@ all training samples. Additional knowledge about the structure or content of the
 \label{fig:kNN example}
 \end{figure}
 
-\begin{algorithm}[weighted kNN]
-Let $O$ be a specific set of objects, e.g. $\mathbb{R}^n$, with a similarity measure $\mathit{sim}$.
-Let $n \in \mathbb{N}$ be the number of labels. 
-Let $T = \{(o_i, l_i)\}$ with $i=0,\dots,m-1$ and be the set of training samples with $m$ samples, where $o_i \in O$
-is an object and $l_i \in [0, n-1]$ is its corresponding class.
-Let $u \in O$ be an unclassified object.
-\textbf{TODO: insert missing definitions}
-\begin{enumerate}
-\item Find the set $K$ of $k$ nearest neighbors to $u$ in $T$. 
-$K = \{ \}$ 
-\item Each item $k \in K$ a weight is assigned based on its similarity to $u$.
-$w_k = \textit{sim}(k, u)/sum(sim(o_j, u))$.
-\item Each item votes for its label using its weight. The label which has the highest vote score is assigned as label to $u$.
-$l$
-\end{enumerate}
-\end{algorithm}
+The basic notion of k-nearest-neighbors is presented in Figure~\ref{fig:kNN example}.
+Given a set of points in $\mathbb{R}^2$ with classes blue, red and yellow. 
+To classify an unknown class $u$, the closest $k$ classes are selected.
+In the example, the solid circle indicates $k=4$ and the dashed circle indicates $k=10$.
+The $k$ selected neighbors vote for their own class with a given weight, which is typically dependent on its similarity to $u$.
+In this simple example, it is assumed that all points have a uniform weight.
+Following, for $k=4$ $u$ is classified as yellow and for $k=10$ as red.
 
-The task defined in this thesis can be considered a multi-label classification problem.
-\fullcite{Zhang2005} developed a multi-label nearest neighbor algorithm, which is based on kNN.
-\textbf{TODO: explain it}
+In comparison to the example, the weights assigned to each neighbor are not uniform.
+Weights are assigned, so that similar neighbors are given larger weights (affinity).
+Because in practical applications many neighbors may be very similar to each other, which can skew the classification results, 
+\fullcite{Chen2009} propose to additionally down-weight very similar neighbors (diversity).
+This can be accomplished by using kernel ridge interpolation (KRI) \cite{Chen2009}. The following quadratic programming has to be solved to calculate the weights:
+\begin{align}\label{def:kri knn}
+\begin{split}
+& \min_{w} \frac{1}{2} w^T S w - s^T w + \frac{\lambda}{2} w^T w \\
+& \textnormal{subject to} \: \sum_{i=1}^{k} w_i = 1, w_i \ge 0, i=1,\dots,k,
+\end{split}
+\end{align}
+where $w \in \mathbb{R}^{k \times 1}$ the weights of the nearest neighbors,
+ $S \in [0,1]^{k \times k}$ is the similarity matrix between the nearest neighbors of $u$, $s \in [0,1]^{k \times 1}$ is the similarity between $u$ and its nearest neighbors,
+$\lambda > 0$ is a regularization parameter.
+It is common to assume that weights are positive and the sum of weights is $1$.
+Minimizing $- s^T w$ alone would return all weight on the nearest neighbor with $w_1 = 1$.
+The ridge regularization term $\frac{\lambda}{2} w^T w$, which controls the variance of the weights in $w$, counteracts this by pushing the weights closer to uniform weights.
+Increasing $\lambda$ increases the uniformity of the weights. Together these terms fulfill the affinity requirement.
+The term $ \frac{1}{2} w^T S w$ represents the diversity requirement, as the weights of very similar neighbors are down-weighted to minimize the term.
+Solving this problem therefore returns weights, which fulfill the requirements of affinity and diversity.
+Experiments show that KRI kNN on average generates better results than uniformly weighted kNN \cite{Chen2009}.

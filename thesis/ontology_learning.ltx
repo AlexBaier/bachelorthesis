@@ -21,7 +21,7 @@ Both subsections are based on work by \fullcite{Cimiano2009}, \fullcite{Maedche2
 Finally, related work, which exploits neural networks, is analyzed and compared to the thesis' task. 
 The novelty and additional benefits of this work are justified.
 
-\subsection{Process and architecture for ontology learning}
+\subsubsection{Process and architecture for ontology learning}
 The process of ontology learning can be divided into subtasks. \fullcite{Maedche2001} define a ontology learning cycle, consisting of the following steps:
 \begin{enumerate}
 \item \textit{Import/Reuse} is the merging of existing structures and mapping between the structures and the target ontology.
@@ -52,7 +52,7 @@ which mainly support the task of refining and maintaining the current ontology.
 For example, \fullcite{Stratan2016} develops a taxonomy browser for Wikidata, which is able to evaluate the quality of the taxonomy by detecting different types 
 of cycles, redundancies, errors and unlinked classes. This tool is an ontology learning component, as it provides the ability to browse and evaluate the ontology of Wikidata.
 
-\subsection{Approaches for learning taxonomic relations}
+\subsubsection{Approaches for learning taxonomic relations}
 A subgroup of algorithms for ontology learning is concerned with learning taxonomic relations.
 The following approaches, categorized by \fullcite{Cimiano2009}, use text as input.
 
@@ -85,7 +85,7 @@ The algorithm developed by this thesis uses a classification-based approach, sin
 Instead of exploiting the hierarchic structure of the taxonomy, a variant of k-nearest-neighbors is used to address the "high number of labels" problem 
 (mentioned in Section~\ref{section:problem statement}).
 
-\subsection{Related work}
+\subsubsection{Neural networks in ontology learning}
 \fullcite{Fu2014} develop a method to construct semantic hierarchies given a hyponym (subclass) 
 and a list of corresponding superclasses. The solution uses neural word embeddings generated with
 the Skip-gram model \cite{Mikolov2013}, which was presented in Section~\ref{section:word2vec}.
