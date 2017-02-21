@@ -85,3 +85,14 @@ class GraphWalkSentences(Wikidata2Sequence):
         c.execute('SELECT * FROM edges WHERE s=?', [node])
         results = c.fetchall()
         return list(map(lambda e: ['Q'+str(e[0]), 'P'+str(e[1]), 'Q'+str(e[2])], results))
+
+
+class SentenceIterator(Iterator[List[str]]):
+
+    def __init__(self, file_path: str):
+        self.__path = file_path  # type: str
+
+    def __iter__(self):
+        with open(self.__path) as f:
+            for s in map(lambda l: l.strip().split(), f):
+                yield s
