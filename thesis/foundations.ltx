@@ -28,7 +28,7 @@ Additionally, references can be used for statements to include its source. See F
 
 Following, the terms of item and statement are defined in the context of Wikidata.
 \begin{definition}[Item]\label{definition:item}
-An\textnormal{item} is a tuple $(\mathit{id},  \mathit{label}, \mathit{aliases}, \mathit{description}, \mathit{sitelinks})$:
+An \textnormal{item} is a tuple $(\mathit{id},  \mathit{label}, \mathit{aliases}, \mathit{description}, \mathit{sitelinks})$:
 	\begin{itemize}
 	\item $\mathit{id} \in \mathbb{N}$ is the numerical item ID;
 	\item $\mathit{label} \in \mathit{String}$ is the English label of the item;
@@ -52,8 +52,8 @@ In Wikidata, there is no strict distinction between classes and instances. Both 
 This leads to the issue, that recognizing, whether an item is a class or instance is not trivial.
 Based on which statements connect two items, a distinction can be made.
 A class is any item, which has instances, subclasses or is the subclass of another class.
-In Wikidata, the properties \textit{instance of (P31)} and \textit{subclass of (P279)} exist, which describe this relation between items.
-Therefore to identify whether an item is a class, it needs to be checked, whether the items fulfills any of the three above criteria.
+In Wikidata, the properties \textit{instance of (P31)} and \textit{subclass of (P279)} exist, which describe these relations between items.
+Therefore to identify whether an item is a class, it needs to be checked, whether the items fulfills any of the three mentioned criteria.
 \begin{definition}[Class]
 Given a set of items $I$ and a set of statements $R$. $c = (\mathit{classid}, \_, \_, \_, \_)  \in I$ is a \textnormal{class}, if at least one of the following assertions are true:
 \begin{align*}
