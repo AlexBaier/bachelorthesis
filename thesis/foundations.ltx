@@ -185,6 +185,40 @@ $\mathit{sim}: \Omega \times \Omega \mapsto [ 0, 1 ]$ is called \textnormal{simi
 \end{definition}
 A similarity of $1$ implies identical objects and a similarity of $0$ implies that there are no commonalities between the input objects.
 
+Many objects can be defined as feature vectors in $\mathbb{R}^n$, e.g. \textbf{examples and citations}.
+If feature vectors exist, the similarity can be measured based on the distance $\delta_S(\vec{p}, \vec{q})$ 
+between two vectors $\vec{p}$ and $\vec{q}$. 
+The distance represents the differences between two feature vectors. 
+A typical distance measure is the $L_S$-Norm \cite{Weber2000}:
+\begin{align}
+&L_s: \delta_S (\vec{p}, \vec{q}) = \sqrt[S]{\sum_{i=0}^{n-1}\abs{\vec{p}_i - \vec{q}_i}^S}
+\end{align}
+For example, the $L_2$-Norm is the euclidean distance:
+\begin{align}
+&L_2: \delta_2 (\vec{p}, \vec{q}) = \sqrt{\sum_{i=0}^{n-1}\abs{\vec{p}_i - \vec{q}_i}^2}
+\end{align}
+Similarity between vectors can now defined by mapping the distances to similarity values using a correspondence
+function \cite{Weber2000}:
+\begin{definition}[Correspondence function]
+$h: \mathbb{R}^+ \mapsto [0,1]$ is correspondence function, if it fulfills the following properties:
+\begin{enumerate}
+\item $h(0), h(\infty) = 0$,
+\item $\forall x,y: x > y \implies h(x) \le h(y)$
+\end{enumerate}
+\end{definition}
+Another measure of vector similarity, which also includes the angle of vectors by using the dot product,
+is the cosine similarity. It is defined as follows:
+\begin{align}
+& \mathit{sim}_\mathit{cos}(\vec{p}, \vec{q}) = 
+\frac{\vec{p}^T \cdot \vec{q}}{||\vec{p}||_2 \cdot ||\vec{q}||_2}
+\end{align}
+Cosine similarity maps to $[-1,1]$. It returns $1$ if the vectors are identical, $0$ if the vectors are orthogonal,
+and $-1$ if the angle between the vectors is $\pi$ and therefore opposites.
+However, if the feature vector are positive, $\vec{p} \in \mathbb{R}^n: \vec{p}_i \ge 0 \forall i=0,\dots,n-1$,
+then the cosine similarity maps to $[0, 1]$ and fulfills the definition of a similarity measure.
+For example, feature vectors representing word frequencies in documents are positive,
+as a word can not occur less than $0$ times.
+
 \textbf{TODO: Whole paragraph needs citations}
 In ontology learning, semantic similarity is used to great effect . 
 Semantic similarity compares the semantic content of objects or documents . This can be achieved by comparing which features
@@ -192,13 +226,12 @@ can be found in both objects (commonalities) and which features are unique to th
 \fullcite{Rodriguez2003} develops a semantic similarity measure for comparing entity classes in ontologies.
 \textbf{Write}
 
-Similarity between vectors can be computed by calculating their distance \cite{Weber2000}.
-\textbf{Write}
 
 
 
 % Problem statement 
 \subsection{Problem statement}\label{section:problem statement}
+\textbf{TODO: correct the definition of the problem}
 The task of this thesis is the classification of unlinked classes in Wikidata. In other words a function
 is needed, which given an unlinked class $u$ of a taxonomy $T = (C, S)$ with a root class $root_T$,
 find an appropriate superclass for $T$. \fullcite{Doan2002} suggests that for the task of placing a class
@@ -215,7 +248,7 @@ which, given an unlinked class $u \in C$, returns a set of classes $P = f(u)$,
 fulfilling the following criteria:
 \begin{align}
 & \neg(\forall p \in S: p \subclassof{T} u \: \textnormal{no children} \label{no children}\\
-& = \mathit{succ}(\underset{c \in C}{\max(sim(u, s))}) \: \textnormal{superclasses of most similar classes} 
+& P = \mathit{succ}(\underset{c \in C}{\max(sim(u, s))}) \: \textnormal{superclasses of most similar classes} 
 \label{most similar class}
 \end{align}
 \end{definition}

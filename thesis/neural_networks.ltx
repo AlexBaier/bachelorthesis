@@ -33,6 +33,15 @@ A $k$-skip-$n$-gram for a sentence $w_1 \dots w_n$ is defined as follows \textbf
 The skip-gram model solves the opposite task to CBOW.
 The target word is now the input and the model is trained to predict its context.
 
+\textbf{What is the task? What function is maximized? Purpose of negative sampling? Subsampling?}
+
+Negative sampling increases the distance between unobserved word pairs.
+
+Research has shown that the effectiveness of word embeddings is highly dependent
+on the choice of hyperparameters \cite{Levy2015} \cite{Mikolov2013a}.
+Experiments by \fullcite{Levy2015} indicate that SGNS prefers a high number of negative samples.
+Additionally subsampling of very frequent words (e.g. ''in'', ''a'') benefits the embeddings, since these
+words provide less information than less frequent words \cite{Mikolov2013a}.
 
 \subsubsection{RDF2Vec}\label{section:rdf2vec}
 combination of Word2Vec and graph walking, which can be found in dnn for gr\\

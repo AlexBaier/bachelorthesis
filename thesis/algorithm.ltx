@@ -1,5 +1,5 @@
 \subsection{Components}
-The combined algorithm will use a Word2Vec model to generate word embeddings, which
+The hybrid algorithm will use a Word2Vec model to generate word embeddings, which
 then can be used in a classification task.
 This leads to the identification of three main components. These main components
 will be implemented by a baseline algorithm and for each variation an improvement is proposed,
@@ -54,17 +54,25 @@ where value is either another item ID or a data type.
 \textbf{Insert example.}
 
 \item \textbf{Word2Vec}. As mentioned above a Skip-gram model with negative sampling will be used.
-Based on \textbf{cite levy?} and \textbf{cite mikolov} the following hyperparameters have been proven to be effective in
+Based on \fullcite{Levy2015}, \fullcite{Mikolov2013} and \fullcite{Mikolov2013a} 
+the following hyperparameters have been proven to be effective in
 the task of creating word embeddings and are therefore used:
 \begin{itemize}
-\item \textbf{TODO: add hyperparameters}
+\item Embedding size: $300$
+\item Subsampling frequency: $10^{-5}$
+\item Context window: $2$
+\item Negative samples: $15$
 \end{itemize}
+The original paper by \fullcite{Mikolov2013} uses context windows of size $2$.
+Bigger context windows show slight improvements in the quality of word embeddings \fullcite{Levy2015}.
+However triple sentences only have a maximum context of $2$, e.g. $w_1 \: w_2 \: w_3$ the maximum distance
+between words in the same sentence is $2$. Therefore triple sentences would not benefit from bigger
+context sizes. To preserve comparability between variations of the algorithm, the same context size is also used
+for graph walk sentences, if not mentioned otherwise. 
 
-\item \textbf{Classification}. A weighted kNN will be used for the classification task. Each neighbor
-votes for all of its superclasses with the same weighted vote. \textbf{Which distance or similarity measure
-will be used to identify the k nearest neighbors.}
-The weight of each vote is based on its similarity to the input class.
-\textbf{TODO: What is k?}
+\item \textbf{Classification}. KRI-kNN by \fullcite{Chen2009} is implemented (see Section~\ref{section:knn}).
+As similarity measure the cosine similarity will be used, which finds precedence in other work about 
+word embeddings like \fullcite{Mikolov2013}.
 \end{enumerate}
 
 \subsection{Variation: Graph walk}
@@ -73,8 +81,32 @@ can be used for generating longer sentences instead of triple sentences.
 The longer sequences are able to better capture contextual information than three word sentences.
 This is achieved by creating paths of a depth $d$, starting from each class.
 Evaluation of RDF2Vec shows that  Skip-gram and CBOW both produce better word embeddings this way 
-\cite{Ristoski2016}..
+\cite{Ristoski2016}.
 Therefore it is expected that graph walk will also improve the performance of this algorithm.
+However, the potentially exponential number of walks is an issue, as this will increase the runtime
+for generating the walks to extremely high values. A single-process implementation using breadth-first
+search requires $\sim 40$ seconds to generate all walks for one vertice. \textbf{mention hardware stats, and
+implementation details in appendix?}
+Generating walks for all $\sim 24$ million items or $\sim 1.2$ classes is therefore not feasible,
+e.g. using the mentioned implementation generating walks for all classes would take $\sim 555$ days.
+\fullcite{Ristoski2016} proposes a first measure to improve the runtime by reducing the maximum number
+of walks per vertice. 
+Another measure proposed by the author is the sampling of vertices, for which walks should be generated. 
+The sampling should try to maximize the coverage of edges and vertices by the walks.
+One requirement for the sampling would be the coverage of all classes, as the word embeddings for
+these classes are used in the classification component of the algorithm.
+The implementation will combine limiting the number of walks per vertice and a partially random sampling approach.
+The sampling will first choose only vertices from the set of classes, which are not yet covered by the
+generated walks. After all classes are covered, the same choice will be made on the set of all items.
+The following parameters are chosen for the component based on \fullcite{Ristoski2016}:
+\begin{itemize}
+\item Depth of walks: $4$
+\item Maximum number of walks per vertice: $100$
+\end{itemize}
+Because of time constraints the number of walks, which can be generated is restricted.
+\textbf{When should the graph walk terminate? specific node or edge coverage, number of walks, 
+number of nodes, time?}
+
 \textbf{TODO: choice of hyperparameters}
 
 \subsection{Variation: Vector offset}
