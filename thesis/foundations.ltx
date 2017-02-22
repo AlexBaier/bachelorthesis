@@ -151,17 +151,17 @@ in the case of Wikidata, this assumption does not hold true. The following state
 \abs{\{  c \in C \mid \neg \exists s \in C: c \subclassof{T} s \}} > 
 \end{align}
 There are classes other than the root class, which also have no superclasses. These classes will be called
-\textit{unlinked classes}.
+\textit{orphan classes}.
 \begin{definition}[Root class]\label{root class}
 Given a taxonomy $T=(C, S)$, the \textnormal{root class} $root_T$ is a specific, predefined class with no superclasses in 
 $T$. For $root_T$, $\abs{succ_T(root_T)} = 0$ applies.
 \end{definition}
-\begin{definition}[Unlinked class]\label{unlinked class}
-Given a taxonomy $T=(C,S)$ with a root class $root_T$, a class $u \in C$ is called \textnormal{unlinked class},
+\begin{definition}[Orphan class]\label{orphan class}
+Given a taxonomy $T=(C,S)$ with a root class $root_T$, a class $u \in C$ is called \textnormal{orphan class},
 if $u \neq root_T \land \abs{succ_T(u)} = 0$.
 \end{definition}
 In Wikidata, the root class is \entity{} \cite{WikidataQ35120}. 
-All other classes, which are not subclasses of \entity{}, are therefore either unlinked classes, or subclasses of unlinked classes.
+All other classes, which are not subclasses of \entity{}, are therefore either orphan classes, or subclasses of orphan classes.
 In Section~\ref{section:taxonomy analysis}, it will be shown that the Wikidata taxonomy graph is not fully
 connected. But the component, which contains the root class \entity{}, contains $97\%$ of all classes.
 This component will be referred to as \textit{root taxonomy} in later sections.
@@ -247,19 +247,19 @@ Neural embeddings however seem to implicitly capture only relevant features \cit
 
 % Problem statement 
 \subsection{Problem statement}\label{section:problem statement}
-The task of this thesis is the classification of unlinked classes in Wikidata. In other words a function
-is needed, which given an unlinked class $u$ of a taxonomy $T = (C, S)$ with a root class $root_T$,
+The task of this thesis is the classification of orphan classes in Wikidata. In other words a function
+is needed, which given an orphan class $u$ of a taxonomy $T = (C, S)$ with a root class $root_T$,
 find an appropriate superclass for $T$. \fullcite{Doan2002} suggests that for the task of placing a class
 into an appropriate position in $T$,
 either finding the most similar class, most specific superclass, or most general subclasses of $u$,
 are sensible approaches.
-This induces that the appropriate superclass for an unlinked class $u$ is the superclass of the most
+This induces that the appropriate superclass for an orphan class $u$ is the superclass of the most
 similar class to $u$.
 Therefore we can define the problem, as follows:
 \begin{definition}[Problem definition]\label{problem definition}
 Given a taxonomy $T = (C, S)$ with root class $root_T$ and a similarity function $sim$ over $T$,
 find a function $f: \mathbb{N} \mapsto \mathcal{P}(\mathbb{N})$, 
-which, given an unlinked class $u \in C$, returns a set of classes $P = f(u)$, 
+which, given an orphan class $u \in C$, returns a set of classes $P = f(u)$, 
 fulfilling the following criteria:
 \textbf{TODO: redefine second criteria}
 \begin{align}
@@ -276,8 +276,8 @@ The stated problem induces several challenges, which will be listed here, but ad
 In Wikidata and other ontologies, it is possible for one class to have multiple superclasses.
 It has to be decided whether the solution will be simplified to a single-label classification,
 or attempt multi-label classification.
-\item \textbf{High number of labels}. An unlinked class has to be assigned to a class in the root taxonomy.
-The only restricting condition is that the chosen class cannot be a subclass of the unlinked class.
+\item \textbf{High number of labels}. An orphan class has to be assigned to a class in the root taxonomy.
+The only restricting condition is that the chosen class cannot be a subclass of the orphan class.
 As shown in Section~\ref{section:taxonomy analysis} $97\%$ of $12999501$ classes are part of the root
 taxonomy. Classification methods, like SVM or neural networks, usually classify with a small number of labels.
 A classification method, which is able to handle over a million labels, is required.
