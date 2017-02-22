@@ -168,13 +168,7 @@ This component will be referred to as \textit{root taxonomy} in later sections.
 
 % Similarity
 \subsection{Similarity}\label{section:similarity}
-\begin{itemize}
-\item semantic similarity e.g. distributional similarity \\
-	\fullcite{Lin1998} \\
-	\fullcite{Rodriguez2003}
-\item geometrical similarity e.g. distance based-similarity, cosine similarity
-\end{itemize}
-For the task of ontology learning \cite{Hazman2011} as well as classification, e.g. k-nearest-neighbors,
+For the task of ontology learning \cite{Hazman2011} as well as classification, e.g. k-nearest-neighbors \cite{Chen2009},
 the concept of similarity is of importance. A basic intuition of similarity is for example given by 
 \fullcite{Lin1998}. Similarity is related to the commonalities and differences between two objects.
 More commonalities implies higher similarity. Vice versa, more differences implies lower similarity.
@@ -183,10 +177,12 @@ able to achieve maximum similarity. A similarity measure computes the similarity
 \begin{definition}[Similarity measure]
 $\mathit{sim}: \Omega \times \Omega \mapsto [ 0, 1 ]$ is called \textnormal{similarity measure} for a set of objects $\Omega$.
 \end{definition}
-A similarity of $1$ implies identical objects and a similarity of $0$ implies that there are no commonalities between the input objects.
+A similarity of $1$ implies identical objects and a similarity of $0$ implies that there are no commonalities between the input objects. The information-theoretic definition of similarity states that a similarity measure
+should factor in both commonalities as well as differences to compute the similarity between objects \cite{Lin1998}.
 
-Many objects can be defined as feature vectors in $\mathbb{R}^n$, e.g. \textbf{examples and citations}.
-If feature vectors exist, the similarity can be measured based on the distance $\delta_S(\vec{p}, \vec{q})$ 
+Many types of information can be encoded as feature vectors in $\mathbb{R}^n$, e.g.
+words \cite{Levy2015} \cite{Mikolov2013}, graphs \cite{Ristoski2016} \cite{Cao2016}, etc.
+The similarity between feature vectors can be measured using the distance $\delta_S(\vec{p}, \vec{q})$ 
 between two vectors $\vec{p}$ and $\vec{q}$. 
 The distance represents the differences between two feature vectors. 
 A typical distance measure is the $L_S$-Norm \cite{Weber2000}:
@@ -197,7 +193,7 @@ For example, the $L_2$-Norm is the euclidean distance:
 \begin{align}
 &L_2: \delta_2 (\vec{p}, \vec{q}) = \sqrt{\sum_{i=0}^{n-1}\abs{\vec{p}_i - \vec{q}_i}^2}
 \end{align}
-Similarity between vectors can now defined by mapping the distances to similarity values using a correspondence
+Similarity between vectors can now be defined by mapping the distances to similarity values using a correspondence
 function \cite{Weber2000}:
 \begin{definition}[Correspondence function]
 $h: \mathbb{R}^+ \mapsto [0,1]$ is correspondence function, if it fulfills the following properties:
@@ -206,32 +202,51 @@ $h: \mathbb{R}^+ \mapsto [0,1]$ is correspondence function, if it fulfills the f
 \item $\forall x,y: x > y \implies h(x) \le h(y)$
 \end{enumerate}
 \end{definition}
-Another measure of vector similarity, which also includes the angle of vectors by using the dot product,
-is the cosine similarity. It is defined as follows:
+\fullcite{Aggarwal2001} show that $L_S$ distance measures especially suffer the curse of dimensionality for
+increasing values of $S$. The curse of dimensionality implies that
+''the ratio of the distances of the nearest and farthest neighbors to a given target in high dimensional space 
+is almost $1$ for a wide variety of data distributions and distance functions'' \cite{Aggarwal2001}.
+Cosine similarity can offset this problem to some degree by including the direction of the vectors
+into the calculation of the similarity \cite{Houle2010}. 
+This is done by computing the dot product between two vector. It is defined as follows:
 \begin{align}
 & \mathit{sim}_\mathit{cos}(\vec{p}, \vec{q}) = 
 \frac{\vec{p}^T \cdot \vec{q}}{||\vec{p}||_2 \cdot ||\vec{q}||_2}
-\end{align}
+\end{align}  
 Cosine similarity maps to $[-1,1]$. It returns $1$ if the vectors are identical, $0$ if the vectors are orthogonal,
-and $-1$ if the angle between the vectors is $\pi$ and therefore opposites.
-However, if the feature vector are positive, $\vec{p} \in \mathbb{R}^n: \vec{p}_i \ge 0 \forall i=0,\dots,n-1$,
+and $-1$ if the angle between the vectors is $\pi$ and therefore the vectors are opposites.
+However, if the feature vector space $\Omega$ contains only positive vectors, 
+$\forall \vec{p} \in \Omega: \vec{p}_i \ge 0 \forall i=0,\dots,n-1$,
 then the cosine similarity maps to $[0, 1]$ and fulfills the definition of a similarity measure.
 For example, feature vectors representing word frequencies in documents are positive,
 as a word can not occur less than $0$ times.
 
-\textbf{TODO: Whole paragraph needs citations}
-In ontology learning, semantic similarity is used to great effect . 
-Semantic similarity compares the semantic content of objects or documents . This can be achieved by comparing which features
-can be found in both objects (commonalities) and which features are unique to the compared objects (differences).
+In ontology learning, semantic similarity is used to great effect, 
+e.g  for clustering objects to create hierarchies\cite{Hazman2011} \cite{Wong2012} 
+or mapping between different ontologies  \cite{Doan2002} \cite{Rodriguez2003}. 
+Semantic similarity compares the semantic content of objects or documents . 
+This can be achieved by comparing which features can be found in both objects (commonalities) 
+and which features are unique to the compared objects (differences).
 \fullcite{Rodriguez2003} develops a semantic similarity measure for comparing entity classes in ontologies.
-\textbf{Write}
+Given two objects $a, b \in \Omega$. $A$ and $B$ are their corresponding descriptions sets,
+e.g. for Wikidata the aliases and statements. $\alpha$ is a function, which defines the importance of
+differences between $a$ and $b$. $A \cap B$ is the set of commonalities, and $A/B$ the set of differences between
+the $a$ and $b$. The defined similarity function is not symmetric, $\mathit{sim}(a,b) \neq \mathit{sim}(a,b)$.
+\begin{align}
+&\mathit{sim}(a, b) = \frac{\abs{A \cap B}}{\abs{A \cap B} + \alpha (a,b) \abs{A/B} + (1 - \alpha (a,b)) \abs{B/A}}
+\end{align}
+for $0 \le \alpha \le 1$.
 
-
-
+Calculating the similarity between vectors is an easier task than calculating the similarity between objects in
+an ontology. Using neural word or graph embeddings, which are presented in Sections~\ref{section:word2vec}
+and~\ref{section:graph embeddings}, enables the representation of classes and instances in ontologies
+as feature vectors. The mentioned curse of dimensionality is a non-issue as it applies, if the the number
+of irrelevant of features is high. This is typically solved by reducing the dimension of the feature vectors
+to include only relevant features \cite{Domingos2012}. 
+Neural embeddings however seem to implicitly capture only relevant features \cite{Mikolov2013}.
 
 % Problem statement 
 \subsection{Problem statement}\label{section:problem statement}
-\textbf{TODO: correct the definition of the problem}
 The task of this thesis is the classification of unlinked classes in Wikidata. In other words a function
 is needed, which given an unlinked class $u$ of a taxonomy $T = (C, S)$ with a root class $root_T$,
 find an appropriate superclass for $T$. \fullcite{Doan2002} suggests that for the task of placing a class
@@ -246,30 +261,28 @@ Given a taxonomy $T = (C, S)$ with root class $root_T$ and a similarity function
 find a function $f: \mathbb{N} \mapsto \mathcal{P}(\mathbb{N})$, 
 which, given an unlinked class $u \in C$, returns a set of classes $P = f(u)$, 
 fulfilling the following criteria:
+\textbf{TODO: redefine second criteria}
 \begin{align}
-& \neg(\forall p \in S: p \subclassof{T} u \: \textnormal{no children} \label{no children}\\
-& P = \mathit{succ}(\underset{c \in C}{\max(sim(u, s))}) \: \textnormal{superclasses of most similar classes} 
+& \forall p \in P: \neg (p \subclassof{T} u) \: \textnormal{no children} \label{no children}\\
+& P = \mathit{succ}(\underset{c \in C}{\max(sim(u, c))}) \: \textnormal{superclasses of most similar class} 
 \label{most similar class}
 \end{align}
 \end{definition}
-Because it is possible for a class to have multiple superclasses, it is necessary to define $f$ in such a way,
-that it returns a set of classes. Therefore the described problem is a multi-label classification problem.
 
 The stated problem induces several challenges, which will be listed here, but addressed in later sections.
 
 \begin{enumerate}
-\item \textbf{Multi-label classification}. Algorithms for classification typically map entered objects to one label 
-\textbf{TODO:Reference}.
-It has to be decided whether the solution will be simplified to assign one superclass per input,
+\item \textbf{Multi-label classification}. Algorithms for classification typically map entered objects to one label.
+In Wikidata and other ontologies, it is possible for one class to have multiple superclasses.
+It has to be decided whether the solution will be simplified to a single-label classification,
 or attempt multi-label classification.
-\item \textbf{High number of labels}. An entered, unlinked class has to be assigned to a class in the root taxonomy.
+\item \textbf{High number of labels}. An unlinked class has to be assigned to a class in the root taxonomy.
 The only restricting condition is that the chosen class cannot be a subclass of the unlinked class.
 As shown in Section~\ref{section:taxonomy analysis} $97\%$ of $12999501$ classes are part of the root
-taxonomy. Classification like SVM or neural networks are usually used for classification with a small number of labels.
-SVM is for example a binary classification method. A classification method, which is able to handle over a million
-of labels, has to be found.
-\item \textbf{Representation of items}. Items in Wikidata are structured information, similar to nodes in RDF graphs.
-Items are nodes and statements can be simplified to triples of $(\mathit{itemid}, \mathit{pid}, \mathit{value}$.
+taxonomy. Classification methods, like SVM or neural networks, usually classify with a small number of labels.
+A classification method, which is able to handle over a million labels, is required.
+\item \textbf{Representation of items}. Items in Wikidata are structured information, similar to nodes in RDF graphs
+and Wikidata can be represented as such \cite{Ristoski2016} \cite{Erxleben2014}.
 As motivated in Section~\ref{section:introduction}, the solution should exploit the apparent power of
 neural networks. Neural networks, which are introduced in Section~\ref{section:neural networks},
 require input to be represented as vectors. Therefore it will be necessary to map items to vectors.

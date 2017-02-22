@@ -47,7 +47,7 @@ The architecture consists of the following components:
 \item \textit{Algorithm library component} contains the algorithms, which are applied for the purpose of ontology learning. These algorithms are generic
 	standard machine learning methods, as well as specialized OL methods. Additionally, different similarity and collocation measures should be available.
 \end{enumerate}
-In the context of Wikidata, there exists no single comprehensive OL tool. However, in the \textbf{Wikidata technology space???} different tools exist,
+In the context of Wikidata, there exists no single comprehensive OL tool. However, in the Wikimedia technology space different tools exist,
 which mainly support the task of refining and maintaining the current ontology.
 For example, \fullcite{Stratan2016} develops a taxonomy browser for Wikidata, which is able to evaluate the quality of the taxonomy by detecting different types 
 of cycles, redundancies, errors and unlinked classes. This tool is an ontology learning component, as it provides the ability to browse and evaluate the ontology of Wikidata.
@@ -62,13 +62,14 @@ For example, such a pattern is
 \mathit{NP}_{\mathit{hyper}} \: \textnormal{such as} \: \{  \mathit{NP}_\mathit{hypo} , \}^*  \:  \{ ( \textnormal{and} \mid  \textnormal{or} ) \} \: \mathit{NP}_\mathit{hypo}
 \end{align*},
 where $\mathit{NP}$ stands for noun phrase, and $\mathit{NP}_\mathit{hyper}$ is a hypernym or superclass, while $\mathit{NP}_\mathit{hypo}$ are hyponyms or subclasses.
-These patterns provide reasonable results, but the manual creation of patterns is involve ''high''\textbf{not really high, but it could be automatized} cost and time investments \cite{Wong2012}.
+These patterns provide reasonable results, but the manual creation of patterns is involve high cost and time investments \cite{Wong2012}.
 
 \textit{Clustering} uses some measure of similarity to organize objects into groups. This can be achieved by representing the words or terms as vectors \cite{Cimiano2005},
 on which different distance or similarity measures can be applied. Clustering methods can be categorized to three different types.
 Agglomerative clustering initializes each term as its own cluster and merges in each step the most similar terms into one cluster.
 Divisive clustering approaches the problem the opposite way by starting with a single cluster, containing all words, and then dividing them into smaller groups.
-Both of these approaches generate  hierarchies, agglomerative bottom-up and divisive top-down \textbf{maybe not say that or formulate it another way}.
+Both approaches generate hierarchies. Agglomerative clustering is doing so bottom-up and divisive
+clustering top-down.
 
 \textit{Phrase analysis} analyses noun phrases directly. It is assumed that nouns, which have additional modifiers are subclasses of the noun without modifiers.
 For example, this could be applied on the labeled unlinked classes of Wikidata. For example the classes
@@ -96,8 +97,6 @@ The embeddings are trained on a 30 million Chinese sentence corpus. And the proj
 on  $15247$ hypernym-hyponym word pairs. The handpicked testing data consists of
 $418$ entities and their hypernyms. The method achieves an F-score of $73.74\%$ on a manually labeled dataset,
 and outperforms existing state-of-the-art methods.
-\textbf{A bit skeptical about these really good evaluation results. 
-The test set is not very big, maybe it was just chosen right?}
 
 \fullcite{Petrucci16} develop a recurrent neural network for ontology learning.
 The purpose of the work is a first step to verify whether neural networks are able to 
@@ -106,7 +105,7 @@ The task solved by the specific network is the translation of encyclopedic text 
 This task is divided into the task of sentence transduction, identify logical structure 
 and generate corresponding formula template,
 and sentence tagging, identifying the roles of words in the input sentence.
-The tagged sentence can then be mapped \textbf{unto (is this a real word?)} the generated formula template.
+The tagged sentence can then be mapped unto the generated formula template.
 This is achieved by the use of a  recurrent neural network for sentence tagging and a
 recurrent encoder-decoder for sentence transduction. Both are supported by gated recursive units,
 which provide a short-term-memory effect. The developed network is, at this time, under evaluation.
