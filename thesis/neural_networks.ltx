@@ -1,13 +1,7 @@
-Word embeddings are vector representations of words.
-
 \subsubsection{Introduction to neural networks}
 Notion of neural networks will be introduced.
 
-\subsubsection{Word2Vec}\label{section:word2vec}
-\fullcite{Mikolov2013}\\
-\fullcite{Levy2015}\\
-\fullcite{Goldberg14}\\
-suitable for capturing linear structures \cite{Cao2016}\\
+\subsubsection{Word embeddings}\label{section:word2vec}
 \fullcite{Mikolov2013} introduce two neural network language models, Continuous Bag-of-Words
 and Skip-gram, which have proven to be very effective at creating word embeddings.
 The generated word embeddings of both models encode the semantics and linguistic regularities of
@@ -21,21 +15,63 @@ can be answered by calculating the offset between \textit{big} and \textit{bigge
 of \textit{small} to it: $\mathit{vector}(\textnormal{''biggest''})-\mathit{vector}(\textnormal{''big''})
 +\mathit{vector}(\textnormal{''small''})$ \cite{Mikolov2013}.
 
-Continuous Bag-of-Words (CBOW) is a feedforward network with one hidden layer.
-The model is trained for the task of predicting a given word $w$ based on its context $c$.
+Further research in this topic has shown that SGNS
+is generally more effective
+in generating high-quality word embeddings than CBOW \cite{Mikolov2013} \cite{Mikolov2013a} \cite{Levy2015}, 
+as it is better in representing rare words.
+Therefore only the skip-gram model with negative sampling will be introduced in this thesis.
+The following description is based on work by \fullcite{Mikolov2013} \cite{Mikolov2013a},
+\fullcite{Levy2014} \cite{Levy2014a} \cite{Goldberg2014}, \fullcite{Rong2014}, and \fullcite{Levy2015}.
 
-A $k$-skip-$n$-gram for a sentence $w_1 \dots w_n$ is defined as follows \textbf{cite Guthrie}:
-\textbf{TODO: add indizes to sum}
+\begin{figure}
+\centering
+\includegraphics[width=0.5\textwidth]{images/neural_networks/skipgram.pdf}
+\caption{Skip-gram model}
+\label{fig:skipgram}
+\end{figure}
+
+The skip-gram model with negative sampling uses a word corpus $w \in V_W$ and the corresponding context
+corpus $c \in W_C$. $V_W$ and $V_C$ are vocabularies.
+Given a sequence of words $w_1, \dots, w_n$, e.g. a text corpus like a Wikipedia text dump,
+the context to a word $w_i$ are the $2*L$ words around it:
+$w_{i-L}, \dots, w_{i-1}, w_{i+1}, \dots, w_{i+L}$. $L \in \mathbb{N}$ is the size of the context window.
+The network (see Figure~\ref{fig:skipgram}) is trained for the task of predicting the context
+of an input word. Each word $w \in V_W$ is mapped to an embedding vector $\vec{W} \in \mathbb{R}^d$,
+and each context $c \in V_C$ is mapped to an embedding vector $\vec{c} \in \mathbb{R}^d$,
+where $d$ is the embedding size. Both embeddings are parameters, which are learned by the network.
+The embeddings can be represented as matrices $W \in \mathbb{R}^{\abs{V_W} \times d}$ and 
+$C \in \mathbb{R}^{\abs{V_C} \times d}$, where $W$ maps the word input to the projection layer
+and $C$ maps the projection to the output layer, and therefore the context of the entered word
+\cite{Rong2014}.
+
+Given a word $w$ and a context $c$ the model wants to maximize the probability $p(D=1 | w, c)$,
+that $(w, c)$ is in the data $D$. The probability distribution is modeled as \cite{Levy2014}:
 \begin{align}
-\{ w_{i_1}, w_{i_2}, \dots , w_{i_n} \mid \Sigma i_j - i_{j-1} < k \}
+&p(D=1 | w, c) = \frac{1}{1 + e^{- \vec{w} \cdot \vec{c}}}
+\end{align},
+which leads to the maximization objective \cite{Levy2014a}:
+\begin{align}\label{align:sg objective}
+&\max_{\vec{w}, \vec{c}} \sum_{(w, c) \in D} \log \frac{1}{1 + e^{- \vec{w} \cdot \vec{c}}}
 \end{align}
+This problem has a trivial solution with $\vec{c} = \vec{w}$ and $\vec{c} \cdot \vec{w} = K$, for a large enough $K$
+\cite{Levy2014a} \cite{Levy2014}.
+ Using negative sampling solves the problem of having a trivial solution and also benefits
+the quality of word embeddings, as it increases the distance between word-context pairs, which do not occur in the data.
+Negative sampling is represented with the probability $p(D=0|w,c) = 1 - p(D=1 | w,c)$, that a pair $(w,c)$
+does not occur in the data $D$. The negative sampling training objective can be written as \cite{Levy2014a}:
+\begin{align}
+&\max_{\vec{w}, \vec{c}} (\sum_{(w, c) \in D} \log \sigma(\vec{c} \cdot \vec{w}) + \sum_{(w, c) \in D'} \log \sigma
+(- \vec{c} \cdot \vec{w}))
+\end{align},
+where $D'$ is a set of negative training samples, which are not in $D$, and $\sigma(x) = \frac{1}{1 + e^x}$.
+For this objective $p(D=1 | w, c)$ needs to produce small values for $(w, c) \in D'$ and high values for
+$(w, c) \in D$, which counteracts the trivial solution possible for objective~\ref{align:sg objective}.
 
-The skip-gram model solves the opposite task to CBOW.
-The target word is now the input and the model is trained to predict its context.
-
-\textbf{What is the task? What function is maximized? Purpose of negative sampling? Subsampling?}
-
-Negative sampling increases the distance between unobserved word pairs.
+Additionally \fullcite{Mikolov2013} introduces parameters to further influence the
+quality of word embeddings. Rare words that occur less than a certain threshold are not considered as
+words or context. Additionally very frequent words are down-sampled (occur less often).
+This is done before context generation and increases the effective size of context windows \cite{Levy2014},
+which improves the quality of word embeddings \cite{Mikolov2013a}.
 
 Research has shown that the effectiveness of word embeddings is highly dependent
 on the choice of hyperparameters \cite{Levy2015} \cite{Mikolov2013a}.
@@ -43,35 +79,50 @@ Experiments by \fullcite{Levy2015} indicate that SGNS prefers a high number of n
 Additionally subsampling of very frequent words (e.g. ''in'', ''a'') benefits the embeddings, since these
 words provide less information than less frequent words \cite{Mikolov2013a}.
 
-\subsubsection{RDF2Vec}\label{section:rdf2vec}
-combination of Word2Vec and graph walking, which can be found in dnn for gr\\
-\fullcite{Ristoski2016} propose two approaches to create embeddings for entities in RDF graphs,
-graph walks and Weisfeiler-Lehman subtree RDF graph kernels.
-Both approaches create linear sequences from the RDF graph, which then are applied
-on the CBOW and Skip-gram models with negative sampling (see Section~\ref{section:word2vec}).
+\subsubsection{Graph embeddings}\label{section:graph embeddings}
+Similar to generating vector embeddings for words, it is beneficial to create graph embeddings.
+As it allows the extraction of useful information about vertices in its graph context \cite{Cao2016}.
 
+Where sentences are directly representable as linear sequences and can therefore be directly
+used in SGNS, this is not the case for graph structures like RDF graphs or protein networks.
+\fullcite{Ristoski2016} proposes the use of graph walks to generate linear sequence samples.
 Given an undirected, weighted graph $G=(V, E)$, graph walk will generate all graph walks $P_v$ of depth $d$
 starting in vertex $v$, for all vertices $v \in V$. Breadth-first search is used for generating the graph walks.
 This results in a set of sequences of the format $v_i \rightarrow e_{ij} \rightarrow v_j \rightarrow \dots$, where
-$v_i, v_j \in V$ and $e_{ij} \in E$. \textbf{TODO: finish this explanation}
+$v_i, v_j \in V$ and $e_{ij} \in E$. The number of generated walks increases exponentially with depth $d$.
+Therefore, instead of generating all graph walks for each vertice, a random walk approach as developed
+by \fullcite{Perozzi2014} is used, where the number of walks per vertice is limited. A random walk $W_v$
+rooted at vertice $v$ consists of random variables $W_v^1, W_v^2, \dots, W_v^k$. $W_v^{i+1}$ is a vertice,
+which is chosen randomly from the neighbors of $W_v^{i}$.
+Random walking allows an easier parallelization, since multiple workers can simultaneously
+generate walks in different parts of the graph \cite{Perozzi2014}.
+Evaluation results show that this approach outperforms standard feature generation approaches \cite{Ristoski2016}.
 
-\textbf{it will be fun to explain the second approach}
+\fullcite{Cao2016} develop a deep neural network for graph representation (DNGR).
+Instead of generating graph walks, a random surfing model similar to Google's PageRank is used
+to generate a probabilistic co-occurrence matrix, which indicates the probability of reaching a vertice $j$
+after a number of steps $k$ from a starting vertice $v_i$.
+A 
+Similar to PageRank a teleportation probaility $\alpha$ is used,
+which indicates the chance whether the random surfing continues or is reset to the starting vertice.
+A row $p_k$ of the co-occurrence matrix is therefore defined as follows \cite{Cao2016}:
+\begin{align}
+&p_k = \alpha \cdot p_{k-1} A + (1 - \alpha)p_0
+\end{align}
+with $p_{0_i} = 1, p_{0_j} = 0, j \neq i$.
+Based on the co-occurrence relation, a vector representation $r$ can be defined.
+It can be assumed that vertices, which are close to the original vertice should have higher weight than
+distant vertices. This leads to the vector representation $r$ for the starting vertice $v_i$ \cite{Cao2016}:
+\begin{align}
+&r = \sum_{k=1}^K w(k) \cdot p_k^*
+\end{align}
+with $p_k^* = p_{k-1}^* A = p_0 A^k$ being the probabilities of arriving in exactly $k$ steps, if no random restart occurs,
+and $w$ being a decreasing weight function.
 
-\subsubsection{Deep neural networks for graph representation}\label{section:graph embeddings}
-\fullcite{Cao2016} deep neural networks for graph representation \\
-\fullcite{Raghu2016} expressivity of deep neural networks \\
-The idea of representing semantic objects like words or vertices, which was already explored in the previous
-section, can applied similarly to graphs.
-\fullcite{Cao2016} develop a deep neural network for graph representation.
-Based on the idea of generating linear sequences of vertices using a graph walk approach like DeepWalk \textbf{cite}
-or similar to the previously presented RDF2Vec \textbf{cite}.
-\citeauthor{Cao2016} develop a random surfing model similar to Google's PageRank using a
-teleportation probability $\alpha$, which indicates the chance to return to the starting vertice and restarting
-the process. The random surfing generates a probabilistic co-occurrence matrix,
-which contains the probabilities to reach a certain vertex after a determined amount of steps.
-The advantage of random surfing instead of random walking is the fact, that linear sequences have
-finite lengths and can therefore fail to capture relevant contextual information.
-
-
-
-\subsubsection{Comparison}
+Random surfing has multiple advantages to sampling approaches like graph walking.
+Linear sequences have finite lengths and can therefore fail to capture relevant contextual information. 
+Using random surfing overcomes this problem as it is able to consider walks of every length.
+Additionally, a desired property of embedding approaches is the ability to weight
+context based on its distance to original word or vertice \cite{Mikolov2013} \cite{Cao2016}.
+Random surfing allows, similarly to Word2Vec (see Section~\ref{section:word2vec}, the weighting
+of words based on its distance, which is important to create good word representations \cite{Cao2016}.
