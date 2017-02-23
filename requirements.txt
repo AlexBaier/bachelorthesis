@@ -1,4 +1,3 @@
-blist
 boto==2.45.0
 bz2file==0.98
 cycler==0.10.0

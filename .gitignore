@@ -1,17 +1,9 @@
 # Byte-compiled / optimized / DLL files
 __pycache__/
-*.py[cod]
-*$py.class
 
 # Pycharm
 .idea/dictionaries
 .idea/workspace.xml
-
-# dumps
-data_analysis/output/reduced_items
-data_analysis/output/reduced_classes
-data_analysis/output/root_classes
-data_analysis/output/root_class_characteristics
 
 # algorithm out- and input
 data/*
@@ -29,6 +21,3 @@ data/*
 # misc folder
 misc/*
 
-# sparse matrix
-/data_analysis/output/idx_class_mapping.csv
-/data_analysis/output/sparse_taxonomy.csv

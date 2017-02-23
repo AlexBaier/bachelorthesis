@@ -8,7 +8,8 @@ def main():
     path = '../data'
     analysis_file_names = [
         'unlinked_labeled_instantiated_analysis-20161107',
-        'unlinked_analysis-20161107'
+        'unlinked_analysis-20161107',
+        'class_analysis-20161107'
     ]
     output_paths = list(map(lambda f: path + os.sep + f + '.csv', analysis_file_names))
     for idx, file_name in enumerate(analysis_file_names):
