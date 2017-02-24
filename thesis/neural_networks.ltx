@@ -1,5 +1,79 @@
+The notion of neural networks is introduced with the example for feedforward networks with backpropagation.
+The task of representing semantic information encoded in text and graphs as feature vectors using neural embeddings is then discussed.
+Solutions for generating word and graph embeddings by \fullcite{Mikolov2013}, \fullcite{Ristoski2016}, \fullcite{Cao2016} are presented.
+
 \subsubsection{Introduction to neural networks}
-Notion of neural networks will be introduced.
+A neural network is a triple $(N, C, W)$, where $N$ are neurons, $C = \{ (i, j) | i, j \in N \}$ is a set of connections between neurons, and $W$ are the weights corresponding
+to the connections, where $W_{ij}$ is the weight for the connection $(i, j) \in C$ \cite{Kriesel2005}. 
+Each neuron has an activation function $f_\mathit{act}$,
+which commonly is the Fermi function
+\begin{align}
+& f_\mathit{act} = \frac{1}{1 + e^{-x}}
+\end{align}
+mapping values to the interval of $(0,1)$. This function is non-linear and therefore allows the neural network to solve non-linear problems.
+Input neurons typically use the identity function $\mathit{id}$ as activation function \cite{Kriesel2005}. 
+The output of a neuron is computed by summing up the products of weights and inputs
+of the neuron, which is called net input, and applying the activation function on this value:
+\begin{align}
+&o_i = f_{act}(\sum_{k=1}^{n} w_{ki} o_i) 
+\end{align} 
+The input for input neurons (neurons on the first layer) are the inputs of the network.
+
+A feedforward neural network consists of an input layer with $s_i$ input neurons, an output layer with $s_o$ output neurons and $d$ hidden layers with
+$h$ neurons per layer. A neural network with many hidden layers is called deep neural network.
+The connections in a feedforward network only connect the neurons of a layer $i$ with the next layer $i+1$.
+This means that a neuron can never influence itself. Networks, which allow this, are called recurrent neural networks.
+See in Figure~\ref{fig:nn example} a feedforward neural network with $s_i =2, s_o=1, d=1, h=2$
+with already initialized weights.
+
+\begin{figure}
+\centering
+\includegraphics[width=0.75\textwidth]{images/neural_networks/nn_example.pdf}
+\caption{Example for feedforward neural network}
+\label{fig:nn example}
+\end{figure}
+
+Forward propagation pushes an input through all layers of the network in a step-wise manner (layer per layer).
+In the first step, the input vector $\vec{x}$ is pushed to the hidden layer and outputs of the hidden layer are computed, which results in a vector 
+$\vec{h}$ in the hidden layer:
+\begin{align} \label{align:fp step1}
+&\vec{h} =
+f_\mathit{act}(
+\begin{bmatrix}
+w_{1,3} & w_{2,3} \\
+w_{1,4} & w_{2,4} \\
+\end{bmatrix}
+\vec{x})
+\end{align}
+In the second step, the output of the hidden layer is pushed to the output layer resulting in the output $y^*$:
+\begin{align}
+&y^* =
+f_\mathit{act}(
+\begin{bmatrix}
+w_{3,5} & w_{4,5}\\
+\end{bmatrix}
+\vec{h})
+\end{align}
+Assuming the expected output for an input $\vec{x}$ is $y$, the error function is defined as
+\begin{align}
+E = \frac{1}{2}(y - y^*)^2
+\end{align}
+Training objective is to minimize the error function $E$.
+This can be accomplished by adjusting the weights $w_{ij} \in W$.
+Rather than brute-forcing the optimal weights for a network, backpropagation using gradient descent is applied in training.
+The idea of gradient descent is to look at the slope of the error function in respect to the current weights and adjust the weights into the descending direction.
+To do so the partial gradient in respect to each weight $w_ij$ has to be derived from the error function \cite{Nielsen2017}:
+\begin{align}
+&\frac{\partial E}{\partial w_{ij}} = \delta_j o_i \: \textnormal{with} \\
+& \delta_j = \frac{\partial E}{\partial o_j} \frac{\partial o_j}{\partial \mathit{net}_j}
+\end{align}
+Subsequently, the weights can be updated by adding $\Delta w_{ij} = - \alpha \frac{\partial E}{\partial w_{ij}}$ to each corresponding weight \cite{Nielsen2017}.
+Repeating the backpropagation for a set of training samples will train the neural network to approximate a specific function.
+
+In the following subsections, the concept of embeddings will be used to generate word and graph vector representations.
+By learning a certain task like predicting the probability for a certain word to appear in a context, a neural network implicitly learns
+hidden embeddings for the inputs. Embeddings are, in the case of Word2Vec \cite{Mikolov2013}, the connection weights between the input and hidden layer.
+More specifically, if the weights are represented as a matrix (e.g. see Equation~\ref{align:fp step1}), each row is an embedding for the corresponding input neuron.
 
 \subsubsection{Word embeddings}\label{section:word2vec}
 \fullcite{Mikolov2013} introduce two neural network language models, Continuous Bag-of-Words
