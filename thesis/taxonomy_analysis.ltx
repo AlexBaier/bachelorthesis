@@ -3,9 +3,9 @@ what information the classes carry and if there are certain patterns among the c
 For this purpose an analysis of the taxonomy needs to be carried out, which may answer questions.
 
 The taxonomy contained in the Wikidata dump of \dumpdate{} was analyzed.
+It contains a total of $24507102$ items, of which $1299501$ are classes.
 Classes were recognized as defined in Section~\ref{section:wikidata}. 
 Orphan classes were identified by checking whether a class does not have the \textit{subclass of (P279)} property.
-The taxonomy contained a total of $1299501$ classes at this time.
 
 \subsection{Root taxonomy}
 The state of the taxonomy was captured in regards to the root class \entity{} (see Figure~\ref{fig:root distance}).
@@ -20,10 +20,15 @@ which assumes that a taxonomy only has one root, and this root is \entity{} in W
 \caption{Distance of subclasses to root class \entity{}. Wikidata (\dumpdate{})}
 \label{fig:root distance}
 \end{figure}
-\textbf{Last sentences of this paragraph are mostly interesting trivia, but have currently no further use.}
-The longest shortest distance between the root and a leaf class is $20$. 
-The classes \textit{Q639064}, \textit{Q15978631} and \textit{Q151055} fulfill this characteristics. 
-Each of them is subclass of \textit{Homo (Q171283)}. 
+In Figure~\ref{fig:root distance}, the levels of the root taxonomy tree are represented. 
+Most classes have a shortest distance between $6$ and $10$ to the root.
+While the highest distance to the root is $20$. 
+The most distant classes generally belong to concepts of biological taxonomies.
+The most distant classes are subclasses of the genus \textit{Homo (Q171283)}.
+
+The developed algorithm will likely place orphan classes into the same levels of the taxonomy, in which most classes already reside.
+If the algorithm places classes in levels close to the root, it would indicate that the classification method is not specific enough but not necessarily.
+On the opposite, placing classes into distant levels would indicate incorrectness of the algorithm, since only a very specific subset of classes occur there.
 
 \subsection{Orphan classes}
 The characteristics of all orphan classes and the root class were analyzed.
@@ -131,12 +136,10 @@ is lower, because the same properties occur not as frequently for different clas
 The lack of commonalties between unlinked classes is not very problematic, as the algorithm
 would not compare unlinked classes with each other but with classes in the root taxonomy.
 
-\subsection{Discussion (TODO: new subsection title)}
+\subsection{Results}
 After completing the analysis, it can be seen that \entity{} is the root class of the taxonomy,
-and Wikidata's taxonomy is in a good state, since $97\%$ of classes are part of the root taxonomy.
-\textbf{TODO: not sure if i can just say that it is in a good state}
-Unlinked classes share few commonalities, and as shown above, a percentage of classes lack even
-basic information like a label. 
+and Wikidata's taxonomy is in a relatively good state regarding number of orphan classes and unlinked components, since $97\%$ of classes are part of the root taxonomy.
+Unlinked classes share few commonalities, and as shown above, a high percentage of classes lack even basic information like labels. 
 For developing an algorithm it is necessary to set a baseline, of what can be expected from the input.
 In this case, input is required to be labeled and have at least one instance.
 The benefit of this specific restriction is, that a basic level of descriptiveness can be assumed for

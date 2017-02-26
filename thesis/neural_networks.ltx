@@ -153,6 +153,12 @@ Experiments by \fullcite{Levy2015} indicate that SGNS prefers a high number of n
 Additionally subsampling of very frequent words (e.g. ''in'', ''a'') benefits the embeddings, since these
 words provide less information than less frequent words \cite{Mikolov2013a}.
 
+SGNS has a log-linear computational complexity $O$ in respect to the vocabulary size $V$
+\begin{align}
+& O = E \times T \times C \times (D + D \times \log_2 (V))
+\end{align}
+where $E$ is the number of training epochs, $T$ is the number of words in the training set, $C$ is the context window, and $D$ is the word embedding size \cite{Mikolov2013}.
+
 \subsubsection{Graph embeddings}\label{section:graph embeddings}
 Similar to generating vector embeddings for words, it is beneficial to create graph embeddings.
 As it allows the extraction of useful information about vertices in its graph context \cite{Cao2016}.
@@ -176,7 +182,6 @@ Evaluation results show that this approach outperforms standard feature generati
 Instead of generating graph walks, a random surfing model similar to Google's PageRank is used
 to generate a probabilistic co-occurrence matrix, which indicates the probability of reaching a vertice $j$
 after a number of steps $k$ from a starting vertice $v_i$.
-A 
 Similar to PageRank a teleportation probaility $\alpha$ is used,
 which indicates the chance whether the random surfing continues or is reset to the starting vertice.
 A row $p_k$ of the co-occurrence matrix is therefore defined as follows \cite{Cao2016}:
@@ -192,6 +197,14 @@ distant vertices. This leads to the vector representation $r$ for the starting v
 \end{align}
 with $p_k^* = p_{k-1}^* A = p_0 A^k$ being the probabilities of arriving in exactly $k$ steps, if no random restart occurs,
 and $w$ being a decreasing weight function.
+Finally a stacked denoising autoencoder is used to produce a non-linear mapping from the representations to low dimensional vectors.
+Stacked implies that the autoencoder has multiple hidden layers (deep neural network), which allows the learning better embeddings with each layer \cite{Cao2016}.
+The neural network encodes and decodes the inputted vectors, which performs a meaningful dimension reduction by removing redundant information
+and noise \cite{Cao2016}.
+Evaluation with comparison to other word embedding approaches like SGNS \cite{Mikolov2013}, DeepWalk \cite{Perozzi2014}, etc. show
+that the combination of random surfing and deep neural networks is effective, as the approach performs better than the other baselines.
+However, the approach has a linear complexity in regards to the number of vertices in the graph, while SGNS has a log-linear computational complexity \cite{Mikolov2013}.
+This is problematic in the thesis' use case, since Wikidata contains over $20$ million vertices.
 
 Random surfing has multiple advantages to sampling approaches like graph walking.
 Linear sequences have finite lengths and can therefore fail to capture relevant contextual information. 

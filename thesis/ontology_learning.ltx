@@ -101,9 +101,13 @@ This is achieved by the use of a  recurrent neural network for sentence tagging 
 recurrent encoder-decoder for sentence transduction. Both are supported by gated recursive units,
 which provide a short-term-memory effect. The developed network is, at this time, under evaluation.
 Therefore, no statement about the effectiveness of recursive neural networks for the task of ontology
-learning can be made based on the paper.
+learning can be made based on their work.
 
-
-\textbf{TODO: Interpret related work in context of this thesis.}
+In regards to this work, the use of word embeddings for enriching the taxonomy seems promising, as the approach by \fullcite{Fu2014} generated very good results. 
+Additionally, research in neural word embeddings has shown a high effectivness in similarity-based tasks \textbf{citations}, which is relevant for the described problem.
+This work will in comparison to \fullcite{Fu2014} attempt the task of adding taxonomic relations to an existing rather than constructing a taxonomy if given a subclass and a set
+of superclasses. Multiple approaches using neural word embeddings will be evaluated on the full Wikidata dataset, which has a greater size than for example the Chinese word corpus
+used in the previously mentioned related work.
+Therefore the novelty of this work, at the time of writing, is assumed.
 
 

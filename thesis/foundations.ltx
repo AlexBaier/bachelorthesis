@@ -247,24 +247,23 @@ Neural embeddings however seem to implicitly capture only relevant features \cit
 
 % Problem statement 
 \subsection{Problem statement}\label{section:problem statement}
-The task of this thesis is the classification of orphan classes in Wikidata. In other words a function
-is needed, which given an orphan class $u$ of a taxonomy $T = (C, S)$ with a root class $root_T$,
-find an appropriate superclass for $T$. \fullcite{Doan2002} suggests that for the task of placing a class
-into an appropriate position in $T$,
-either finding the most similar class, most specific superclass, or most general subclasses of $u$,
-are sensible approaches.
-This induces that the appropriate superclass for an orphan class $u$ is the superclass of the most
-similar class to $u$.
-Therefore we can define the problem, as follows:
+The task of this thesis is the classification of orphan classes in Wikidata. In other words a function is needed, 
+which given an orphan class $u$ of a taxonomy $T = (C, S)$ with a root class $root_T$, find an appropriate superclass for $T$.
+
+\fullcite{Doan2002} suggests that for the task of placing a class into an appropriate position in $T$,
+either finding the most similar class, most specific superclass, or most general subclasses of $u$, are sensible approaches.
+Therefore a ''most-specific-parent" similarity measure $\mathit{sim}_\mathit{msp}(a, b)$ is assumed, which defines similarity between a subclass $a$ and a superclass $b$.
+$\mathit{sim}_\mathit{msp}(a, b)$ is $0$, if $b$ is not a superclass of $a$.
+
+The problem is defined as follows:
 \begin{definition}[Problem definition]\label{problem definition}
 Given a taxonomy $T = (C, S)$ with root class $root_T$ and a similarity function $sim$ over $T$,
 find a function $f: \mathbb{N} \mapsto \mathcal{P}(\mathbb{N})$, 
-which, given an orphan class $u \in C$, returns a set of classes $P = f(u)$, 
+which, given an orphan class $u \in C$, returns a class $s = f(u)$, 
 fulfilling the following criteria:
-\textbf{TODO: redefine second criteria}
 \begin{align}
 & \forall p \in P: \neg (p \subclassof{T} u) \: \textnormal{no children} \label{no children}\\
-& P = \mathit{succ}(\underset{c \in C}{\max(sim(u, c))}) \: \textnormal{superclasses of most similar class} 
+& s =\max_{s \in C}(\textit{sim}_\textit{msp}(u, c)) \: \textnormal{most specific parent} 
 \label{most similar class}
 \end{align}
 \end{definition}
