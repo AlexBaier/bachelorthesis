@@ -7,7 +7,7 @@ logging.basicConfig(format='%(asctime)s : %(levelname)s : %(message)s', level=lo
 
 def main():
     node_id_path = '../data/algorithm_io/class_ids-20161107.txt'
-    edge_store_path = '../data/algorithm_io/edges.sqlite3'
+    edge_store_path = '../data/algorithm_io/edges-20161107.sqlite3'
     output_path = '../data/algorithm_io/graphwalk_sentences-20161107.txt'
     nodes = list()
     with open(node_id_path) as f:

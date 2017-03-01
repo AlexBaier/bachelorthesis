@@ -6,15 +6,17 @@ import algorithm.skipgram_model as sgm
 
 
 def main():
+    # 2017-03-01 07:49:56,481 : INFO : training on 1595945650 raw words
+    #   (373764633 effective words) took 45693.4s, 8180 effective words/s
     logging.basicConfig(format='%(asctime)s : %(levelname)s : %(message)s', level=logging.INFO)
     classes_path = '../data/algorithm_io/class_ids-20161107.txt'
     training_path = '../data/algorithm_io/simple_sentences-20161107.txt'
-    output_path = '../data/algorithm_io/standard_model-20161107-' + time.strftime("%Y%m%d-%H%M%S")
+    output_path = '../data/algorithm_io/simple_sentence_model-20161107'
     config = {
         'size': 300,  # embedding size
         'window': 2,  # context window
         'alpha': 0.025,  # initial learning rate
-        'min_count': 2,  # minimum number of word occurrences
+        'min_count': 1,  # minimum number of word occurrences
         'max_vocab_size': 3e6,  # limited vocabulary size => approx 5GB memory usage
         'sample': 1e-05,  # threshold for down-sampling higher-frequency words
         'negative': 15,  # noise words, try 20

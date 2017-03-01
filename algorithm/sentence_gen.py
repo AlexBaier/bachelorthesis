@@ -95,4 +95,4 @@ class SentenceIterator(Iterator[List[str]]):
     def __iter__(self):
         with open(self.__path) as f:
             for s in map(lambda l: l.strip().split(), f):
-                yield s
+                yield s if s[2][0] in ['Q', 'P'] else s[0:2]

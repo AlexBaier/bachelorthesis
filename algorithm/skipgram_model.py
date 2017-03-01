@@ -20,7 +20,6 @@ class SpecificWordTrim(object):
         return rule
 
 
-# TODO: functions shouldn't do 2 tasks
 def train_and_store_sgns(config: dict, required_words: List[str], sentences: Iterator[List[str]], output_path: str):
     rule = SpecificWordTrim(include=required_words, exclude=list()).get_rule()
     model = gensim.models.Word2Vec(

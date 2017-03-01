@@ -32,7 +32,7 @@ def generate_edge_store(db_path: str, edges: Iterator[List[str]]):
 
 def main():
     logging.basicConfig(format='%(asctime)s : %(levelname)s : %(message)s', level=logging.INFO)
-    edge_store_path = '../data/algorithm_io/edges.sqlite3'
+    edge_store_path = '../data/algorithm_io/edges-20161107.sqlite3'
     triple_sentence_path = '../data/algorithm_io/simple_sentences-20161107.txt'
     generate_edge_store(edge_store_path, EdgeIterator(triple_sentence_path))
 
