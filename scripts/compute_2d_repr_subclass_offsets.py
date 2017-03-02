@@ -1,5 +1,4 @@
 import logging
-import sqlite3
 
 import gensim
 import numpy
