@@ -87,12 +87,13 @@ Evaluation of RDF2Vec shows that  Skip-gram and CBOW both produce better word em
 Therefore it is expected that graph walk will also improve the performance of the hybrid algorithm.
 Computing all walks for each vertex is however not feasible, since the number of walks for each vertex is potentially exponential \cite{Ristoski2016}.
 The exponential runtime can be counteracted by computing a limited number of random walks instead of computing all walks \cite{Perozzi2014}.
-Additionally, the starting vertices for each walk will first be chosen from the set of classes rather than the set of all items,
-until all classes are covered by the generated walks.
-This will maximize the occurrence frequency of classes in the training data, and therefore improve the quality of word embeddings
-in regards to them.
+Additionally, the starting vertices for each walk will be sampled the set of classes rather than the set of all items.
+The quality of word embeddings in regards to classes is a major concern, while the word embeddings for other items are only optional for the task
+of classification. The proposed measure will ensure that each class occurs at least once in the graph walk sequences and
+the frequency of classes in the generated set will be higher than by random sampling from all items.
 
-The set of random walk sequences will be combined with the set of triple sentences used in the baseline for training the SGNS.
+The set of random walk sequences will be combined with the set of triple sentences, which are used in the baseline, to constitute a new training data set
+for the SGNS.
 
 The following parameters are used for the graph walk based on \fullcite{Ristoski2016}:
 \begin{itemize}
