@@ -2,6 +2,7 @@ import logging
 
 import matplotlib.pyplot as plt
 import numpy
+from sklearn.decomposition import PCA
 
 
 def main():
@@ -9,20 +10,33 @@ def main():
 
     offsets_path = '../data/algorithm_io/subclass_offsets-20161107.csv'
     plot_output = '../data/plots/2d_subclass_offsets.png'
+    max_offset_amount = int(8e5)  # type: int
 
-    xs = list()
-    ys = list()
+    offsets = list()
     c = 0
 
+    logging.log(level=logging.INFO, msg='start loading all offsets')
     with open(offsets_path) as f:
-        for subclass, superclass, coordinates in map(lambda s: s.strip().split(';'), f):
+        for subclass, superclass, offset in map(lambda s: s.strip().split(';'), f):
             # i don't know why i would do this
-            coordinates = numpy.array(coordinates.strip('[').strip(']').strip().split(), dtype=numpy.float32)
-            xs.append(coordinates[0])
-            ys.append(coordinates[1])
+            offset = numpy.array(offset.strip('[').strip(']').strip().split(), dtype=numpy.float32)
+            offsets.append(offset)
             c += 1
-            if c % 500 == 0:
-                logging.log(level=logging.INFO, msg='points already added: {}'.format(c))
+    logging.log(level=logging.INFO, msg='total of {} offsets loaded'.format(c))
+
+    if max_offset_amount != -1:
+        offsets = numpy.random.permutation(numpy.array(offsets))[:max_offset_amount]
+        logging.log(level=logging.INFO, msg='random sampled {} offsets'.format(offsets.shape[0]))
+
+    logging.log(level=logging.INFO, msg='execute pca')
+    pca = PCA(n_components=2)
+    pca.fit(offsets)
+    offsets = pca.transform(offsets)
+    logging.log(level=logging.INFO, msg='completed pca and transformed offsets')
+    logging.log(level=logging.INFO, msg='offsets dimension: {}'.format(offsets.shape))
+
+    xs, ys = offsets.T
+
     logging.log(level=logging.INFO, msg='create plot with {} points'.format(c))
     plt.scatter(xs, ys, s=0.1)
     logging.log(level=logging.INFO, msg='save plot to {}'.format(plot_output))
