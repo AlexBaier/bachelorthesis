@@ -5,12 +5,14 @@ This leads to the identification of three main components. These main components
 will be implemented by a baseline algorithm and for each variation an improvement is proposed,
 which in general replaces one of the components.
 The data flow and input/output between the components is visualized in Figure~\ref{fig:algorithm data flow}
+
 \begin{figure}
 \centering
 \includegraphics[width=\textwidth]{images/algorithm/combined_algorithm_components.pdf}
 \caption{Data flow between components}
 \label{fig:algorithm data flow}
 \end{figure}
+
 \begin{enumerate}
 \item \textbf{Wikidata2Sequence}. 
 For the task of generating word embeddings the Skip-gram model with negative sampling will be used.
@@ -43,7 +45,7 @@ the corresponding Wikidata dump.
 The classification method will then be trained on the word embeddings and can
 be applied repeatedly to unlinked classes.
 
-\subsection{Baseline}
+\subsection{Baseline}\label{section:baseline}
 The baseline algorithm uses a very basic Wikidata2Sequence component and simple weighted kNN 
 for classification. If not otherwise mentioned, the variations will use the same hyperparameters and
 components as the baseline algorithm. 
@@ -79,37 +81,56 @@ word embeddings like \fullcite{Mikolov2013}.
 A graph walk, developed by \fullcite{Ristoski2016} and explained in Section~\ref{section:rdf2vec}
 can be used for generating longer sentences instead of triple sentences. 
 The longer sequences are able to better capture contextual information than three word sentences.
-This is achieved by creating paths of a depth $d$, starting from each class.
+This is achieved by creating walks of a depth $d$, starting from each class.
 Evaluation of RDF2Vec shows that  Skip-gram and CBOW both produce better word embeddings this way 
 \cite{Ristoski2016}.
-Therefore it is expected that graph walk will also improve the performance of this algorithm.
-However, the potentially exponential number of walks is an issue, as this will increase the runtime
-for generating the walks to extremely high values. A single-process implementation using breadth-first
-search requires $\sim 40$ seconds to generate all walks for one vertice. \textbf{mention hardware stats, and
-implementation details in appendix?}
-Generating walks for all $\sim 24$ million items or $\sim 1.2$ classes is therefore not feasible,
-e.g. using the mentioned implementation generating walks for all classes would take $\sim 555$ days.
-\fullcite{Ristoski2016} proposes a first measure to improve the runtime by reducing the maximum number
-of walks per vertice. 
-Another measure proposed by the author is the sampling of vertices, for which walks should be generated. 
-The sampling should try to maximize the coverage of edges and vertices by the walks.
-One requirement for the sampling would be the coverage of all classes, as the word embeddings for
-these classes are used in the classification component of the algorithm.
-The implementation will combine limiting the number of walks per vertice and a partially random sampling approach.
-The sampling will first choose only vertices from the set of classes, which are not yet covered by the
-generated walks. After all classes are covered, the same choice will be made on the set of all items.
-The following parameters are chosen for the component based on \fullcite{Ristoski2016}:
+Therefore it is expected that graph walk will also improve the performance of the hybrid algorithm.
+Computing all walks for each vertex is however not feasible, since the number of walks for each vertex is potentially exponential \cite{Ristoski2016}.
+The exponential runtime can be counteracted by computing a limited number of random walks instead of computing all walks \cite{Perozzi2014}.
+Additionally, the starting vertices for each walk will be sampled the set of classes rather than the set of all items.
+The quality of word embeddings in regards to classes is a major concern, while the word embeddings for other items are only optional for the task
+of classification. The proposed measure will ensure that each class occurs at least once in the graph walk sequences and
+the frequency of classes in the generated set will be higher than by random sampling from all items.
+
+The set of random walk sequences will be combined with the set of triple sentences, which are used in the baseline, to constitute a new training data set
+for the SGNS.
+
+The following parameters are used for the graph walk based on \fullcite{Ristoski2016}:
 \begin{itemize}
 \item Depth of walks: $4$
 \item Maximum number of walks per vertice: $100$
 \end{itemize}
-Because of time constraints the number of walks, which can be generated is restricted.
-\textbf{When should the graph walk terminate? specific node or edge coverage, number of walks, 
-number of nodes, time?}
-
-\textbf{TODO: choice of hyperparameters}
 
 \subsection{Variation: Vector offset}
+A possible approach for classification is to exploit the linear regularities encoded in the word embeddings.
+As shown in Section~\ref{section:word2vec}, it is possible to answer semantic questions by applying algebraic operations on word embeddings \cite{Mikolov2013}.
+Given a subclass-superclass pair with word embeddings $\vec{c}, \vec{p}$ and the word embedding $\vec{o}$ of an orphan class,
+the superclass with word embedding $\vec{r}$ of $\vec{o}$ could be calculated, as follows 
+\begin{align*}
+\vec{r} = \vec{p} - \vec{c} + \vec{o}
+\end{align*}
+The subclass-of relationship is represented by the offset $\vec{p} - \vec{c}$. 
+The classification task could be simplified to the task of adding such an offset to a given word embedding.
+This is however only possible, if the subclass-of offset is similar for all existing subclass-superclass pairs \cite{Fu2014}.
+
+For the use case of Wikidata, it can be shown that the offsets do not fulfill this criteria. It can rather be seen that different clusters of
+similar subclass-of offsets exist. 
+Using the word embeddings created by the baseline SGNS (Section~\ref{section:baseline})
+the subclass-of offsets for $800000$ randomly chosen subclass-superclass pairs were computed.
+Using Principal Component Analysis (PCA), the 300-dimensional vectors were reduced to  2-dimensional vectors,
+which are shown in Figure~\ref{fig:2d offsets}.
+
+\begin{figure}
+\centering
+\includegraphics[width=0.75\textwidth]{images/algorithm/2d_subclass_offsets.png}
+\caption{Subclass-of offsets of $400000$ randomly chosen subclass-superclass pairs}
+\label{fig:2d offsets}
+\end{figure}
+
+It can be seen, that clusters of offsets exist, which have completely different orientations in respect to the origin $(0,0)$.
+Therefore directly using vector offsets would not be applicable, as offsets can not represent the complex subclass-of relation.
+\fullcite{Fu2014} reached a similar conclusion and proposes the use of linear projections as means to represent the subclass-of relation.
+In the following section, the approach by \citeauthor{Fu2014} is described and implemented as a variation of the classification component.
 
 \subsection{Variation: Linear projection}
 
