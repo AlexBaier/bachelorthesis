@@ -133,6 +133,28 @@ Therefore directly using vector offsets would not be applicable, as offsets can 
 In the following section, the approach by \citeauthor{Fu2014} is described and implemented as a variation of the classification component.
 
 \subsection{Variation: Linear projection}
+It is assumed that a class $\vec{x}$ can be projected to its superclass $\vec{y}$ using a matrix $\Phi$, so that $\vec{y} = \Phi \vec{x}$ applies.
+\fullcite{Fu2014} propose two variants of linear projection for classification. A uniform linear projection, which trains a single matrix $\Phi$ on all subclass-superclass pairs,
+and a piecewise linear projection, which trains $k$ matrices $\Phi_k$ for $k$ clusters of subclass-superclass offsets.
+
+Uniform linear projection tries to minimize the mean squared error of the projected $\Phi \vec{x}$ and the actual result $\vec{y}$, as follows
+\begin{align}
+&\Phi^* = \min_\Phi \frac{1}{N} \sum_{(\vec{x}, \vec{y})} \norm{\Phi \vec{x} - \vec{y}}^2 
+\end{align}
+where $N$ is the number of $(\vec{x}, \vec{y})$ subclass-superclass pairs in the training data \cite{Fu2014}.
+
+Piecewise linear projection learns a projection matrix $\Phi_k$ for each identified cluster in the data set.
+For this to work, training data needs to be selected in such a way that each cluster is represented in the training data.
+Otherwise the training objective is the same to the uniform linear projection:
+\begin{align}
+&\Phi^* = \min_{\Phi_k} \frac{1}{N_k} \sum_{(\vec{x}, \vec{y})\in C_k} \norm{\Phi_k \vec{x} - \vec{y}}^2 
+\end{align}
+where $N_k$ is the amount of word pairs in the $k^\mathit{th}$ cluster $C_k$ \cite{Fu2014}.
+
+The piecewise linear projection will be implemented as classification component.
+Evaluation by \fullcite{Fu2014} has shown very good results in comparison to other methods.
+The thesis' evaluation will show whether linear projection is superior to the baseline KRI-kNN,
+and to what degree it benefits from more effective word embeddings using graph walk.
 
 \subsection{Variation: Wikipedia}
 
