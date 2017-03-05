@@ -1,7 +1,10 @@
 import abc
 import logging
+import random
 import sqlite3
 from typing import Iterable, Iterator, List
+
+import pathos.multiprocessing as mp
 
 
 class Wikidata2Sequence(object, metaclass=abc.ABCMeta):
@@ -38,49 +41,64 @@ class GraphWalkSentences(Wikidata2Sequence):
     """
     GraphWalk has exponential runtime.
     """
-    def __init__(self, vertices: List[str], depth: int, max_walks_per_v: int, edge_store_path: str):
+    def __init__(self, vertices: List[str], depth: int, max_walks_per_v: int, edge_store_path: str, workers: int=4):
         self.__vertices = vertices  # type: List[str]
         self.__depth = depth  # type: int
         self.__max_walks = max_walks_per_v  # type: int
-        self.__edge_store = sqlite3.connect(edge_store_path)
+        self.__edge_store_path = edge_store_path
+        self.__workers = workers
 
     def get_sequences(self)->Iterable[List[str]]:
+        logging.log(level=logging.INFO, msg='Graph walk sequences with depth={}, max walks={}, workers={}'.format(
+            self.__depth, self.__max_walks, self.__workers
+        ))
+
         def __get_sequences():
-            l = len(self.__vertices)
-            for idx, v in enumerate(self.__vertices):
-                # TODO: optimize breadth-first search
-                active_paths_from_v = self.__get_out_edges(v)
-                finished_paths_from_v = list()
-                current_depth = 1
-                while current_depth <= self.__depth:
-                    if len(active_paths_from_v) == 0:
-                        break
-                    current_path = active_paths_from_v.pop(0)
-                    current_node = current_path[-1]
-                    out_edges = self.__get_out_edges(current_node)
-                    if not out_edges:
-                        logging.log(level=logging.INFO, msg='{} has no'
-                                                            ' out edges'.format(current_node))
-                        finished_paths_from_v.append(current_path)
-                    else:
-                        for edge in out_edges:
-                            if len(active_paths_from_v) + len(finished_paths_from_v) < self.__max_walks:
-                                new_path = current_path.copy()
-                                new_path.append(edge[1])
-                                new_path.append(edge[2])
-                                active_paths_from_v.append(new_path)
-                            else:
-                                break
-                    current_depth += 1
-                finished_paths_from_v.extend(active_paths_from_v)
-                logging.log(level=logging.INFO, msg='{} paths discovered from {}'.format(len(finished_paths_from_v), v))
-                for path in finished_paths_from_v:
-                    yield path
-                logging.log(level=logging.INFO, msg='graph walk progress: {}/{}'.format(idx+1, l))
+            with mp.Pool(processes=self.__workers) as p:
+                for walks in p.imap_unordered(self.__get_walks, self.__vertices):
+                    for w in walks:
+                        yield w
+
         return __get_sequences()
 
-    def __get_out_edges(self, v: str)->List[List[str]]:
-        c = self.__edge_store.cursor()
+    def __get_walks(self, vertice: str):
+        logging.log(level=logging.INFO, msg='start computing walks from {}'.format(vertice))
+
+        random_walks = [random.sample(range(0, 500), self.__depth) for _ in range(self.__max_walks)]
+        walks = [[vertice if idx == 0 else '' for idx, _ in enumerate(range(2*self.__depth+1))]
+                 for _ in range(self.__max_walks)]
+        queue = [(vertice, 0)]
+
+        with sqlite3.connect(self.__edge_store_path) as conn:
+            while len(queue) > 0:
+                current_vertice, current_depth = queue.pop(0)
+                # current vertice is already at max depth
+                if current_depth >= self.__depth:
+                    continue
+                out_edges = self.__get_out_edges(current_vertice, conn)
+                m = len(out_edges)
+                if m == 0:
+                    logging.log(level=logging.INFO, msg='{} has no out-edges'.format(current_vertice))
+                    continue
+                for walk_id in range(self.__max_walks):
+                    if walks[walk_id][current_depth*2] != current_vertice:
+                        continue
+                    chosen_edge = out_edges[random_walks[walk_id][current_depth] % m]
+                    walks[walk_id][2*current_depth+1] = chosen_edge[1]  # add edge weight to walk
+                    walks[walk_id][2*current_depth+2] = chosen_edge[2]  # add target to walk
+                    if (chosen_edge[2], current_depth+1) not in queue:
+                        queue.append((chosen_edge[2], current_depth+1))
+
+        # strip empty strings of walk, remove walks with length 1
+        for walk_id in range(self.__max_walks):
+            walks[walk_id] = list(filter(lambda s: s != '', walks[walk_id]))
+        walks = list(filter(lambda walk: len(walk) > 1, walks))
+        logging.log(level=logging.INFO, msg='{} paths discovered from {}'.format(len(walks), vertice))
+        return walks
+
+    @staticmethod
+    def __get_out_edges(v: str, conn)->List[List[str]]:
+        c = conn.cursor()
         node = int(v[1:])
         c.execute('SELECT * FROM edges WHERE s=?', [node])
         results = c.fetchall()
