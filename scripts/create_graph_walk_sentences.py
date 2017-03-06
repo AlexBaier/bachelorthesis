@@ -3,14 +3,13 @@ import random
 
 from algorithm.sentence_gen import GraphWalkSentences
 
-logging.basicConfig(format='%(asctime)s : %(levelname)s : %(process)d: %(message)s', level=logging.INFO)
-
 
 def main():
+    logging.basicConfig(format='%(asctime)s : %(levelname)s : %(process)d: %(message)s', level=logging.DEBUG)
     node_id_path = '../data/algorithm_io/class_ids-20161107.txt'
     edge_store_path = '../data/algorithm_io/edges-20161107.sqlite3'
     output_path = '../data/algorithm_io/graphwalk_sentences-20161107.txt'
-    node_count = 300000
+    node_count = 50000
 
     random.seed()
 
@@ -23,7 +22,7 @@ def main():
     gen = GraphWalkSentences(
         nodes[:node_count],
         4,  # RDF2Vec: depth = 4
-        100,  # RDF2Vec: max walks per vertice = 100
+        10,  # RDF2Vec: max walks per vertice = 100
         edge_store_path,
         workers=4
     )

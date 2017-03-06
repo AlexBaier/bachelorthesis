@@ -2,6 +2,7 @@ import abc
 import logging
 import random
 import sqlite3
+import time
 from typing import Iterable, Iterator, List
 
 import pathos.multiprocessing as mp
@@ -62,7 +63,13 @@ class GraphWalkSentences(Wikidata2Sequence):
         return __get_sequences()
 
     def __get_walks(self, vertice: str):
-        logging.log(level=logging.INFO, msg='start computing walks from {}'.format(vertice))
+        """
+        Runtime complexity:
+            max_walks*depth + max_walks^depth * max_walks + max_walks
+        :param vertice:
+        :return:
+        """
+        start_time = time.time()
 
         random.seed()
 
@@ -75,7 +82,6 @@ class GraphWalkSentences(Wikidata2Sequence):
         with sqlite3.connect(self.__edge_store_path) as conn:
             while len(queue) > 0:
                 current_vertice, current_depth = queue.pop(0)
-                logging.log(level=logging.DEBUG, msg='depth={}, queue={}'.format(current_depth, len(queue)))
                 # current vertice is already at max depth => skip this vertice
                 if current_depth >= self.__depth:
                     continue
@@ -83,12 +89,10 @@ class GraphWalkSentences(Wikidata2Sequence):
                     out_edges = self.__get_out_edges(current_vertice, conn)
                     out_edge_cache[current_vertice] = out_edges
                 else:
-                    logging.log(level=logging.DEBUG, msg='cache hit for {}'.format(current_vertice))
                     out_edges = out_edge_cache[current_vertice]
                 m = len(out_edges)
                 # current vertice has no out-edges => skip this vertice
                 if m == 0:
-                    logging.log(level=logging.INFO, msg='{} has no out-edges'.format(current_vertice))
                     continue
                 for walk_id in range(self.__max_walks):
                     # current walk doesn't end with current vertice or is already computed => skip this walk
@@ -101,11 +105,14 @@ class GraphWalkSentences(Wikidata2Sequence):
                     if (chosen_edge[2], current_depth+1) not in queue:
                         queue.append((chosen_edge[2], current_depth+1))
 
-        # strip empty strings of walk, remove walks with length 1
+        # strip empty strings of walk
         for walk_id in range(self.__max_walks):
             walks[walk_id] = list(filter(lambda s: s != '', walks[walk_id]))
         walks = list(filter(lambda walk: len(walk) > 1, walks))
-        logging.log(level=logging.INFO, msg='{} paths discovered from {}'.format(len(walks), vertice))
+
+        duration = time.time() - start_time
+
+        logging.log(level=logging.INFO, msg='{} walks from {} in {} seconds'.format(len(walks), vertice, duration))
         return walks
 
     @staticmethod
