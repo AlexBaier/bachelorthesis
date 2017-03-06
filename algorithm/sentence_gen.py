@@ -66,19 +66,25 @@ class GraphWalkSentences(Wikidata2Sequence):
 
         random.seed()
 
-        random_walks = [random.sample(range(0, 1000), self.__depth) for _ in range(self.__max_walks)]
         walks = [[vertice if idx == 0 else '' for idx, _ in enumerate(range(2*self.__depth+1))]
                  for _ in range(self.__max_walks)]
         queue = [(vertice, 0)]
 
+        out_edge_cache = dict()
+
         with sqlite3.connect(self.__edge_store_path) as conn:
             while len(queue) > 0:
                 current_vertice, current_depth = queue.pop(0)
-                logging.log(level=logging.INFO, msg='depth={}, queue={}'.format(current_depth, len(queue)))
+                logging.log(level=logging.DEBUG, msg='depth={}, queue={}'.format(current_depth, len(queue)))
                 # current vertice is already at max depth => skip this vertice
                 if current_depth >= self.__depth:
                     continue
-                out_edges = self.__get_out_edges(current_vertice, conn)
+                if not out_edge_cache.get(current_vertice, None):
+                    out_edges = self.__get_out_edges(current_vertice, conn)
+                    out_edge_cache[current_vertice] = out_edges
+                else:
+                    logging.log(level=logging.DEBUG, msg='cache hit for {}'.format(current_vertice))
+                    out_edges = out_edge_cache[current_vertice]
                 m = len(out_edges)
                 # current vertice has no out-edges => skip this vertice
                 if m == 0:
@@ -88,7 +94,8 @@ class GraphWalkSentences(Wikidata2Sequence):
                     # current walk doesn't end with current vertice or is already computed => skip this walk
                     if walks[walk_id][2*current_depth] != current_vertice or walks[walk_id][2*current_depth+1] != '':
                         continue
-                    chosen_edge = out_edges[random_walks[walk_id][current_depth] % m]
+                    r = random.randint(0, m-1)
+                    chosen_edge = out_edges[r]
                     walks[walk_id][2*current_depth+1] = chosen_edge[1]  # add edge weight to walk
                     walks[walk_id][2*current_depth+2] = chosen_edge[2]  # add target to walk
                     if (chosen_edge[2], current_depth+1) not in queue:
