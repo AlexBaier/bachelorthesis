@@ -2,8 +2,7 @@
 The hybrid algorithm will use a Word2Vec model to generate word embeddings, which
 then can be used in a classification task.
 This leads to the identification of three main components. These main components
-will be implemented by a baseline algorithm and for each variation an improvement is proposed,
-which in general replaces one of the components.
+will be implemented by a baseline algorithm and for each baseline component improvements are proposed.
 The data flow and input/output between the components is visualized in Figure~\ref{fig:algorithm data flow}
 
 \begin{figure}[h]
@@ -26,7 +25,7 @@ or property ID, or the data type for a literal value (e.g. replace all strings w
 \item \textbf{Word2Vec}. The Skip-gram model with negative sampling (SGNS)
 will be used in every variation of the algorithm.
 It has been proven through theoretic analysis as well as experiments that SGNS creates very effective
-word embeddings, if its hyperparameters are chosen well. \textbf{TODO: citations}
+word embeddings, if its hyperparameters are chosen well \cite{Mikolov2013} \cite{Levy2015}.
 
 \item \textbf{Classification}. The final component of the algorithm is a classification method.
 The word embeddings produced by SGNS group similar words close to each other and
@@ -43,12 +42,11 @@ Therefore each classification method will output the Wikidata ID (e.g. Q35120) o
 Wikidata2Sequence and Word2Vec are executed once to compute the word embeddings of
 the corresponding Wikidata dump.
 The classification method will then be trained on the word embeddings and can
-be applied repeatedly to unlinked classes.
+be applied repeatedly to unclassified classes e.g. orphan classes.
 
 \subsection{Baseline}\label{section:baseline}
-The baseline algorithm uses a very basic Wikidata2Sequence component and simple weighted kNN 
-for classification. If not otherwise mentioned, the variations will use the same hyperparameters and
-components as the baseline algorithm. 
+The baseline algorithm uses a very basic Wikidata2Sequence component and KRI-kNN by \fullcite{Chen2009}
+for classification.
 \begin{enumerate}
 \item \textbf{Wikidata2Sequence}. Trivial sentences will be generated from statements.
 Each statement can be transformed to a triple $(\mathit{itemid}, \mathit{pid}, \mathit{value})$,
@@ -70,11 +68,13 @@ Bigger context windows show slight improvements in the quality of word embedding
 However triple sentences only have a maximum context of $2$, e.g. $w_1 \: w_2 \: w_3$ the maximum distance
 between words in the same sentence is $2$. Therefore triple sentences would not benefit from bigger
 context sizes. To preserve comparability between variations of the algorithm, the same context size is also used
-for graph walk sentences, if not mentioned otherwise. 
+for graph walk sentences.
 
-\item \textbf{Classification}. KRI-kNN by \fullcite{Chen2009} is implemented (see Section~\ref{section:knn}).
-As similarity measure the cosine similarity will be used, which finds precedence in other work about 
-word embeddings like \fullcite{Mikolov2013}.
+\item \textbf{Classification}. 
+A k-nearest-neighbors classifier is implemented (see Section~\ref{section:knn}).
+Weights are based on the inverse distance to the unclassified object using cosine distance, which is defined as $1 - \mathit{sim}_\mathit{cos}(\vec{q}, \vec{p})$,
+where $\vec{p}, \vec{q} \in \mathbb{R}^d$ with $d$ the size of word embeddings, e.g. $d=300$.
+Cosine similarity, which is the basis for cosine distance, is used to great effect in similarity tasks for word embeddings \cite{Mikolov2013} \cite{Mikolov2013a}.
 \end{enumerate}
 
 \subsection{Variation: Graph walk}
