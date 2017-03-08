@@ -24,8 +24,9 @@ def main():
             c += 1
     logging.log(level=logging.INFO, msg='total of {} offsets loaded'.format(c))
 
+    offsets = numpy.array(offsets)
     if max_offset_amount != -1:
-        offsets = numpy.random.permutation(numpy.array(offsets))[:max_offset_amount]
+        offsets = numpy.random.permutation(offsets)[:max_offset_amount]
         logging.log(level=logging.INFO, msg='random sampled {} offsets'.format(offsets.shape[0]))
 
     logging.log(level=logging.INFO, msg='execute pca')
