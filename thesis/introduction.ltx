@@ -17,12 +17,13 @@ like language processing \cite{Mikolov2013} \cite{Kalchbrenner2014} \cite{Arisoy
 Especially interesting are neural word embeddings \cite{Mikolov2013}, which have been used to great effect in the task of generating concept hierarchies by
 \fullcite{Fu2014}. Different approaches in using neural word embeddings for classification of orphan classes will be considered and evaluated in this work.
 
-\begin{figure}[hb]
+\begin{figure}
 \centering
 \includegraphics[width=\textwidth]{images/introduction/example_taxonomy.pdf}
 \caption{Classification of orphan class in Wikidata's taxonomy}
 \label{fig:problem example}
 \end{figure}
+
 In this work, the taxonomy of Wikidata is considered as case example, as it provides a high number of entities ($24507102$ in \dumpdate{} \cite{WikidataDump}).
 and a high degree of ''correctness'', since human editors constantly curate the existing knowledge.
 In a complete taxonomy, a single \textbf{root class} exists, which is considered the most general concept \cite{Cimiano2006}. All other classes should therefore have a superclass.
