@@ -1,20 +1,20 @@
 % Wikidata
 \subsection{Wikidata}\label{section:wikidata}
-Wikidata is an open, free, multilingual and collaborative knowledge base. It is a structured knowledge source for other Wikimedia projects. 
+Wikidata is an open, free, multilingual and collaborative KB. It is a structured knowledge source for other Wikimedia projects. 
 It tries to model the real world, meaning every concept, object, animal, person, etc.
 Wikidata is mostly edited and extended by humans, which in general improves the quality of entries compared to fully-automated systems, 
 because different editors can validate and correct occurring errors.
-However, Wikidata, like most knowledge bases, is incomplete and therefore has to be operated under the \textit{Open World Assumption} (OWA).
+However, Wikidata, like most knowledge bases, is incomplete and therefore has to be operated under the \textbf{Open World Assumption (OWA)}.
 OWA states that if a statement is not contained in a knowledge base, it is not necessarily false but rather unknown \cite{Galarraga2016}.
 
-In Wikidata items and properties exist. Items are the aforementioned concepts, objects, etc. Properties are used to make claims about
+In Wikidata \textbf{items} and \textbf{properties} exist. Items are the aforementioned concepts, objects, etc. Properties are used to make claims about
 items, e.g. \textit{photographic film (Q6293)} is a \textit{subclass of (P279)} \textit{data storage device (Q193395)} (see Figure~\ref{fig:class example}).
 Each item and property has an unique identifier, which starts with the letter Q for items and the letter P for properties and is followed by a numeric code.
 The identifiers in Wikidata are essential to avoid ambiguity and make items and properties multilingual.
 
 Items consist of labels, aliases and descriptions in different languages. 
 Sitelinks connect items to their corresponding pages of Wikimedia projects like Wikipedia articles.
-Most importantly item are described by statements. 
+Most importantly item are described by \textbf{statements}. 
 Statements are in their simplest form a pair of property and value, assigned to a specific item. A value is either a literal value or another item.
 It should be noted that an item can have multiple statements with the same property. The set of statements with the same property is called statement group.
 Statements can be annotated with qualifiers, which specify the context of the statement, e.g. population at a certain point of time.
@@ -73,16 +73,16 @@ For example, \textit{photographic film (Q6293)} (Figure~\ref{fig:class example})
 % Taxonomy
 \subsection{Taxonomy}\label{section:taxonomy}
 
-``\textit{Ontologies} are (meta)data schemas, 
+``Ontologies are (meta)data schemas, 
 providing a controlled vocabulary of concepts, each with an explicitly defined and machine processable semantics'' \cite{Maedche2001}. Additionally it is possible for ontologies to
 contain axioms used for validation and constraint enforcement. Ontologies enable the modeling and sharing of knowledge in a specific domain and support
 the knowledge exchange via web by extending syntactic to semantic interoperability \cite{Hazman2011}.
-In comparison, a knowledge base like Wikidata can be seen as an instantiation of such an ontology,
-since every knowledge base has to be conceptualized by an ontology \cite{Wong2012}. Different types of ontologies can grouped by their level of formality and expressiveness.
+In comparison, a KB like Wikidata can be seen as an instantiation of such an ontology,
+since every KB has to be conceptualized by an ontology \cite{Wong2012}. Different types of ontologies can grouped by their level of formality and expressiveness.
 \fullcite{Wong2012} differentiates ontologies as lightweight and heavyweight ontologies (see Figure~\ref{fig:ontology spectrum}). 
-\textit{Taxonomies} are concept or class hierarchies.
+\textbf{Taxonomies} are concept or class hierarchies.
 They typically represent a parent-child structure, which can be formalized with a single relationship called for example \textit{subclass-of} in the case of Wikidata.
-The observed taxonomy in Wikidata belongs to the category of lightweight ontologies, specifically \textit{principled, informal hierarchies}, 
+The observed taxonomy in Wikidata belongs to the category of lightweight ontologies, specifically principled, informal hierarchies, 
 as the only enforced rule for the subclass-of relation is that it should connect two entities \cite{WikidataP279}.
 
 \begin{figure}
@@ -147,13 +147,12 @@ assumption is true, for $T=(C,S)$:
 \begin{align}
  \abs{\{  c \in C \mid \neg \exists s \in C: c \subclassof{T} s \}} = 1
  \end{align}
-Only one class in this taxonomy has no superclasses. This class is called \textit{root class}. However
+Only one class in this taxonomy has no superclasses. This class is called \textbf{root class}. However
 in the case of Wikidata, this assumption does not hold true. The following state is the case:
 \begin{align}
 \abs{\{  c \in C \mid \neg \exists s \in C: c \subclassof{T} s \}} > 
 \end{align}
-There are classes other than the root class, which also have no superclasses. These classes will be called
-\textit{orphan classes}.
+There are classes other than the root class, which also have no superclasses. These classes will be called orphan classes.
 \begin{definition}[Root class]\label{root class}
 Given a taxonomy $T=(C, S)$, the \textnormal{root class} $root_T$ is a specific, predefined class with no superclasses in 
 $T$. For $root_T$, $\abs{succ_T(root_T)} = 0$ applies.
@@ -166,16 +165,16 @@ In Wikidata, the root class is \entity{} \cite{WikidataQ35120}.
 All other classes, which are not subclasses of \entity{}, are therefore either orphan classes, or subclasses of orphan classes.
 In Section~\ref{section:taxonomy analysis}, it will be shown that the Wikidata taxonomy graph is not fully
 connected. But the component, which contains the root class \entity{}, contains $97\%$ of all classes.
-This component will be referred to as \textit{root taxonomy} in later sections.
+This component will be referred to as \textbf{root taxonomy} in later sections.
 
 % Similarity
 \subsection{Similarity}\label{section:similarity}
 For the task of ontology learning \cite{Hazman2011} as well as classification, e.g. k-nearest-neighbors \cite{Chen2009},
-the concept of similarity is of importance. A basic intuition of similarity is for example given by 
+the concept of \textbf{similarity} is of importance. A basic intuition of similarity is for example given by 
 \fullcite{Lin1998}. Similarity is related to the commonalities and differences between two objects.
 More commonalities implies higher similarity. Vice versa, more differences implies lower similarity.
 Two identical objects should have the maximum similarity. In addition, only identical objects should be
-able to achieve maximum similarity. A similarity measure computes the similarity between two objects \cite{Weber2000}:
+able to achieve maximum similarity. A \textbf{similarity measure} computes the similarity between two objects \cite{Weber2000}:
 \begin{definition}[Similarity measure]
 $\mathit{sim}: \Omega \times \Omega \mapsto [ 0, 1 ]$ is called \textnormal{similarity measure} for a set of objects $\Omega$.
 \end{definition}
@@ -187,7 +186,7 @@ words \cite{Levy2015} \cite{Mikolov2013}, graphs \cite{Ristoski2016} \cite{Cao20
 The similarity between feature vectors can be measured using the distance $\delta_S(\vec{p}, \vec{q})$ 
 between two vectors $\vec{p}$ and $\vec{q}$. 
 The distance represents the differences between two feature vectors. 
-A typical distance measure is the $L_S$-Norm \cite{Weber2000}:
+A typical distance measure is the \textbf{$L_S$-Norm} \cite{Weber2000}:
 \begin{align}
 &L_s: \delta_S (\vec{p}, \vec{q}) = \sqrt[S]{\sum_{i=0}^{n-1}\abs{\vec{p}_i - \vec{q}_i}^S}
 \end{align}
@@ -208,7 +207,7 @@ $h: \mathbb{R}^+ \mapsto [0,1]$ is correspondence function, if it fulfills the f
 increasing values of $S$. The curse of dimensionality implies that
 ''the ratio of the distances of the nearest and farthest neighbors to a given target in high dimensional space 
 is almost $1$ for a wide variety of data distributions and distance functions'' \cite{Aggarwal2001}.
-Cosine similarity can offset this problem to some degree by including the direction of the vectors
+\textbf{Cosine similarity} can offset this problem to some degree by including the direction of the vectors
 into the calculation of the similarity \cite{Houle2010}. 
 This is done by computing the dot product between two vector. It is defined as follows:
 \begin{align}
@@ -223,7 +222,7 @@ then the cosine similarity maps to $[0, 1]$ and fulfills the definition of a sim
 For example, feature vectors representing word frequencies in documents are positive,
 as a word can not occur less than $0$ times.
 
-In ontology learning, semantic similarity is used to great effect, 
+In ontology learning, \textbf{semantic similarity} is used to great effect, 
 e.g  for clustering objects to create hierarchies\cite{Hazman2011} \cite{Wong2012} 
 or mapping between different ontologies  \cite{Doan2002} \cite{Rodriguez2003}. 
 Semantic similarity compares the semantic content of objects or documents . 
@@ -292,13 +291,13 @@ require input to be represented as vectors. Therefore it will be necessary to ma
 % Similarity-based classification
 \subsection{k-nearest-neighbors classification}\label{section:knn}
 Based on the characteristics of the classification problem, described by the problem statement, and the challenges attached to it,
-the k-nearest-neighbor algorithm (kNN) seems like an appropriate tool for solving the task.
+the \textbf{k-nearest-neighbor algorithm (kNN)} seems like an appropriate tool for solving the task.
 Nearest-neighbors classification is a lazy method, as it does not require training before testing.
 This is useful for applications with high amounts of data, large numbers of classes, and changing data \cite{Zhang2005} \cite{Chen2009}.
 For the considered use case of classification in Wikidata, these are very important strengths,
 as the number of classes in the taxonomy is very high and Wikidata is being constantly edited.
 
-k-nearest-neighbors can be defined as a similarity-based classification method.
+kNNs can be defined as a similarity-based classification method.
 kNN uses a pairwise similarity or distance measure (see Section~\ref{section:similarity}).
 Access to the features of the classified objects is therefore not required \cite{Chen2009}.
 
@@ -309,7 +308,7 @@ Access to the features of the classified objects is therefore not required \cite
 \label{fig:kNN example}
 \end{figure}
 
-The basic notion of k-nearest-neighbors is presented in Figure~\ref{fig:kNN example}.
+The basic notion of kNN is presented in Figure~\ref{fig:kNN example}.
 Given a set of points in $\mathbb{R}^2$ with classes blue, red and yellow. 
 To classify an unknown class $u$, the closest $k$ classes are selected.
 In the example, the solid circle indicates $k=4$ and the dashed circle indicates $k=10$.
@@ -337,4 +336,4 @@ The ridge regularization term $\frac{\lambda}{2} w^T w$, which controls the vari
 Increasing $\lambda$ increases the uniformity of the weights. Together these terms fulfill the affinity requirement.
 The term $ \frac{1}{2} w^T S w$ represents the diversity requirement, as the weights of very similar neighbors are down-weighted to minimize the term.
 Solving this problem therefore returns weights, which fulfill the requirements of affinity and diversity.
-Experiments show that KRI kNN on average generates better results than uniformly weighted kNN \cite{Chen2009}.
+Experiments show that KRI-kNN on average generates better results than uniformly or distance-weighted kNN \cite{Chen2009}.

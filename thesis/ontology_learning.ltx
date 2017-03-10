@@ -1,41 +1,41 @@
 Manually building ontologies is an expensive, tedious and error-prone process \cite{Hazman2011}.
-\fullcite{Maedche2001} recognize that the manual construction of ontologies results in a \textit{knowledge acquisition bottleneck},
-which motivates the research into the field of \textit{ontology learning (OL)}.
-The field of ontology learning supports ontology engineers in the construction and maintenance of ontologies by providing OL techniques in the form
+\fullcite{Maedche2001} recognize that the manual construction of ontologies results in a \textbf{knowledge acquisition bottleneck},
+which motivates the research into the field of \textbf{ontology learning (OL)}.
+The field of OL supports ontology engineers in the construction and maintenance of ontologies by providing OL techniques in the form
 of tools like \textit{OntoEdit} \cite{Maedche2001}. The process of OL can be divided into different subtasks. OL tools consist of
 different components, which automatically or semi-automatically support this process. The field of ontology learning
 exploits different research fields like natural language processing, machine learning, ontology engineering, etc. \cite{Cimiano2009}.
 
-The process of ontology learning and the components of a generic OL architecture are summarized and the task of the thesis is categorized.
+The process of OL and the components of a generic OL architecture are summarized and the task of the thesis is categorized.
 Following, basic algorithms for learning taxonomic relations are summarized. 
 Both subsections are based on work by \fullcite{Cimiano2009}, \fullcite{Maedche2001}, and \fullcite{Hazman2011}.
 Finally, related work, which exploits neural networks, is analyzed and compared to the thesis' task. 
 The novelty and additional benefits of this work are justified.
 
 \subsubsection{Process and architecture for ontology learning}
-The process of ontology learning can be divided into subtasks. \fullcite{Maedche2001} define a ontology learning cycle, consisting of the following steps:
+The process of OLg can be divided into subtasks. \fullcite{Maedche2001} define a ontology learning cycle, consisting of the following steps:
 \begin{enumerate}
-\item \textit{Import/Reuse} is the merging of existing structures and mapping between the structures and the target ontology.
-\item \textit{Extraction} defines the modeling of the target ontology by feeding from web documents.
-\item \textit{Prune} takes the generated model and adjusts the ontology to its purpose.
-\item \textit{Refine} completes the ontology at a fine granularity.
-\item \textit{Apply} applies the resulting ontology on its target application. This serves as a measure of validation.
+\item \textbf{Import/Reuse} is the merging of existing structures and mapping between the structures and the target ontology.
+\item \textbf{Extraction} defines the modeling of the target ontology by feeding from web documents.
+\item \textbf{Prune} takes the generated model and adjusts the ontology to its purpose.
+\item \textbf{Refine} completes the ontology at a fine granularity.
+\item \textbf{Apply} applies the resulting ontology on its target application. This serves as a measure of validation.
 \end{enumerate}
 These 5 steps can be repeated as often as necessary to include additional domains and updating it with new content.
 The thesis' task can be categorized to the \textit{Refine} step, as its goal is to improve the completeness of an existing ontology.
 
-\fullcite{Cimiano2009} introduces a generic ontology learning architecture and its major components. The described tool is semi-automatic, meaning
+\fullcite{Cimiano2009} introduces a generic OL architecture and its major components. The described tool is semi-automatic, meaning
 that it support an ontology engineer rather than fully automatizing the process of ontology construction and maintenance.
 The architecture consists of the following components:
 \begin{enumerate}
-\item \textit{Ontology management component} provides an interface between the ontology and learning algorithms.
+\item \textbf{Ontology management component} provides an interface between the ontology and learning algorithms.
 	Learned concepts, relations and axioms should be added to the ontology using this component.
 	It is also used for manipulating the ontology.
 	More specifically, for the importing, browsing, modification, versioning and evolution of ontologies.
-\item \textit{Coordination component} is the user interface, which should allow the ontology engineer to choose input data, learning and resource processing methods.
-\item \textit{Resource processing component} allows the discovery, import, analysis and transformation of unstructured, semi-structured and structured input.
+\item \textbf{Coordination component} is the user interface, which should allow the ontology engineer to choose input data, learning and resource processing methods.
+\item \textbf{Resource processing component} allows the discovery, import, analysis and transformation of unstructured, semi-structured and structured input.
 	For this purpose the component needs different natural language processing components to parse and analyze input on different levels, word to sentence-level.  
-\item \textit{Algorithm library component} contains the algorithms, which are applied for the purpose of ontology learning. These algorithms are generic
+\item \textbf{Algorithm library component} contains the algorithms, which are applied for the purpose of ontology learning. These algorithms are generic
 	standard machine learning methods, as well as specialized OL methods. Additionally, different similarity and collocation measures should be available.
 \end{enumerate}
 In the context of Wikidata, there exists no single comprehensive OL tool. However, in the Wikimedia technology space different tools exist,
@@ -44,10 +44,10 @@ For example, \fullcite{Stratan2016} develops a taxonomy browser for Wikidata, wh
 of cycles, redundancies, errors and unlinked classes. This tool is an ontology learning component, as it provides the ability to browse and evaluate the ontology of Wikidata.
 
 \subsubsection{Approaches for learning taxonomic relations}
-A subgroup of algorithms for ontology learning is concerned with learning taxonomic relations.
+A subgroup of algorithms for OL is concerned with learning taxonomic relations.
 The following approaches, categorized by \fullcite{Cimiano2009}, use text as input.
 
-\textit{Lexico-syntactic patterns} are word patterns in patterns, which are used to identify hypernym-hyponym pairs (superclass-subclass pairs) in natural text.
+\textbf{Lexico-syntactic patterns} are word patterns in patterns, which are used to identify hypernym-hyponym pairs (superclass-subclass pairs) in natural text.
 For example, such a pattern is 
 \begin{align*}
 \mathit{NP}_{\mathit{hyper}} \: \textnormal{such as} \: \{  \mathit{NP}_\mathit{hypo} , \}^*  \:  \{ ( \textnormal{and} \mid  \textnormal{or} ) \} \: \mathit{NP}_\mathit{hypo}
@@ -55,20 +55,20 @@ For example, such a pattern is
 where $\mathit{NP}$ stands for noun phrase, and $\mathit{NP}_\mathit{hyper}$ is a hypernym or superclass, while $\mathit{NP}_\mathit{hypo}$ are hyponyms or subclasses.
 These patterns provide reasonable results, but the manual creation of patterns is involve high cost and time investments \cite{Wong2012}.
 
-\textit{Clustering} uses some measure of similarity to organize objects into groups. This can be achieved by representing the words or terms as vectors \cite{Cimiano2005},
+\textbf{Clustering} uses some measure of similarity to organize objects into groups. This can be achieved by representing the words or terms as vectors \cite{Cimiano2005},
 on which different distance or similarity measures can be applied. Clustering methods can be categorized to three different types.
 Agglomerative clustering initializes each term as its own cluster and merges in each step the most similar terms into one cluster.
 Divisive clustering approaches the problem the opposite way by starting with a single cluster, containing all words, and then dividing them into smaller groups.
 Both approaches generate hierarchies. Agglomerative clustering is doing so bottom-up and divisive
 clustering top-down.
 
-\textit{Phrase analysis} analyses noun phrases directly. It is assumed that nouns, which have additional modifiers are subclasses of the noun without modifiers.
+\textbf{Phrase analysis} analyses noun phrases directly. It is assumed that nouns, which have additional modifiers are subclasses of the noun without modifiers.
 For example, this could be applied on the labeled unlinked classes of Wikidata. For example the classes
 \textit{Men's Junior European Volleyball Championship (Q169359)}
 and  \textit{Women's Junior European Volleyball Championship (Q169956)}  could be subclasses of \textit{European Volleyball Championship (Q6834)}.
 In this case, phrase analysis interprets \textit{Men's Junior} and \textit{Women's Junior} as modifiers, which denote these classes as specialization to \textit{Q6834}.
 
-\textit{Classification}-based approaches can be used, when a taxonomy is already present. In this case, classification can be used to add unclassified concepts
+\textbf{Classification}-based approaches can be used, when a taxonomy is already present. In this case, classification can be used to add unclassified concepts
 to the existing hierarchy. Challenging with this task is that a taxonomy typically contains a large amount of classes and therefore classification
 methods like SVM are not suited for the task. Specific algorithms, which only consider, a subset of relevant classes are necessary to carry out an efficient classification.
 For example, \fullcite{Pekar2002} solves this problem by exploiting the taxonomy's tree structure using tree-ascending or tree-descending algorithms.
