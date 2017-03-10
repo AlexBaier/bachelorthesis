@@ -1,9 +1,10 @@
 import logging
 import time
 
+from adjustText import adjust_text
 import matplotlib.pyplot as plt
 import numpy as np
-from sklearn.decomposition import IncrementalPCA
+from sklearn.manifold import TSNE
 
 from data_analysis.pipe import DataPipe
 import data_analysis.utils as utils
@@ -15,7 +16,7 @@ def main():
     embeddings_path = '../data/algorithm_io/simple_sentence_class_embeddings-20161107'
     classes_path = '../data/classes-20161107'
     plot_path = '../data/plots/2d_class_embeddings.png'
-    plot_count = 500
+    plot_count = 100
 
     embeddings = list()
     class_ids = list()
@@ -34,21 +35,24 @@ def main():
 
     start_time = time.time()
 
-    pca = IncrementalPCA(n_components=2)
-    pca.fit(embeddings)
-    embeddings = pca.transform(embeddings)
-    xs, ys = embeddings.T
+    tsne = TSNE(perplexity=30, n_components=2, init='pca', n_iter=5000)
+    embeddings = tsne.fit_transform(embeddings[:min(plot_count, embeddings.shape[0])])
 
-    del pca
+    del tsne
 
     duration = time.time() - start_time
-    logging.log(level=logging.INFO, msg='executed PCA in {} seconds'.format(duration))
+    logging.log(level=logging.INFO, msg='executed tsne in {} seconds'.format(duration))
 
+    plt.figure(figsize=(18, 18))
+    xs, ys = embeddings.T
     plt.scatter(xs, ys)
-    for i, embedding in enumerate(embeddings[:plot_count]):
+    texts = list()
+    for idx, embedding in enumerate(embeddings):
         x, y = embedding
-        label = class_labels[class_ids[i]] if class_labels[class_ids[i]] else class_ids[i]
-        plt.annotate(label, xy=(x, y))
+        class_id = class_ids[idx]
+        label = class_labels[class_id] if class_labels[class_id] else class_id
+        texts.append(plt.text(x, y, label))
+    adjust_text(texts, arrowprops=dict(arrowstyle="->", color='r', lw=0.5))
     logging.log(level=logging.INFO, msg='finished drawing scatter plot')
 
     plt.savefig(plot_path)
