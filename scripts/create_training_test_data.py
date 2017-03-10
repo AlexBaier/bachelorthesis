@@ -17,7 +17,7 @@ def main():
                 msg='test samples: {}, training samples: {}'.format(len(test_samples), len(training_samples)))
 
     with open(test_data_output, mode='w') as f:
-        f.write(str(len(test_samples)))
+        f.write(str(len(test_samples)) + '\n')
         for test_sample in test_samples:
             f.write(test_sample.to_csv_row(',', '\n'))
 
