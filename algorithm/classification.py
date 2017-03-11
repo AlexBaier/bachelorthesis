@@ -20,7 +20,21 @@ class Classifier(object, metaclass=abc.ABCMeta):
         pass
 
 
-class DistanceNearestNeighbors(Classifier):
+class KNNClassifier(Classifier, metaclass=abc.ABCMeta):
+
+    @abc.abstractclassmethod
+    def train(self, training_data: Tuple[np.array, np.array]):
+        pass
+
+
+class ProjectionClassifier(Classifier, metaclass=abc.ABCMeta):
+
+    @abc.abstractclassmethod
+    def train(self, training_data: List[Tuple[np.array, np.array]]):
+        pass
+
+
+class DistanceKNNClassifier(KNNClassifier):
 
     def __init__(self, neighbors=5):
         self.__classifier = KNeighborsClassifier(
@@ -29,7 +43,7 @@ class DistanceNearestNeighbors(Classifier):
             p=DistanceMetric.get_metric(cls='pyfunc', args=cosine_distances)
         )  # type: KNeighborsClassifier
 
-    def train(self, training_data: Tuple(np.array, np.array)):
+    def train(self, training_data: Tuple[np.array, np.array]):
         x, y = training_data
         self.__classifier.fit(x, y)
 
@@ -37,11 +51,11 @@ class DistanceNearestNeighbors(Classifier):
         return self.__classifier.predict(unknown)
 
 
-class KRINearestNeighbors(Classifier):
+class KRINKNNClassifier(KNNClassifier):
     pass
 
 
-class LinearProjection(Classifier):
+class LinearProjectionClassifier(ProjectionClassifier):
 
     def __init__(self, embedding_size: int, model: Word2Vec):
         self.__embedding_size = embedding_size  # type: int
@@ -68,7 +82,7 @@ class LinearProjection(Classifier):
         return self.__model.similar_by_vector(self.__phi * unknown, topn=1)[0][0]
 
 
-class PiecewiseLinearProjection(Classifier):
+class PiecewiseLinearProjectionClassifier(ProjectionClassifier):
 
     def __init__(self, embedding_size: int, model: Word2Vec, clusters: int):
         self.__clusters = clusters  # type: int
