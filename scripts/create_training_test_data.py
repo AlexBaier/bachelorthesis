@@ -1,7 +1,7 @@
 import logging
 
 import data_analysis.dumpio as dumpio
-import evaluation.data_gen as data_gen
+import evaluation.data_sample as data_gen
 
 
 def main():

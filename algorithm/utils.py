@@ -2,7 +2,7 @@ from typing import Callable, List, Tuple
 
 import numpy as np
 
-from evaluation.data_gen import MultiLabelSample
+from evaluation.data_sample import MultiLabelSample
 
 
 def map_to_knn_training_input(training_samples: List[MultiLabelSample[str]], id2embedding: Callable[[str], np.array])\
