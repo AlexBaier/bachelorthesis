@@ -18,6 +18,11 @@ class MultiLabelSample(Generic[T]):
     def to_csv_row(self, col_sep: str=',', row_sep: str='\n')->str:
         return col_sep.join([str(self.input_arg)] + list(map(str, self.possible_outputs))) + row_sep
 
+    @staticmethod
+    def from_csv(row: str, col_sep: str=',')->'MultiLabelSample':
+        input_arg, *possible_outputs = row.strip().split(col_sep)
+        return MultiLabelSample(input_arg, possible_outputs)
+
 
 def generate_wikidata_classification_samples(classes: Iterable[dict], property_id: str)->\
         Iterable[MultiLabelSample[str]]:
