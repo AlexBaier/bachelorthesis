@@ -1,0 +1,49 @@
+{
+  "simple sentences": {
+  },
+  "graph walk sentences": {
+      "depth": 4,
+      "max walks": 100
+  },
+  "simple sentence sgns": {
+      "embedding size": 300,
+      "window size": 2,
+      "initial learning rate": 0.25,
+      "min count": 1,
+      "max vocab size": 3000000,
+      "subsampling": 0.00001,
+      "negative sampling": 15,
+      "iterations": 5
+  },
+  "graph walk sentence sgns": {
+      "embedding size": 300,
+      "window size": 2,
+      "initial learning rate": 0.25,
+      "min count": 1,
+      "max vocab size": 3000000,
+      "subsampling": 0.00001,
+      "negative sampling": 15,
+      "iterations": 5
+  },
+  "distance-knn": {
+      "neighbors": 15
+  },
+  "kri-knn": {
+      "neighbors": 15,
+      "regularization param": 1
+  },
+  "linear projection": {
+  },
+  "piecewise linear projection": {
+      "clusters": 8
+  },
+  "combinations": {
+      "baseline": ["simple sentences", "simple sentence sgns", "kri-knn"],
+      "distknn": ["simple sentences", "simple sentences sgns", "distance-knn"],
+      "linproj": ["simple sentences", "simple sentence sgns", "linear projection"],
+      "pwlinproj": ["simple sentences", "simple sentence sgns", "piecewise linear projection"],
+      "gw": ["graph walk sentences", "graph walk sentence sgns", "kri-knn"],
+      "gw+linproj" : ["graph walk sentences", "graph walk sentence sgns", "linear projection"],
+      "gw+pwlinproj" : ["graph walk sentences", "graph walk sentence sgns", "piecewise linear projection"]
+  }
+}
