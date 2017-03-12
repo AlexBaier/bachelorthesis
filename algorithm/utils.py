@@ -25,5 +25,9 @@ def map_to_proj_training_input(training_samples: List[MultiLabelSample[str]], id
     for sample in training_samples:
         obj = id2embedding(sample.input_arg)
         for label in sample.possible_outputs:
-            training_data.append((obj, id2embedding(label)))
+            try:
+                superclass = id2embedding(label)
+            except KeyError:
+                continue
+            training_data.append((obj, superclass))
     return training_data
