@@ -158,7 +158,7 @@ def execute_classification(algorithm: str, config: dict,
     test_input_matrix = np.array(list(map(lambda t: id2embedding(t), test_inputs[:10])))
     labels = classifier.classify(test_input_matrix)
     results = list()  # type: List[Tuple[str, str]]
-    for i in range(len(test_inputs)):
+    for i in range(len(test_inputs[:10])):
         results.append((test_inputs[i], labels[i]))
     logging.log(level=logging.INFO, msg='executed classification for all test inputs')
 
@@ -168,28 +168,28 @@ def execute_classification(algorithm: str, config: dict,
 class UnknownAlgorithmError(LookupError):
     def __init__(self, algorithm):
         self.strerror = 'combined algorithm with name {} not found in config'.format(algorithm)
-        self.args = {algorithm}
+        self.args = {self.strerror}
 
 
 class MissingComponentError(LookupError):
     def __init__(self, component_type, algorithm):
         self.strerror = '{} component is not defined for {}'.format(component_type, algorithm)
-        self.args = {component_type, algorithm}
+        self.args = {self.strerror}
 
 
 class UnknownComponentError(LookupError):
     def __init__(self, component_type, component):
-        self.strerror = 'classification component "{}" not found in config'.format(component_type, component)
-        self.args = {component_type, component}
+        self.strerror = '{} component "{}" not found in config'.format(component_type, component)
+        self.args = {self.strerror}
 
 
 class MissingParameterError(LookupError):
     def __init__(self, parameter, component):
         self.strerror = 'parameter "{}" missing in {}'.format(parameter, component)
-        self.args = {parameter, component}
+        self.args = {self.strerror}
 
 
 class NotImplementedClassifierError(Exception):
     def __init__(self, classification_component):
         self.strerror = 'classification method "{}" does not exist'.format(classification_component)
-        self.args = {classification_component}
+        self.args = {self.strerror}
