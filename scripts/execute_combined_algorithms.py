@@ -14,7 +14,7 @@ def main():
     col_sep = ','
     row_sep = '\n'
 
-    combined_algorithms = {'distknn', 'linproj'}
+    combined_algorithms = {'baseline'}
 
     results = execute_combined_algorithms(
         combined_algorithms=combined_algorithms,

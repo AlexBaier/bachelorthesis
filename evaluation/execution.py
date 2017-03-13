@@ -130,7 +130,12 @@ def execute_classification(algorithm: str, config: dict,
     logging.log(level=logging.INFO, msg='prepared training data')
 
     if algorithm == 'kri-knn':
-        classifier = alg.KRINKNNClassifier()
+        try:
+            neighbors = config['neighbors']
+            reg_param = config['regularization param']
+        except KeyError as e:
+            raise MissingParameterError(str(e), algorithm)
+        classifier = alg.KRINKNNClassifier(neighbors=neighbors, regularization_param=reg_param)
     elif algorithm == 'distance-knn':
         try:
             neighbors = config['neighbors']
@@ -155,10 +160,10 @@ def execute_classification(algorithm: str, config: dict,
     classifier.train(training_input)
     logging.log(level=logging.INFO, msg='trained {} classifier'.format(algorithm))
 
-    test_input_matrix = np.array(list(map(lambda t: id2embedding(t), test_inputs[:10])))
+    test_input_matrix = np.array(list(map(lambda t: id2embedding(t), test_inputs)))
     labels = classifier.classify(test_input_matrix)
     results = list()  # type: List[Tuple[str, str]]
-    for i in range(len(test_inputs[:10])):
+    for i in range(len(test_inputs)):
         results.append((test_inputs[i], labels[i]))
     logging.log(level=logging.INFO, msg='executed classification for all test inputs')
 

@@ -5,7 +5,7 @@ import numpy as np
 from scipy.optimize import minimize
 from sklearn.cluster import MiniBatchKMeans
 from sklearn.metrics.pairwise import cosine_similarity
-from sklearn.neighbors import KNeighborsClassifier
+from sklearn.neighbors import KNeighborsClassifier, NearestNeighbors
 
 
 class Classifier(object, metaclass=abc.ABCMeta):
@@ -38,8 +38,11 @@ class DistanceKNNClassifier(KNNClassifier):
     def __init__(self, neighbors: int):
         self.__classifier = KNeighborsClassifier(
             algorithm='auto',
+            metric='minkowski',
+            n_jobs=-1,
             n_neighbors=neighbors,
-            weights='distance'
+            p=2,
+            weights='distance',
         )  # type: KNeighborsClassifier
 
     def train(self, training_data: Tuple[np.array, np.array]):
@@ -54,8 +57,50 @@ class DistanceKNNClassifier(KNNClassifier):
 
 
 class KRINKNNClassifier(KNNClassifier):
-    # TODO: implement
-    pass
+
+    def __init__(self, neighbors: int, regularization_param: float):
+        self.__x = None
+        self.__y = None
+        self.__nearest_neighbors = NearestNeighbors(
+            metric='minkowski',
+            n_neighbors=neighbors,
+            n_jobs=-1,
+            p=2)
+        self.__neighbors = neighbors
+        self.__reg = regularization_param
+
+    def train(self, training_data: Tuple[np.array, np.array]):
+        self.__x, self.__y = training_data
+        self.__nearest_neighbors.fit(training_data[0])
+
+    def classify(self, unknowns: np.array)->List[str]:
+        labels = list()
+        n = unknowns.shape[0]
+        index_matrix = self.__nearest_neighbors.kneighbors(unknowns, return_distance=False)
+        for i in range(n):
+            indexes = index_matrix[i]
+            neighbors = np.array([self.__x[idx] for idx in indexes])
+            S = cosine_similarity(neighbors, neighbors)
+            s = cosine_similarity(unknowns[i].reshape(1, -1), neighbors)[0]
+
+            def f(w):
+                return 0.5 * (w.T @ S @ w) - (s.T @ w) + (0.5 * self.__reg) * (w.T @ w)
+            constraints = ({'type': 'ineq', 'fun': lambda w: 1 if (1 - np.sum(w)) > 0 and np.alltrue(w > 0) else -1})
+            w0 = np.random.random(self.__neighbors)
+            w0 /= np.linalg.norm(w0)
+            result = minimize(f, x0=w0, method='COBYLA', constraints=constraints)
+
+            if not result.success:
+                raise TrainingFailureException(result.message)
+
+            weights = result.x
+            votes = dict()
+            for neighbor, idx in enumerate(indexes):
+                if not votes.get(self.__y[idx], None):
+                    votes[self.__y[idx]] = 0.0
+                votes[self.__y[idx]] += weights[neighbor]
+            labels.append(max(votes.items(), key=lambda t: t[1])[0])
+        return labels
 
 
 class LinearProjectionClassifier(ProjectionClassifier):
