@@ -9,10 +9,9 @@ def main():
     node_id_path = '../data/algorithm_io/class_ids-20161107.txt'
     edge_store_path = '../data/algorithm_io/edges-20161107.sqlite3'
     output_path = '../data/algorithm_io/graphwalk_sentences-20161107.txt'
-    node_count = 5000
-    section = 0
+    node_count = 2500
 
-    random.seed(42)
+    random.seed()
 
     nodes = list()
     with open(node_id_path) as f:
@@ -21,7 +20,7 @@ def main():
     logging.log(level=logging.INFO, msg='node count: {}'.format(len(nodes)))
     random.shuffle(nodes)
     gen = GraphWalkSentences(
-        nodes[section*node_count:(section+1)*node_count],
+        nodes[:node_count],
         4,  # RDF2Vec: depth = 4
         10,  # RDF2Vec: max walks per vertice = 100
         edge_store_path,
