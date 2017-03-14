@@ -1,4 +1,5 @@
 import abc
+import logging
 from typing import List, Tuple
 
 import numpy as np
@@ -91,15 +92,19 @@ class KRINKNNClassifier(KNNClassifier):
             result = minimize(f, x0=w0, method='COBYLA', constraints=constraints)
 
             if not result.success:
-                raise TrainingFailureException(result.message)
-
-            weights = result.x
+                logging.log(level=logging.INFO,
+                            msg='KRI-kNN: weights did not converge for unknowns[{}], use similarity-based weights'
+                            .format(i))
+                weights = s/np.linalg.norm(s)
+            else:
+                weights = result.x
             votes = dict()
             for neighbor, idx in enumerate(indexes):
                 if not votes.get(self.__y[idx], None):
                     votes[self.__y[idx]] = 0.0
                 votes[self.__y[idx]] += weights[neighbor]
             labels.append(max(votes.items(), key=lambda t: t[1])[0])
+            logging.log(level=logging.INFO, msg='KRI-kNN: classification progress: {}%'.format(100.0*float(i)/n))
         return labels
 
 
