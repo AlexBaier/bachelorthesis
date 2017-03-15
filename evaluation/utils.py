@@ -20,19 +20,21 @@ def load_training_data(training_data_path: str)->List[MultiLabelSample[str]]:
             if idx == 0:
                 continue
             training_samples.append(MultiLabelSample.from_csv(r, col_sep=','))
-    logging.log(level=logging.INFO, msg='loaded training samples')
     return training_samples
 
 
-def load_test_inputs(test_data_path: str)->List[str]:
-    test_inputs = list()  # type: List[str]
+def load_test_data(test_data_path: str)->List[MultiLabelSample]:
+    test_samples = list()  # type: List[MultiLabelSample]
     with open(test_data_path) as f:
         for idx, r in enumerate(f):
             if idx == 0:
                 continue
-            test_inputs.append(MultiLabelSample.from_csv(r, col_sep=',').input_arg)
-    logging.log(level=logging.INFO, msg='loaded test inputs')
-    return test_inputs
+            test_samples.append(MultiLabelSample.from_csv(r, col_sep=','))
+    return test_samples
+
+
+def load_test_inputs(test_data_path: str)->List[str]:
+    return [sample.input_arg for sample in load_test_data(test_data_path)]
 
 
 def load_embeddings_and_labels(embeddings_path: str)->Tuple[np.array, List[str]]:
@@ -44,5 +46,4 @@ def load_embeddings_and_labels(embeddings_path: str)->Tuple[np.array, List[str]]
             class_ids.append(cid)
             embeddings.append(embedding)
     embeddings = np.array(embeddings)  # type: np.array
-    logging.log(level=logging.INFO, msg='loaded embeddings and labels')
     return embeddings, class_ids
