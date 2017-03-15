@@ -78,6 +78,8 @@ class KRINKNNClassifier(KNNClassifier):
         labels = list()
         n = unknowns.shape[0]
         index_matrix = self.__nearest_neighbors.kneighbors(unknowns, return_distance=False)
+        logging.log(level=logging.INFO, msg='KRI-kNN: found {}-nearest neighbors for {} unknowns'
+                    .format(self.__neighbors, n))
         for i in range(n):
             indexes = index_matrix[i]
             neighbors = np.array([self.__x[idx] for idx in indexes])
