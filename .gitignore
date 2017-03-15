@@ -2,8 +2,7 @@
 __pycache__/
 
 # Pycharm
-.idea/dictionaries
-.idea/workspace.xml
+.idea/*
 
 # algorithm out- and input
 data/*
