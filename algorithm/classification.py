@@ -7,6 +7,7 @@ from scipy.optimize import minimize
 from sklearn.cluster import MiniBatchKMeans
 from sklearn.metrics.pairwise import cosine_similarity
 from sklearn.neighbors import KNeighborsClassifier, NearestNeighbors
+from sklearn.neural_network import MLPRegressor
 
 
 class Classifier(object, metaclass=abc.ABCMeta):
@@ -116,39 +117,38 @@ class LinearProjectionClassifier(ProjectionClassifier):
         self.__embedding_size = embedding_size  # type: int
         self.__embeddings = embeddings  # type: np.array
         self.__labels = labels  # type: List[str]
+        self.__nearest_neighbors = NearestNeighbors(
+            metric='minkowski',
+            n_neighbors=1,
+            n_jobs=-1,
+            p=2)
         self.__phi = np.random.random((embedding_size, embedding_size))
 
-    def train(self, training_data: List[Tuple[np.array, np.array]],
-              parts: int=8, tol: float=1e-3, eps: float= 1e-5, max_iter: int=250000):
+    def train(self, training_data: List[Tuple[np.array, np.array]], alpha: float=1e-5, batch_size: int=500):
+        self.__nearest_neighbors.fit(self.__embeddings)
+
         n = len(training_data)  # number of samples
-        if parts <= n:
-            part_distribution = [int(n / parts) for _ in range(parts)]
-            part_distribution[parts-1] = int(n / parts + n % parts)
-        else:
-            part_distribution = [int(n)]
 
         x, y = list(map(np.array, zip(*training_data)))
         del training_data
 
-        def f(phi):
-            # minimize flattens input matrix, return it to matrix shape
-            phi = np.reshape(phi, (self.__embedding_size, self.__embedding_size))
-            error = 0.0
-            for c in range(parts):
-                begin = sum(part_distribution[:c])
-                end = sum(part_distribution[:c+1])
-                error += np.square(np.linalg.norm(np.sum(x[begin:end] @ phi - y[begin:end], axis=0)))
-            return 1.0/float(n) * error
+        batch_count = int(n / batch_size)
+        last_batch_size = n - batch_count * batch_size
 
-        result = minimize(fun=f, x0=self.__phi, method='BFGS',
-                          options={'disp': False, 'gtol': tol, 'eps': eps, 'maxiter': max_iter, 'return_all': False,
-                                   'norm': np.inf})
+        batches = [batch_size for _ in range(batch_count)] + [last_batch_size] if last_batch_size else []
 
-        if not result.success:
-            raise TrainingFailureException(result.message)
-
-        # minimize flattens input matrix, return it to matrix shape
-        self.__phi = np.reshape(result.x, (self.__embedding_size, self.__embedding_size))
+        old_error = 0.0
+        p = np.random.permutation(n)
+        for k in range(len(batches)):
+            begin = sum(batches[:k])
+            end = sum(batches[:k+1])
+            pk = p[begin:end]
+            error_vec = np.sum(x[pk] @ self.__phi - y[pk], axis=0)
+            error = 1.0/float(batch_size) * np.sum(error_vec)**2
+            self.__phi -= alpha * np.array([error_vec for _ in range(self.__embedding_size)])
+            logging.log(level=logging.INFO, msg='batch={},error={},diff={}'
+                        .format(k, error, np.absolute(error-old_error)))
+            old_error = error
 
     def classify(self, unknowns: np.array)->List[str]:
         labels = list()
@@ -156,10 +156,11 @@ class LinearProjectionClassifier(ProjectionClassifier):
         y = unknowns @ self.__phi
         # calculate similarities between projections and all embeddings
         # get indices of most similar embedding
-        indexes = np.argmax(cosine_similarity(y, self.__embeddings), axis=1)
+        indexes = self.__nearest_neighbors.kneighbors(y, return_distance=False)
 
         for index in indexes:
-            labels.append(self.__labels[index])
+            labels.append(self.__labels[index[0]])
+
         return labels
 
 
