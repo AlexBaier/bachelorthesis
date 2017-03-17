@@ -1,12 +1,29 @@
-\citeauthor{Dellschaft2006} \cite{Dellschaft2006}
+\fullcite{Dellschaft2006}\\
+\fullcite{Kosmopoulos2014}
 
 \subsection{Method}
-Includes how the gold standard was generated.
+The hybrid algorithms are evaluated using a gold standard.
+The gold standard is fetched from classes in the \dumpdate{} Wikidata dump \cite{WikidataDump}.
+$1,283,128$ classes with superclasses, where retrieved from the dump.
+As test data $200,000$ classes were randomly chosen. 
+The remaining $1,083,128$ classes are used as training data.
+The retrieved subclass-superclass relations should be sufficient as gold standard,
+because they are curated by experts of the Wikidata community.
+
+Precision, recall and F1-score cannot effectively be used to evaluate classification problems with high amounts of classes in a taxonomy \cite{Kosmopoulos2014}.
+These measures are typically used for flat classification problems with small amounts of classes, which are not related.
+It has to be recognized that a misclassification in the thesis' use case is not a binary problem.
+Assuming a pair of prediction and gold standard, the predicted class could be very similar or very different to the gold standard.
+The evaluation should consider the similarity between prediction and output, rather than only differentiating between correct and incorrect classification.
+The similarity of prediction and gold standard can be evaluated in different dimensions.
+\textbf{TODO: dimensions} 
+
+Different relations between the prediction and gold standard are possible in a hierarchical classification task \cite{Kosmopoulos2014}.
+The desired case is a correct classification, such that the prediction is equal to the gold standard.
+\textbf{TODO: cases}
 
 \subsection{About the dataset}
 Simple sentences generated $72,386,886$ sentences.
 
-test samples: $200,000$.
-training samples: $1,083,128$.
 
 \subsection{Results}
