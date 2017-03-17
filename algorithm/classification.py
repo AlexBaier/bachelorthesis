@@ -7,7 +7,6 @@ from scipy.optimize import minimize
 from sklearn.cluster import MiniBatchKMeans
 from sklearn.metrics.pairwise import cosine_similarity
 from sklearn.neighbors import KNeighborsClassifier, NearestNeighbors
-from sklearn.neural_network import MLPRegressor
 
 
 class Classifier(object, metaclass=abc.ABCMeta):
@@ -124,7 +123,8 @@ class LinearProjectionClassifier(ProjectionClassifier):
             p=2)
         self.__phi = np.random.random((embedding_size, embedding_size))
 
-    def train(self, training_data: List[Tuple[np.array, np.array]], alpha: float=1e-5, batch_size: int=500):
+    def train(self, training_data: List[Tuple[np.array, np.array]], alpha: float=1e-5, batch_size: int=500,
+              max_iter: int=200000, btol: float=1e-05):
         self.__nearest_neighbors.fit(self.__embeddings)
 
         n = len(training_data)  # number of samples
@@ -132,22 +132,17 @@ class LinearProjectionClassifier(ProjectionClassifier):
         x, y = list(map(np.array, zip(*training_data)))
         del training_data
 
-        batch_count = int(n / batch_size)
-        last_batch_size = n - batch_count * batch_size
-
-        batches = [batch_size for _ in range(batch_count)] + [last_batch_size] if last_batch_size else []
-
         old_error = 0.0
-        p = np.random.permutation(n)
-        for k in range(len(batches)):
-            begin = sum(batches[:k])
-            end = sum(batches[:k+1])
-            pk = p[begin:end]
-            error_vec = np.sum(x[pk] @ self.__phi - y[pk], axis=0)
+
+        for i in range(max_iter):
+            p = np.random.permutation(n)[:batch_size]
+            error_vec = np.sum(x[p] @ self.__phi - y[p], axis=0)
             error = 1.0/float(batch_size) * np.sum(error_vec)**2
             self.__phi -= alpha * np.array([error_vec for _ in range(self.__embedding_size)])
-            logging.log(level=logging.INFO, msg='batch={},error={},diff={}'
-                        .format(k, error, np.absolute(error-old_error)))
+            logging.log(level=logging.INFO, msg='iter={},error={},diff={}'
+                        .format(i, error, np.absolute(error-old_error)))
+            if old_error < btol and error < btol:
+                logging.log(level=logging.INFO, msg='batch error lower than tolerance after 2 iterations')
             old_error = error
 
     def classify(self, unknowns: np.array)->List[str]:
