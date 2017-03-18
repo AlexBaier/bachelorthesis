@@ -141,7 +141,7 @@ class LinearProjectionClassifier(ProjectionClassifier):
             end = sum(batches[:k+1])
             for target in range(self.__embedding_size):
                 self.__sgd_regressors[target].partial_fit(x[begin:end], y[begin:end][:, target])
-            logging.log(level=logging.INFO, msg='regression fitting progress: {}/{}'.format(k, len(batches)))
+            logging.log(level=logging.INFO, msg='batch progress: {}/{}'.format(k, len(batches)))
 
     def classify(self, unknowns: np.array)->List[str]:
         labels = list()
@@ -168,12 +168,11 @@ class PiecewiseLinearProjectionClassifier(ProjectionClassifier):
         self.__embeddings = embeddings
         self.__kmeans = MiniBatchKMeans(n_clusters=clusters)  # type: MiniBatchKMeans
         self.__labels = labels  # type: List[str]
-        self.__phi = [np.random.random((embedding_size, embedding_size)) for _ in range(clusters)]
+        self.__sgd_regressors = [[SGDRegressor() for _ in range(self.__embedding_size)] for _ in range(self.__clusters)]
 
-    def train(self, training_data: List[Tuple[np.array, np.array]], batch_size: int=500,
-              btol: float=1e-3, alpha: float= 1e-5, max_iter: int=50000):
-        n = len(training_data)  # number of samples
+    def train(self, training_data: List[Tuple[np.array, np.array]], batch_size: int=500):
         self.__kmeans.fit(self.__embeddings)
+        logging.log(level=logging.INFO, msg='finished clustering, clusters={}'.format(self.__clusters))
 
         x, y = list(map(np.array, zip(*training_data)))
         del training_data
@@ -188,21 +187,22 @@ class PiecewiseLinearProjectionClassifier(ProjectionClassifier):
         del y
         clustered_x = list(map(np.array, clustered_x))
         clustered_y = list(map(np.array, clustered_y))
+        logging.log(level=logging.INFO, msg='sorted training samples into clusters')
 
-        for k in range(self.__clusters):
-            old_error = 0.0
-            for i in range(max_iter):
-                p = np.random.permutation(clustered_x[k].shape[0])[:batch_size]
-                error_vec = np.sum(clustered_x[k][p] @ self.__phi[k] - clustered_y[k][p], axis=0)
-                error = 1.0 / float(batch_size) * np.sum(error_vec) ** 2
-                self.__phi[k] -= alpha * np.array([error_vec for _ in range(self.__embedding_size)])
-                logging.log(level=logging.INFO, msg='iter={},error={},diff={}'
-                            .format(i, error, np.absolute(error - old_error)))
-                if old_error < btol and error < btol:
-                    logging.log(level=logging.INFO, msg='batch error lower than tolerance after 2 iterations')
-                    break
-                old_error = error
-            logging.log(level=logging.INFO, msg='trained cluster {}/{}'.format(k, self.__clusters))
+        for c in range(self.__clusters):
+            n = len(clustered_x[c])
+
+            batches = [batch_size for _ in range(int(n / batch_size) + 1)]
+            batches[-1] = n % batch_size
+
+            for k in range(len(batches)):
+                begin = sum(batches[:k])
+                end = sum(batches[:k + 1])
+                for target in range(self.__embedding_size):
+                    self.__sgd_regressors[c][target].partial_fit(
+                        clustered_x[c][begin:end],
+                        clustered_y[c][begin:end][:, target])
+                logging.log(level=logging.INFO, msg='cluster={},batch progress={}/{}'.format(c, k, len(batches)))
 
     def classify(self, unknowns: np.array)->List[str]:
         projections = np.zeros(unknowns.shape)
@@ -211,7 +211,11 @@ class PiecewiseLinearProjectionClassifier(ProjectionClassifier):
 
         # project all unknowns
         for i, c in enumerate(cluster_labels):
-            projections[i] = unknowns[i] @ self.__phi[c]
+            y = list()
+            for target in range(self.__embedding_size):
+                y.append(self.__sgd_regressors[c][target].predict(unknowns[i].reshape(1, -1)))
+            y = np.array(y).T
+            projections[i] = y
         # find indices of most similar embeddings
         indexes = np.argmax(cosine_similarity(projections, self.__embeddings), axis=1)
 
