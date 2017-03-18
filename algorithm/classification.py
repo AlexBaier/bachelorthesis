@@ -124,7 +124,7 @@ class LinearProjectionClassifier(ProjectionClassifier):
         self.__phi = np.random.random((embedding_size, embedding_size))
 
     def train(self, training_data: List[Tuple[np.array, np.array]], alpha: float=1e-5, batch_size: int=500,
-              max_iter: int=200000, btol: float=1e-05):
+              max_iter: int=50000, btol: float=1e-03):
         self.__nearest_neighbors.fit(self.__embeddings)
 
         n = len(training_data)  # number of samples
