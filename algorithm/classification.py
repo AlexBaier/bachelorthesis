@@ -5,6 +5,7 @@ from typing import List, Tuple
 import numpy as np
 from scipy.optimize import minimize
 from sklearn.cluster import MiniBatchKMeans
+from sklearn.linear_model import SGDRegressor
 from sklearn.metrics.pairwise import cosine_similarity
 from sklearn.neighbors import KNeighborsClassifier, NearestNeighbors
 
@@ -121,34 +122,34 @@ class LinearProjectionClassifier(ProjectionClassifier):
             n_neighbors=1,
             n_jobs=-1,
             p=2)
-        self.__phi = np.random.random((embedding_size, embedding_size))
+        self.__sgd_regressors = [SGDRegressor() for _ in range(self.__embedding_size)]
 
-    def train(self, training_data: List[Tuple[np.array, np.array]], alpha: float=1e-5, batch_size: int=500,
-              max_iter: int=50000, btol: float=1e-03):
+    def train(self, training_data: List[Tuple[np.array, np.array]], batch_size: int=500):
         self.__nearest_neighbors.fit(self.__embeddings)
+        logging.log(level=logging.INFO, msg='fitted nearest neighbors tree on all embeddings')
 
-        n = len(training_data)  # number of samples
+        n = len(training_data)
 
         x, y = list(map(np.array, zip(*training_data)))
         del training_data
 
-        old_error = 0.0
+        batches = [batch_size for _ in range(int(n / batch_size) + 1)]
+        batches[-1] = n % batch_size
 
-        for i in range(max_iter):
-            p = np.random.permutation(n)[:batch_size]
-            error_vec = np.sum(x[p] @ self.__phi - y[p], axis=0)
-            error = 1.0/float(batch_size) * np.sum(error_vec)**2
-            self.__phi -= alpha * np.array([error_vec for _ in range(self.__embedding_size)])
-            logging.log(level=logging.INFO, msg='iter={},error={},diff={}'
-                        .format(i, error, np.absolute(error-old_error)))
-            if old_error < btol and error < btol:
-                logging.log(level=logging.INFO, msg='batch error lower than tolerance after 2 iterations')
-            old_error = error
+        for k in range(len(batches)):
+            begin = sum(batches[:k])
+            end = sum(batches[:k+1])
+            for target in range(self.__embedding_size):
+                self.__sgd_regressors[target].partial_fit(x[begin:end], y[begin:end][:, target])
+            logging.log(level=logging.INFO, msg='regression fitting progress: {}/{}'.format(k, len(batches)))
 
     def classify(self, unknowns: np.array)->List[str]:
         labels = list()
-        # project all unknowns
-        y = unknowns @ self.__phi
+
+        y = list()
+        for target in range(self.__embedding_size):
+            y.append(self.__sgd_regressors[target].predict(unknowns))
+        y = np.array(y).T
         # calculate similarities between projections and all embeddings
         # get indices of most similar embedding
         indexes = self.__nearest_neighbors.kneighbors(y, return_distance=False)
@@ -169,8 +170,8 @@ class PiecewiseLinearProjectionClassifier(ProjectionClassifier):
         self.__labels = labels  # type: List[str]
         self.__phi = [np.random.random((embedding_size, embedding_size)) for _ in range(clusters)]
 
-    def train(self, training_data: List[Tuple[np.array, np.array]],
-              tol: float=1e-3, eps: float= 1e-5, max_iter: int=250000):
+    def train(self, training_data: List[Tuple[np.array, np.array]], batch_size: int=500,
+              btol: float=1e-3, alpha: float= 1e-5, max_iter: int=50000):
         n = len(training_data)  # number of samples
         self.__kmeans.fit(self.__embeddings)
 
@@ -189,21 +190,19 @@ class PiecewiseLinearProjectionClassifier(ProjectionClassifier):
         clustered_y = list(map(np.array, clustered_y))
 
         for k in range(self.__clusters):
-
-            def f(phi):
-                # minimize flattens input matrix, return it to matrix shape
-                phi = np.reshape(phi, (self.__embedding_size, self.__embedding_size))
-                error = np.square(np.linalg.norm(clustered_x[k] @ phi - clustered_y[k]))
-                return 1.0/n * error
-
-            result = minimize(fun=f, x0=self.__phi[k], method='BFGS',
-                              options={'disp': False, 'gtol': tol, 'eps': eps, 'maxiter': max_iter, 'return_all': False,
-                                       'norm': np.inf})
-
-            if not result.success:
-                raise TrainingFailureException(result.message)
-
-            self.__phi[k] = np.reshape(result.x, (self.__embedding_size, self.__embedding_size))
+            old_error = 0.0
+            for i in range(max_iter):
+                p = np.random.permutation(clustered_x[k].shape[0])[:batch_size]
+                error_vec = np.sum(clustered_x[k][p] @ self.__phi[k] - clustered_y[k][p], axis=0)
+                error = 1.0 / float(batch_size) * np.sum(error_vec) ** 2
+                self.__phi[k] -= alpha * np.array([error_vec for _ in range(self.__embedding_size)])
+                logging.log(level=logging.INFO, msg='iter={},error={},diff={}'
+                            .format(i, error, np.absolute(error - old_error)))
+                if old_error < btol and error < btol:
+                    logging.log(level=logging.INFO, msg='batch error lower than tolerance after 2 iterations')
+                    break
+                old_error = error
+            logging.log(level=logging.INFO, msg='trained cluster {}/{}'.format(k, self.__clusters))
 
     def classify(self, unknowns: np.array)->List[str]:
         projections = np.zeros(unknowns.shape)
