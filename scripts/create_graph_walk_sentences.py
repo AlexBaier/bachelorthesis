@@ -8,7 +8,7 @@ def main():
     logging.basicConfig(format='%(asctime)s : %(levelname)s : %(process)d: %(message)s', level=logging.DEBUG)
     node_id_path = '../data/algorithm_io/class_ids-20161107.txt'
     edge_store_path = '../data/algorithm_io/edges-20161107.sqlite3'
-    output_path = '../data/algorithm_io/graphwalk_sentences-20161107.txt'
+    output_path = '../data/algorithm_io/graph_walk_sentences-20161107.txt'
     node_count = 2500
 
     random.seed()
