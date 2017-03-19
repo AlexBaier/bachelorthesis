@@ -166,7 +166,7 @@ As it allows the extraction of useful information about vertices in its graph co
 Where sentences are directly representable as linear sequences and can therefore be directly
 used in SGNS, this is not the case for graph structures like RDF graphs or protein networks.
 \fullcite{Ristoski2016} proposes the use of graph walks to generate linear sequence samples.
-Given an undirected, weighted graph $G=(V, E)$, graph walk will generate all graph walks $P_v$ of depth $d$
+Given an directed, weighted graph $G=(V, E)$, graph walk will generate all graph walks $P_v$ of depth $d$
 starting in vertex $v$, for all vertices $v \in V$. Breadth-first search is used for generating the graph walks.
 This results in a set of sequences of the format $v_i \rightarrow e_{ij} \rightarrow v_j \rightarrow \dots$, where
 $v_i, v_j \in V$ and $e_{ij} \in E$. The number of generated walks increases exponentially with depth $d$.

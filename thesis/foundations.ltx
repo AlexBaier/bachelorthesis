@@ -155,17 +155,16 @@ in the case of Wikidata, this assumption does not hold true. The following state
 There are classes other than the root class, which also have no superclasses. These classes will be called orphan classes.
 \begin{definition}[Root class]\label{root class}
 Given a taxonomy $T=(C, S)$, the \textnormal{root class} $root_T$ is a specific, predefined class with no superclasses in 
-$T$. For $root_T$, $\abs{succ_T(root_T)} = 0$ applies.
+$T$. For $root_T$, $\abs{succ_T(\mathit{root}_T)} = 0$ applies.
 \end{definition}
 \begin{definition}[Orphan class]\label{orphan class}
-Given a taxonomy $T=(C,S)$ with a root class $root_T$, a class $u \in C$ is called \textnormal{orphan class},
-if $u \neq root_T \land \abs{succ_T(u)} = 0$.
+Given a taxonomy $T=(C,S)$ with a root class $\mathit{root}_T$, a class $u \in C$ is called \textnormal{orphan class},
+if $u \neq \mathit{root}_T \land \abs{\mathit{succ}_T(u)} = 0$.
 \end{definition}
 In Wikidata, the root class is \entity{} \cite{WikidataQ35120}. 
 All other classes, which are not subclasses of \entity{}, are therefore either orphan classes, or subclasses of orphan classes.
-In Section~\ref{section:taxonomy analysis}, it will be shown that the Wikidata taxonomy graph is not fully
-connected. But the component, which contains the root class \entity{}, contains $97\%$ of all classes.
-This component will be referred to as \textbf{root taxonomy} in later sections.
+In Chapter~\ref{section:taxonomy analysis}, it is shown that $97\%$ of all classes are subclasses of the root class \entity{}.
+This set $R = \{ c \in C | c \subclassof{T} \mathit{root}_T \lor c = \mathit{root}_T \}$ will be referred to as \textbf{root taxonomy} in later sections.
 
 % Similarity
 \subsection{Similarity}\label{section:similarity}
