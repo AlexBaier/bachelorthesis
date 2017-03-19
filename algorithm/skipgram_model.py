@@ -25,15 +25,15 @@ def train_and_store_sgns(config: dict, required_words: List[str], sentences: Ite
     model = gensim.models.Word2Vec(
         sentences=sentences,
         sg=1,
-        size=config['size'],
-        window=config['window'],
-        alpha=config['alpha'],
-        min_count=config['min_count'],
-        max_vocab_size=config['max_vocab_size'],
-        sample=config['sample'],
+        size=config['embedding size'],
+        window=config['window size'],
+        alpha=config['initial learning rate'],
+        min_count=config['min count'],
+        max_vocab_size=config['max vocab size'],
+        sample=config['subsampling'],
         hs=0,
-        negative=config['negative'],
-        iter=config['iter'],
+        negative=config['negative sampling'],
+        iter=config['iterations'],
         trim_rule=rule
     )
     model.save(output_path)

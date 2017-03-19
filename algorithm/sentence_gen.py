@@ -123,10 +123,15 @@ class GraphWalkSentences(Wikidata2Sequence):
 
 class SentenceIterator(Iterator[List[str]]):
 
-    def __init__(self, file_path: str):
-        self.__path = file_path  # type: str
+    def __init__(self, file_paths: List[str]):
+        self.__paths = file_paths  # type: List[str]
 
     def __iter__(self):
-        with open(self.__path) as f:
-            for s in map(lambda l: l.strip().split(), f):
-                yield s if s[2][0] in ['Q', 'P'] else s[0:2]
+        for path in self.__paths:
+            with open(path) as f:
+                for s in map(lambda l: l.strip().split(), f):
+                    # triple sentence
+                    if len(s) == 3:
+                        yield s if s[2][0] in ['Q', 'P'] else s[0:2]
+                    else:
+                        yield s
