@@ -39,7 +39,7 @@
   "linear projection": {
   },
   "piecewise linear projection": {
-    "clusters": 8
+    "clusters": 16
   },
   "combinations": {
     "baseline": {

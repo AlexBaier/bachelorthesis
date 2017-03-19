@@ -5,6 +5,7 @@ from typing import List, Tuple
 import numpy as np
 from scipy.optimize import minimize
 from sklearn.cluster import MiniBatchKMeans
+from sklearn.linear_model import SGDRegressor
 from sklearn.metrics.pairwise import cosine_similarity
 from sklearn.neighbors import KNeighborsClassifier, NearestNeighbors
 
@@ -116,50 +117,48 @@ class LinearProjectionClassifier(ProjectionClassifier):
         self.__embedding_size = embedding_size  # type: int
         self.__embeddings = embeddings  # type: np.array
         self.__labels = labels  # type: List[str]
-        self.__phi = np.random.random((embedding_size, embedding_size))
+        self.__nearest_neighbors = NearestNeighbors(
+            metric='minkowski',
+            n_neighbors=1,
+            n_jobs=-1,
+            p=2)
+        self.__sgd_regressors = [SGDRegressor() for _ in range(self.__embedding_size)]
 
-    def train(self, training_data: List[Tuple[np.array, np.array]],
-              parts: int=8, tol: float=1e-3, eps: float= 1e-5, max_iter: int=250000):
-        n = len(training_data)  # number of samples
-        if parts <= n:
-            part_distribution = [int(n / parts) for _ in range(parts)]
-            part_distribution[parts-1] = int(n / parts + n % parts)
-        else:
-            part_distribution = [int(n)]
+    def train(self, training_data: List[Tuple[np.array, np.array]], batch_size: int=500, n_iter: int=5):
+        self.__nearest_neighbors.fit(self.__embeddings)
+
+        n = len(training_data)
 
         x, y = list(map(np.array, zip(*training_data)))
         del training_data
 
-        def f(phi):
-            # minimize flattens input matrix, return it to matrix shape
-            phi = np.reshape(phi, (self.__embedding_size, self.__embedding_size))
-            error = 0.0
-            for c in range(parts):
-                begin = sum(part_distribution[:c])
-                end = sum(part_distribution[:c+1])
-                error += np.square(np.linalg.norm(np.sum(x[begin:end] @ phi - y[begin:end], axis=0)))
-            return 1.0/float(n) * error
+        batches = [batch_size for _ in range(int(n / batch_size) + 1)]
+        batches[-1] = n % batch_size
 
-        result = minimize(fun=f, x0=self.__phi, method='BFGS',
-                          options={'disp': False, 'gtol': tol, 'eps': eps, 'maxiter': max_iter, 'return_all': False,
-                                   'norm': np.inf})
-
-        if not result.success:
-            raise TrainingFailureException(result.message)
-
-        # minimize flattens input matrix, return it to matrix shape
-        self.__phi = np.reshape(result.x, (self.__embedding_size, self.__embedding_size))
+        for i in range(n_iter):
+            p = np.random.permutation(n)
+            for k in range(len(batches)):
+                begin = sum(batches[:k])
+                end = sum(batches[:k+1])
+                for target in range(self.__embedding_size):
+                    self.__sgd_regressors[target].partial_fit(x[p[begin:end]], y[p[begin:end]][:, target])
+                logging.log(level=logging.INFO,
+                            msg='iter={}/{},batch progress: {}/{}'.format(i+1, n_iter, k+1, len(batches)))
 
     def classify(self, unknowns: np.array)->List[str]:
         labels = list()
-        # project all unknowns
-        y = unknowns @ self.__phi
+
+        y = list()
+        for target in range(self.__embedding_size):
+            y.append(self.__sgd_regressors[target].predict(unknowns))
+        y = np.array(y).T
         # calculate similarities between projections and all embeddings
         # get indices of most similar embedding
-        indexes = np.argmax(cosine_similarity(y, self.__embeddings), axis=1)
+        indexes = self.__nearest_neighbors.kneighbors(y, return_distance=False)
 
         for index in indexes:
-            labels.append(self.__labels[index])
+            labels.append(self.__labels[index[0]])
+
         return labels
 
 
@@ -171,12 +170,17 @@ class PiecewiseLinearProjectionClassifier(ProjectionClassifier):
         self.__embeddings = embeddings
         self.__kmeans = MiniBatchKMeans(n_clusters=clusters)  # type: MiniBatchKMeans
         self.__labels = labels  # type: List[str]
-        self.__phi = [np.random.random((embedding_size, embedding_size)) for _ in range(clusters)]
+        self.__nearest_neighbors = NearestNeighbors(
+            metric='minkowski',
+            n_neighbors=1,
+            n_jobs=-1,
+            p=2)
+        self.__sgd_regressors = [[SGDRegressor() for _ in range(self.__embedding_size)] for _ in range(self.__clusters)]
 
-    def train(self, training_data: List[Tuple[np.array, np.array]],
-              tol: float=1e-3, eps: float= 1e-5, max_iter: int=250000):
-        n = len(training_data)  # number of samples
+    def train(self, training_data: List[Tuple[np.array, np.array]], batch_size: int=500, n_iter: int=5):
+        self.__nearest_neighbors.fit(self.__embeddings)
         self.__kmeans.fit(self.__embeddings)
+        logging.log(level=logging.INFO, msg='finished clustering, clusters={}'.format(self.__clusters))
 
         x, y = list(map(np.array, zip(*training_data)))
         del training_data
@@ -191,23 +195,26 @@ class PiecewiseLinearProjectionClassifier(ProjectionClassifier):
         del y
         clustered_x = list(map(np.array, clustered_x))
         clustered_y = list(map(np.array, clustered_y))
+        logging.log(level=logging.INFO, msg='sorted training samples into clusters')
 
-        for k in range(self.__clusters):
+        for c in range(self.__clusters):
+            n = len(clustered_x[c])
 
-            def f(phi):
-                # minimize flattens input matrix, return it to matrix shape
-                phi = np.reshape(phi, (self.__embedding_size, self.__embedding_size))
-                error = np.square(np.linalg.norm(clustered_x[k] @ phi - clustered_y[k]))
-                return 1.0/n * error
+            batches = [batch_size for _ in range(int(n / batch_size) + 1)]
+            batches[-1] = n % batch_size
 
-            result = minimize(fun=f, x0=self.__phi[k], method='BFGS',
-                              options={'disp': False, 'gtol': tol, 'eps': eps, 'maxiter': max_iter, 'return_all': False,
-                                       'norm': np.inf})
-
-            if not result.success:
-                raise TrainingFailureException(result.message)
-
-            self.__phi[k] = np.reshape(result.x, (self.__embedding_size, self.__embedding_size))
+            for i in range(n_iter):
+                p = np.random.permutation(n)
+                for k in range(len(batches)):
+                    begin = sum(batches[:k])
+                    end = sum(batches[:k + 1])
+                    for target in range(self.__embedding_size):
+                        self.__sgd_regressors[c][target].partial_fit(
+                            clustered_x[c][p[begin:end]],
+                            clustered_y[c][p[begin:end]][:, target])
+                    logging.log(level=logging.INFO,
+                                msg='cluster={}, iter={}/{},batch progress={}/{}'
+                                .format(c+1, i+1, n_iter, k+1, len(batches)))
 
     def classify(self, unknowns: np.array)->List[str]:
         projections = np.zeros(unknowns.shape)
@@ -216,12 +223,16 @@ class PiecewiseLinearProjectionClassifier(ProjectionClassifier):
 
         # project all unknowns
         for i, c in enumerate(cluster_labels):
-            projections[i] = unknowns[i] @ self.__phi[c]
+            y = list()
+            for target in range(self.__embedding_size):
+                y.append(self.__sgd_regressors[c][target].predict(unknowns[i].reshape(1, -1)))
+            y = np.array(y).T
+            projections[i] = y
         # find indices of most similar embeddings
-        indexes = np.argmax(cosine_similarity(projections, self.__embeddings), axis=1)
+        indexes = self.__nearest_neighbors.kneighbors(projections, return_distance=False)
 
         for index in indexes:
-            labels.append(self.__labels[index])
+            labels.append(self.__labels[index[0]])
         return labels
 
 
