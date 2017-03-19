@@ -3,8 +3,8 @@ The task of representing semantic information encoded in text and graphs as feat
 Solutions for generating word and graph embeddings by \fullcite{Mikolov2013}, \fullcite{Ristoski2016}, \fullcite{Cao2016} are presented.
 
 \subsubsection{Introduction to neural networks}
-A neural network is a triple $(N, C, W)$, where $N$ are neurons, $C = \{ (i, j) | i, j \in N \}$ is a set of connections between neurons, and $W$ are the weights corresponding
-to the connections, where $W_{ij}$ is the weight for the connection $(i, j) \in C$ \cite{Kriesel2005}. 
+A \textbf{neural network} is a triple $(N, C, W)$, where $N$ are \textbf{neurons}, $C = \{ (i, j) | i, j \in N \}$ is a set of \textbf{connections} between neurons, 
+and $W$ are the weights corresponding to the connections, where $W_{ij}$ is the weight for the connection $(i, j) \in C$ \cite{Kriesel2005}. 
 Each neuron has an activation function $f_\mathit{act}$,
 which commonly is the Fermi function
 \begin{align}
@@ -19,7 +19,7 @@ of the neuron, which is called net input, and applying the activation function o
 \end{align} 
 The input for input neurons (neurons on the first layer) are the inputs of the network.
 
-A feedforward neural network consists of an input layer with $s_i$ input neurons, an output layer with $s_o$ output neurons and $d$ hidden layers with
+A \textbf{feedforward neural network} consists of an input layer with $s_i$ input neurons, an output layer with $s_o$ output neurons and $d$ hidden layers with
 $h$ neurons per layer. A neural network with many hidden layers is called deep neural network.
 The connections in a feedforward network only connect the neurons of a layer $i$ with the next layer $i+1$.
 This means that a neuron can never influence itself. Networks, which allow this, are called recurrent neural networks.
@@ -33,7 +33,7 @@ with already initialized weights.
 \label{fig:nn example}
 \end{figure}
 
-Forward propagation pushes an input through all layers of the network in a step-wise manner (layer per layer).
+\textbf{Forward propagation} pushes an input through all layers of the network in a step-wise manner (layer per layer).
 In the first step, the input vector $\vec{x}$ is pushed to the hidden layer and outputs of the hidden layer are computed, which results in a vector 
 $\vec{h}$ in the hidden layer:
 \begin{align} \label{align:fp step1}
@@ -60,7 +60,7 @@ E = \frac{1}{2}(y - y^*)^2
 \end{align}
 Training objective is to minimize the error function $E$.
 This can be accomplished by adjusting the weights $w_{ij} \in W$.
-Rather than brute-forcing the optimal weights for a network, backpropagation using gradient descent is applied in training.
+Rather than brute-forcing the optimal weights for a network, \textbf{backpropagation} using \textbf{gradient descent} is applied in training.
 The idea of gradient descent is to look at the slope of the error function in respect to the current weights and adjust the weights into the descending direction.
 To do so the partial gradient in respect to each weight $w_ij$ has to be derived from the error function \cite{Nielsen2017}:
 \begin{align}
@@ -76,10 +76,9 @@ hidden embeddings for the inputs. Embeddings are, in the case of Word2Vec \cite{
 More specifically, if the weights are represented as a matrix (e.g. see Equation~\ref{align:fp step1}), each row is an embedding for the corresponding input neuron.
 
 \subsubsection{Word embeddings}\label{section:word2vec}
-\fullcite{Mikolov2013} introduce two neural network language models, Continuous Bag-of-Words
-and Skip-gram, which have proven to be very effective at creating word embeddings.
-The generated word embeddings of both models encode the semantics and linguistic regularities of
-words.
+\fullcite{Mikolov2013} introduce two neural network language models, \textbf{Continuous Bag-of-Words (CBOW)}
+and \textbf{Skip-gram (SG)}, which have proven to be very effective at creating word embeddings.
+The generated word embeddings of both models encode the semantics and linguistic regularities of words.
 Words, which are semantically close, are also close in the word embedding vector space.
 Calculating the offset between words makes it possible to answer more complex semantic questions.
 It is possible to answer more complex questions than similarity about the relationship between words.
@@ -89,11 +88,11 @@ can be answered by calculating the offset between \textit{big} and \textit{bigge
 of \textit{small} to it: $\mathit{vector}(\textnormal{''biggest''})-\mathit{vector}(\textnormal{''big''})
 +\mathit{vector}(\textnormal{''small''})$ \cite{Mikolov2013}.
 
-Further research in this topic has shown that SGNS
+Further research in this topic has shown that \textbf{SG with negative sampling (SGNS)}
 is generally more effective
 in generating high-quality word embeddings than CBOW \cite{Mikolov2013} \cite{Mikolov2013a} \cite{Levy2015}, 
 as it is better in representing rare words.
-Therefore only the skip-gram model with negative sampling will be introduced in this thesis.
+Therefore only SGSN will be introduced in this thesis.
 The following description is based on work by \fullcite{Mikolov2013} \cite{Mikolov2013a},
 \fullcite{Levy2014} \cite{Levy2014a} \cite{Goldberg2014}, \fullcite{Rong2014}, and \fullcite{Levy2015}.
 
@@ -104,7 +103,7 @@ The following description is based on work by \fullcite{Mikolov2013} \cite{Mikol
 \label{fig:skipgram}
 \end{figure}
 
-The skip-gram model with negative sampling uses a word corpus $w \in V_W$ and the corresponding context
+SGNS uses a word corpus $w \in V_W$ and the corresponding context
 corpus $c \in W_C$. $V_W$ and $V_C$ are vocabularies.
 Given a sequence of words $w_1, \dots, w_n$, e.g. a text corpus like a Wikipedia text dump,
 the context to a word $w_i$ are the $2*L$ words around it:
@@ -165,13 +164,13 @@ As it allows the extraction of useful information about vertices in its graph co
 
 Where sentences are directly representable as linear sequences and can therefore be directly
 used in SGNS, this is not the case for graph structures like RDF graphs or protein networks.
-\fullcite{Ristoski2016} proposes the use of graph walks to generate linear sequence samples.
+\fullcite{Ristoski2016} proposes the use of \textbf{graph walks} to generate linear sequence samples.
 Given an directed, weighted graph $G=(V, E)$, graph walk will generate all graph walks $P_v$ of depth $d$
 starting in vertex $v$, for all vertices $v \in V$. Breadth-first search is used for generating the graph walks.
 This results in a set of sequences of the format $v_i \rightarrow e_{ij} \rightarrow v_j \rightarrow \dots$, where
 $v_i, v_j \in V$ and $e_{ij} \in E$. The number of generated walks increases exponentially with depth $d$.
 Therefore, instead of generating all graph walks for each vertice, a random walk approach as developed
-by \fullcite{Perozzi2014} is used, where the number of walks per vertice is limited. A random walk $W_v$
+by \fullcite{Perozzi2014} is used, where the number of walks per vertice is limited. A \textbf{random walk} $W_v$
 rooted at vertice $v$ consists of random variables $W_v^1, W_v^2, \dots, W_v^k$. $W_v^{i+1}$ is a vertice,
 which is chosen randomly from the neighbors of $W_v^{i}$.
 Random walking allows an easier parallelization, since multiple workers can simultaneously
@@ -179,7 +178,7 @@ generate walks in different parts of the graph \cite{Perozzi2014}.
 Evaluation results show that this approach outperforms standard feature generation approaches \cite{Ristoski2016}.
 
 \fullcite{Cao2016} develop a deep neural network for graph representation (DNGR).
-Instead of generating graph walks, a random surfing model similar to Google's PageRank is used
+Instead of generating graph walks, a \textbf{random surfing} model similar to Google's PageRank is used
 to generate a probabilistic co-occurrence matrix, which indicates the probability of reaching a vertice $j$
 after a number of steps $k$ from a starting vertice $v_i$.
 Similar to PageRank a teleportation probaility $\alpha$ is used,

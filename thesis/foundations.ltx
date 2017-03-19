@@ -29,7 +29,7 @@ Additionally, references can be used for statements to include its source. See F
 
 Following, the terms of item and statement are defined in the context of Wikidata.
 \begin{definition}[Item]\label{definition:item}
-An \textnormal{item} is a tuple $(\mathit{id},  \mathit{label}, \mathit{aliases}, \mathit{description}, \mathit{sitelinks})$:
+An \textbf{item} is a tuple $(\mathit{id},  \mathit{label}, \mathit{aliases}, \mathit{description}, \mathit{sitelinks})$:
 	\begin{itemize}
 	\item $\mathit{id} \in \mathbb{N}$ is the numerical item ID;
 	\item $\mathit{label} \in \mathit{String}$ is the English label of the item;
@@ -40,7 +40,7 @@ An \textnormal{item} is a tuple $(\mathit{id},  \mathit{label}, \mathit{aliases}
 	\end{itemize}
 \end{definition}
 \begin{definition}[Statement]
-A \textnormal{statement} is a tuple $(\mathit{itemid}, \mathit{pid}, \mathit{value}, \mathit{refs}, \mathit{qualifiers})$:
+A \textbf{statement} is a tuple $(\mathit{itemid}, \mathit{pid}, \mathit{value}, \mathit{refs}, \mathit{qualifiers})$:
 \begin{itemize}
 \item $\mathit{itemid} \in \mathbb{N}$ is a numerical item ID, to which the statement belongs;
 \item $\mathit{pid} \in \mathbb{N}$ is a numerical property ID;
@@ -56,7 +56,7 @@ A class is any item, which has instances, subclasses or is the subclass of anoth
 In Wikidata, the properties \textit{instance of (P31)} and \textit{subclass of (P279)} exist, which describe these relations between items.
 Therefore to identify whether an item is a class, it needs to be checked, whether the items fulfills any of the three mentioned criteria.
 \begin{definition}[Class]
-Given a set of items $I$ and a set of statements $R$. $c = (\mathit{classid}, \_, \_, \_, \_)  \in I$ is a \textnormal{class}, if at least one of the following assertions are true:
+Given a set of items $I$ and a set of statements $R$. $c = (\mathit{classid}, \_, \_, \_, \_)  \in I$ is a \textbf{class}, if at least one of the following assertions are true:
 \begin{align*}
 &\exists i=(\mathit{instanceid}, \_, \_, \_, \_) \in I \; \exists s=(\mathit{itemid}, \mathit{pid}, \mathit{value}, \_, \_) \in R :  \\
 &\phantom{\exists i=(\mathit{instanceid}, \_, \_, \_, \_) \in I} \mathit{instanceid} = \mathit{itemid} \land \mathit{pid} = 31 \land \mathit{value} = \mathit{classid} \: 
@@ -96,7 +96,7 @@ For the purpose of developing a formal definition of the thesis' problem stateme
 \fullcite{Cimiano2006} defines a heavyweight ontology, which includes a taxonomy, as follows:\\
 ``
 	\begin{definition*}[Ontology]\label{Ontology}
-		An \textnormal{ontology} is a structure
+		An \textbf{ontology} is a structure
 		\begin{equation*} 
 			\mathcal{O} := (C, \taxon, R, \relsig, \relhier, \mathcal{A}, \attsig, \mathcal{T})
 		\end{equation*}
@@ -133,7 +133,7 @@ Refer to Appendix~\ref{section:graphs} for the necessary definitions on graphs.
 In Wikidata, a class can have multiple superclasses, therefore a tree structure is not sufficient to model the taxonomy.
 However a directed acyclic graph, can model the taxonomy. The acyclic constraint is necessary to ensure that no class is transitively a subclass of itself.
 \begin{definition}[Taxonomy]
-A \textnormal{taxonomy} $T=(C, S)$ is a directed  acyclic graph, where $C$ is a set of \textnormal{class identifiers}, 
+A \textbf{taxonomy} $T=(C, S)$ is a directed  acyclic graph, where $C$ is a set of \textnormal{class identifiers}, 
 and $S$ is the set of edges, which describe the \textnormal{subclass-of relation}  between two classes. such that $c_1$ is the subclass of $c_2$, if $(c_1, c_2) \in S$.
 \end{definition}
 \begin{definition}[Subclass-of relation]\label{subclass of}
@@ -154,11 +154,11 @@ in the case of Wikidata, this assumption does not hold true. The following state
 \end{align}
 There are classes other than the root class, which also have no superclasses. These classes will be called orphan classes.
 \begin{definition}[Root class]\label{root class}
-Given a taxonomy $T=(C, S)$, the \textnormal{root class} $root_T$ is a specific, predefined class with no superclasses in 
+Given a taxonomy $T=(C, S)$, the \textbf{root class} $root_T$ is a specific, predefined class with no superclasses in 
 $T$. For $root_T$, $\abs{succ_T(\mathit{root}_T)} = 0$ applies.
 \end{definition}
 \begin{definition}[Orphan class]\label{orphan class}
-Given a taxonomy $T=(C,S)$ with a root class $\mathit{root}_T$, a class $u \in C$ is called \textnormal{orphan class},
+Given a taxonomy $T=(C,S)$ with a root class $\mathit{root}_T$, a class $u \in C$ is called \textbf{orphan class},
 if $u \neq \mathit{root}_T \land \abs{\mathit{succ}_T(u)} = 0$.
 \end{definition}
 In Wikidata, the root class is \entity{} \cite{WikidataQ35120}. 
@@ -175,7 +175,7 @@ More commonalities implies higher similarity. Vice versa, more differences impli
 Two identical objects should have the maximum similarity. In addition, only identical objects should be
 able to achieve maximum similarity. A \textbf{similarity measure} computes the similarity between two objects \cite{Weber2000}:
 \begin{definition}[Similarity measure]
-$\mathit{sim}: \Omega \times \Omega \mapsto [ 0, 1 ]$ is called \textnormal{similarity measure} for a set of objects $\Omega$.
+$\mathit{sim}: \Omega \times \Omega \mapsto [ 0, 1 ]$ is called \textbf{similarity measure} for a set of objects $\Omega$.
 \end{definition}
 A similarity of $1$ implies identical objects and a similarity of $0$ implies that there are no commonalities between the input objects. The information-theoretic definition of similarity states that a similarity measure
 should factor in both commonalities as well as differences to compute the similarity between objects \cite{Lin1998}.
@@ -196,7 +196,7 @@ For example, the $L_2$-Norm is the euclidean distance:
 Similarity between vectors can now be defined by mapping the distances to similarity values using a correspondence
 function \cite{Weber2000}:
 \begin{definition}[Correspondence function]
-$h: \mathbb{R}^+ \mapsto [0,1]$ is correspondence function, if it fulfills the following properties:
+$h: \mathbb{R}^+ \mapsto [0,1]$ is a \textbf{correspondence function}, if it fulfills the following properties:
 \begin{enumerate}
 \item $h(0), h(\infty) = 0$,
 \item $\forall x,y: x > y \implies h(x) \le h(y)$
@@ -319,7 +319,7 @@ In comparison to the example, the weights assigned to each neighbor are not unif
 Weights are assigned, so that similar neighbors are given larger weights (affinity).
 Because in practical applications many neighbors may be very similar to each other, which can skew the classification results, 
 \fullcite{Chen2009} propose to additionally down-weight very similar neighbors (diversity).
-This can be accomplished by using kernel ridge interpolation (KRI) \cite{Chen2009}. The following quadratic programming has to be solved to calculate the weights:
+This can be accomplished by using \textbf{kernel ridge interpolation (KRI)} \cite{Chen2009}. The following quadratic programming has to be solved to calculate the weights:
 \begin{align}\label{def:kri knn}
 \begin{split}
 & \min_{w} \frac{1}{2} w^T S w - s^T w + \frac{\lambda}{2} w^T w \\
