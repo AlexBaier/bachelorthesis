@@ -155,9 +155,10 @@ Otherwise the training objective is the same to the uniform linear projection:
 \end{align}
 where $N_k$ is the amount of word pairs in the $k^\mathit{th}$ cluster $C_k$ \cite{Fu2014}.
 
-Linear projection and piecewise linear projection are implemented as classification components.
-Evaluation by \fullcite{Fu2014} has shown very good results in comparison to other methods.
-The thesis' evaluation will show whether linear projection is superior to the KRI-kNN,
+Both training objectives describe multivariate linear regression tasks.
+\fullcite{Fu2014} uses stochastic gradient descent (SGD) to solve the objective.
+In the thesis' implementation SciPy's SGD regressor \cite{Jones2001} is used to train the linear projection matrices.
+The thesis' evaluation will show whether linear projection is superior to the KRI-kNN in the given task,
 and to what degree it benefits from word embeddings using graph walk sentences instead of triple sentences.
 
 \subsection{Variation: Wikipedia}
