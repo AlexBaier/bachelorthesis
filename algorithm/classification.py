@@ -124,9 +124,8 @@ class LinearProjectionClassifier(ProjectionClassifier):
             p=2)
         self.__sgd_regressors = [SGDRegressor() for _ in range(self.__embedding_size)]
 
-    def train(self, training_data: List[Tuple[np.array, np.array]], batch_size: int=500):
+    def train(self, training_data: List[Tuple[np.array, np.array]], batch_size: int=500, n_iter: int=5):
         self.__nearest_neighbors.fit(self.__embeddings)
-        logging.log(level=logging.INFO, msg='fitted nearest neighbors tree on all embeddings')
 
         n = len(training_data)
 
@@ -136,12 +135,15 @@ class LinearProjectionClassifier(ProjectionClassifier):
         batches = [batch_size for _ in range(int(n / batch_size) + 1)]
         batches[-1] = n % batch_size
 
-        for k in range(len(batches)):
-            begin = sum(batches[:k])
-            end = sum(batches[:k+1])
-            for target in range(self.__embedding_size):
-                self.__sgd_regressors[target].partial_fit(x[begin:end], y[begin:end][:, target])
-            logging.log(level=logging.INFO, msg='batch progress: {}/{}'.format(k, len(batches)))
+        for i in range(n_iter):
+            p = np.random.permutation(n)
+            for k in range(len(batches)):
+                begin = sum(batches[:k])
+                end = sum(batches[:k+1])
+                for target in range(self.__embedding_size):
+                    self.__sgd_regressors[target].partial_fit(x[p[begin:end]], y[p[begin:end]][:, target])
+                logging.log(level=logging.INFO,
+                            msg='iter={}/{},batch progress: {}/{}'.format(i+1, n_iter, k+1, len(batches)))
 
     def classify(self, unknowns: np.array)->List[str]:
         labels = list()
@@ -168,9 +170,15 @@ class PiecewiseLinearProjectionClassifier(ProjectionClassifier):
         self.__embeddings = embeddings
         self.__kmeans = MiniBatchKMeans(n_clusters=clusters)  # type: MiniBatchKMeans
         self.__labels = labels  # type: List[str]
+        self.__nearest_neighbors = NearestNeighbors(
+            metric='minkowski',
+            n_neighbors=1,
+            n_jobs=-1,
+            p=2)
         self.__sgd_regressors = [[SGDRegressor() for _ in range(self.__embedding_size)] for _ in range(self.__clusters)]
 
     def train(self, training_data: List[Tuple[np.array, np.array]], batch_size: int=500):
+        self.__nearest_neighbors.fit(self.__embeddings)
         self.__kmeans.fit(self.__embeddings)
         logging.log(level=logging.INFO, msg='finished clustering, clusters={}'.format(self.__clusters))
 
@@ -202,7 +210,7 @@ class PiecewiseLinearProjectionClassifier(ProjectionClassifier):
                     self.__sgd_regressors[c][target].partial_fit(
                         clustered_x[c][begin:end],
                         clustered_y[c][begin:end][:, target])
-                logging.log(level=logging.INFO, msg='cluster={},batch progress={}/{}'.format(c, k, len(batches)))
+                logging.log(level=logging.INFO, msg='cluster={},batch progress={}/{}'.format(c+1, k+1, len(batches)))
 
     def classify(self, unknowns: np.array)->List[str]:
         projections = np.zeros(unknowns.shape)
@@ -217,10 +225,10 @@ class PiecewiseLinearProjectionClassifier(ProjectionClassifier):
             y = np.array(y).T
             projections[i] = y
         # find indices of most similar embeddings
-        indexes = np.argmax(cosine_similarity(projections, self.__embeddings), axis=1)
+        indexes = self.__nearest_neighbors.kneighbors(projections, return_distance=False)
 
         for index in indexes:
-            labels.append(self.__labels[index])
+            labels.append(self.__labels[index[0]])
         return labels
 
 
