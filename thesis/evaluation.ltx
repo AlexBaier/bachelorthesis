@@ -14,16 +14,49 @@ Precision, recall and F1-score cannot effectively be used to evaluate classifica
 These measures are typically used for flat classification problems with small amounts of classes, which are not related.
 It has to be recognized that a misclassification in the thesis' use case is not a binary problem.
 Assuming a pair of prediction and gold standard, the predicted class could be very similar or very different to the gold standard.
-The evaluation should consider the similarity between prediction and output, rather than only differentiating between correct and incorrect classification.
-The similarity of prediction and gold standard can be evaluated in different dimensions.
-\textbf{TODO: dimensions} 
+The evaluation should consider the similarity between prediction and gold standard, rather than only differentiating between correct and incorrect classification.
+Relevant similarities to include in the evaluation are the semantic similarity and the taxonomic similarity.
+In this evaluation, the semantic similarity will be computed using the cosine similarity between the corresponding word embeddings of the prediction and
+the gold standard.
+The taxonomic similarity is dependent on the distance between two classes in the taxonomy.
 
-Different relations between the prediction and gold standard are possible in a hierarchical classification task \cite{Kosmopoulos2014}.
-The desired case is a correct classification, such that the prediction is equal to the gold standard.
-\textbf{TODO: cases}
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.75\textwidth]{images/evaluation/hierarchical_classification_cases.pdf}
+\caption{Possible taxonomic relations between prediction and gold standard}
+\label{fig:relation between prediction and gold}
+\medskip
+\small
+Legend: red box = gold standard, blue circle = prediction.
+\end{figure}
+
+Different taxonomic relations between the prediction and gold standard are possible in a hierarchical classification task \cite{Kosmopoulos2014}.
+The desired case is a correct classification, such that the prediction is equal to the gold standard. 
+In the case of misclassification, three cases of taxonomic relations are possible. These are represented in Figure~\ref{fig:relation between prediction and gold}.
+Evaluation should give an insight whether the evaluated algorithm tends to over- or underspecialization or if it tends to miss the appropriate branch 
+\textbf{Note: maybe find a better word than branch}.
+Additionally, the distance in the taxonomy between the prediction and gold standard should be included in this analysis,
+since the taxonomic distance can serve as a measure of similarity and therefore is therefore able to more accurately show the performance of the evaluated algorithm. 
+
+\textbf{TODO: handling of multiple possible gold standards}
 
 \subsection{About the dataset}
-Simple sentences generated $72,386,886$ sentences.
+Triple sentences generated $72,386,886$ sentences.
 
 
 \subsection{Results}
+
+\begin{table}[H]
+\center
+\begin{tabular}{ l | l l}
+name & Wikidata2Sequence & Classification \\
+\hline
+baseline & triple sentences & KRI-kNN \\
+distknn & triple sentences & distance-based kNN \\
+linproj & triple sentences & linear projection \\
+pwlinproj & triple sentences & piecewise linear projection \\
+gw & graph walk sentences & KRI-kNN \\
+gw+pwlinproj & graph walk sentences & piecewise linear projection
+\end{tabular}
+\caption{Evaluated hybrid algorithms}
+\end{table}
