@@ -37,14 +37,14 @@ class ProjectionClassifier(Classifier, metaclass=abc.ABCMeta):
 
 class DistanceKNNClassifier(KNNClassifier):
 
-    def __init__(self, neighbors: int):
+    def __init__(self, neighbors: int, n_jobs: int=-1):
         self.__classifier = KNeighborsClassifier(
             algorithm='auto',
             metric='minkowski',
-            n_jobs=-1,
             n_neighbors=neighbors,
             p=2,
             weights='distance',
+            n_jobs=n_jobs
         )  # type: KNeighborsClassifier
 
     def train(self, training_data: Tuple[np.array, np.array]):
@@ -58,16 +58,17 @@ class DistanceKNNClassifier(KNNClassifier):
             return self.__classifier.predict(unknowns).tolist()
 
 
-class KRINKNNClassifier(KNNClassifier):
+class KRIKNNClassifier(KNNClassifier):
 
-    def __init__(self, neighbors: int, regularization_param: float):
+    def __init__(self, neighbors: int, regularization_param: float, n_jobs: int=-1):
         self.__x = None
         self.__y = None
         self.__nearest_neighbors = NearestNeighbors(
             metric='minkowski',
             n_neighbors=neighbors,
-            n_jobs=-1,
-            p=2)
+            p=2,
+            n_jobs=n_jobs
+        )
         self.__neighbors = neighbors
         self.__reg = regularization_param
 
@@ -113,15 +114,16 @@ class KRINKNNClassifier(KNNClassifier):
 
 class LinearProjectionClassifier(ProjectionClassifier):
 
-    def __init__(self, embedding_size: int, embeddings: np.array, labels: List[str]):
+    def __init__(self, embedding_size: int, embeddings: np.array, labels: List[str], n_jobs: int=-1):
         self.__embedding_size = embedding_size  # type: int
         self.__embeddings = embeddings  # type: np.array
         self.__labels = labels  # type: List[str]
         self.__nearest_neighbors = NearestNeighbors(
             metric='minkowski',
             n_neighbors=1,
-            n_jobs=-1,
-            p=2)
+            p=2,
+            n_jobs=n_jobs
+        )
         self.__sgd_regressors = [SGDRegressor() for _ in range(self.__embedding_size)]
 
     def train(self, training_data: List[Tuple[np.array, np.array]], batch_size: int=500, n_iter: int=5):
@@ -164,7 +166,7 @@ class LinearProjectionClassifier(ProjectionClassifier):
 
 class PiecewiseLinearProjectionClassifier(ProjectionClassifier):
 
-    def __init__(self, embedding_size: int, embeddings: np.array, labels: List[str], clusters: int):
+    def __init__(self, embedding_size: int, embeddings: np.array, labels: List[str], clusters: int, n_jobs: int=-1):
         self.__clusters = clusters  # type: int
         self.__embedding_size = embedding_size  # type: int
         self.__embeddings = embeddings
@@ -173,8 +175,9 @@ class PiecewiseLinearProjectionClassifier(ProjectionClassifier):
         self.__nearest_neighbors = NearestNeighbors(
             metric='minkowski',
             n_neighbors=1,
-            n_jobs=-1,
-            p=2)
+            p=2,
+            n_jobs=n_jobs
+        )
         self.__sgd_regressors = [[SGDRegressor() for _ in range(self.__embedding_size)] for _ in range(self.__clusters)]
 
     def train(self, training_data: List[Tuple[np.array, np.array]], batch_size: int=500, n_iter: int=5):

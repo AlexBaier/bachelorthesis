@@ -93,7 +93,7 @@ def execute_classification(algorithm: str, config: dict,
             reg_param = config['regularization param']
         except KeyError as e:
             raise MissingParameterError(str(e), algorithm)
-        classifier = alg.KRINKNNClassifier(neighbors=neighbors, regularization_param=reg_param)
+        classifier = alg.KRIKNNClassifier(neighbors=neighbors, regularization_param=reg_param, n_jobs=1)
     elif algorithm == 'distance-knn':
         try:
             neighbors = config['neighbors']
