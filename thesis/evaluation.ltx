@@ -1,6 +1,3 @@
-\fullcite{Dellschaft2006}\\
-\fullcite{Kosmopoulos2014}
-
 \subsection{Method}
 The hybrid algorithms are evaluated using a gold standard.
 The gold standard is fetched from classes in the \dumpdate{} Wikidata dump \cite{WikidataDump}.
@@ -14,16 +11,65 @@ Precision, recall and F1-score cannot effectively be used to evaluate classifica
 These measures are typically used for flat classification problems with small amounts of classes, which are not related.
 It has to be recognized that a misclassification in the thesis' use case is not a binary problem.
 Assuming a pair of prediction and gold standard, the predicted class could be very similar or very different to the gold standard.
-The evaluation should consider the similarity between prediction and output, rather than only differentiating between correct and incorrect classification.
-The similarity of prediction and gold standard can be evaluated in different dimensions.
-\textbf{TODO: dimensions} 
+The evaluation should consider the similarity between prediction and gold standard, rather than only differentiating between correct and incorrect classification.
+Good evaluation measures for ontologies should additionally evaluate the results in different dimensions \cite{Dellschaft2006}.
+Relevant dimensions, which can be used to evaluate the classification task, include the similarity of word embeddings and the distance in the taxonomy.
+The similarity of word embeddings can be computed using cosine similarity and represents a semantic similarity measure,
+because the embedding vectors encode the semantic information \cite{Mikolov2013} and therefore similar vectors equates to similar classes.
+Distance of prediction and gold standard also describes a type of semantic similarity, since classes describing similar concepts should be grouped close in the taxonomy.
+Additionally, the taxonomic distance allows to evaluate other characteristics of the classification algorithm, which are described in the following paragraph.
 
-Different relations between the prediction and gold standard are possible in a hierarchical classification task \cite{Kosmopoulos2014}.
-The desired case is a correct classification, such that the prediction is equal to the gold standard.
-\textbf{TODO: cases}
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.75\textwidth]{images/evaluation/hierarchical_classification_cases.pdf}
+\caption{Possible taxonomic relations between prediction and gold standard}
+\label{fig:relation between prediction and gold}
+\medskip
+\small
+Legend: red box = gold standard, blue circle = prediction.
+\end{figure}
+
+Different taxonomic relations between the prediction and gold standard are possible in a hierarchical classification task \cite{Kosmopoulos2014}.
+The desired case is a correct classification, such that the prediction is equal to the gold standard. 
+In the case of misclassification, three cases of taxonomic relations are possible. These are represented in Figure~\ref{fig:relation between prediction and gold}.
+Evaluation should give an insight whether the evaluated algorithm tends to over- or underspecialization or if it tends to miss the appropriate branch 
+\textbf{Note: maybe find a better word than branch}.
+Additionally, the distance in the taxonomy between the prediction and gold standard should be included in this analysis,
+since the taxonomic distance can serve as a measure of similarity and therefore is therefore able to more accurately show the performance of the evaluated algorithm. 
+
+A taxonomy is modeled as a directed acyclic graph. 
+Therefore it is possible for each class to have multiple superclasses, subsequently for each input class more than one class could be considered as gold standard.
+It has to be defined, how the predicted class is paired to the multiple gold standard classes.
+Following the decision by \fullcite{Kosmopoulos2014}, the predicted class is paired with the closest gold standard class for each measure.
+This achieves a minimization of the classification error, which is a sensible approach.
+
+\textbf{TODO: Evaluation measures used?}
 
 \subsection{About the dataset}
-Simple sentences generated $72,386,886$ sentences.
+Triple sentences generated $72,386,886$ sentences.
 
 
 \subsection{Results}
+Different hybrid algorithms were executed based on the components proposed in Chapter~\ref{section:algorithm}.
+In Table~\ref{table:algorithms}, the evaluated hybrid algorithms and their components are listed.
+
+\begin{table}[H]
+\center
+\begin{tabular}{ l | l l}
+name & Wikidata2Sequence & Classification \\
+\hline
+baseline & triple sentences & KRI-kNN \\
+distknn & triple sentences & distance-based kNN \\
+linproj & triple sentences & linear projection \\
+pwlinproj & triple sentences & piecewise linear projection \\
+gw & graph walk sentences & KRI-kNN \\
+gw+pwlinproj & graph walk sentences & piecewise linear projection
+\end{tabular}
+\caption{Evaluated hybrid algorithms}
+\label{table:algorithms}
+\end{table}
+
+distknn uses the euclidian distance as weights. It is compared to baseline.
+It is expected that KRI-kNN provides better results than a distance-based kNN,
+since experiments by \fullcite{Chen2009} has shown generally better classification results for KRI-kNN.
+The comparison between these classifiers will check whether this is the case for the applied usecase.
