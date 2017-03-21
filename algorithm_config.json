@@ -27,7 +27,7 @@
     "subsampling": 0.00001,
     "negative sampling": 15,
     "iterations": 5,
-    "embeddings path": ""
+    "embeddings path": "/home/alex/PycharmProjects/thesis/data/algorithm_io/graph_walk_class_embeddings-20161107"
   },
   "distance-knn": {
     "neighbors": 15
@@ -39,7 +39,7 @@
   "linear projection": {
   },
   "piecewise linear projection": {
-    "clusters": 16
+    "clusters": 8
   },
   "combinations": {
     "baseline": {
