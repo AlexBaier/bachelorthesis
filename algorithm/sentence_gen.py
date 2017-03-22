@@ -64,12 +64,6 @@ class GraphWalkSentences(Wikidata2Sequence):
         return __get_sequences()
 
     def __get_walks(self, vertice: str):
-        """
-        Runtime complexity:
-            max_walks*depth + max_walks^depth * max_walks + max_walks
-        :param vertice:
-        :return:
-        """
         start_time = time.time()
 
         random.seed()
