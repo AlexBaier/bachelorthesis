@@ -47,3 +47,14 @@ def load_embeddings_and_labels(embeddings_path: str)->Tuple[np.array, List[str]]
             embeddings.append(embedding)
     embeddings = np.array(embeddings)  # type: np.array
     return embeddings, class_ids
+
+
+def algo2color(algo):
+    colors = {
+        'baseline': '#3f9b0b',  # grass green
+        'distknn': '#89fe05',  # lime green
+        'linproj': '#00ffff',  # cyan
+        'pwlinproj': '#00035b',  # dark blue
+    }
+    default = '#e50000'  # red
+    return colors.get(algo, default)
