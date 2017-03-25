@@ -101,18 +101,25 @@ def execute_classification(algorithm: str, config: dict,
             raise MissingParameterError(str(e), algorithm)
         classifier = alg.DistanceKNNClassifier(neighbors=neighbors)
     elif algorithm == 'linear projection':
+        try:
+            sgd_iter = config['sgd iterations']
+        except KeyError as e:
+            raise MissingParameterError(str(e), algorithm)
         classifier = alg.LinearProjectionClassifier(embedding_size=embeddings.shape[1],
                                                     embeddings=embeddings,
-                                                    labels=class_ids)
+                                                    labels=class_ids,
+                                                    sgd_iter=sgd_iter)
     elif algorithm == 'piecewise linear projection':
         try:
             clusters = config['clusters']
+            sgd_iter = config['sgd iterations']
         except KeyError as e:
             raise MissingParameterError(str(e), algorithm)
         classifier = alg.PiecewiseLinearProjectionClassifier(embedding_size=embeddings.shape[1],
                                                              clusters=clusters,
                                                              embeddings=embeddings,
-                                                             labels=class_ids)
+                                                             labels=class_ids,
+                                                             sgd_iter=sgd_iter)
     logging.log(level=logging.INFO, msg='initialized {} classifier'.format(algorithm))
 
     classifier.train(training_input)

@@ -114,7 +114,7 @@ class KRIKNNClassifier(KNNClassifier):
 
 class LinearProjectionClassifier(ProjectionClassifier):
 
-    def __init__(self, embedding_size: int, embeddings: np.array, labels: List[str], n_jobs: int=-1):
+    def __init__(self, embedding_size: int, embeddings: np.array, labels: List[str], sgd_iter: int=5, n_jobs: int=-1):
         self.__embedding_size = embedding_size  # type: int
         self.__embeddings = embeddings  # type: np.array
         self.__labels = labels  # type: List[str]
@@ -124,9 +124,10 @@ class LinearProjectionClassifier(ProjectionClassifier):
             p=2,
             n_jobs=n_jobs
         )
+        self.__sgd_iter = sgd_iter
         self.__sgd_regressors = [SGDRegressor() for _ in range(self.__embedding_size)]
 
-    def train(self, training_data: List[Tuple[np.array, np.array]], batch_size: int=500, n_iter: int=5):
+    def train(self, training_data: List[Tuple[np.array, np.array]], batch_size: int=500):
         self.__nearest_neighbors.fit(self.__embeddings)
 
         n = len(training_data)
@@ -137,7 +138,7 @@ class LinearProjectionClassifier(ProjectionClassifier):
         batches = [batch_size for _ in range(int(n / batch_size) + 1)]
         batches[-1] = n % batch_size
 
-        for i in range(n_iter):
+        for i in range(self.__sgd_iter):
             p = np.random.permutation(n)
             for k in range(len(batches)):
                 begin = sum(batches[:k])
@@ -145,7 +146,7 @@ class LinearProjectionClassifier(ProjectionClassifier):
                 for target in range(self.__embedding_size):
                     self.__sgd_regressors[target].partial_fit(x[p[begin:end]], y[p[begin:end]][:, target])
                 logging.log(level=logging.INFO,
-                            msg='iter={}/{},batch progress: {}/{}'.format(i+1, n_iter, k+1, len(batches)))
+                            msg='iter={}/{},batch progress: {}/{}'.format(i+1, self.__sgd_iter, k+1, len(batches)))
 
     def classify(self, unknowns: np.array)->List[str]:
         labels = list()
@@ -166,7 +167,8 @@ class LinearProjectionClassifier(ProjectionClassifier):
 
 class PiecewiseLinearProjectionClassifier(ProjectionClassifier):
 
-    def __init__(self, embedding_size: int, embeddings: np.array, labels: List[str], clusters: int, n_jobs: int=-1):
+    def __init__(self, embedding_size: int, embeddings: np.array, labels: List[str], clusters: int, sgd_iter: int=5,
+                 n_jobs: int=-1):
         self.__clusters = clusters  # type: int
         self.__embedding_size = embedding_size  # type: int
         self.__embeddings = embeddings
@@ -178,9 +180,10 @@ class PiecewiseLinearProjectionClassifier(ProjectionClassifier):
             p=2,
             n_jobs=n_jobs
         )
+        self.__sgd_iter = sgd_iter
         self.__sgd_regressors = [[SGDRegressor() for _ in range(self.__embedding_size)] for _ in range(self.__clusters)]
 
-    def train(self, training_data: List[Tuple[np.array, np.array]], batch_size: int=500, n_iter: int=5):
+    def train(self, training_data: List[Tuple[np.array, np.array]], batch_size: int=500):
         self.__nearest_neighbors.fit(self.__embeddings)
         self.__kmeans.fit(self.__embeddings)
         logging.log(level=logging.INFO, msg='finished clustering, clusters={}'.format(self.__clusters))
@@ -206,7 +209,7 @@ class PiecewiseLinearProjectionClassifier(ProjectionClassifier):
             batches = [batch_size for _ in range(int(n / batch_size) + 1)]
             batches[-1] = n % batch_size
 
-            for i in range(n_iter):
+            for i in range(self.__sgd_iter):
                 p = np.random.permutation(n)
                 for k in range(len(batches)):
                     begin = sum(batches[:k])
@@ -217,7 +220,7 @@ class PiecewiseLinearProjectionClassifier(ProjectionClassifier):
                             clustered_y[c][p[begin:end]][:, target])
                     logging.log(level=logging.INFO,
                                 msg='cluster={}, iter={}/{},batch progress={}/{}'
-                                .format(c+1, i+1, n_iter, k+1, len(batches)))
+                                .format(c+1, i+1, self.__sgd_iter, k+1, len(batches)))
 
     def classify(self, unknowns: np.array)->List[str]:
         projections = np.zeros(unknowns.shape)

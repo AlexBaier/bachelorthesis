@@ -37,9 +37,11 @@
     "regularization param": 1
   },
   "linear projection": {
+    "sgd iterations": 10
   },
   "piecewise linear projection": {
-    "clusters": 8
+    "clusters": 16,
+    "sgd iterations": 10
   },
   "combinations": {
     "baseline": {
