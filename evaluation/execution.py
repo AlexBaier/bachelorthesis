@@ -93,12 +93,12 @@ def execute_classification(algorithm: str, config: dict,
             reg_param = config['regularization param']
         except KeyError as e:
             raise MissingParameterError(str(e), algorithm)
-        classifier = alg.KRIKNNClassifier(neighbors=neighbors, regularization_param=reg_param, n_jobs=1)
+        classifier = alg.KRIKNNClassifier(neighbors=neighbors, regularization_param=reg_param)
     elif algorithm == 'distance-knn':
         try:
             neighbors = config['neighbors']
-        except KeyError:
-            raise MissingParameterError('neighbors', algorithm)
+        except KeyError as e:
+            raise MissingParameterError(str(e), algorithm)
         classifier = alg.DistanceKNNClassifier(neighbors=neighbors)
     elif algorithm == 'linear projection':
         classifier = alg.LinearProjectionClassifier(embedding_size=embeddings.shape[1],
@@ -107,8 +107,8 @@ def execute_classification(algorithm: str, config: dict,
     elif algorithm == 'piecewise linear projection':
         try:
             clusters = config['clusters']
-        except KeyError:
-            raise MissingParameterError("clusters", algorithm)
+        except KeyError as e:
+            raise MissingParameterError(str(e), algorithm)
         classifier = alg.PiecewiseLinearProjectionClassifier(embedding_size=embeddings.shape[1],
                                                              clusters=clusters,
                                                              embeddings=embeddings,
@@ -118,9 +118,9 @@ def execute_classification(algorithm: str, config: dict,
     classifier.train(training_input)
     logging.log(level=logging.INFO, msg='trained {} classifier'.format(algorithm))
 
+    results = list()  # type: List[Tuple[str, str]]
     test_input_matrix = np.array(list(map(lambda t: id2embedding(t), test_inputs)))
     labels = classifier.classify(test_input_matrix)
-    results = list()  # type: List[Tuple[str, str]]
     for i in range(len(test_inputs)):
         results.append((test_inputs[i], labels[i]))
     logging.log(level=logging.INFO, msg='executed classification for all test inputs')
