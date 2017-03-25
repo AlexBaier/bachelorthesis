@@ -184,25 +184,23 @@ class PiecewiseLinearProjectionClassifier(ProjectionClassifier):
         self.__sgd_regressors = [[SGDRegressor() for _ in range(self.__embedding_size)] for _ in range(self.__clusters)]
 
     def train(self, training_data: List[Tuple[np.array, np.array]], batch_size: int=500):
-        self.__nearest_neighbors.fit(self.__embeddings)
-        self.__kmeans.fit(self.__embeddings)
-        logging.log(level=logging.INFO, msg='finished clustering, clusters={}'.format(self.__clusters))
-
         x, y = list(map(np.array, zip(*training_data)))
         del training_data
 
-        cluster_labels = self.__kmeans.predict(x)
+        # compute clusters based on subclass-of offset
+        cluster_labels = self.__kmeans.fit_predict(y - x)
+        logging.log(level=logging.INFO, msg='finished fit and predict of clusters, clusters={}'.format(self.__clusters))
         clustered_x = [list() for _ in range(self.__clusters)]
         clustered_y = [list() for _ in range(self.__clusters)]
         for i, c in enumerate(cluster_labels):
             clustered_x[c].append(x[i])
             clustered_y[c].append(y[i])
-        del x
-        del y
+
         clustered_x = list(map(np.array, clustered_x))
         clustered_y = list(map(np.array, clustered_y))
         logging.log(level=logging.INFO, msg='sorted training samples into clusters')
 
+        # use sgd regression on <self.__embedding_size> targets to learn <self.__clusters> projection matrices
         for c in range(self.__clusters):
             n = len(clustered_x[c])
 
@@ -219,28 +217,23 @@ class PiecewiseLinearProjectionClassifier(ProjectionClassifier):
                             clustered_x[c][p[begin:end]],
                             clustered_y[c][p[begin:end]][:, target])
                     logging.log(level=logging.INFO,
-                                msg='cluster={}, iter={}/{},batch progress={}/{}'
+                                msg='sgd regression: cluster={}, iter={}/{},batch progress={}/{}'
                                 .format(c+1, i+1, self.__sgd_iter, k+1, len(batches)))
 
+        # fit nearest neighbors on cluster centers, used in classification
+        self.__nearest_neighbors.fit(self.__kmeans.cluster_centers_)
+
     def classify(self, unknowns: np.array)->List[str]:
-        projections = np.zeros(unknowns.shape)
         labels = list()
-        cluster_labels = self.__kmeans.predict(unknowns)
 
-        # project all unknowns
-        for i, c in enumerate(cluster_labels):
-            y = list()
-            for target in range(self.__embedding_size):
-                y.append(self.__sgd_regressors[c][target].predict(unknowns[i].reshape(1, -1)))
-            y = np.array(y).T
-            projections[i] = y
-        # find indices of most similar embeddings
-        _, indexes = self.__nearest_neighbors.kneighbors(projections, return_distance=True)
+        for idx, unknown in enumerate(unknowns):
+            # compute subset of all embeddings and unknown
+            offsets = self.__embeddings - unknown
+            # for each offset find the nearest cluster center
+            distances, indexes = self.__nearest_neighbors.kneighbors(offsets, return_distance=True)
+            # find the offset closest to a cluster center
+            superclass_idx = indexes[np.argmin(distances)][0]
+            labels.append(self.__labels[superclass_idx])
+            logging.log(level=logging.INFO, msg='classified {}/{} unknowns'.format(idx+1, unknowns.shape[0]))
 
-        for index in indexes:
-            labels.append(self.__labels[index[0]])
         return labels
-
-
-class TrainingFailureException(Exception):
-    pass
