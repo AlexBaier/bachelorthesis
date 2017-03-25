@@ -1,5 +1,3 @@
-# TODO: rename module
-import logging
 import sqlite3
 from typing import Callable, Dict, List, Tuple
 
@@ -15,6 +13,19 @@ def get_true_positive_count(predictions: Dict[str, str], golds: List[MultiLabelS
         if predictions[gold.input_arg] in gold.possible_outputs:
             tp_count += 1
     return tp_count
+
+
+def get_true_positive_ratio(predictions: Dict[str, str], golds: List[MultiLabelSample])->float:
+    tps = get_true_positive_count(predictions, golds)
+    n = len(golds)
+    return float(tps)/n
+
+
+def get_mean_squared_error(predictions: Dict[str, str], golds: List[MultiLabelSample],
+                           id2embedding: Callable[[str], np.array])->float:
+    n = float(len(golds))
+    mse = (1/n * np.sum((1.0 - get_prediction_gold_cosine_similarities(predictions, golds, id2embedding))**2))
+    return mse
 
 
 def get_prediction_gold_cosine_similarities(predictions: Dict[str, str], golds: List[MultiLabelSample],
