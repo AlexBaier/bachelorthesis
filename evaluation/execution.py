@@ -16,7 +16,7 @@ def execute_combined_algorithms(combined_algorithms: List[str], config_path: str
 
     training_samples = load_training_data(training_data_path)  # type: List[MultiLabelSample[str]]
 
-    test_inputs = load_test_inputs(test_data_path) # type: List[str]
+    test_inputs = load_test_inputs(test_data_path)  # type: List[str]
 
     results = dict()  # type: Dict[str, List[Tuple[str, str]]
 

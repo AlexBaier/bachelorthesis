@@ -180,12 +180,6 @@ class PiecewiseLinearProjectionClassifier(ProjectionClassifier):
             p=2,
             n_jobs=n_jobs
         )
-        self.__nearest_neighbors_cluster_center = NearestNeighbors(
-            metric='minkowski',
-            n_neighbors=1,
-            p=2,
-            n_jobs=n_jobs
-        )
         self.__sgd_iter = sgd_iter
         self.__sgd_regressors = [[SGDRegressor() for _ in range(self.__embedding_size)] for _ in range(self.__clusters)]
 
@@ -222,12 +216,13 @@ class PiecewiseLinearProjectionClassifier(ProjectionClassifier):
                         self.__sgd_regressors[c][target].partial_fit(
                             clustered_x[c][p[begin:end]],
                             clustered_y[c][p[begin:end]][:, target])
-                    logging.log(level=logging.INFO,
-                                msg='sgd regression: cluster={}, iter={}/{},batch progress={}/{}'
-                                .format(c+1, i+1, self.__sgd_iter, k+1, len(batches)))
+                logging.log(level=logging.INFO, msg='sgd regression: cluster={}/{}, iter={}/{}'
+                            .format(c+1, self.__clusters, i+1, self.__sgd_iter))
+        logging.log(level=logging.INFO, msg='finished training projections')
 
         # fit nearest neighbors on word embeddings
         self.__nearest_neighbors_embeddings.fit(self.__embeddings)
+        logging.log(level=logging.INFO, msg='finished fitting all-embeddings nearest neighbor')
 
     def classify(self, unknowns: np.array)->List[str]:
         labels = list()
@@ -243,11 +238,12 @@ class PiecewiseLinearProjectionClassifier(ProjectionClassifier):
         # compute projection for each unknown
         projections = np.zeros(unknowns.shape)
         for cluster in range(self.__clusters):
-            idx = np.where(cluster_labels == cluster)
-            for target in range(self.__embedding_size):
-                projections[idx][target] = self.__sgd_regressors[cluster][target].predict(unknowns[idx])
-            logging.log(level=logging.INFO, msg='computed projections for {} unknowns in cluster {}'
-                        .format(idx.size, self.__clusters))
+            idx, = np.where(cluster_labels == cluster)
+            if idx.size > 0:
+                for target in range(self.__embedding_size):
+                    projections[idx][:, target] = self.__sgd_regressors[cluster][target].predict(unknowns[idx])
+            logging.log(level=logging.INFO, msg='computed projections for {} unknown(s) in cluster {}'
+                        .format(idx.size, cluster+1))
         logging.log(level=logging.INFO, msg='computed projections for all unknowns')
 
         # find nearest neighbor to each projection
