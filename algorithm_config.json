@@ -40,7 +40,7 @@
     "sgd iterations": 10
   },
   "piecewise linear projection": {
-    "clusters": 16,
+    "clusters": 20,
     "sgd iterations": 10
   },
   "combinations": {
