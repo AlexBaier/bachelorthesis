@@ -1,5 +1,5 @@
 import logging
-from typing import Dict, List, Set, Tuple
+from typing import Dict, List, Tuple
 
 import numpy as np
 
@@ -9,14 +9,14 @@ from evaluation.data_sample import MultiLabelSample
 from evaluation.utils import load_config, load_embeddings_and_labels, load_test_inputs, load_training_data
 
 
-def execute_combined_algorithms(combined_algorithms: Set[str], config_path: str, training_data_path: str,
+def execute_combined_algorithms(combined_algorithms: List[str], config_path: str, training_data_path: str,
                                 test_data_path: str)->Dict[str, List[Tuple[str, str]]]:
 
     config = load_config(config_path)  # type: dict
 
     training_samples = load_training_data(training_data_path)  # type: List[MultiLabelSample[str]]
 
-    test_inputs = load_test_inputs(test_data_path)  # type: List[str]
+    test_inputs = load_test_inputs(test_data_path) # type: List[str]
 
     results = dict()  # type: Dict[str, List[Tuple[str, str]]
 
