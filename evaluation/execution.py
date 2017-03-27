@@ -115,6 +115,7 @@ def execute_classification(algorithm: str, config: dict,
             sgd_iter = config['sgd iterations']
         except KeyError as e:
             raise MissingParameterError(str(e), algorithm)
+
         classifier = alg.PiecewiseLinearProjectionClassifier(embedding_size=embeddings.shape[1],
                                                              clusters=clusters,
                                                              embeddings=embeddings,

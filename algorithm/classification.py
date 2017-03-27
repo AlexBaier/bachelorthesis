@@ -237,13 +237,9 @@ class PiecewiseLinearProjectionClassifier(ProjectionClassifier):
 
         # compute projection for each unknown
         projections = np.zeros(unknowns.shape)
-        for cluster in range(self.__clusters):
-            idx, = np.where(cluster_labels == cluster)
-            if idx.size > 0:
-                for target in range(self.__embedding_size):
-                    projections[idx][:, target] = self.__sgd_regressors[cluster][target].predict(unknowns[idx])
-            logging.log(level=logging.INFO, msg='computed projections for {} unknown(s) in cluster {}'
-                        .format(idx.size, cluster+1))
+        for idx, cluster in enumerate(cluster_labels):
+            for target in range(self.__embedding_size):
+                projections[idx][target] = self.__sgd_regressors[cluster][target].predict(unknowns[idx].reshape(1, -1))
         logging.log(level=logging.INFO, msg='computed projections for all unknowns')
 
         # find nearest neighbor to each projection
@@ -251,7 +247,8 @@ class PiecewiseLinearProjectionClassifier(ProjectionClassifier):
         logging.log(level=logging.INFO, msg='found corresponding superclass embeddings')
 
         # find corresponding label of each superclass
-        for idx, index in enumerate(indexes):
-            labels.append(self.__labels[index[0]])
+        for index in indexes:
+            label = self.__labels[index[0]]
+            labels.append(label)
 
         return labels
