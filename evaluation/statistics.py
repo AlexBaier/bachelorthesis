@@ -101,8 +101,7 @@ def get_near_hits(succ_nodes: Dict[str, List[str]], predictions: Dict[str, str],
     return underspecialized, overspecialized, same_parent
 
 
-def get_weighted_precision_recall_f1(predictions: Dict[str, str], golds: List[MultiLabelSample])\
-        ->Tuple[float, float, float]:
+def get_f1_score(predictions: Dict[str, str], golds: List[MultiLabelSample])->float:
     """
     Probably based on
     http://text-analytics101.rxnlp.com/2014/10/computing-precision-and-recall-for.html (accessed: 2017-03-29)
@@ -127,7 +126,7 @@ def get_weighted_precision_recall_f1(predictions: Dict[str, str], golds: List[Mu
     # fill confusion matrix
     for gold in golds:
         prediction = predictions[gold.input_arg]
-        if prediction in gold.input_arg:
+        if prediction in gold.possible_outputs:
             confusion[label2idx[prediction]][label2idx[prediction]] += 1
         else:
             confusion[label2idx[prediction]][label2idx[gold.possible_outputs[0]]] += 1
@@ -135,9 +134,8 @@ def get_weighted_precision_recall_f1(predictions: Dict[str, str], golds: List[Mu
     # compute precision and recall for labels, and total weighted precision and recall
     precisions = dict()
     recalls = dict()
+    f1_scores = dict()
 
-    precision = 0.0
-    recall = 0.0
     for label in labels:
         tp = confusion[label2idx[label]][label2idx[label]]  # type: int
         total_gold = np.sum(confusion[:, label2idx[label]])  # type: int
@@ -147,21 +145,27 @@ def get_weighted_precision_recall_f1(predictions: Dict[str, str], golds: List[Mu
         if total_predicted > 0:
             precisions[label] = float(tp) / float(total_predicted)
         else:
-            precisions[label] = 0.0
+            # no predictions in this label at all, should be ignored for computing precision
+            pass
 
         # compute recall
         if total_gold > 0:
             recalls[label] = float(tp) / float(total_gold)
         else:
-            recalls[label] = 0.0
+            # no missed labels, should be ignored for computing recall
+            pass
 
-        precision += 0.5 * (total_predicted + total_gold) * precisions[label]
-        recall += 0.5 * (total_predicted + total_gold) * recalls[label]
+        if precisions.get(label, None) is not None and recalls.get(label) is not None:
+            if precisions[label] + recalls[label] == 0.0:
+                f1_scores[label] = 0.0
+            else:
+                f1_scores[label] = 2.0 * (recalls[label] * precisions[label]) / (recalls[label] + precisions[label])
 
-    precision /= len(golds)
-    recall /= len(golds)
+    f1_score = 0.0
+    for label in labels:
+        gold_count = np.sum(confusion[:, label2idx[label]])
+        if gold_count > 0:
+            f1_score += gold_count * f1_scores.get(label, 0.0)
+    f1_score /= len(golds)
 
-    # compute final weighted F1-score
-    f1_score = 2.0 * (precision * recall) / (precision + recall)
-
-    return precision, recall, f1_score
+    return f1_score
