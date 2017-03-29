@@ -55,13 +55,16 @@ def main():
     for algorithm in algorithms:
         tp_counts[algorithm] = get_true_positive_count(predictions[algorithm], golds)
         tp_ratios[algorithm] = float(tp_counts[algorithm]) / total_count
+        logging.log(level=logging.INFO, msg='computed TPR for {}'.format(algorithm))
         mses[algorithm] = get_mean_squared_error(predictions[algorithm], golds,
                                                  id2embedding[config['combinations'][algorithm]['sgns']])
+        logging.log(level=logging.INFO, msg='computed MSE for {}'.format(algorithm))
         underspec, overspec = get_near_hits(edge_db_path, predictions[algorithm], golds)
         underspec_counts[algorithm] = underspec
         overspec_counts[algorithm] = overspec
         near_hit_ratios[algorithm] = float(tp_counts[algorithm] + underspec_counts[algorithm]
                                            + overspec_counts[algorithms]) / total_count
+        logging.log(level=logging.INFO, msg='computed NHR for {}'.format(algorithm))
         logging.log(level=logging.INFO, msg='evaluated {}'.format(algorithm))
 
     with open(evaluation_output, mode='w') as f:

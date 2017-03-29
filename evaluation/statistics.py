@@ -1,4 +1,6 @@
 import sqlite3
+
+import logging
 from typing import Callable, Dict, List, Tuple
 
 import numpy as np
@@ -82,7 +84,14 @@ def get_near_hits(edge_db_path: str, predictions: Dict[str, str], golds: List[Mu
                     return True
             return False
 
-        for pred, gold in pred_gold_pairs:
+        for idx, pred, gold in enumerate(pred_gold_pairs):
+            if idx + 1 % 500 == 0:
+                logging.log(level=logging.INFO, msg='near hit progress: {}/{} samples'
+                            .format(idx+1, len(pred_gold_pairs)))
+
+            if pred in gold:
+                continue
+
             p_outs = get_outs(pred)
 
             if set(p_outs).intersection(set(gold)):
