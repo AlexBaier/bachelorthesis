@@ -110,48 +110,54 @@ def get_weighted_precision_recall_f1(predictions: Dict[str, str], golds: List[Mu
     :param golds: 
     :return: (precision, recall, F1)
     """
-    labels = set()  # type: Set[str]
+    labels = list()  # type: List[str]
 
-    gold_counts = dict()  # type: Dict[str, int]
-    tp_counts = dict()  # type: Dict[str, int]
-    fp_counts = dict()  # type: Dict[str, int]
+    # get all relevant labels:
+    for gold in golds:
+        labels.append(predictions[gold.input_arg])
+        labels.extend(gold.possible_outputs)
+    # remove duplicates
+    labels = list(set(labels))
+    n = len(labels)
+    # map from label to idx
+    label2idx = dict((labels[idx], idx) for idx in range(n))
 
-    # count gold labels, true positives and false positives (similar to confusion matrix)
+    # initialize confusion matrix
+    confusion = np.zeros((n, n), dtype=np.int32)
+    # fill confusion matrix
     for gold in golds:
         prediction = predictions[gold.input_arg]
-        if prediction in gold.possible_outputs:
-            gold_counts[prediction] = gold_counts.setdefault(prediction, 0) + 1
-            tp_counts[prediction] = tp_counts.setdefault(prediction, 0) + 1
-            labels.add(prediction)
+        if prediction in gold.input_arg:
+            confusion[label2idx[prediction]][label2idx[prediction]] += 1
         else:
-            gold_counts[gold.possible_outputs[0]] = gold_counts.setdefault(gold.possible_outputs[0], 0) + 1
-            fp_counts[prediction] = fp_counts.setdefault(prediction, 0) + 1
-            labels.add(gold.possible_outputs[0])
-            labels.add(prediction)
+            confusion[label2idx[prediction]][label2idx[gold.possible_outputs[0]]] += 1
 
-    # compute precision and recall for all registered labels
+    # compute precision and recall for labels, and total weighted precision and recall
     precisions = dict()
     recalls = dict()
-    for label in labels:
-        # compute recall
-        if gold_counts.get(label, 0) > 0:
-            recalls[label] = float(tp_counts.get(label, 0)) / float(gold_counts[label])
-        else:
-            recalls[label] = 0.0
-        # compute precision
-        if tp_counts.get(label, 0) > 0:
-            precisions[label] = float(tp_counts[label]) / float(tp_counts[label] + fp_counts.get(label, 0))
-        else:
-            precisions[label] = 0.0
 
-    # compute total weighted precision and recall
     precision = 0.0
     recall = 0.0
     for label in labels:
-        weight = float(tp_counts.get(label, 0) + fp_counts.get(label, 0))
-        if weight > 0.0:
-            precision += weight * precisions[label]
-            recall += weight * recalls[label]
+        tp = confusion[label2idx[label]][label2idx[label]]  # type: int
+        total_gold = np.sum(confusion[:, label2idx[label]])  # type: int
+        total_predicted = np.sum(confusion[label2idx[label], :])  # type: int
+
+        # compute precision
+        if total_predicted > 0:
+            precisions[label] = float(tp) / float(total_predicted)
+        else:
+            precisions[label] = 0.0
+
+        # compute recall
+        if total_gold > 0:
+            recalls[label] = float(tp) / float(total_gold)
+        else:
+            recalls[label] = 0.0
+
+        precision += total_predicted * precisions[label]
+        recall += total_predicted * recalls[label]
+
     precision /= len(golds)
     recall /= len(golds)
 
