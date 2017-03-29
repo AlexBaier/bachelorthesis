@@ -35,7 +35,8 @@ In the case of misclassification, three cases of taxonomic relations are possibl
 Evaluation should give an insight whether the evaluated algorithm tends to over- or underspecialization or if it tends to miss the appropriate branch 
 \textbf{Note: maybe find a better word than branch}.
 Additionally, the distance in the taxonomy between the prediction and gold standard should be included in this analysis,
-since the taxonomic distance can serve as a measure of similarity and therefore is therefore able to more accurately show the performance of the evaluated algorithm. 
+since the taxonomic distance can serve as a measure of similarity and therefore is therefore able to more accurately show the performance of the evaluated algorithm.
+\textbf{consider case where distance between gold and prediction is too high}
 
 A taxonomy is modeled as a directed acyclic graph. 
 Therefore it is possible for each class to have multiple superclasses, subsequently for each input class more than one class could be considered as gold standard.
@@ -43,7 +44,35 @@ It has to be defined, how the predicted class is paired to the multiple gold sta
 Following the decision by \fullcite{Kosmopoulos2014}, the predicted class is paired with the closest gold standard class for each measure.
 This achieves a minimization of the classification error, which is a sensible approach.
 
-\textbf{TODO: Evaluation measures used?}
+
+
+Scores:
+\begin{itemize}
+\item \textbf{True positive ratio} $\mathit{TP}$.
+\item \textbf{Mean squared error} $\mathit{MSE}$.
+For an algorithm $\mathit{alg}$, the set $R_\mathit{alg}$ with $\abs{R_\mathit{alg}} = n$ consisting of prediction-gold standard pairs.
+The corresponding gold standard is chosen, as previously stated, to be the closest given option to the prediction.
+Based on this set, the classification error for a given algorithm can be computed using the mean squared error, as follows
+\begin{align}
+&\mathit{MSE} = \frac{1}{n} \sum_{(\vec{p}, \vec{g}) \in R_\mathit{alg}} (1 - \mathit{sim}_\mathit{cos}(\vec{p}, \vec{g}))^2
+\end{align}
+In comparison to the true positive ratio, the classification error $\mathit{MSE}$ also considers the severity of misclassifications.
+The $\mathit{MSE}$ signifies how far a prediction of the given algorithm is from the gold standard.
+Therefore a lower value is preferred since this induces that the classifier predicts on average very close to the gold standard.
+A low $\mathit{MSE}$ does not necessarly also imply a high $\mathit{TP}$. 
+A classifier could for example have a relatively high $\mathit{TP}$, because it predicts well for a specific subset of unknowns,
+which occurs frequently in the test samples, but otherwise predicts very badly. 
+Using the $\mathit{MSE}$, it is possible to identify this case.
+
+\item weighted $F_1$-score
+\end{itemize}
+
+Plots:
+\begin{itemize}
+\item Density function over prediction to gold standard similarities.
+\item Distribution function $P[x \geq X]$ over similarities.
+\item Taxonomic distances for misclassification for 3 cases described in Figure~\ref{fig:relation between prediction and gold}
+\end{itemize}
 
 \subsection{About the dataset}
 Triple sentences generated $72,386,886$ sentences.
