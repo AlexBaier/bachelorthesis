@@ -1,7 +1,7 @@
 import json
 import logging
 
-from evaluation.statistics import get_mean_squared_error, get_true_positive_ratio
+from evaluation.statistics import get_mean_squared_error, get_near_hits, get_true_positive_count
 from evaluation.utils import load_embeddings_and_labels, load_test_data
 
 
@@ -11,6 +11,7 @@ def main():
     config_path = '../algorithm_config.json'
     predictions_path = '../evaluation/results_{}-20161107.csv'
     test_data_path = '../evaluation/test_data-20161107.csv'
+    edge_db_path = '../data/algorithm_io/edges-20161107.sqlite3'
 
     evaluation_output = '../evaluation/hybrid_evaluation.csv'
 
@@ -44,14 +45,39 @@ def main():
         id2embedding[model] = lambda item_id: embeddings[id2idx[item_id]]
         logging.log(level=logging.INFO, msg='loaded embeddings of {}'.format(model))
 
+    total_count = len(golds)
+    tp_counts = dict()
+    tp_ratios = dict()
+    mses = dict()
+    underspec_counts = dict()
+    overspec_counts = dict()
+    near_hit_ratios = dict()
+    for algorithm in algorithms:
+        tp_counts[algorithm] = get_true_positive_count(predictions[algorithm], golds)
+        tp_ratios[algorithm] = float(tp_counts[algorithm]) / total_count
+        mses[algorithm] = get_mean_squared_error(predictions[algorithm], golds,
+                                                 id2embedding[config['combinations'][algorithm]['sgns']])
+        underspec, overspec = get_near_hits(edge_db_path, predictions[algorithm], golds)
+        underspec_counts[algorithm] = underspec
+        overspec_counts[algorithm] = overspec
+        near_hit_ratios[algorithm] = float(tp_counts[algorithm] + underspec_counts[algorithm]
+                                           + overspec_counts[algorithms]) / total_count
+        logging.log(level=logging.INFO, msg='evaluated {}'.format(algorithm))
+
     with open(evaluation_output, mode='w') as f:
-        f.write(','.join(['algorithm', 'tp_ratio', 'mse']) + '\n')
+        f.write(','.join(['algorithm', 'TPs', 'TPR', 'MSE', 'underspecialized', 'overspecialized', 'NHR', 'F1']) + '\n')
         for algorithm in algorithms:
-            tp_ratio = get_true_positive_ratio(predictions[algorithm], golds)
-            mse = get_mean_squared_error(predictions[algorithm], golds,
-                                         id2embedding[config['combinations'][algorithm]['sgns']])
-            f.write(','.join([algorithm, str(tp_ratio), str(mse)]) + '\n')
-            logging.log(level=logging.INFO, msg='evaluated {}'.format(algorithm))
+            row = [
+                algorithm,
+                str(tp_counts[algorithm]),
+                str(tp_ratios[algorithm]),
+                str(mses[algorithm]),
+                str(underspec_counts[algorithm]),
+                str(overspec_counts[algorithm]),
+                str(near_hit_ratios[algorithm]),
+                'not implemented'
+            ]
+            f.write(','.join(row) + '\n')
 
 
 if __name__ == '__main__':

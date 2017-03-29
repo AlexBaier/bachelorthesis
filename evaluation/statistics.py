@@ -1,7 +1,10 @@
 import sqlite3
-from typing import Callable, Dict, List, Tuple
+
+import logging
+from typing import Callable, Dict, List, Tuple, Set
 
 import numpy as np
+import pathos.multiprocessing as mp
 from sklearn.metrics.pairwise import cosine_similarity
 
 from evaluation.data_sample import MultiLabelSample
@@ -48,18 +51,49 @@ def get_prediction_gold_cosine_similarities(predictions: Dict[str, str], golds: 
     return similarities
 
 
-def get_prediction_gold_taxonomic_relations(self, edge_db_conn: sqlite3.Connection, predictions: Dict[str, str],
-                            golds: List[MultiLabelSample], max_dist_to_common_parent: int=3)\
-        ->Tuple[List[int], List[int], List[int], List[str]]:
+def get_near_hits(edge_db_path: str, predictions: Dict[str, str], golds: List[MultiLabelSample])\
+        ->Tuple[int, int]:
     """
-    Get taxonomic relations of misclassifications
-    :return: distance between prediction and gold in case of (underspecialized, overspecialized, wrong branch)
+    Computes taxonomic neighborhood relations between prediction and gold standard.
+    The following cases are counted:
+    underspecialized: prediction is superclass of gold standard.
+    overspecialized: prediction is subclass of gold standard.
+    :param edge_db_path: 
+    :param predictions: 
+    :param golds: 
+    :return: (underspecialized, overspecialized)
     """
-    # TODO: implement
-    underspecialized = list()
-    overspecialized = list()
-    wrong_branch = list()
-    distance_exceeded = list()
+    underspecialized = 0  # type: int
+    overspecialized = 0  # type: int
 
-    return underspecialized, overspecialized, wrong_branch, distance_exceeded
+    pred_gold_pairs = [(predictions[gold.input_arg], gold.possible_outputs)for gold in golds]
 
+    with sqlite3.connect(edge_db_path) as conn:
+        cursor = conn.cursor()
+        succ_nodes = dict()  # type: Dict[str, List[str]]
+
+        def get_outs(node):
+            if not succ_nodes.get(node, None):
+                cursor.execute('SELECT * FROM edges WHERE s=?', [int(node[1:])])
+                succ_nodes[node] = list(map(lambda e: 'Q{}'.format(e[2]), cursor.fetchall()))
+            return succ_nodes[node]
+
+        def is_underspecialized(prediction, classes):
+            for c in classes:
+                c_outs = get_outs(c)
+                if prediction in c_outs:
+                    return True
+            return False
+
+        for pred, gold in pred_gold_pairs:
+            p_outs = get_outs(pred)
+
+            if set(p_outs).intersection(set(gold)):
+                overspecialized += 1
+                continue
+
+            if is_underspecialized(pred, gold):
+                underspecialized += 1
+                continue
+
+    return underspecialized, overspecialized
