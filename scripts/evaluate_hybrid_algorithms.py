@@ -4,7 +4,8 @@ from typing import Dict, List
 
 from data_analysis.dumpio import JSONDumpReader
 from data_analysis.utils import get_subclass_of_ids
-from evaluation.statistics import get_mean_squared_error, get_near_hits, get_true_positive_count
+from evaluation.statistics import get_mean_squared_error, get_near_hits, get_true_positive_count, \
+    get_weighted_precision_recall_f1
 from evaluation.utils import load_embeddings_and_labels, load_test_data
 
 
@@ -69,17 +70,18 @@ def main():
 
     total_count = len(golds)
     tp_counts = dict()
-    tp_ratios = dict()
     mses = dict()
     underspec_counts = dict()
     overspec_counts = dict()
     same_par_counts = dict()
     near_hit_ratios = dict()
+    precisions = dict()
+    recalls = dict()
+    f1_scores = dict()
 
     for algorithm in algorithms:
         tp_counts[algorithm] = get_true_positive_count(predictions[algorithm], golds)
-        tp_ratios[algorithm] = float(tp_counts[algorithm]) / total_count
-        logging.log(level=logging.INFO, msg='computed TPR for {}'.format(algorithm))
+        logging.log(level=logging.INFO, msg='computed TP count for {}'.format(algorithm))
         mses[algorithm] = get_mean_squared_error(predictions[algorithm], golds,
                                                  id2embedding[config['combinations'][algorithm]['sgns']])
         logging.log(level=logging.INFO, msg='computed MSE for {}'.format(algorithm))
@@ -90,31 +92,38 @@ def main():
         near_hit_ratios[algorithm] = float(tp_counts[algorithm] + underspec_counts[algorithm]
                                            + overspec_counts[algorithm] + same_par_counts[algorithm]) / total_count
         logging.log(level=logging.INFO, msg='computed NHR for {}'.format(algorithm))
+        precision, recall, f1 = get_weighted_precision_recall_f1(predictions[algorithm], golds)
+        precisions[algorithm] = precision
+        recalls[algorithm] = recall
+        f1_scores[algorithm] = f1
+        logging.log(level=logging.INFO, msg='computed precision, recall and F1 for {}'.format(algorithm))
         logging.log(level=logging.INFO, msg='evaluated {}'.format(algorithm))
 
     with open(evaluation_output, mode='w') as f:
         f.write(','.join(['algorithm',
                           'total',
                           'TPs',
-                          'TPR',
                           'MSE',
                           'underspecialized',
                           'overspecialized',
                           'same_parent',
                           'NHR',
+                          'precision',
+                          'recall',
                           'F1']) + '\n')
         for algorithm in algorithms:
             row = [
                 algorithm,
                 str(total_count),
                 str(tp_counts[algorithm]),
-                str(tp_ratios[algorithm]),
                 str(mses[algorithm]),
                 str(underspec_counts[algorithm]),
                 str(overspec_counts[algorithm]),
                 str(same_par_counts[algorithm]),
                 str(near_hit_ratios[algorithm]),
-                'not implemented'
+                str(precisions[algorithm]),
+                str(recalls[algorithm]),
+                str(f1_scores[algorithm])
             ]
             f.write(','.join(row) + '\n')
 
