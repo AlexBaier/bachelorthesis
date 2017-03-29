@@ -155,8 +155,8 @@ def get_weighted_precision_recall_f1(predictions: Dict[str, str], golds: List[Mu
         else:
             recalls[label] = 0.0
 
-        precision += total_predicted * precisions[label]
-        recall += total_predicted * recalls[label]
+        precision += 0.5 * (total_predicted + total_gold) * precisions[label]
+        recall += 0.5 * (total_predicted + total_gold) * recalls[label]
 
     precision /= len(golds)
     recall /= len(golds)
