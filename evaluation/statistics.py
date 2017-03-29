@@ -1,5 +1,5 @@
 import logging
-from typing import Callable, Dict, List, Tuple, Set
+from typing import Callable, Dict, List, Tuple
 
 import numpy as np
 from sklearn.metrics.pairwise import cosine_similarity
