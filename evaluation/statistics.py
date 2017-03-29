@@ -1,5 +1,3 @@
-import sqlite3
-
 import logging
 from typing import Callable, Dict, List, Tuple
 
@@ -50,56 +48,60 @@ def get_prediction_gold_cosine_similarities(predictions: Dict[str, str], golds: 
     return similarities
 
 
-def get_near_hits(edge_db_path: str, predictions: Dict[str, str], golds: List[MultiLabelSample])\
-        ->Tuple[int, int]:
+def get_near_hits(succ_nodes: Dict[str, List[str]], predictions: Dict[str, str], golds: List[MultiLabelSample])\
+        ->Tuple[int, int, int]:
     """
     Computes taxonomic neighborhood relations between prediction and gold standard.
     The following cases are counted:
     underspecialized: prediction is superclass of gold standard.
     overspecialized: prediction is subclass of gold standard.
-    :param edge_db_path: 
+    :param succ_nodes: 
     :param predictions: 
     :param golds: 
-    :return: (underspecialized, overspecialized)
+    :return: (underspecialized, overspecialized, same_parent)
     """
     underspecialized = 0  # type: int
     overspecialized = 0  # type: int
+    same_parent = 0  # type: int
 
-    pred_gold_pairs = [(predictions[gold.input_arg], gold.possible_outputs)for gold in golds]
+    prediction_gold_pairs = [(predictions[gold.input_arg], gold.possible_outputs) for gold in golds]
 
-    with sqlite3.connect(edge_db_path) as conn:
-        cursor = conn.cursor()
-        succ_nodes = dict()  # type: Dict[str, List[str]]
+    n = len(prediction_gold_pairs)
 
-        def get_outs(node):
-            if not succ_nodes.get(node, None):
-                cursor.execute('SELECT * FROM edges WHERE s=?', [int(node[1:])])
-                succ_nodes[node] = list(map(lambda e: 'Q{}'.format(e[2]), cursor.fetchall()))
-            return succ_nodes[node]
+    def is_underspecialized(prediction, classes):
+        for c in classes:
+            c_outs = succ_nodes.get(c, list())
+            if prediction in c_outs:
+                return True
+        return False
 
-        def is_underspecialized(prediction, classes):
-            for c in classes:
-                c_outs = get_outs(c)
-                if prediction in c_outs:
-                    return True
-            return False
+    def have_same_parent(prediction_outs, classes):
+        for c in classes:
+            c_outs = succ_nodes.get(c, list())
+            if set(prediction_outs).intersection(set(c_outs)):
+                return True
+        return False
 
-        for idx, pred, gold in enumerate(pred_gold_pairs):
-            if idx + 1 % 500 == 0:
-                logging.log(level=logging.INFO, msg='near hit progress: {}/{} samples'
-                            .format(idx+1, len(pred_gold_pairs)))
+    for idx, (pred, gold) in enumerate(prediction_gold_pairs):
+        if idx + 1 % 500 == 0:
+            logging.log(level=logging.INFO, msg='near hit progress: {}%'
+                        .format(100.0*float(idx+1)/n))
 
-            if pred in gold:
-                continue
+        if pred in gold:
+            continue
 
-            p_outs = get_outs(pred)
+        p_outs = succ_nodes.get(pred, list())
 
-            if set(p_outs).intersection(set(gold)):
-                overspecialized += 1
-                continue
+        if set(p_outs).intersection(set(gold)):
+            overspecialized += 1
+            continue
 
-            if is_underspecialized(pred, gold):
-                underspecialized += 1
-                continue
+        if is_underspecialized(pred, gold):
+            underspecialized += 1
+            continue
 
-    return underspecialized, overspecialized
+        if have_same_parent(p_outs, gold):
+            same_parent += 1
+            continue
+
+    return underspecialized, overspecialized, same_parent
