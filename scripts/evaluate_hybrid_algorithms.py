@@ -16,7 +16,7 @@ def main():
     test_data_path = '../evaluation/test_data-20161107.csv'
     classes_path = '../data/classes-20161107'
 
-    evaluation_output = '../evaluation/hybrid_evaluation.csv'
+    evaluation_output = '../evaluation/hybrid_evaluation-20161107.csv'
 
     algorithms = [
         'baseline',
