@@ -9,6 +9,7 @@ The results are printed to stdout.
 Note:
     It turns out there is no difference in memory usage, which should be expected, since both sets of embeddings
     should have the same shape: (number_of_classes, embedding_size).
+    The size for (1299501, 300) is approx. 1.5 GB.
 Output:
     triple sentence sgns:
         bytes:1559401200
