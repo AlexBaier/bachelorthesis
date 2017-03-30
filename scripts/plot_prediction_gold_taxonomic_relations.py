@@ -35,11 +35,10 @@ def main():
             logging.log(level=logging.INFO, msg='loaded {}'.format(algorithm))
 
     labels = ['underspecialized', 'overspecialized', 'same parent']
-    exploded = [1, 1, 1, 0]
     colors = [
-        '#0485d1',  # cerulean
-        '#c04e01',  # burnt orange
-        '#01ff07',  # bright green
+        '#06470c',  # forest green
+        '#8f1402',  # brick red
+        '#75bbfd',  # sky blue
     ]
     for algorithm in algorithms:
         plt.figure(1)
