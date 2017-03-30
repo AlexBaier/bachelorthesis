@@ -101,13 +101,12 @@ def get_near_hits(succ_nodes: Dict[str, List[str]], predictions: Dict[str, str],
     return underspecialized, overspecialized, same_parent
 
 
-def get_f1_score(predictions: Dict[str, str], golds: List[MultiLabelSample])->float:
-    """
-    Probably based on
-    http://text-analytics101.rxnlp.com/2014/10/computing-precision-and-recall-for.html (accessed: 2017-03-29)
+def get_confusion_matrix(predictions: Dict[str, str], golds: List[MultiLabelSample])\
+        ->Tuple[np.array, Dict[str, int]]:
+    """ 
     :param predictions: 
     :param golds: 
-    :return: (precision, recall, F1)
+    :return: confusion matrix, mapping from label to matrix index
     """
     labels = list()  # type: List[str]
 
@@ -130,6 +129,21 @@ def get_f1_score(predictions: Dict[str, str], golds: List[MultiLabelSample])->fl
             confusion[label2idx[prediction]][label2idx[prediction]] += 1
         else:
             confusion[label2idx[prediction]][label2idx[gold.possible_outputs[0]]] += 1
+
+    return confusion, label2idx
+
+
+def get_f1_score(predictions: Dict[str, str], golds: List[MultiLabelSample])->float:
+    """
+    Probably based on
+    http://text-analytics101.rxnlp.com/2014/10/computing-precision-and-recall-for.html (accessed: 2017-03-29)
+    :param predictions: 
+    :param golds: 
+    :return: (precision, recall, F1)
+    """
+    confusion, label2idx = get_confusion_matrix(predictions, golds)
+
+    labels = list(label2idx.keys())  # type: List[str]
 
     # compute precision and recall for labels, and total weighted precision and recall
     precisions = dict()
