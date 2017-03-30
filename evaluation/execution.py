@@ -129,6 +129,7 @@ def execute_classification(algorithm: str, config: dict,
     results = list()  # type: List[Tuple[str, str]]
     test_input_matrix = np.array(list(map(lambda t: id2embedding(t), test_inputs)))
     labels = classifier.classify(test_input_matrix)
+    del classifier
     for i in range(len(test_inputs)):
         results.append((test_inputs[i], labels[i]))
     logging.log(level=logging.INFO, msg='executed classification for all test inputs')

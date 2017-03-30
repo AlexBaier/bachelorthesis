@@ -242,9 +242,13 @@ class PiecewiseLinearProjectionClassifier(ProjectionClassifier):
                 projections[idx][target] = self.__sgd_regressors[cluster][target].predict(unknowns[idx].reshape(1, -1))
         logging.log(level=logging.INFO, msg='computed projections for all unknowns')
 
+        del cluster_labels
+
         # find nearest neighbor to each projection
         _, indexes = self.__nearest_neighbors_embeddings.kneighbors(projections, return_distance=True)
         logging.log(level=logging.INFO, msg='found corresponding superclass embeddings')
+
+        del projections
 
         # find corresponding label of each superclass
         for index in indexes:
