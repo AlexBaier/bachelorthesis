@@ -1,5 +1,5 @@
 {
-  "simple sentences": {
+  "triple sentences": {
     "sentences path": ""
   },
   "graph walk sentences": {
@@ -7,7 +7,7 @@
     "max walks": 100,
     "sentences path": ""
   },
-  "simple sentence sgns": {
+  "triple sentence sgns": {
     "embedding size": 300,
     "window size": 2,
     "initial learning rate": 0.25,
@@ -45,23 +45,23 @@
   },
   "combinations": {
     "baseline": {
-      "sequences": "simple sentences",
-      "sgns": "simple sentence sgns",
+      "sequences": "triple sentences",
+      "sgns": "triple sentence sgns",
       "classification": "kri-knn"
     },
     "distknn": {
-      "sequences": "simple sentences",
-      "sgns": "simple sentence sgns",
+      "sequences": "triple sentences",
+      "sgns": "triple sentence sgns",
       "classification": "distance-knn"
     },
     "linproj": {
-      "sequences": "simple sentences",
-      "sgns": "simple sentence sgns",
+      "sequences": "triple sentences",
+      "sgns": "triple sentence sgns",
       "classification": "linear projection"
     },
     "pwlinproj": {
-      "sequences": "simple sentences",
-      "sgns": "simple sentence sgns",
+      "sequences": "triple sentences",
+      "sgns": "triple sentence sgns",
       "classification": "piecewise linear projection"
     },
     "gw": {
