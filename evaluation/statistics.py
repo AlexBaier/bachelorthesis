@@ -16,10 +16,10 @@ def get_true_positive_count(predictions: Dict[str, str], golds: List[MultiLabelS
 
 
 def get_mean_squared_error(predictions: Dict[str, str], golds: List[MultiLabelSample],
-                           id2embedding: Callable[[str], np.array])->float:
+                           id2embedding: Callable[[str], np.array], round_to: int=3)->float:
     n = float(len(golds))
     mse = (1/n * np.sum((1.0 - get_prediction_gold_cosine_similarities(predictions, golds, id2embedding))**2))
-    return mse
+    return np.round(mse, decimals=round_to)
 
 
 def get_prediction_gold_cosine_similarities(predictions: Dict[str, str], golds: List[MultiLabelSample],
@@ -133,53 +133,18 @@ def get_confusion_matrix(predictions: Dict[str, str], golds: List[MultiLabelSamp
     return confusion, label2idx
 
 
-def get_f1_score(predictions: Dict[str, str], golds: List[MultiLabelSample])->float:
+def get_f1_score(predictions: Dict[str, str], golds: List[MultiLabelSample], round_to: int=3)->float:
     """
-    Probably based on
-    http://text-analytics101.rxnlp.com/2014/10/computing-precision-and-recall-for.html (accessed: 2017-03-29)
+    Precision and recall are identical, since TP + FP = #golds for the observed task.
     :param predictions: 
     :param golds: 
-    :return: (precision, recall, F1)
+    :param round_to:
+    :return: F1-score
     """
-    confusion, label2idx = get_confusion_matrix(predictions, golds)
+    tps = get_true_positive_count(predictions, golds)
 
-    labels = list(label2idx.keys())  # type: List[str]
+    precision = recall = float(tps)/len(golds)
 
-    # compute precision and recall for labels, and total weighted precision and recall
-    precisions = dict()
-    recalls = dict()
-    f1_scores = dict()
+    f1_score = 2.0 * (recall * precision) / (recall + precision)
 
-    for label in labels:
-        tp = confusion[label2idx[label]][label2idx[label]]  # type: int
-        total_gold = np.sum(confusion[:, label2idx[label]])  # type: int
-        total_predicted = np.sum(confusion[label2idx[label], :])  # type: int
-
-        # compute precision
-        if total_predicted > 0:
-            precisions[label] = float(tp) / float(total_predicted)
-        else:
-            # no predictions in this label at all, should be ignored for computing precision
-            pass
-
-        # compute recall
-        if total_gold > 0:
-            recalls[label] = float(tp) / float(total_gold)
-        else:
-            # no missed labels, should be ignored for computing recall
-            pass
-
-        if precisions.get(label, None) is not None and recalls.get(label) is not None:
-            if precisions[label] + recalls[label] == 0.0:
-                f1_scores[label] = 0.0
-            else:
-                f1_scores[label] = 2.0 * (recalls[label] * precisions[label]) / (recalls[label] + precisions[label])
-
-    f1_score = 0.0
-    for label in labels:
-        gold_count = np.sum(confusion[:, label2idx[label]])
-        if gold_count > 0:
-            f1_score += gold_count * f1_scores.get(label, 0.0)
-    f1_score /= len(golds)
-
-    return f1_score
+    return np.round(f1_score, decimals=round_to)

@@ -69,7 +69,6 @@ def main():
 
     total_count = len(golds)
     tp_counts = dict()
-    accuracies = dict()
     mses = dict()
     underspec_counts = dict()
     overspec_counts = dict()
@@ -79,20 +78,18 @@ def main():
 
     for algorithm in algorithms:
         tp_counts[algorithm] = get_true_positive_count(predictions[algorithm], golds)
-        accuracies[algorithm] = float(tp_counts[algorithm]) / len(golds)
         logging.log(level=logging.INFO, msg='computed TP count and accuracy for {}'.format(algorithm))
         mses[algorithm] = get_mean_squared_error(predictions[algorithm], golds,
-                                                 id2embedding[config['combinations'][algorithm]['sgns']])
+                                                 id2embedding[config['combinations'][algorithm]['sgns']], round_to=5)
         logging.log(level=logging.INFO, msg='computed MSE for {}'.format(algorithm))
         underspec, overspec, same_par = get_near_hits(succ_nodes, predictions[algorithm], golds)
         underspec_counts[algorithm] = underspec
         overspec_counts[algorithm] = overspec
         same_par_counts[algorithm] = same_par
-        near_hit_ratios[algorithm] = float(tp_counts[algorithm] + underspec_counts[algorithm]
+        near_hit_ratios[algorithm] = float(underspec_counts[algorithm]
                                            + overspec_counts[algorithm] + same_par_counts[algorithm]) / total_count
         logging.log(level=logging.INFO, msg='computed NHR for {}'.format(algorithm))
-        f1 = get_f1_score(predictions[algorithm], golds)
-        f1_scores[algorithm] = f1
+        f1_scores[algorithm] = get_f1_score(predictions[algorithm], golds, round_to=5)
         logging.log(level=logging.INFO, msg='computed precision, recall and F1 for {}'.format(algorithm))
         logging.log(level=logging.INFO, msg='evaluated {}'.format(algorithm))
 
@@ -100,7 +97,6 @@ def main():
         f.write(','.join(['algorithm',
                           'total',
                           'TPs',
-                          'accuracy',
                           'MSE',
                           'underspecialized',
                           'overspecialized',
@@ -112,7 +108,6 @@ def main():
                 algorithm,
                 str(total_count),
                 str(tp_counts[algorithm]),
-                str(accuracies[algorithm]),
                 str(mses[algorithm]),
                 str(underspec_counts[algorithm]),
                 str(overspec_counts[algorithm]),
