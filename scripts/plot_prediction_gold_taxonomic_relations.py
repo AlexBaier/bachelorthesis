@@ -30,8 +30,8 @@ def main():
             overspecialized[algorithm] = int(row[label2idx['overspecialized']])
             underspecialized[algorithm] = int(row[label2idx['underspecialized']])
             common_parent[algorithm] = int(row[label2idx['same_parent']])
-            distance_exceeded[algorithm] = fps[algorithm] - overspecialized[algorithm] - underspecialized[algorithm] \
-                                           - common_parent[algorithm]
+            distance_exceeded[algorithm] = (fps[algorithm] - overspecialized[algorithm] - underspecialized[algorithm]
+                                            - common_parent[algorithm])
             logging.log(level=logging.INFO, msg='loaded {}'.format(algorithm))
 
     labels = ['underspecialized', 'overspecialized', 'same parent']
