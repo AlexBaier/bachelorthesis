@@ -16,10 +16,10 @@ def main():
     test_data_path = '../evaluation/test_data-20161107.csv'
 
     sim_hist_plot_path = '../evaluation/plots/sim_hist_{}-20161107.png'
-    leq_sim_distr_plot_path = '../evaluation/plots/le_sim_distr_{}-20161107.png'
+    leq_sim_distr_plot_path = '../evaluation/plots/cumul_sim_distr_{}-20161107.png'
 
     comb_sim_hist_plot_path = '../evaluation/plots/comb_sim_hist_{}-20161107.png'
-    comb_leq_sim_distr_plot_path = '../evaluation/plots/comb_le_sim_distr_{}-20161107.png'
+    comb_leq_sim_distr_plot_path = '../evaluation/plots/comb_cumul_sim_distr_{}-20161107.png'
 
     algorithms = [
         'baseline',
@@ -33,8 +33,7 @@ def main():
         ['baseline', 'linproj', 'pwlinproj']
     ]
 
-    steps = 11
-    nbins = 10
+    nbins = 12
     round_to = 3
 
     with open(config_path) as f:
@@ -42,7 +41,6 @@ def main():
     logging.log(level=logging.INFO, msg='loaded algorithm config')
 
     golds = load_test_data(test_data_path)
-    gold_count = len(golds)
     logging.log(level=logging.INFO, msg='loaded gold standard')
 
     predictions = dict()
@@ -70,48 +68,48 @@ def main():
     logging.log(level=logging.INFO, msg='computed similarities between all predictions and gold standards')
 
     for algorithm in algorithms:
-        plt.figure(1)
-        axes = plt.gca()
         # plot similarity histogram
+        plt.figure(1)
+        plt.clf()
+        axes = plt.gca()
         axes.set_xlim([None, 1])
-        n, bins, _ = plt.hist(similarities[algorithm], bins=nbins, label=algorithm,
-                              color=algo2color(algorithm))
+        n, bins, _ = plt.hist(similarities[algorithm], bins=nbins, label=algorithm, color=algo2color(algorithm))
+        for idx, value in enumerate(n):
+            plt.text(bins[idx], value+1, s=str(int(value)))
         plt.xticks(bins, np.round(bins, decimals=2))
         plt.xlabel('$\mathit{sim}_\mathit{cos}(p_i, g_i)$')
         plt.ylabel('count')
         plt.title('{}: similarity histogram'.format(algorithm))
         plt.savefig(sim_hist_plot_path.format(algorithm))
-        plt.clf()
         logging.log(level=logging.INFO, msg='plotted similarity histogram of {}\n stored in {}'
                     .format(algorithm, sim_hist_plot_path.format(algorithm)))
-        # plot similarity distributions
-        axes.set_xlim([0, 1])
-        x_sim = np.linspace(0, 1, num=steps)
-        y_prob = np.zeros(steps)
-        # plot leq similarity distribution
-        for idx, sim in enumerate(x_sim):
-            y_prob[idx] = np.count_nonzero(similarities[algorithm] <= sim) / gold_count
-        plt.bar(np.arange(0, steps), y_prob, alpha=1, label=algorithm, color=algo2color(algorithm))
-        plt.xticks(np.arange(0, steps) + 0.5, np.round(x_sim, decimals=round_to))
+
+        # plot cumulative similarity histogram
+        plt.figure(1)
+        plt.clf()
+        axes = plt.gca()
+        axes.set_xlim([None, 1])
+        n, bins, _ = plt.hist(similarities[algorithm], bins=nbins, label=algorithm, color=algo2color(algorithm),
+                              cumulative=True, normed=True)
+        for idx, value in enumerate(n):
+            plt.text(bins[idx], value+0.01, s=str(np.round(value, decimals=round_to)))
+        plt.xticks(bins, np.round(bins, decimals=2))
         plt.xlabel('$\mathit{sim}_\mathit{cos}(p, g)$')
         plt.ylabel('$P[x \leq X]$')
-        plt.title('{}: $P[x \leq X]$ similarity distribution'.format(algorithm))
+        plt.title('{}: $P[x \leq X]$ cumulative similarity distribution'.format(algorithm))
         plt.savefig(leq_sim_distr_plot_path.format(algorithm))
         plt.clf()
-        logging.log(level=logging.INFO, msg='plotted similarity distribution of {}\n stored in {}'
+        logging.log(level=logging.INFO, msg='plotted cumulative similarity distribution of {}\n stored in {}'
                     .format(algorithm, leq_sim_distr_plot_path.format(algorithm)))
 
     for combined_plot in combined_plots:
-        width = 1.0/(len(combined_plot)+1)
-        step_offset = 1.0/len(combined_plot)
-
-        plt.figure(1)
-        axes = plt.gca()
-        # plot density function
-        plt.clf()
+        # prepare similarities for combined histogram input
         sim = np.array(list(zip(*[similarities[algo] for algo in combined_plot])))
-        n, bins, _ = plt.hist(sim, bins=nbins, label=combined_plot,
-                              color=[algo2color(algo) for algo in combined_plot])
+
+        # plot similarity histogram
+        plt.figure(1)
+        plt.clf()
+        n, bins, _ = plt.hist(sim, bins=nbins, label=combined_plot, color=[algo2color(algo) for algo in combined_plot])
         plt.xticks(bins, np.round(bins, decimals=2))
         plt.legend(loc=2)
         plt.xlabel('$\mathit{sim}_\mathit{cos}(p_i, g_i)$')
@@ -122,24 +120,18 @@ def main():
         logging.log(level=logging.INFO, msg='plotted similarity histogram of {}\n stored in {}'
                     .format(','.join(combined_plot), comb_sim_hist_plot_path.format('_'.join(combined_plot))))
 
-        # plot similarity distributions
+        # plot cumulative similarity distributions
+        plt.figure(1)
         plt.clf()
-        axes.set_xlim([0, 1])
-        x_sim = np.linspace(0, 1, num=steps)
-        # plot leq similarity distribution
-        legend_handles = list()
-        for bar_idx, algorithm in enumerate(combined_plot):
-            y_prob = np.zeros(steps)
-            for idx, sim in enumerate(x_sim):
-                y_prob[idx] = np.count_nonzero(similarities[algorithm] <= sim) / gold_count
-            rect = plt.bar(np.arange(0, steps) + bar_idx*(step_offset if bar_idx == 0 else width),
-                           y_prob, width=width, label=algorithm, color=algo2color(algorithm))
-            legend_handles.append(rect[0])
-        plt.xticks(np.arange(0, steps) + 0.35, np.round(x_sim, decimals=round_to))
+        axes = plt.gca()
+        axes.set_xlim([None, 1])
+        n, bins, _ = plt.hist(sim, bins=nbins, label=combined_plot, color=[algo2color(algo) for algo in combined_plot],
+                              cumulative=True, normed=True)
+        plt.xticks(bins, np.round(bins, decimals=2))
+        plt.legend(loc=2)
         plt.xlabel('$\mathit{sim}_\mathit{cos}(p, g)$')
         plt.ylabel('$P[x \leq X]$')
         plt.title('$P[x \leq X]$ similarity distribution'.format(','.join(combined_plot)))
-        plt.legend(legend_handles, combined_plot, loc=2)
         plt.savefig(comb_leq_sim_distr_plot_path.format('_'.join(combined_plot)))
         logging.log(level=logging.INFO, msg='plotted similarity distribution of {}\n stored in {}'
                     .format(','.join(combined_plot), comb_leq_sim_distr_plot_path.format('_'.join(combined_plot))))
