@@ -14,7 +14,7 @@ def main():
     col_sep = ','
     row_sep = '\n'
 
-    combined_algorithms = ['gw+pwlinproj']
+    combined_algorithms = []
 
     results = execute_combined_algorithms(
         combined_algorithms=combined_algorithms,

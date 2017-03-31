@@ -51,10 +51,10 @@ def load_embeddings_and_labels(embeddings_path: str)->Tuple[np.array, List[str]]
 
 def algo2color(algo):
     colors = {
-        'baseline': '#3f9b0b',  # grass green
-        'distknn': '#89fe05',  # lime green
-        'linproj': '#00ffff',  # cyan
-        'pwlinproj': '#00035b',  # dark blue
+        'ts+kriknn(k=15&r=1)': '#3f9b0b',  # grass green
+        'ts+distknn(k=15)': '#89fe05',  # lime green
+        'ts+linproj': '#00ffff',  # cyan
+        'ts+pwlinproj(c=30)': '#00035b',  # dark blue
     }
     default = '#e50000'  # red
     return colors.get(algo, default)

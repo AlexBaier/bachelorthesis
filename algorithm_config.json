@@ -29,55 +29,62 @@
     "iterations": 5,
     "embeddings path": "/home/alex/PycharmProjects/thesis/data/algorithm_io/graph_walk_class_embeddings-20161107"
   },
-  "distance-knn": {
+  "distance-knn (k=15)": {
     "neighbors": 15
   },
-  "kri-knn": {
+  "kri-knn (k=15&r=1)": {
     "neighbors": 15,
     "regularization param": 1
   },
   "linear projection": {
     "sgd iterations": 10
   },
-  "piecewise linear projection": {
+  "piecewise linear projection (c=30)": {
     "clusters": 30,
     "sgd iterations": 5
   },
   "combinations": {
-    "baseline": {
+    "ts+kriknn(k=15&r=1)": {
       "sequences": "triple sentences",
       "sgns": "triple sentence sgns",
-      "classification": "kri-knn"
+      "classification": "kri-knn (k=15&r=1)",
+      "training samples": 1083128
     },
-    "distknn": {
+    "ts+distknn(k=15)": {
       "sequences": "triple sentences",
       "sgns": "triple sentence sgns",
-      "classification": "distance-knn"
+      "classification": "distance-knn (k=15)",
+      "training samples": 1083128
     },
-    "linproj": {
+    "ts+linproj": {
       "sequences": "triple sentences",
       "sgns": "triple sentence sgns",
-      "classification": "linear projection"
+      "classification": "linear projection",
+      "training samples": 1083128
     },
-    "pwlinproj": {
+    "ts+pwlinproj(c=30)": {
       "sequences": "triple sentences",
       "sgns": "triple sentence sgns",
-      "classification": "piecewise linear projection"
+      "classification": "piecewise linear projection (c=30)",
+      "training samples": 1083128
     },
-    "gw": {
+    "gw+distknn(k=15)": {
       "sequences": "graph walk sentences",
       "sgns": "graph walk sentence sgns",
-      "classification": "kri-knn"
+      "classification": "distance-knn (k=15)",
+      "training samples": 1083128
     },
     "gw+linproj" : {
       "sequences": "graph walk sentences",
       "sgns": "graph walk sentence sgns",
-      "classification": "linear projection"
+      "classification": "linear projection",
+      "training samples": 1083128
     },
-    "gw+pwlinproj" : {
+    "gw+pwlinproj(c=30)" : {
       "sequences": "graph walk sentences",
       "sgns": "graph walk sentence sgns",
-      "classification": "piecewise linear projection"
+      "classification": "piecewise linear projection (c=30)",
+      "training samples": 1083128
     }
   }
 }

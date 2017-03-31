@@ -19,10 +19,10 @@ def main():
     evaluation_output = '../evaluation/hybrid_evaluation-20161107.csv'
 
     algorithms = [
-        'baseline',
-        'distknn',
-        'linproj',
-        'pwlinproj'
+        'ts+kriknn(k=15&r=1)',
+        'ts+distknn(k=15)',
+        'ts+linproj',
+        'ts+pwlinproj(c=30)'
     ]
 
     with open(config_path) as f:
@@ -67,6 +67,7 @@ def main():
             logging.log(logging.INFO, msg='successors progress: {}'.format(100.0*float(count)/len(class_ids)))
     logging.log(level=logging.INFO, msg='successors retrieved')
 
+    training_samples = dict()
     total_count = len(golds)
     tp_counts = dict()
     mses = dict()
@@ -77,6 +78,7 @@ def main():
     f1_scores = dict()
 
     for algorithm in algorithms:
+        training_samples[algorithm] = config['combinations'][algorithm]['training samples']
         tp_counts[algorithm] = get_true_positive_count(predictions[algorithm], golds)
         logging.log(level=logging.INFO, msg='computed TP count and accuracy for {}'.format(algorithm))
         mses[algorithm] = get_mean_squared_error(predictions[algorithm], golds,
@@ -95,6 +97,7 @@ def main():
 
     with open(evaluation_output, mode='w') as f:
         f.write(','.join(['algorithm',
+                          'training_samples',
                           'total',
                           'TPs',
                           'MSE',
@@ -106,6 +109,7 @@ def main():
         for algorithm in algorithms:
             row = [
                 algorithm,
+                str(training_samples[algorithm]),
                 str(total_count),
                 str(tp_counts[algorithm]),
                 str(mses[algorithm]),

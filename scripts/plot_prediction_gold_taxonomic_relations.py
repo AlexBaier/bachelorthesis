@@ -36,7 +36,7 @@ def main():
 
     labels = ['underspecialized', 'overspecialized', 'same parent']
     colors = [
-        '#06470c',  # forest green
+        '#3f9b0b',  # grass green
         '#8f1402',  # brick red
         '#75bbfd',  # sky blue
     ]
