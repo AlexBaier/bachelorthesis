@@ -55,7 +55,7 @@
     "ts+kriknn(k=2&r=1)": {
       "sequences": "triple sentences",
       "sgns": "triple sentence sgns",
-      "classification": "kri-knn (k=5&r=1)",
+      "classification": "kri-knn (k=2&r=1)",
       "training samples": 1083128
     },
     "ts+kriknn(k=5&r=1)": {
