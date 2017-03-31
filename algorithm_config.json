@@ -32,6 +32,14 @@
   "distance-knn (k=15)": {
     "neighbors": 15
   },
+  "kri-knn (k=2&r=1)": {
+    "neighbors": 2,
+    "regularization param": 1
+  },
+  "kri-knn (k=5&r=1)": {
+    "neighbors": 5,
+    "regularization param": 1
+  },
   "kri-knn (k=15&r=1)": {
     "neighbors": 15,
     "regularization param": 1
@@ -44,6 +52,18 @@
     "sgd iterations": 5
   },
   "combinations": {
+    "ts+kriknn(k=2&r=1)": {
+      "sequences": "triple sentences",
+      "sgns": "triple sentence sgns",
+      "classification": "kri-knn (k=5&r=1)",
+      "training samples": 1083128
+    },
+    "ts+kriknn(k=5&r=1)": {
+      "sequences": "triple sentences",
+      "sgns": "triple sentence sgns",
+      "classification": "kri-knn (k=5&r=1)",
+      "training samples": 1083128
+    },
     "ts+kriknn(k=15&r=1)": {
       "sequences": "triple sentences",
       "sgns": "triple sentence sgns",
