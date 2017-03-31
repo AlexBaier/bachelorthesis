@@ -16,7 +16,7 @@ __PW_LIN_PROJ_REGEX = re.compile(r'piecewise linear projection \(c=[1-9][0-9]\)'
 
 
 def execute_combined_algorithms(combined_algorithms: List[str], config_path: str, training_data_path: str,
-                                test_data_path: str)->Dict[str, List[Tuple[str, str]]]:
+                                test_data_path: str, workers)->Dict[str, List[Tuple[str, str]]]:
 
     config = load_config(config_path)  # type: dict
 
@@ -66,7 +66,8 @@ def execute_combined_algorithms(combined_algorithms: List[str], config_path: str
                                         embeddings=embeddings,
                                         class_ids=class_ids,
                                         training_samples=training_samples[:training_samples_count],
-                                        test_inputs=test_inputs
+                                        test_inputs=test_inputs,
+                                        workers=workers
                                         )
         results[hybrid_algorithm] = result
         logging.log(level=logging.INFO, msg='completed execution of combined algorithm "{}"'.format(hybrid_algorithm))
@@ -76,7 +77,7 @@ def execute_combined_algorithms(combined_algorithms: List[str], config_path: str
 def execute_classification(algorithm: str, config: dict,
                            embeddings: np.array, class_ids: List[str],
                            training_samples: List[MultiLabelSample[str]],
-                           test_inputs: List[str])->List[Tuple[str, str]]:
+                           test_inputs: List[str], workers: int)->List[Tuple[str, str]]:
     id2idx = dict()  # type: Dict[str, int]
     for idx in range(len(class_ids)):
         id2idx[class_ids[idx]] = idx
@@ -104,13 +105,13 @@ def execute_classification(algorithm: str, config: dict,
             reg_param = config['regularization param']
         except KeyError as e:
             raise MissingParameterError(str(e), algorithm)
-        classifier = alg.KRIKNNClassifier(neighbors=neighbors, regularization_param=reg_param)
+        classifier = alg.KRIKNNClassifier(neighbors=neighbors, regularization_param=reg_param, n_jobs=workers)
     elif __DIST_KNN_REGEX.fullmatch(algorithm):
         try:
             neighbors = config['neighbors']
         except KeyError as e:
             raise MissingParameterError(str(e), algorithm)
-        classifier = alg.DistanceKNNClassifier(neighbors=neighbors)
+        classifier = alg.DistanceKNNClassifier(neighbors=neighbors, n_jobs=workers)
     elif __LIN_PROJ_REGEX.fullmatch(algorithm):
         try:
             sgd_iter = config['sgd iterations']
@@ -119,7 +120,8 @@ def execute_classification(algorithm: str, config: dict,
         classifier = alg.LinearProjectionClassifier(embedding_size=embeddings.shape[1],
                                                     embeddings=embeddings,
                                                     labels=class_ids,
-                                                    sgd_iter=sgd_iter)
+                                                    sgd_iter=sgd_iter,
+                                                    n_jobs=workers)
     elif __PW_LIN_PROJ_REGEX.fullmatch(algorithm):
         try:
             clusters = config['clusters']
@@ -131,7 +133,8 @@ def execute_classification(algorithm: str, config: dict,
                                                              clusters=clusters,
                                                              embeddings=embeddings,
                                                              labels=class_ids,
-                                                             sgd_iter=sgd_iter)
+                                                             sgd_iter=sgd_iter,
+                                                             n_jobs=workers)
     logging.log(level=logging.INFO, msg='initialized {} classifier'.format(algorithm))
 
     classifier.train(training_input)

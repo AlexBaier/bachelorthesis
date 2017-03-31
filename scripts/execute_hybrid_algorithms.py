@@ -20,7 +20,8 @@ def main():
         combined_algorithms=combined_algorithms,
         config_path=config_path,
         training_data_path=training_data_path,
-        test_data_path=test_data_path
+        test_data_path=test_data_path,
+        workers=1
     )
 
     for combined_algorithm in combined_algorithms:
