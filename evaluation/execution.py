@@ -1,4 +1,5 @@
 import logging
+import re
 from typing import Dict, List, Tuple
 
 import numpy as np
@@ -7,6 +8,11 @@ import algorithm.classification as alg
 from algorithm.utils import map_to_knn_training_input, map_to_proj_training_input
 from evaluation.data_sample import MultiLabelSample
 from evaluation.utils import load_config, load_embeddings_and_labels, load_test_inputs, load_training_data
+
+__KRI_KNN_REGEX = re.compile(r'kri-knn \(k=[1-9][0-9]*&r=[0-9]+\)')
+__DIST_KNN_REGEX = re.compile(r'distance-knn \(k=[1-9][0-9]*\)')
+__LIN_PROJ_REGEX = re.compile(r'linear projection')
+__PW_LIN_PROJ_REGEX = re.compile(r'piecewise linear projection \(c=[1-9][0-9]\)')
 
 
 def execute_combined_algorithms(combined_algorithms: List[str], config_path: str, training_data_path: str,
@@ -20,35 +26,38 @@ def execute_combined_algorithms(combined_algorithms: List[str], config_path: str
 
     results = dict()  # type: Dict[str, List[Tuple[str, str]]
 
-    for combined_algorithm in combined_algorithms:
+    for hybrid_algorithm in combined_algorithms:
 
         try:
-            components = config['combinations'][combined_algorithm]
+            components = config['combinations'][hybrid_algorithm]
+        except KeyError as e:
+            raise UnknownAlgorithmError(str(e))
+
+        try:
+            training_samples_count = components['training samples']
         except KeyError:
-            raise UnknownAlgorithmError(combined_algorithm)
+            raise MissingSampleCountError(hybrid_algorithm)
 
         try:
             sgns = components['sgns']
-        except KeyError:
-            raise MissingComponentError('sgns', combined_algorithm)
-        try:
             classification = components['classification']
-        except KeyError:
-            raise MissingComponentError('classification', combined_algorithm)
+        except KeyError as e:
+            raise MissingComponentError(str(e), hybrid_algorithm)
 
         try:
             sgns_config = config[sgns]
-        except KeyError:
-            raise UnknownComponentError('sgns', sgns)
+        except KeyError as e:
+            raise UnknownComponentError('sgns', str(e))
+
         try:
             classification_config = config[classification]
-        except KeyError:
-            raise UnknownComponentError('classification', classification)
+        except KeyError as e:
+            raise UnknownComponentError('classification', str(e))
 
         try:
             embeddings_path = sgns_config['embeddings path']
-        except KeyError:
-            raise MissingParameterError('embeddings path', sgns)
+        except KeyError as e:
+            raise MissingParameterError('embeddings path', str(e))
 
         embeddings, class_ids = load_embeddings_and_labels(embeddings_path)
 
@@ -56,11 +65,11 @@ def execute_combined_algorithms(combined_algorithms: List[str], config_path: str
                                         config=classification_config,
                                         embeddings=embeddings,
                                         class_ids=class_ids,
-                                        training_samples=training_samples,
+                                        training_samples=training_samples[:training_samples_count],
                                         test_inputs=test_inputs
                                         )
-        results[combined_algorithm] = result
-        logging.log(level=logging.INFO, msg='completed execution of combined algorithm "{}"'.format(combined_algorithm))
+        results[hybrid_algorithm] = result
+        logging.log(level=logging.INFO, msg='completed execution of combined algorithm "{}"'.format(hybrid_algorithm))
     return results
 
 
@@ -77,9 +86,11 @@ def execute_classification(algorithm: str, config: dict,
 
     classifier = None  # type: alg.Classifier
 
-    if algorithm in ['kri-knn', 'distance-knn']:
+    if __KRI_KNN_REGEX.fullmatch(algorithm) or __DIST_KNN_REGEX.fullmatch(algorithm):
+        print('recognized knn algorithm')
         mapping = map_to_knn_training_input
-    elif algorithm in ['linear projection', 'piecewise linear projection']:
+    elif __LIN_PROJ_REGEX.fullmatch(algorithm) or __PW_LIN_PROJ_REGEX.fullmatch(algorithm):
+        print('recognized linear projection algorithm')
         mapping = map_to_proj_training_input
     else:
         raise NotImplementedClassifierError(algorithm)
@@ -87,20 +98,20 @@ def execute_classification(algorithm: str, config: dict,
     training_input = mapping(training_samples, id2embedding)
     logging.log(level=logging.INFO, msg='prepared training data')
 
-    if algorithm == 'kri-knn':
+    if __KRI_KNN_REGEX.fullmatch(algorithm):
         try:
             neighbors = config['neighbors']
             reg_param = config['regularization param']
         except KeyError as e:
             raise MissingParameterError(str(e), algorithm)
         classifier = alg.KRIKNNClassifier(neighbors=neighbors, regularization_param=reg_param)
-    elif algorithm == 'distance-knn':
+    elif __DIST_KNN_REGEX.fullmatch(algorithm):
         try:
             neighbors = config['neighbors']
         except KeyError as e:
             raise MissingParameterError(str(e), algorithm)
         classifier = alg.DistanceKNNClassifier(neighbors=neighbors)
-    elif algorithm == 'linear projection':
+    elif __LIN_PROJ_REGEX.fullmatch(algorithm):
         try:
             sgd_iter = config['sgd iterations']
         except KeyError as e:
@@ -109,7 +120,7 @@ def execute_classification(algorithm: str, config: dict,
                                                     embeddings=embeddings,
                                                     labels=class_ids,
                                                     sgd_iter=sgd_iter)
-    elif algorithm == 'piecewise linear projection':
+    elif __PW_LIN_PROJ_REGEX.fullmatch(algorithm):
         try:
             clusters = config['clusters']
             sgd_iter = config['sgd iterations']
@@ -139,13 +150,18 @@ def execute_classification(algorithm: str, config: dict,
 
 class UnknownAlgorithmError(LookupError):
     def __init__(self, algorithm):
-        self.strerror = 'combined algorithm with name {} not found in config'.format(algorithm)
+        self.strerror = 'combined algorithm with name "{}" not found in config'.format(algorithm)
         self.args = {self.strerror}
+
+
+class MissingSampleCountError(LookupError):
+    def __init__(self, algorithm):
+        self.strerror = 'not "training samples" defined for algorithm "{}"'.format(algorithm)
 
 
 class MissingComponentError(LookupError):
     def __init__(self, component_type, algorithm):
-        self.strerror = '{} component is not defined for {}'.format(component_type, algorithm)
+        self.strerror = '"{}" component is not defined for "{}"'.format(component_type, algorithm)
         self.args = {self.strerror}
 
 
@@ -157,7 +173,7 @@ class UnknownComponentError(LookupError):
 
 class MissingParameterError(LookupError):
     def __init__(self, parameter, component):
-        self.strerror = 'parameter "{}" missing in {}'.format(parameter, component)
+        self.strerror = 'parameter "{}" missing in "{}"'.format(parameter, component)
         self.args = {self.strerror}
 
 
