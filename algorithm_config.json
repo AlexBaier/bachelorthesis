@@ -44,11 +44,35 @@
     "neighbors": 15,
     "regularization param": 1
   },
+  "kri-knn (k=5&r=10)": {
+    "neighbors": 5,
+    "regularization param": 10
+  },
+  "kri-knn (k=15&r=10)": {
+    "neighbors": 15,
+    "regularization param": 10
+  },
   "linear projection": {
     "sgd iterations": 10
   },
+  "piecewise linear projection (c=5)": {
+    "clusters": 5,
+    "sgd iterations": 5
+  },
+  "piecewise linear projection (c=10)": {
+    "clusters": 10,
+    "sgd iterations": 5
+  },
+  "piecewise linear projection (c=20)": {
+    "clusters": 20,
+    "sgd iterations": 5
+  },
   "piecewise linear projection (c=30)": {
     "clusters": 30,
+    "sgd iterations": 5
+  },
+  "piecewise linear projection (c=50)": {
+    "clusters": 50,
     "sgd iterations": 5
   },
   "combinations": {
@@ -70,6 +94,18 @@
       "classification": "kri-knn (k=15&r=1)",
       "training samples": 1083128
     },
+    "ts+kriknn(k=5&r=10)": {
+      "sequences": "triple sentences",
+      "sgns": "triple sentence sgns",
+      "classification": "kri-knn (k=5&r=10)",
+      "training samples": 1083128
+    },
+    "ts+kriknn(k=15&r=10)": {
+      "sequences": "triple sentences",
+      "sgns": "triple sentence sgns",
+      "classification": "kri-knn (k=15&r=10)",
+      "training samples": 1083128
+    },
     "ts+distknn(k=15)": {
       "sequences": "triple sentences",
       "sgns": "triple sentence sgns",
@@ -82,10 +118,34 @@
       "classification": "linear projection",
       "training samples": 1083128
     },
+    "ts+pwlinproj(c=5)": {
+      "sequences": "triple sentences",
+      "sgns": "triple sentence sgns",
+      "classification": "piecewise linear projection (c=5)",
+      "training samples": 1083128
+    },
+    "ts+pwlinproj(c=10)": {
+      "sequences": "triple sentences",
+      "sgns": "triple sentence sgns",
+      "classification": "piecewise linear projection (c=10)",
+      "training samples": 1083128
+    },
+    "ts+pwlinproj(c=20)": {
+      "sequences": "triple sentences",
+      "sgns": "triple sentence sgns",
+      "classification": "piecewise linear projection (c=20)",
+      "training samples": 1083128
+    },
     "ts+pwlinproj(c=30)": {
       "sequences": "triple sentences",
       "sgns": "triple sentence sgns",
       "classification": "piecewise linear projection (c=30)",
+      "training samples": 1083128
+    },
+    "ts+pwlinproj(c=50)": {
+      "sequences": "triple sentences",
+      "sgns": "triple sentence sgns",
+      "classification": "piecewise linear projection (c=50)",
       "training samples": 1083128
     },
     "gw+distknn(k=15)": {
