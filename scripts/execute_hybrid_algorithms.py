@@ -14,7 +14,7 @@ def main():
     col_sep = ','
     row_sep = '\n'
 
-    combined_algorithms = ['ts+kriknn(k=5&r=10)', 'ts+kriknn(k=15&r=10)']
+    combined_algorithms = ['ts+kriknn(k=10&r=1)']
 
     results = execute_combined_algorithms(
         combined_algorithms=combined_algorithms,

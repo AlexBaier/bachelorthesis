@@ -1,6 +1,7 @@
 import logging
 
 import matplotlib.pyplot as plt
+import numpy as np
 
 
 def main():
@@ -8,7 +9,12 @@ def main():
 
     eval_result_path = '../evaluation/hybrid_evaluation-20161107.csv'
 
-    output_path = '../evaluation/plots/tax_rel_pie_{}-20161107.png'
+    output_path = '../evaluation/plots/tax_rel_{}-20161107.png'
+
+    combined_plots = [
+        ['ts+kriknn(k=2&r=1)', 'ts+kriknn(k=5&r=1)', 'ts+kriknn(k=15&r=1)'],
+        ['ts+linproj', 'ts+pwlinproj(c=30)', 'ts+kriknn(k=15&r=1)']
+    ]
 
     algorithms = list()
     totals = dict()
@@ -34,28 +40,36 @@ def main():
                                             - common_parent[algorithm])
             logging.log(level=logging.INFO, msg='loaded {}'.format(algorithm))
 
-    labels = ['underspecialized', 'overspecialized', 'same parent']
     colors = [
+        '#929591',  # grey
         '#3f9b0b',  # grass green
         '#8f1402',  # brick red
         '#75bbfd',  # sky blue
     ]
-    for algorithm in algorithms:
+
+    for combined_plot in combined_plots:
         plt.figure(1)
         plt.clf()
-        values = [underspecialized[algorithm],
-                  overspecialized[algorithm],
-                  common_parent[algorithm]]
-        total = sum(values)
-        patches, texts, autotexts = plt.pie(values, startangle=90, colors=colors, pctdistance=0.5,
-                                            autopct=lambda p: '{:.0f}'.format(p * total / 100))
-        plt.axis('equal')
-        plt.legend(patches, labels, loc='lower left')
-        plt.text(0.55, 0.85, 'distance exceeded: {}'.format(distance_exceeded[algorithm]))
-        plt.title('{}: taxonomic relations of misclassifications'.format(algorithm))
 
-        plt.savefig(output_path.format(algorithm))
-        logging.log(level=logging.INFO, msg='stored plot to {}'.format(output_path.format(algorithm)))
+        n = len(combined_plot)
+        ind = np.arange(n)
+
+        de_c = np.array([distance_exceeded[algorithm] for algorithm in combined_plot])
+        os_c = np.array([overspecialized[algorithm] for algorithm in combined_plot])
+        us_c = np.array([underspecialized[algorithm] for algorithm in combined_plot])
+        cp_c = np.array([common_parent[algorithm] for algorithm in combined_plot])
+
+        de_plt = plt.bar(ind, de_c, color=colors[0])
+        os_plt = plt.bar(ind, os_c, color=colors[1], bottom=de_c)
+        us_plt = plt.bar(ind, us_c, color=colors[2], bottom=de_c+os_c)
+        cp_plt = plt.bar(ind, cp_c, color=colors[3], bottom=de_c+os_c+us_c)
+
+        plt.title('taxonomic relations of misclassifications')
+        plt.legend([de_plt[0], os_plt[0], us_plt[0], cp_plt[0]],
+                   ['distance exceeded', 'overspecialized', 'underspecialized', 'same parent'], loc='lower left')
+        plt.xticks(ind+0.4, combined_plot)
+
+        plt.savefig(output_path.format('_'.join(combined_plot)))
 
 
 if __name__ == '__main__':
