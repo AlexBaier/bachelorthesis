@@ -40,6 +40,10 @@
     "neighbors": 5,
     "regularization param": 1
   },
+  "kri-knn (k=10&r=1)": {
+    "neighbors": 10,
+    "regularization param": 1
+  },
   "kri-knn (k=15&r=1)": {
     "neighbors": 15,
     "regularization param": 1
@@ -86,6 +90,12 @@
       "sequences": "triple sentences",
       "sgns": "triple sentence sgns",
       "classification": "kri-knn (k=5&r=1)",
+      "training samples": 1083128
+    },
+    "ts+kriknn(k=10&r=1)": {
+      "sequences": "triple sentences",
+      "sgns": "triple sentence sgns",
+      "classification": "kri-knn (k=10&r=1)",
       "training samples": 1083128
     },
     "ts+kriknn(k=15&r=1)": {
