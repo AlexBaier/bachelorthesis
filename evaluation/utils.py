@@ -53,7 +53,7 @@ def algo2color(algo):
         'ts+kriknn(k=2&r=1)': '#01ff07',  # bright green
         'ts+kriknn(k=5&r=1)': '#3f9b0b',  # grass green
         'ts+kriknn(k=5&r=10)': '#8eab12',  # pea green
-        'ts+kriknn(k=15&r=1)': '##06470c',  # forest green
+        'ts+kriknn(k=15&r=1)': '#06470c',  # forest green
         'ts+kriknn(k=15&r=10)': '#4b5d16',  # army green
         'ts+distknn(k=15)': '#89fe05',  # lime green
         'ts+linproj': '#00ffff',  # cyan
