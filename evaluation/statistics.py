@@ -1,8 +1,8 @@
 import logging
-from typing import Callable, Dict, List, Tuple
 
 import numpy as np
 from sklearn.metrics.pairwise import cosine_similarity
+from typing import Callable, Dict, List, Tuple
 
 from evaluation.data_sample import MultiLabelSample
 
@@ -26,7 +26,11 @@ def get_prediction_gold_cosine_similarities(predictions: Dict[str, str], golds: 
                                             id2embedding: Callable[[str], np.array])->np.array:
     similarities = np.zeros(len(golds), dtype=np.float64)
     for idx, gold in enumerate(golds):
-        prediction = id2embedding(predictions[gold.input_arg]).reshape(1, -1)
+        try:
+            prediction = id2embedding(predictions[gold.input_arg]).reshape(1, -1)
+        except KeyError as e:
+            logging.log(level=logging.WARNING, msg='missing class embedding {}'.format(str(e)))
+            continue
         golds = list()
         for output in gold.possible_outputs:
             try:
