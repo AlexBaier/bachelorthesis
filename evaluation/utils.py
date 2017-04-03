@@ -1,8 +1,7 @@
 import json
-import logging
-from typing import List, Tuple
 
 import numpy as np
+from typing import List, Tuple
 
 from evaluation.data_sample import MultiLabelSample
 
@@ -51,7 +50,11 @@ def load_embeddings_and_labels(embeddings_path: str)->Tuple[np.array, List[str]]
 
 def algo2color(algo):
     colors = {
-        'ts+kriknn(k=15&r=1)': '#3f9b0b',  # grass green
+        'ts+kriknn(k=2&r=1)': '#01ff07',  # bright green
+        'ts+kriknn(k=5&r=1)': '#3f9b0b',  # grass green
+        'ts+kriknn(k=5&r=10)': '#8eab12',  # pea green
+        'ts+kriknn(k=15&r=1)': '##06470c',  # forest green
+        'ts+kriknn(k=15&r=10)': '#4b5d16',  # army green
         'ts+distknn(k=15)': '#89fe05',  # lime green
         'ts+linproj': '#00ffff',  # cyan
         'ts+pwlinproj(c=30)': '#00035b',  # dark blue
