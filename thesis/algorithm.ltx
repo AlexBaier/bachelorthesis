@@ -5,55 +5,14 @@ For each component, possible implementations are proposed and implemented.
 \subsection{Components}
 The hybrid algorithm exploits neural word embeddings to solve the classification task,
 which is motivated by the power of word embeddings in similarity tasks \cite{Mikolov2013} and in taxonomy construction \cite{Fu2014}.
-For the task of computing word embeddings, SGNS model will be used, which has shown to generate effective word embeddings relatively fast 
+
+For the task of computing word embeddings, the SGNS model will be used, which has shown to generate effective word embeddings relatively fast 
 \cite{Mikolov2013} \cite{Levy2015}.
-
-Three required components can be identified for the hybrid algorithm using SGNS.
-The data flow and IO of the components is visualized in Figure~\ref{fig:algorithm data flow}.
-
-\begin{figure}[H]
-\centering
-\includegraphics[width=\textwidth]{images/algorithm/combined_algorithm_components.pdf}
-\caption{Data flow between components}
-\label{fig:algorithm data flow}
-\end{figure}
-
-\begin{enumerate}
-\item \textbf{Wikidata2Sequence}. 
-For the task of generating word embeddings the Skip-gram model with negative sampling will be used.
-As mentioned in Section~\ref{section:word2vec}, both Word2Vec models require a linear sequence of words as input.
-Wikidata's highly interlinked structure is more alike to an RDF graph \cite{Erxleben2014}. 
-Therefore the first required component for the algorithm is a mapping from Wikidata to word sequences.
-The output of this method is required to be at least one sequence of words, which is called sentence.
-Therefore multiple sentences represent a text. Each word in the sequence has to be either a Wikidata item
-or property ID, or the data type for a literal value (e.g. replace all strings with \textit{string}).
-
-\item \textbf{Word2Vec}. The Skip-gram model with negative sampling (SGNS) will be used in every variation of the algorithm.
 It has been proven through theoretic analysis as well as experiments that SGNS creates very effective
 word embeddings, if its hyperparameters are chosen well \cite{Mikolov2013} \cite{Levy2015}.
 
-\item \textbf{Classification}. The final component of the algorithm is a classification method.
-The word embeddings produced by SGNS group similar words close to each other and preserve linguistic regularities. 
-kNN can exploit the first characteristic using a similarity or distance measure.
-The second characteristic can be exploited by computing the vector offset or learning a linear projection representing the subclass-of relationship between two classes \cite{Fu2014}.
-The classification component should implement a single-label multiclass classification.
-This will simplify the evaluation and comparibility of the different algorithms.
-The classiification component is trained on a set of subclass-superclass pairs.
-\end{enumerate}
-
-\subsection{Baseline}\label{section:baseline}
-First, the components for a baseline algorithm are defined.
-\begin{enumerate}
-\item \textbf{Triple sentences}. 
-Trivial sentences will be generated from statements.
-Each statement can be transformed to a triple $(\mathit{itemid}, \mathit{pid}, \mathit{value})$, where value is either another item ID or a literal like string, date, etc.
-These triples represents simple 3-word sentences, which are sufficient as training input for Word2Vec.
-In comparison to natural text, the triple sentences generated from Wikidata statements contain no noise, since each sentence only encodes semantic information.
-
-\item \textbf{SGNS}. As mentioned above a Skip-gram model with negative sampling will be used.
 Based on \fullcite{Levy2015}, \fullcite{Mikolov2013} and \fullcite{Mikolov2013a} 
-the following hyperparameters have been proven to be effective in
-the task of creating word embeddings and are therefore used:
+the following hyperparameters are used:
 \begin{itemize}
 \item Embedding size: $300$
 \item Subsampling frequency: $10^{-5}$
@@ -62,24 +21,56 @@ the task of creating word embeddings and are therefore used:
 \end{itemize}
 The original paper by \fullcite{Mikolov2013} uses context windows of size $2$.
 Bigger context windows show slight improvements in the quality of word embeddings \cite{Levy2015}.
-However triple sentences only have a maximum context of $2$, e.g. $w_1 \: w_2 \: w_3$ the maximum distance
+However triple sentences (see Section~\ref{section:triple sentences}) only have a maximum context of $2$, e.g. $w_1 \: w_2 \: w_3$ the maximum distance
 between words in the same sentence is $2$. Therefore triple sentences would not benefit from bigger
 context sizes. To preserve comparability between variations of the algorithm, the same context size is also used
-for other Wikidata2Sequence components.
-
+for all types of SequenceGen components.
 The implementation of SGNS in the gensim library by \fullcite{Rehurek2010} is used.
 
-\item \textbf{KRI-kNN}. 
-The KRI-kNN classifier by \cite{Chen2009} (see Section \ref{section:knn}) is implemented as classification component.
-The KRI-kNN classifier should be superior to a uniform or distance-based kNN classifier, 
-since it not only includes the similarity of neighbors to the unclassified object into the classification decision, but also the similarity between the neighbors.
+Two additional components can be identified for the hybrid classification algorithm using SGNS.
+The data flow and IO of the components is visualized in Figure~\ref{fig:algorithm data flow}.
 
-In the implementation, the scipy.optimize library \fullcite{Jones2001} is used to compute the KRI weights.
-It is possible, that the weights do not converge for a set of nearest neighbors. 
-If this exception occurs, the similarity-based weights will be used.
+\begin{figure}[]
+\centering
+\includegraphics[width=\textwidth]{images/algorithm/hybrid_algorithm_components.pdf}
+\caption{Data flow between components}
+\label{fig:algorithm data flow}
+\end{figure}
+
+\begin{enumerate}
+\item \textbf{SequenceGen}. 
+SGNS requires a linear sequence of words as input (see Section~\ref{section:word2vec}).
+The SequenceGen component transforms any possible kind of data into a set of sentences, which can be used for training the SGNS.
+Possible data sets include Wikidata and Wikipedia.
+Wikidata's highly interlinked structure is more alike to an RDF graph \cite{Erxleben2014}.
+Using Wikidata therefore requires an approach, which maps the graph to linear sequences.
+If the encyclopedic text provided by Wikipedia is used, a different challenge has to be solved.
+Since the gold standard consists of pairs of subclass-superclass pairs, which were acquired from Wikidata \cite{WikidataDump},
+a mapping from words to Wikidata IDs would have to be implemented.
+
+\item \textbf{Classification}.
+The Classification component is trained on a set of gold standard subclass-superclass pairs.
+It uses the word embeddings generated by SGNS to make a classification decision.
+The word embeddings produced by SGNS group similar words close to each other and preserve linguistic regularities.
+These properties can be exploited by different classifiers. 
+kNN can exploit the first characteristic using a similarity or distance measure.
+The second characteristic can be exploited by computing the vector offset or learning a linear projection representing the subclass-of relationship between two classes \cite{Fu2014}.
+The classification component should implement a single-label multiclass classification.
+This will simplify the evaluation and comparibility of the different algorithms.
 \end{enumerate}
 
-\subsection{Variation: Graph walk sentences}
+\subsection{SequenceGen}\label{section:sequencegen}
+
+\subsubsection{Triple sentences}\label{section:triple sentences}
+Triple sentences uses Wikidata as input data set.
+Statements in Wikidata can be represented as triples of $(\mathit{source}, \mathit{property}, \mathit{target})$,
+where $\mathit{source}$ is a Wikidata item ID, $\mathit{property}$ is a Wikidata property ID, and $\mathit{target}$ is either a Wikidata item ID or a literal.
+These triples represents simple 3-word sentences, which are sufficient as training input for Word2Vec.
+Appereances of literals are removed from the generated sentences to reduce the amount of noise in the data.
+In comparison to natural text, the triple sentence contain a very low amount of noise, which may improve the quality of embeddings in comparison to using for example
+Wikipedia as data set.
+
+\subsubsection{Graph walk sentences}
 A graph walk, developed by \fullcite{Ristoski2016} and explained in Section~\ref{section:rdf2vec}
 can be used for generating longer sentences instead of triple sentences. 
 The longer sequences are able to better capture contextual information than triples.
@@ -105,7 +96,35 @@ The following parameters are used for the graph walk :
 Because of time and hardware constraints only $10$ walks per vertice are computed,
 which should allow a "good" coverage of classes in the generated sequences.
 
-\subsection{Variation: Vector offset}
+\subsubsection{Variation: Wikipedia}
+
+\subsection{Classification}
+
+\subsubsection{k-nearest-neighbors}
+Similar classes are grouped close to each other in the embedding vector space.
+Intuitively a kNN classifier (see Section \ref{section:knn}) should be able to use this property to great effect.
+
+The KRI-kNN classifier by \cite{Chen2009} is implemented as classification component.
+The KRI-kNN classifier should be superior to a uniform or distance-based kNN classifier, 
+since it not only includes the similarity of neighbors to the unclassified object into the classification decision, but also the similarity between the neighbors.
+Additionally, a distance-based kNN classifier using euclidian distance implemented, which can be compared to KRI-kNN.
+Depending on the distribution of embeddings in the vector space, the benefits of KRI-kNN could be minimal.
+If this is the case, distance-based kNN should be preferred as it has a better runtime.
+
+In the implementation of KRI-kNN, the scipy.optimize library \cite{Jones2001} is used to compute the KRI weights.
+It is possible, that the weights do not converge for a set of nearest neighbors. 
+If this exception occurs, the similarity-based weights will be used.
+Distance-based kNN is implemented by the scikit-learn library \cite{scikit-learn}.
+
+\subsubsection{Vector offset}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{images/algorithm/2d_subclass_offsets.png}
+\caption{Subclass-of offsets of $800000$ randomly chosen subclass-superclass pairs}
+\label{fig:2d offsets}
+\end{figure}
+
 A possible approach for classification is to exploit the linear regularities encoded in the word embeddings.
 As shown in Section~\ref{section:word2vec}, it is possible to answer semantic questions by applying algebraic operations on word embeddings \cite{Mikolov2013}.
 Given a subclass-superclass pair with word embeddings $\vec{c}, \vec{p}$ and the word embedding $\vec{o}$ of an orphan class,
@@ -117,16 +136,9 @@ The subclass-of relationship is represented by the offset $\vec{p} - \vec{c}$.
 The classification task could be simplified to the task of adding such an offset to a given word embedding.
 This is however only possible, if the subclass-of offset is similar for all existing subclass-superclass pairs \cite{Fu2014}.
 
-\begin{figure}[H]
-\centering
-\includegraphics[width=\textwidth]{images/algorithm/2d_subclass_offsets.png}
-\caption{Subclass-of offsets of $800000$ randomly chosen subclass-superclass pairs}
-\label{fig:2d offsets}
-\end{figure}
-
 For the use case of Wikidata, it can be shown that the offsets do not fulfill this criteria. It can rather be seen that different clusters of
 similar subclass-of offsets exist. 
-Using the word embeddings created by the baseline SGNS (Section~\ref{section:baseline})
+Using the word embeddings created by SGNS trained on triple sentences.
 the subclass-of offsets for $800000$ randomly chosen subclass-superclass pairs were computed.
 Using Principal Component Analysis (PCA), the 300-dimensional vectors were reduced to  2-dimensional vectors,
 which are shown in Figure~\ref{fig:2d offsets}.
@@ -136,7 +148,7 @@ Therefore directly using vector offsets would not be applicable, as offsets can 
 \fullcite{Fu2014} reached a similar conclusion and proposes the use of linear projections as means to represent the subclass-of relation.
 In the following section, the approach by \citeauthor{Fu2014} is described and implemented as a variation of the classification component.
 
-\subsection{Variation: Linear projection}
+\subsubsection{Linear projection}
 It is assumed that a class $\vec{x}$ can be projected to its superclass $\vec{y}$ using a matrix $\Phi$, so that $\vec{y} = \Phi \vec{x}$ applies.
 \fullcite{Fu2014} propose two variants of linear projection for classification. A uniform linear projection, which trains a single matrix $\Phi$ on all subclass-superclass pairs,
 and a piecewise linear projection, which trains $k$ matrices $\Phi_k$ for $k$ clusters of subclass-superclass offsets.
@@ -160,5 +172,3 @@ Both training objectives describe multivariate linear regression tasks.
 In the thesis' implementation SciPy's SGD regressor \cite{Jones2001} is used to train the linear projection matrices.
 The thesis' evaluation will show whether linear projection is superior to the KRI-kNN in the given task,
 and to what degree it benefits from word embeddings using graph walk sentences instead of triple sentences.
-
-\subsection{Variation: Wikipedia}
