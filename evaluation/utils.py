@@ -50,14 +50,19 @@ def load_embeddings_and_labels(embeddings_path: str)->Tuple[np.array, List[str]]
 
 def algo2color(algo):
     colors = {
-        'ts+kriknn(k=2&r=1)': '#01ff07',  # bright green
-        'ts+kriknn(k=5&r=1)': '#3f9b0b',  # grass green
-        'ts+kriknn(k=5&r=10)': '#8eab12',  # pea green
-        'ts+kriknn(k=15&r=1)': '#06470c',  # forest green
-        'ts+kriknn(k=15&r=10)': '#4b5d16',  # army green
-        'ts+distknn(k=15)': '#89fe05',  # lime green
-        'ts+linproj': '#00ffff',  # cyan
-        'ts+pwlinproj(c=30)': '#00035b',  # dark blue
+        'ts+kriknn(k=2&r=1)': '#75bbfd',  # sky blue
+        'ts+kriknn(k=5&r=1)': '#8fff9f',  # mint green
+        'ts+kriknn(k=10&r=1)': '#137e6d',  # blue green
+        'ts+kriknn(k=15&r=1)': '#0504aa',  # royal blue
+        'ts+kriknn(k=5&r=10)': '#82a67d',  # greyish green
+        'ts+kriknn(k=15&r=10)': '#02d8e9',  # aqua blue
+        'ts+distknn(k=15)': '#0a481e',  # pine green
+        'ts+linproj': '#ff9408',  # tangerine
+        # 'ts+pwlinproj(c=5)': '',
+        # 'ts+pwlinproj(c=10)': '',
+        # 'ts+pwlinproj(c=20)': '',
+        'ts+pwlinproj(c=30)': '#840000',  # dark red
+        # 'ts+pwlinproj(c=50)': ''
     }
     default = '#e50000'  # red
     return colors.get(algo, default)

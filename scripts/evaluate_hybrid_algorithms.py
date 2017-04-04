@@ -23,6 +23,7 @@ def main():
         'ts+distknn(k=15)',
         'ts+kriknn(k=2&r=1)',
         'ts+kriknn(k=5&r=1)',
+        'ts+kriknn(k=10&r=1)',
         'ts+kriknn(k=15&r=1)',
         'ts+kriknn(k=5&r=10)',
         'ts+kriknn(k=15&r=10)',

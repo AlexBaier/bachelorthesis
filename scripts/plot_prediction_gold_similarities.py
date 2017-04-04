@@ -24,6 +24,7 @@ def main():
     algorithms = [
         'ts+kriknn(k=2&r=1)',
         'ts+kriknn(k=5&r=1)',
+        'ts+kriknn(k=10&r=1)',
         'ts+kriknn(k=15&r=1)',
         'ts+kriknn(k=5&r=10)',
         'ts+kriknn(k=15&r=10)',
@@ -34,9 +35,10 @@ def main():
     combined_plots = [
         ['ts+kriknn(k=15&r=1)', 'ts+pwlinproj(c=30)'],
         ['ts+kriknn(k=15&r=1)', 'ts+distknn(k=15)'],
-        ['ts+kriknn(k=2&r=1)', 'ts+kriknn(k=5&r=1)', 'ts+kriknn(k=15&r=1)'],
+        ['ts+kriknn(k=2&r=1)', 'ts+kriknn(k=5&r=1)', 'ts+kriknn(k=10&r=1)', 'ts+kriknn(k=15&r=1)'],
         ['ts+kriknn(k=5&r=10)', 'ts+kriknn(k=15&r=10)'],
         ['ts+kriknn(k=15&r=1)', 'ts+kriknn(k=15&r=10)'],
+        ['ts+kriknn(k=5&r=1)', 'ts+kriknn(k=5&r=10)', 'ts+kriknn(k=15&r=1)', 'ts+kriknn(k=15&r=10)'],
         ['ts+linproj', 'ts+pwlinproj(c=30)'],
         ['ts+kriknn(k=15&r=1)', 'ts+linproj', 'ts+pwlinproj(c=30)']
     ]
@@ -80,10 +82,11 @@ def main():
         plt.figure(1)
         plt.clf()
         axes = plt.gca()
-        axes.set_xlim([None, 1])
         n, bins, _ = plt.hist(similarities[algorithm], bins=nbins, label=algorithm, color=algo2color(algorithm))
         for idx, value in enumerate(n):
             plt.text(bins[idx], value+1, s=str(int(value)))
+        axes.relim()
+        axes.autoscale()
         plt.xticks(bins, np.round(bins, decimals=2))
         plt.xlabel('$\mathit{sim}_\mathit{cos}(p_i, g_i)$')
         plt.ylabel('count')
@@ -96,15 +99,16 @@ def main():
         plt.figure(1)
         plt.clf()
         axes = plt.gca()
-        axes.set_xlim([None, 1])
         n, bins, _ = plt.hist(similarities[algorithm], bins=nbins, label=algorithm, color=algo2color(algorithm),
                               cumulative=True, normed=True)
         for idx, value in enumerate(n):
             plt.text(bins[idx], value+0.01, s=str(np.round(value, decimals=round_to)))
+        axes.relim()
+        axes.autoscale()
         plt.xticks(bins, np.round(bins, decimals=2))
         plt.xlabel('$\mathit{sim}_\mathit{cos}(p, g)$')
         plt.ylabel('$P[x \leq X]$')
-        plt.title('{}: $P[x \leq X]$ cumulative similarity distribution'.format(algorithm))
+        plt.title('{}: $P[x \leq X]$ similarity distribution'.format(algorithm))
         plt.savefig(leq_sim_distr_plot_path.format(algorithm))
         plt.clf()
         logging.log(level=logging.INFO, msg='plotted cumulative similarity distribution of {}\n stored in {}'
@@ -117,7 +121,10 @@ def main():
         # plot similarity histogram
         plt.figure(1)
         plt.clf()
+        axes = plt.gca()
         n, bins, _ = plt.hist(sim, bins=nbins, label=combined_plot, color=[algo2color(algo) for algo in combined_plot])
+        axes.relim()
+        axes.autoscale()
         plt.xticks(bins, np.round(bins, decimals=2))
         plt.legend(loc=2)
         plt.xlabel('$\mathit{sim}_\mathit{cos}(p_i, g_i)$')
@@ -132,9 +139,10 @@ def main():
         plt.figure(1)
         plt.clf()
         axes = plt.gca()
-        axes.set_xlim([None, 1])
         n, bins, _ = plt.hist(sim, bins=nbins, label=combined_plot, color=[algo2color(algo) for algo in combined_plot],
                               cumulative=True, normed=True)
+        axes.set_xlim([None, 1])
+        axes.set_ylim([0, 1])
         plt.xticks(bins, np.round(bins, decimals=2))
         plt.legend(loc=2)
         plt.xlabel('$\mathit{sim}_\mathit{cos}(p, g)$')
