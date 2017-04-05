@@ -1,8 +1,8 @@
 import logging
 import re
-from typing import Dict, List, Tuple
 
 import numpy as np
+from typing import Dict, List, Tuple
 
 import algorithm.classification as alg
 from algorithm.utils import map_to_knn_training_input, map_to_proj_training_input
@@ -12,7 +12,7 @@ from evaluation.utils import load_config, load_embeddings_and_labels, load_test_
 __KRI_KNN_REGEX = re.compile(r'kri-knn \(k=[1-9][0-9]*&r=[0-9]+\)')
 __DIST_KNN_REGEX = re.compile(r'distance-knn \(k=[1-9][0-9]*\)')
 __LIN_PROJ_REGEX = re.compile(r'linear projection')
-__PW_LIN_PROJ_REGEX = re.compile(r'piecewise linear projection \(c=[1-9][0-9]\)')
+__PW_LIN_PROJ_REGEX = re.compile(r'piecewise linear projection \(c=[1-9][0-9]*\)')
 
 
 def execute_combined_algorithms(combined_algorithms: List[str], config_path: str, training_data_path: str,
@@ -153,7 +153,7 @@ def execute_classification(algorithm: str, config: dict,
 
 class UnknownAlgorithmError(LookupError):
     def __init__(self, algorithm):
-        self.strerror = 'combined algorithm with name "{}" not found in config'.format(algorithm)
+        self.strerror = 'hybrid algorithm with name {} not found in config'.format(algorithm)
         self.args = {self.strerror}
 
 

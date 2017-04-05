@@ -136,7 +136,7 @@
       "classification": "piecewise linear projection (c=50)",
       "training samples": 1083128
     },
-    "ts+pwlinproj(c=75)": {
+    "ts+pwlinproj(c=70)": {
       "sequences": "triple sentences",
       "sgns": "triple sentence sgns",
       "classification": "piecewise linear projection (c=70)",
