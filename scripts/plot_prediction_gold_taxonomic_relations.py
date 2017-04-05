@@ -75,6 +75,35 @@ def main():
 
     plt.savefig(output_path.format('_'.join([algorithm.format(k) for k in ks])))
 
+    # plot ts+pwlinproj(c=?) with different c's
+    plt.figure(1)
+    plt.clf()
+
+    algorithm = 'ts+pwlinproj(c={})'
+    cs = [30, 50]
+
+    n = len(cs)
+    ind = np.arange(n)
+
+    de_c = np.array([distance_exceeded[algorithm.format(c)] for c in cs])
+    os_c = np.array([overspecialized[algorithm.format(c)] for c in cs])
+    us_c = np.array([underspecialized[algorithm.format(c)] for c in cs])
+    cp_c = np.array([common_parent[algorithm.format(c)] for c in cs])
+
+    de_plt = plt.bar(ind, de_c, color=colors[0])
+    os_plt = plt.bar(ind, os_c, color=colors[1], bottom=de_c)
+    us_plt = plt.bar(ind, us_c, color=colors[2], bottom=de_c + os_c)
+    cp_plt = plt.bar(ind, cp_c, color=colors[3], bottom=de_c + os_c + us_c)
+
+    plt.title('ts+pwlinproj(c=?): taxonomic relations of misclassifications')
+    plt.xlabel('c')
+    plt.ylabel('count')
+    plt.legend([de_plt[0], os_plt[0], us_plt[0], cp_plt[0]],
+               ['distance exceeded', 'overspecialized', 'underspecialized', 'same parent'], loc='lower left')
+    plt.xticks(ind + 0.4, cs)
+
+    plt.savefig(output_path.format('_'.join([algorithm.format(c) for c in cs])))
+
     # plot arbitrary algorithm combinations defined in combined_plots
     for combined_plot in combined_plots:
         plt.figure(1)

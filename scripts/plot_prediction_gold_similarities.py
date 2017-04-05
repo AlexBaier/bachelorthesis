@@ -30,17 +30,17 @@ def main():
         'ts+kriknn(k=15&r=10)',
         'ts+distknn(k=15)',
         'ts+linproj',
-        'ts+pwlinproj(c=30)'
+        'ts+pwlinproj(c=30)',
+        'ts+pwlinproj(c=50)'
     ]
     combined_plots = [
-        ['ts+kriknn(k=15&r=1)', 'ts+pwlinproj(c=30)'],
         ['ts+kriknn(k=15&r=1)', 'ts+distknn(k=15)'],
         ['ts+kriknn(k=2&r=1)', 'ts+kriknn(k=5&r=1)', 'ts+kriknn(k=10&r=1)', 'ts+kriknn(k=15&r=1)'],
         ['ts+kriknn(k=5&r=10)', 'ts+kriknn(k=15&r=10)'],
         ['ts+kriknn(k=15&r=1)', 'ts+kriknn(k=15&r=10)'],
         ['ts+kriknn(k=5&r=1)', 'ts+kriknn(k=5&r=10)', 'ts+kriknn(k=15&r=1)', 'ts+kriknn(k=15&r=10)'],
-        ['ts+linproj', 'ts+pwlinproj(c=30)'],
-        ['ts+kriknn(k=15&r=1)', 'ts+linproj', 'ts+pwlinproj(c=30)']
+        ['ts+linproj', 'ts+pwlinproj(c=30)', 'ts+pwlinproj(c=50)'],
+        ['ts+kriknn(k=15&r=1)', 'ts+pwlinproj(c=50)']
     ]
 
     nbins = 12
