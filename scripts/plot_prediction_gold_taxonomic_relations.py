@@ -47,11 +47,10 @@ def main():
     ]
 
     # plot ts+kriknn(k=?&r=1) with different k's and r=1
-    plt.figure(1)
-    plt.clf()
-
     algorithm = 'ts+kriknn(k={}&r=1)'
     ks = [2, 5, 10, 15]
+    plt.figure(1, figsize=(8, 20))
+    plt.clf()
 
     n = len(ks)
     ind = np.arange(n)
@@ -65,14 +64,12 @@ def main():
     os_plt = plt.bar(ind, os_c, color=colors[1], bottom=de_c)
     us_plt = plt.bar(ind, us_c, color=colors[2], bottom=de_c + os_c)
     cp_plt = plt.bar(ind, cp_c, color=colors[3], bottom=de_c + os_c + us_c)
-
     plt.title('ts+kriknn(k=?&r=1): taxonomic relations of misclassifications')
     plt.xlabel('k')
     plt.ylabel('count')
     plt.legend([de_plt[0], os_plt[0], us_plt[0], cp_plt[0]],
                ['distance exceeded', 'overspecialized', 'underspecialized', 'same parent'], loc='lower left')
     plt.xticks(ind + 0.4, ks)
-
     plt.savefig(output_path.format('_'.join([algorithm.format(k) for k in ks])))
 
     # plot ts+pwlinproj(c=?) with different c's
@@ -101,36 +98,7 @@ def main():
     plt.legend([de_plt[0], os_plt[0], us_plt[0], cp_plt[0]],
                ['distance exceeded', 'overspecialized', 'underspecialized', 'same parent'], loc='lower left')
     plt.xticks(ind + 0.4, cs)
-
     plt.savefig(output_path.format('_'.join([algorithm.format(c) for c in cs])))
-
-    # plot arbitrary algorithm combinations defined in combined_plots
-    for combined_plot in combined_plots:
-        plt.figure(1)
-        plt.clf()
-
-        n = len(combined_plot)
-        ind = np.arange(n)
-
-        de_c = np.array([distance_exceeded[algorithm] for algorithm in combined_plot])
-        os_c = np.array([overspecialized[algorithm] for algorithm in combined_plot])
-        us_c = np.array([underspecialized[algorithm] for algorithm in combined_plot])
-        cp_c = np.array([common_parent[algorithm] for algorithm in combined_plot])
-
-        de_plt = plt.bar(ind, de_c, color=colors[0])
-        os_plt = plt.bar(ind, os_c, color=colors[1], bottom=de_c)
-        us_plt = plt.bar(ind, us_c, color=colors[2], bottom=de_c+os_c)
-        cp_plt = plt.bar(ind, cp_c, color=colors[3], bottom=de_c+os_c+us_c)
-
-        plt.title('taxonomic relations of misclassifications')
-        plt.xlabel('algorithm')
-        plt.ylabel('count')
-        plt.legend([de_plt[0], os_plt[0], us_plt[0], cp_plt[0]],
-                   ['distance exceeded', 'overspecialized', 'underspecialized', 'same parent'], loc='lower left')
-        plt.xticks(ind+0.4, combined_plot)
-
-        plt.savefig(output_path.format('_'.join(combined_plot)))
-
 
 if __name__ == '__main__':
     main()
