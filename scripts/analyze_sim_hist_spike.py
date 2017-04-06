@@ -26,8 +26,9 @@ def main():
 
     max_length = 100
 
-    output_path = '../evaluation/unknowns_analysis_{}_{}_{}-20161107.csv'.format(
+    output_path_spike = '../evaluation/unknowns_analysis_{}_{}_{}-20161107.csv'.format(
         algorithm, str(interval_begin).replace('.', ''), str(interval_end).replace('.', ''))
+    output_path_all = '../evaluation/unknowns_analysis_{}_all-20161107.csv'.format(algorithm)
 
     config = load_config(config_path)
     sgns = config['combinations'][algorithm]['sgns']
@@ -49,9 +50,11 @@ def main():
     logging.log(level=logging.INFO, msg='computed similarities of prediction-gold pairs')
 
     is_in_relevant_interval = (interval_begin <= similarities) * (similarities <= interval_end)
+    all_ids = set()
     relevant_unknown_ids = set()
 
     for idx in range(len(test_data)):
+        all_ids.add(test_data[idx].input_arg)
         if is_in_relevant_interval[idx]:
             relevant_unknown_ids.add(test_data[idx].input_arg)
     logging.log(level=logging.INFO, msg='found {} unknowns in interval [{}, {}]'.format(len(relevant_unknown_ids),
@@ -65,17 +68,22 @@ def main():
         result['subclass of'] = list(get_subclass_of_ids(obj))
         return result
 
-    details = DataPipe.read_json_dump(classes_path)\
+    details_spike = DataPipe.read_json_dump(classes_path)\
         .filter_by(lambda obj: obj['id'] in relevant_unknown_ids)\
         .map(to_detail)\
         .to_list()
     logging.log(level=logging.INFO, msg='extracted details of unknowns in interval')
+    details_all = DataPipe.read_json_dump(classes_path)\
+        .filter_by(lambda obj: obj['id'] in all_ids)\
+        .map(to_detail)\
+        .to_list()
+    logging.log(level=logging.INFO, msg='extracted details of all unknowns')
 
     labeled_count = 0
     instance_freq = dict()
     subclass_freq = dict()
     prop_freq = dict()
-    for detail in details:
+    for detail in details_spike:
         labeled_count += 1 if detail['label'] else 0
         for subclass in detail['subclass of']:
             subclass_freq[subclass] = subclass_freq.setdefault(subclass, 0) + 1
@@ -83,9 +91,9 @@ def main():
             instance_freq[instance] = instance_freq.setdefault(instance, 0) + 1
         for prop in detail['properties']:
             prop_freq[prop] = prop_freq.setdefault(prop, 0) + 1
-    logging.log(level=logging.INFO, msg='aggregated details')
+    logging.log(level=logging.INFO, msg='aggregated spike details')
 
-    with open(output_path, mode='w') as f:
+    with open(output_path_spike, mode='w') as f:
         f.write(algorithm + '\n')
         f.write(','.join(['interval', str(interval_begin), str(interval_end)]) + '\n')
         f.write(','.join(['total', str(len(relevant_unknown_ids))]) + '\n')
@@ -99,7 +107,38 @@ def main():
         i, c = zip(*sorted(prop_freq.items(), key=lambda o: o[1])[::-1][:max_length])
         f.write(','.join(i) + '\n')
         f.write(','.join(map(lambda o: str(o), c)) + '\n')
-    logging.log(level=logging.INFO, msg='wrote aggregated details')
+    logging.log(level=logging.INFO, msg='wrote aggregated spike details')
+
+    labeled_count = 0
+    instance_freq = dict()
+    subclass_freq = dict()
+    prop_freq = dict()
+    for detail in details_all:
+        labeled_count += 1 if detail['label'] else 0
+        for subclass in detail['subclass of']:
+            subclass_freq[subclass] = subclass_freq.setdefault(subclass, 0) + 1
+        for instance in detail['instance of']:
+            instance_freq[instance] = instance_freq.setdefault(instance, 0) + 1
+        for prop in detail['properties']:
+            prop_freq[prop] = prop_freq.setdefault(prop, 0) + 1
+    logging.log(level=logging.INFO, msg='aggregated all details')
+
+    with open(output_path_all, mode='w') as f:
+        f.write(algorithm + '\n')
+        f.write(','.join(['interval', str(interval_begin), str(interval_end)]) + '\n')
+        f.write(','.join(['total', str(len(all_ids))]) + '\n')
+        f.write(','.join(['labeled', str(labeled_count)]) + '\n')
+        i, c = zip(*sorted(instance_freq.items(), key=lambda o: o[1])[::-1][:max_length])
+        f.write(','.join(i) + '\n')
+        f.write(','.join(map(lambda o: str(o), c)) + '\n')
+        i, c = zip(*sorted(subclass_freq.items(), key=lambda o: o[1])[::-1][:max_length])
+        f.write(','.join(i) + '\n')
+        f.write(','.join(map(lambda o: str(o), c)) + '\n')
+        i, c = zip(*sorted(prop_freq.items(), key=lambda o: o[1])[::-1][:max_length])
+        f.write(','.join(i) + '\n')
+        f.write(','.join(map(lambda o: str(o), c)) + '\n')
+    logging.log(level=logging.INFO, msg='wrote aggregated all details')
+
 
 if __name__ == '__main__':
     main()
