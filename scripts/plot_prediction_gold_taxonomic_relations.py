@@ -12,7 +12,7 @@ def main():
     output_path = '../evaluation/plots/tax_rel_{}-20161107.png'
 
     combined_plots = [
-        ['ts+linproj', 'ts+pwlinproj(c=30)', 'ts+kriknn(k=15&r=1)']
+        ['ts+linproj', 'ts+pwlinproj(c=50)', 'ts+kriknn(k=15&r=1)']
     ]
 
     algorithms = list()
@@ -80,7 +80,7 @@ def main():
     plt.clf()
 
     algorithm = 'ts+pwlinproj(c={})'
-    cs = [30, 50]
+    cs = [30, 50, 70, 85, 100]
 
     n = len(cs)
     ind = np.arange(n)

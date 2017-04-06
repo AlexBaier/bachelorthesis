@@ -59,7 +59,10 @@ def algo2color(algo):
         'ts+distknn(k=15)': '#0a481e',  # pine green
         'ts+linproj': '#ff9408',  # tangerine
         'ts+pwlinproj(c=30)': '#840000',  # dark red
-        'ts+pwlinproj(c=50)': '#80013f'  # wine
+        'ts+pwlinproj(c=50)': '#80013f',  # wine
+        'ts+pwlinproj(c=70)': '#fdaa48',  # light orange
+        'ts+pwlinproj(c=85)': '#e2ca76',  # sand
+        'ts+pwlinproj(c=100)': '#fac205'  # goldenrod
     }
     default = '#e50000'  # red
     return colors.get(algo, default)

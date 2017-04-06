@@ -29,7 +29,10 @@ def main():
         'ts+kriknn(k=15&r=10)',
         'ts+linproj',
         'ts+pwlinproj(c=30)',
-        'ts+pwlinproj(c=50)'
+        'ts+pwlinproj(c=50)',
+        'ts+pwlinproj(c=70)',
+        'ts+pwlinproj(c=85)',
+        'ts+pwlinproj(c=100)'
     ]
 
     with open(config_path) as f:
