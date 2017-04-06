@@ -71,6 +71,10 @@
     "clusters": 70,
     "sgd iterations": 5
   },
+  "piecewise linear projection (c=85)": {
+    "clusters": 85,
+    "sgd iterations": 5
+  },
   "piecewise linear projection (c=100)": {
     "clusters": 100,
     "sgd iterations": 5
@@ -140,6 +144,12 @@
       "sequences": "triple sentences",
       "sgns": "triple sentence sgns",
       "classification": "piecewise linear projection (c=70)",
+      "training samples": 1083128
+    },
+    "ts+pwlinproj(c=85)": {
+      "sequences": "triple sentences",
+      "sgns": "triple sentence sgns",
+      "classification": "piecewise linear projection (c=85)",
       "training samples": 1083128
     },
     "ts+pwlinproj(c=100)": {
