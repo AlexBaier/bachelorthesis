@@ -1,0 +1,9 @@
+{
+  "wikidata dump": "data/wikidata/wikidata-20161107-all.json",
+  "class dump": "data/classes-20161107.json",
+  "class ids": "data/class_ids-20161107.txt",
+  "orphan class dump": "data/orphan_classes-20161107.json",
+  "class characteristics": "data/class_characteristics-20161107.json",
+  "class analysis": "data/class_analysis-20161107.json",
+  "orphan class analysis": "data/orphan_class_analysis-20161107.json"
+}

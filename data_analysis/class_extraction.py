@@ -50,7 +50,7 @@ def is_item(entity: dict)->bool:
     return entity.get('id')[0] == 'Q'
 
 
-def is_unlinked_class(c: dict)->bool:
+def is_orphan_class(c: dict)->bool:
     """
     :param c:
     :return:
@@ -103,40 +103,65 @@ def to_characteristic(class_ids: Set[str], entities: Iterable[dict])->Callable[[
 
 
 def analyze_characteristics(characteristics: Iterable[dict])->dict:
-    result = dict()
-    unlinked_class_count = 0
+    class_count = 0
     enwiki_count = 0
     labeled_count = 0
-    property_counts = dict()  # type: Dict[int, int]
-    subclass_counts = dict()  # type: Dict[int, int]
-    instance_counts = dict()  # type: Dict[int, int]
-    property_frequencies = dict()  # type: Dict[str, int]
+
+    property_count_hist = dict()  # type: Dict[int, int]
+    subclass_count_hist = dict()  # type: Dict[int, int]
+    instance_count_hist = dict()  # type: Dict[int, int]
+
+    property_hist = dict()  # type: Dict[str, int]
+    subclass_hist = dict()  # type: Dict[str, int]
+    instance_hist = dict()  # type: Dict[str, int]
+
     for ch in characteristics:
+        class_count += 1
+        enwiki_count += 1 if ch['enwiki'] else 0
+        labeled_count += 1 if ch['label'] else 0
+
         property_num = len(ch['properties'])
         subclass_num = len(ch['subclasses'])
         instance_num = len(ch['instances'])
-        # count number of analyzed classes
-        unlinked_class_count += 1
-        # count number of classes with enwiki
-        enwiki_count += 1 if ch['enwiki'] else 0
-        # count number of labeled classes
-        labeled_count += 1 if ch['label'] else 0
-        # count number of root classes with a specific number of properties
-        property_counts[property_num] = property_counts.get(property_num, 0) + 1
-        # count number of root classes with a specific number of subclasses
-        subclass_counts[subclass_num] = subclass_counts.get(subclass_num, 0) + 1
-        # count number of root classes with a specific number of instances
-        instance_counts[instance_num] = instance_counts.get(instance_num, 0) + 1
-        # count frequency of properties in root classes
-        for prop in ch['properties']:
-            property_frequencies[prop] = property_frequencies.get(prop, 0) + 1
+        property_count_hist[property_num] = property_count_hist.get(property_num, 0) + 1
+        subclass_count_hist[subclass_num] = subclass_count_hist.get(subclass_num, 0) + 1
+        instance_count_hist[instance_num] = instance_count_hist.get(instance_num, 0) + 1
 
-    result['unlinked class count'] = unlinked_class_count
+        for prop in ch['properties']:
+            property_hist[prop] = property_hist.get(prop, 0) + 1
+        for inst in ch['instances']:
+            instance_hist[inst] = instance_hist.get(inst, 0) + 1
+        for subc in ch['subclasses']:
+            subclass_hist[subc] = subclass_hist.get(subc, 0) + 1
+
+    property_count_avg = utils.average(list(property_count_hist.keys()), list(property_count_hist.values()))
+    subclass_count_avg = utils.average(list(subclass_count_hist.keys()), list(subclass_count_hist.values()))
+    instance_count_avg = utils.average(list(instance_count_hist.keys()), list(instance_count_hist.values()))
+
+    property_count_median = utils.median(list(property_count_hist.keys()), list(property_count_hist.values()))
+    subclass_count_median = utils.median(list(subclass_count_hist.keys()), list(subclass_count_hist.values()))
+    instance_count_median = utils.median(list(instance_count_hist.keys()), list(instance_count_hist.values()))
+
+    result = dict()
+
+    result['class count'] = class_count
     result['enwiki count'] = enwiki_count
     result['labeled class count'] = labeled_count
-    result['property counts'] = property_counts
-    result['subclass counts'] = subclass_counts
-    result['instance counts'] = instance_counts
-    result['property frequencies'] = property_frequencies
+
+    result['property count histogram'] = property_count_hist
+    result['subclass count histogram'] = subclass_count_hist
+    result['instance count histogram'] = instance_count_hist
+
+    result['property histogram'] = property_hist
+    result['subclass histogram'] = subclass_hist
+    result['instance histogram'] = instance_hist
+
+    result['property count average'] = property_count_avg
+    result['subclass count average'] = subclass_count_avg
+    result['instance count average'] = instance_count_avg
+
+    result['property count median'] = property_count_median
+    result['subclass count median'] = subclass_count_median
+    result['instance count median'] = instance_count_median
 
     return result

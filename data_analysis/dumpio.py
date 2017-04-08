@@ -1,5 +1,6 @@
 import json
 import logging
+
 import typing
 
 
@@ -15,7 +16,7 @@ class JSONDumpReader(typing.Iterator[dict]):
                 try:
                     yield json.loads(l)
                 except ValueError as e:
-                    logging.log(level=logging.INFO, msg="encountered illegal string while parsing JSON dump")
+                    logging.log(level=logging.DEBUG, msg="encountered illegal string while parsing JSON dump")
 
     @staticmethod
     def __clean_line(l: str)->str:
@@ -30,10 +31,13 @@ class JSONDumpWriter(object):
 
     def write(self, objects: typing.Iterable[dict]):
         with open(self.__output_path, mode='w') as f:
+            f.write('[\n')
             batch = list()
             for idx, o in enumerate(objects):
                 batch.append(json.dumps(o))
                 if idx and idx % self.__batch_size == 0:
+                    logging.log(level=logging.INFO, msg='wrote {} objects'.format(idx + 1))
                     f.write('\n'.join(batch) + '\n')
                     batch = list()
             f.write('\n'.join(batch) + '\n')
+            f.write(']\n')

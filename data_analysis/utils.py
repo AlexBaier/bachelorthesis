@@ -47,3 +47,17 @@ def get_item_property_ids(property_id: str, entity: dict)->Iterable[str]:
                    filter(lambda e: e.get('mainsnak').get('snaktype') == 'value',
                           entity.get('claims').get(property_id, list()))))
 
+
+def average(x, y):
+    return float(sum([a * b for a, b in zip(x, y)]))/sum(y)
+
+
+def median(x, y):
+    x, y = zip(*sorted(zip(x, y), key=lambda t: t[0]))
+    median_pos = sum(y)/2
+    before = 0
+    for a, b in zip(x, y):
+        before += b
+        if median_pos <= before:
+            return a
+    return x[-1]
