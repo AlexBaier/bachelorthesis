@@ -1,21 +1,11 @@
+import json
 import logging
-
 import sqlite3
-from typing import Iterator, List
+
+from typing import Iterable, List
 
 
-class EdgeIterator(Iterator[List[str]]):
-
-    def __init__(self, triple_sentence_dump: str):
-        self.__dump = triple_sentence_dump
-
-    def __iter__(self):
-        with open(self.__dump) as f:
-            for l in f:
-                yield l.strip().split()
-
-
-def generate_edge_store(db_path: str, edges: Iterator[List[str]]):
+def generate_edge_store(db_path: str, edges: Iterable[List[str]]):
     logging.log(level=logging.INFO, msg='start generating edge store')
     conn = sqlite3.connect(db_path)
     with conn:
@@ -32,9 +22,17 @@ def generate_edge_store(db_path: str, edges: Iterator[List[str]]):
 
 def main():
     logging.basicConfig(format='%(asctime)s : %(levelname)s : %(message)s', level=logging.INFO)
-    edge_store_path = '../data/algorithm_io/edges-20161107.sqlite3'
-    triple_sentence_path = '../data/algorithm_io/simple_sentences-20161107.txt'
-    generate_edge_store(edge_store_path, EdgeIterator(triple_sentence_path))
+
+    with open('paths_config.json') as f:
+        config = json.load(f)
+
+    triple_sentence_path = config['triple sentences']
+    edge_store_path = config['edges db']
+
+    with open(triple_sentence_path) as f:
+        edges = filter(lambda s: len(s) == 3, (l.strip().split() for l in f))
+    generate_edge_store(edge_store_path, edges)
+    logging.log(level=logging.INFO, msg='stored edge db to {}'.format(edge_store_path))
 
 
 if __name__ == '__main__':

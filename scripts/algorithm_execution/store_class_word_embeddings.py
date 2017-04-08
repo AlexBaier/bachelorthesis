@@ -1,15 +1,24 @@
+import json
 import logging
 
-from gensim.models import Word2Vec
 import numpy as np
+from gensim.models import Word2Vec
 
 
 def main():
     logging.basicConfig(format='%(asctime)s : %(levelname)s : %(message)s', level=logging.DEBUG)
 
-    class_id_path = '../data/algorithm_io/class_ids-20161107.txt'
-    model_path = '../data/algorithm_io/simple_sentence_model_final-20161107'
-    output_path = '../data/algorithm_io/simple_sentence_class_embeddings-20161107'
+    model = 'triple sentence sgns'
+
+    with open('paths_config.json') as f:
+        paths_config = json.load(f)
+
+    with open('algorithm_config.json') as f:
+        algorithm_config = json.load(f)
+
+    class_id_path = paths_config['class ids']
+    model_path = paths_config[model]
+    output_path = algorithm_config[model]
 
     model = Word2Vec.load(model_path)
 

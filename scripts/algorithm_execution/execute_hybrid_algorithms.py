@@ -1,3 +1,4 @@
+import json
 import logging
 
 from evaluation.execution import execute_combined_algorithms
@@ -6,15 +7,19 @@ from evaluation.execution import execute_combined_algorithms
 def main():
     logging.basicConfig(format='%(asctime)s : %(levelname)s : %(message)s', level=logging.INFO)
 
-    config_path = '../algorithm_config.json'
-    training_data_path = '../evaluation/training_data-20161107.csv'
-    test_data_path = '../evaluation/test_data-20161107.csv'
-    output_path = '../evaluation/results_{}-20161107.csv'
+    with open('paths_config.json') as f:
+        paths_config = json.load(f)
+
+    config_path = 'algorithm_config.json'
+
+    training_data_path = paths_config['training data']
+    test_data_path = paths_config['test data']
+    output_path = paths_config['execution results']
 
     col_sep = ','
     row_sep = '\n'
 
-    combined_algorithms = ['ts+kriknn(k=10&r=1)']
+    combined_algorithms = ['ts+pwlinproj(c=85)', 'ts+pwlinproj(c=100)', 'ts+pwlinproj(c=70)']
 
     results = execute_combined_algorithms(
         combined_algorithms=combined_algorithms,

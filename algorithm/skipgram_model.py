@@ -1,6 +1,5 @@
-from typing import Iterator, List
-
 import gensim
+from typing import Iterable, List
 
 
 class SpecificWordTrim(object):
@@ -20,7 +19,7 @@ class SpecificWordTrim(object):
         return rule
 
 
-def train_and_store_sgns(config: dict, required_words: List[str], sentences: Iterator[List[str]], output_path: str):
+def train_and_store_sgns(config: dict, required_words: List[str], sentences: Iterable[List[str]], output_path: str):
     rule = SpecificWordTrim(include=required_words, exclude=list()).get_rule()
     model = gensim.models.Word2Vec(
         sentences=sentences,
@@ -36,4 +35,5 @@ def train_and_store_sgns(config: dict, required_words: List[str], sentences: Ite
         iter=config['iterations'],
         trim_rule=rule
     )
+    model.delete_temporary_training_data()
     model.save(output_path)

@@ -3,10 +3,10 @@ import logging
 import random
 import sqlite3
 import time
-from typing import Iterable, Iterator, List
 
 import numpy as np
 import pathos.multiprocessing as mp
+from typing import Iterable, List
 
 
 class Wikidata2Sequence(object, metaclass=abc.ABCMeta):
@@ -18,8 +18,8 @@ class Wikidata2Sequence(object, metaclass=abc.ABCMeta):
 
 class TripleSentences(Wikidata2Sequence):
 
-    def __init__(self, items: Iterator[dict]):
-        self.__items = items  # type: Iterator[dict]
+    def __init__(self, items: Iterable[dict]):
+        self.__items = items  # type: Iterable[dict]
 
     def get_sequences(self)->Iterable[List[str]]:
         def __get_sentences():
@@ -34,8 +34,8 @@ class TripleSentences(Wikidata2Sequence):
                             elif stmt['mainsnak']['datatype'] == 'wikibase-property':
                                 value = 'P' + str(stmt['mainsnak']['datavalue']['value']['numeric-id'])
                             else:
-                                value = stmt['mainsnak']['datatype']
-                            yield [item_id, pid, value]
+                                value = ''
+                            yield [item_id, pid, value] if value else [item_id, pid]
         return __get_sentences()
 
 
@@ -115,7 +115,7 @@ class GraphWalkSentences(Wikidata2Sequence):
         return list(map(lambda e: ['Q'+str(e[0]), 'P'+str(e[1]), 'Q'+str(e[2])], results))
 
 
-class SentenceIterator(Iterator[List[str]]):
+class SentenceIterable(Iterable[List[str]]):
 
     def __init__(self, file_paths: List[str]):
         self.__paths = file_paths  # type: List[str]
@@ -124,8 +124,4 @@ class SentenceIterator(Iterator[List[str]]):
         for path in self.__paths:
             with open(path) as f:
                 for s in map(lambda l: l.strip().split(), f):
-                    # triple sentence
-                    if len(s) == 3:
-                        yield s if s[2][0] in ['Q', 'P'] else s[0:2]
-                    else:
-                        yield s
+                    yield s

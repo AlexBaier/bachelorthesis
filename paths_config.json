@@ -5,5 +5,18 @@
   "orphan class dump": "data/orphan_classes-20161107.json",
   "class characteristics": "data/class_characteristics-20161107.json",
   "class analysis": "data/class_analysis-20161107.json",
-  "orphan class analysis": "data/orphan_class_analysis-20161107.json"
+  "orphan class analysis": "data/orphan_class_analysis-20161107.json",
+
+  "training data": "evaluation/training_data-20161107.csv",
+  "test data": "evaluation/test_data-20161107.csv",
+
+  "edges db": "data/algorithm_io/edges-20161107.sqlite3",
+
+  "triple sentences": "data/algorithm_io/triple_sentences-20161107.txt",
+  "graph walk sentences": "data/algorithm_io/graph_walk_sentences-20161107.txt",
+
+  "triple sentence sgns": "data/algorithm_io/triple_sentence_sgns-20161107",
+  "graph walk sentence sgns": "data/algorithm_io/graph_walk_sentence_sgns-20161107",
+
+  "execution results": "evaluation/results_{}-20161107.csv"
 }

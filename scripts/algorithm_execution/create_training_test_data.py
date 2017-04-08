@@ -1,3 +1,4 @@
+import json
 import logging
 
 import data_analysis.dumpio as dumpio
@@ -6,9 +7,13 @@ import evaluation.data_sample as data_gen
 
 def main():
     logging.basicConfig(format='%(asctime)s : %(levelname)s : %(message)s', level=logging.INFO)
-    classes_path = '../data/classes-20161107'
-    test_data_output = '../evaluation/test_data-20161107.csv'
-    training_data_output = '../evaluation/training_data-20161107.csv'
+
+    with open('paths_config.json') as f:
+        config = json.load(f)
+
+    classes_path = config['class dump']
+    test_data_output = config['test data']
+    training_data_output = config['training data']
     test_sample_count = 200000
 
     samples = data_gen.generate_wikidata_classification_samples(dumpio.JSONDumpReader(classes_path), property_id='P279')
