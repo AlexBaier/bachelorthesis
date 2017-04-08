@@ -6,25 +6,29 @@ import time
 
 import numpy as np
 import pathos.multiprocessing as mp
-from typing import Iterable, List
+from typing import Iterable, List, Set
 
 
-class Wikidata2Sequence(object, metaclass=abc.ABCMeta):
+class SequenceGen(object, metaclass=abc.ABCMeta):
 
     @abc.abstractclassmethod
     def get_sequences(self)->Iterable[List[str]]:
         pass
 
 
-class TripleSentences(Wikidata2Sequence):
+class TripleSentences(SequenceGen):
 
-    def __init__(self, items: Iterable[dict]):
+    def __init__(self, items: Iterable[dict], forbidden_properties: Set[str]):
+        self.__forbidden_properties = forbidden_properties
         self.__items = items  # type: Iterable[dict]
 
     def get_sequences(self)->Iterable[List[str]]:
         def __get_sentences():
             for item in self.__items:
                 item_id = item['id']
+                # skip all items which contain forbidden properties
+                if not set(item['claims'].keys()).isdisjoint(self.__forbidden_properties):
+                    continue
                 for pid in item['claims'].keys():
                     stmt_group = item['claims'][pid]
                     for stmt in stmt_group:
@@ -39,7 +43,7 @@ class TripleSentences(Wikidata2Sequence):
         return __get_sentences()
 
 
-class GraphWalkSentences(Wikidata2Sequence):
+class GraphWalkSentences(SequenceGen):
     """
     GraphWalk has exponential runtime.
     """
@@ -47,8 +51,8 @@ class GraphWalkSentences(Wikidata2Sequence):
         self.__vertices = vertices  # type: List[str]
         self.__depth = depth  # type: int
         self.__max_walks = max_walks_per_v  # type: int
-        self.__edge_store_path = edge_store_path
-        self.__workers = workers
+        self.__edge_store_path = edge_store_path  # type: str
+        self.__workers = workers  # type: int
 
     def get_sequences(self)->Iterable[List[str]]:
         logging.log(level=logging.INFO, msg='Graph walk sequences with depth={}, max walks={}, workers={}'.format(
@@ -115,7 +119,7 @@ class GraphWalkSentences(Wikidata2Sequence):
         return list(map(lambda e: ['Q'+str(e[0]), 'P'+str(e[1]), 'Q'+str(e[2])], results))
 
 
-class SentenceIterable(Iterable[List[str]]):
+class Sequences(Iterable[List[str]]):
 
     def __init__(self, file_paths: List[str]):
         self.__paths = file_paths  # type: List[str]

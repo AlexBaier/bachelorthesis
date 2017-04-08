@@ -4,7 +4,7 @@ import time
 
 import numpy
 
-from algorithm.sentence_gen import SentenceIterable
+from algorithm.sequence_gen import Sequences
 from evaluation.utils import load_embeddings_and_labels
 
 
@@ -36,7 +36,7 @@ def main():
     with open(offsets_output_path, mode='w') as f:
         for subclass, superclass in map(lambda r: (r[0], r[2]),
                                         filter(lambda s: s[1] == 'P279',
-                                               SentenceIterable([triple_sentences_path]))):
+                                               Sequences([triple_sentences_path]))):
             try:
                 superclass_vec = id2embedding[superclass]
                 subclass_vec = id2embedding[subclass]

@@ -11,10 +11,10 @@ def main():
     with open('paths_config.json') as f:
         config = json.load(f)
 
-    classes_path = config['class dump']
+    classes_path = config['relevant class dump']
     test_data_output = config['test data']
     training_data_output = config['training data']
-    test_sample_count = 200000
+    test_sample_count = 50000
 
     samples = data_gen.generate_wikidata_classification_samples(dumpio.JSONDumpReader(classes_path), property_id='P279')
     test_samples, training_samples = data_gen.generate_training_test_data(samples, test_sample_count)

@@ -1,7 +1,7 @@
 import json
 import logging
 
-from algorithm.sentence_gen import TripleSentences
+from algorithm.sequence_gen import TripleSentences
 from data_analysis.dumpio import JSONDumpReader
 
 
@@ -14,7 +14,14 @@ def main():
     dump_path = config['wikidata dump']
     output_path = config['triple sentences']
 
-    sentences = TripleSentences(JSONDumpReader(dump_path)).get_sequences()
+    with open(config['irrelevant properties']) as f:
+        irrelevant_properties = set(l.strip() for l in f)
+
+    sentences = TripleSentences(
+        JSONDumpReader(dump_path),
+        forbidden_properties=irrelevant_properties
+    ).get_sequences()
+
     with open(output_path, mode='w') as f:
         for idx, sentence in enumerate(map(lambda s: ' '.join(s) + '\n', sentences)):
             f.write(sentence)

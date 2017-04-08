@@ -2,7 +2,7 @@ import json
 import logging
 import random
 
-from algorithm.sentence_gen import GraphWalkSentences
+from algorithm.sequence_gen import GraphWalkSentences
 
 
 def main():
@@ -14,6 +14,7 @@ def main():
     node_id_path = config['class ids']
     edge_store_path = config['edges db']
     output_path = config['graph walk sentences']
+
     node_count = 2500
 
     random.seed()
@@ -25,9 +26,9 @@ def main():
     random.shuffle(nodes)
     gen = GraphWalkSentences(
         nodes[:node_count],
-        4,  # RDF2Vec: depth = 4
-        10,  # RDF2Vec: max walks per vertice = 100
-        edge_store_path,
+        depth=4,  # RDF2Vec: depth = 4
+        max_walks_per_v=10,  # RDF2Vec: max walks per vertice = 100
+        edge_store_path=edge_store_path,
         workers=4
     )
     logging.log(level=logging.INFO, msg='initialized graph walk sentence gen')
