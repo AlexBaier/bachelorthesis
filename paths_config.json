@@ -4,10 +4,17 @@
   "orphan class dump": "data/orphan_classes-20161107.json",
 
   "class ids": "data/class_ids-20161107.txt",
+  "wikidata labels": "data/wikidata_labels-20161107.json",
 
   "class characteristics": "data/class_characteristics-20161107.json",
   "class analysis": "data/class_analysis-20161107.json",
   "orphan class analysis": "data/orphan_class_analysis-20161107.json",
+
+  "class property frequency": "data/plots/class_property_frequency.png",
+  "class subclass frequency": "data/plots/class_subclass_frequency.png",
+  "class property counts": "data/plots/class_property_counts.png",
+  "class subclass counts": "data/plots/class_subclass_counts.png",
+  "class instance counts": "data/plots/class_instance_counts.png",
 
   "training data": "evaluation/training_data-20161107.csv",
   "test data": "evaluation/test_data-20161107.csv",
