@@ -11,15 +11,20 @@ from evaluation.utils import algo2color, load_embeddings_and_labels, load_test_d
 def main():
     logging.basicConfig(format='%(asctime)s : %(levelname)s : %(message)s', level=logging.INFO)
 
-    config_path = '../algorithm_config.json'
-    predictions_path = '../evaluation/results_{}-20161107.csv'
-    test_data_path = '../evaluation/test_data-20161107.csv'
+    with open('paths_config.json') as f:
+        paths_config = json.load(f)
 
-    sim_hist_plot_path = '../evaluation/plots/sim_hist_{}-20161107.png'
-    leq_sim_distr_plot_path = '../evaluation/plots/cumul_sim_distr_{}-20161107.png'
+    with open('algorithm_config.json') as f:
+        algorithm_config = json.load(f)
 
-    comb_sim_hist_plot_path = '../evaluation/plots/comb_sim_hist_{}-20161107.png'
-    comb_leq_sim_distr_plot_path = '../evaluation/plots/comb_cumul_sim_distr_{}-20161107.png'
+    predictions_path = paths_config['execution results']
+    test_data_path = paths_config['test data']
+
+    sim_hist_plot_path = paths_config['similarity histogram']
+    leq_sim_distr_plot_path = paths_config['similarity distribution']
+
+    comb_sim_hist_plot_path = paths_config['combined similarity histogram']
+    comb_leq_sim_distr_plot_path = paths_config['combined similarity distribution']
 
     algorithms = [
         'ts+kriknn(k=2&r=1)',
@@ -49,10 +54,6 @@ def main():
     nbins = 12
     round_to = 3
 
-    with open(config_path) as f:
-        config = json.load(f)
-    logging.log(level=logging.INFO, msg='loaded algorithm config')
-
     golds = load_test_data(test_data_path)
     logging.log(level=logging.INFO, msg='loaded gold standard')
 
@@ -64,10 +65,10 @@ def main():
 
     id2embedding = dict()
     for algorithm in algorithms:
-        model = config['combinations'][algorithm]['sgns']
+        model = algorithm_config['combinations'][algorithm]['sgns']
         if model in id2embedding.keys():
             continue
-        embeddings, labels = load_embeddings_and_labels(config[model]['embeddings path'])
+        embeddings, labels = load_embeddings_and_labels(algorithm_config[model]['embeddings path'])
         id2idx = dict((label, idx) for idx, label in enumerate(labels))
         id2embedding[model] = lambda item_id: embeddings[id2idx[item_id]]
         logging.log(level=logging.INFO, msg='loaded embeddings of {}'.format(model))
@@ -76,7 +77,7 @@ def main():
         (algorithm,
          np.round(get_prediction_gold_cosine_similarities(
              predictions[algorithm], golds,
-             id2embedding[config['combinations'][algorithm]['sgns']]), decimals=round_to))
+             id2embedding[algorithm_config['combinations'][algorithm]['sgns']]), decimals=round_to))
         for algorithm in algorithms)
     logging.log(level=logging.INFO, msg='computed similarities between all predictions and gold standards')
 

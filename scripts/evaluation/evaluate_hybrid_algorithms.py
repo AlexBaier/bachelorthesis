@@ -12,12 +12,16 @@ from evaluation.utils import load_embeddings_and_labels, load_test_data
 def main():
     logging.basicConfig(format='%(asctime)s : %(levelname)s : %(message)s', level=logging.INFO)
 
-    config_path = '../algorithm_config.json'
-    predictions_path = '../evaluation/results_{}-20161107.csv'
-    test_data_path = '../evaluation/test_data-20161107.csv'
-    classes_path = '../data/classes-20161107'
+    with open('paths_config.json') as f:
+        paths_config = json.load(f)
 
-    evaluation_output = '../evaluation/hybrid_evaluation-20161107.csv'
+    with open('algorithm_config.json') as f:
+        algorithm_config = json.load(f)
+
+    predictions_path = paths_config['execution results']
+    test_data_path = paths_config['test data']
+    classes_path = paths_config['class dump']
+    evaluation_output = paths_config['evaluation']
 
     algorithms = [
         'ts+distknn(k=15)',
@@ -35,10 +39,6 @@ def main():
         'ts+pwlinproj(c=100)'
     ]
 
-    with open(config_path) as f:
-        config = json.load(f)
-    logging.log(level=logging.INFO, msg='loaded algorithm config')
-
     golds = load_test_data(test_data_path)
     logging.log(level=logging.INFO, msg='loaded gold standard')
 
@@ -50,10 +50,10 @@ def main():
 
     id2embedding = dict()
     for algorithm in algorithms:
-        model = config['combinations'][algorithm]['sgns']
+        model = algorithm_config['combinations'][algorithm]['sgns']
         if model in id2embedding.keys():
             continue
-        embeddings, labels = load_embeddings_and_labels(config[model]['embeddings path'])
+        embeddings, labels = load_embeddings_and_labels(algorithm_config[model]['embeddings path'])
         id2idx = dict((label, idx) for idx, label in enumerate(labels))
         id2embedding[model] = lambda item_id: embeddings[id2idx[item_id]]
         logging.log(level=logging.INFO, msg='loaded embeddings of {}'.format(model))
@@ -88,11 +88,12 @@ def main():
     f1_scores = dict()
 
     for algorithm in algorithms:
-        training_samples[algorithm] = config['combinations'][algorithm]['training samples']
+        training_samples[algorithm] = algorithm_config['combinations'][algorithm]['training samples']
         tp_counts[algorithm] = get_true_positive_count(predictions[algorithm], golds)
         logging.log(level=logging.INFO, msg='computed TP count and accuracy for {}'.format(algorithm))
         mses[algorithm] = get_mean_squared_error(predictions[algorithm], golds,
-                                                 id2embedding[config['combinations'][algorithm]['sgns']], round_to=5)
+                                                 id2embedding[algorithm_config['combinations'][algorithm]['sgns']],
+                                                 round_to=5)
         logging.log(level=logging.INFO, msg='computed MSE for {}'.format(algorithm))
         underspec, overspec, same_par = get_near_hits(succ_nodes, predictions[algorithm], golds)
         underspec_counts[algorithm] = underspec

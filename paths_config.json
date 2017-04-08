@@ -1,8 +1,10 @@
 {
   "wikidata dump": "data/wikidata/wikidata-20161107-all.json",
   "class dump": "data/classes-20161107.json",
-  "class ids": "data/class_ids-20161107.txt",
   "orphan class dump": "data/orphan_classes-20161107.json",
+
+  "class ids": "data/class_ids-20161107.txt",
+
   "class characteristics": "data/class_characteristics-20161107.json",
   "class analysis": "data/class_analysis-20161107.json",
   "orphan class analysis": "data/orphan_class_analysis-20161107.json",
@@ -21,5 +23,11 @@
   "subclass offsets": "data/algorithm_io/subclass_offsets-20161107",
   "subclass offset plot": "data/plots/2d_subclass_offsets.png",
 
-  "execution results": "evaluation/results_{}-20161107.csv"
+  "execution results": "evaluation/results_{}-20161107.csv",
+  "evaluation": "evaluation/hybrid_evaluation-20161107.csv",
+
+  "similarity histogram": "evaluation/plots/sim_hist_{}-20161107.png",
+  "similarity distribution": "evaluation/plots/cumul_sim_distr_{}-20161107.png",
+  "combined similarity histogram": "evaluation/plots/comb_sim_hist_{}-20161107.png",
+  "combined similarity distribution": "evaluation/plots/comb_cumul_sim_distr_{}-20161107.png"
 }
