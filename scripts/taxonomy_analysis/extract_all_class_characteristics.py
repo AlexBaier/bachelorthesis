@@ -13,7 +13,7 @@ def main():
 
     wikidata_path = config['wikidata dump']
     class_ids_path = config['class ids']
-    classes_path = config['classes dump']
+    classes_path = config['class dump']
     characteristics_path = config['class characteristics']
 
     with open(class_ids_path) as f:

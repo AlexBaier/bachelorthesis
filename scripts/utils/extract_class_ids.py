@@ -13,8 +13,9 @@ def main():
     classes_path = config['class dump']
     class_ids_path = config['class ids']
 
-    with open(class_ids_path, mode='w'):
+    with open(class_ids_path, mode='w') as f:
         f.write('\n'.join(map(lambda c: c['id'], JSONDumpReader(classes_path))) + '\n')
+    logging.log(level=logging.INFO, msg='wrote class ids to {}'.format(class_ids_path))
 
 
 if __name__ == '__main__':
