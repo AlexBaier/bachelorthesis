@@ -2,13 +2,16 @@
   "wikidata dump": "data/wikidata/wikidata-20161107-all.json",
   "class dump": "data/classes-20161107.json",
   "orphan class dump": "data/orphan_classes-20161107.json",
+  "relevant class dump": "data/relevant_classes-20161107.json",
 
   "class ids": "data/class_ids-20161107.txt",
   "wikidata labels": "data/wikidata_labels-20161107.json",
+  "irrelevant properties": "irrelevant_properties.txt",
 
   "class characteristics": "data/class_characteristics-20161107.json",
   "class analysis": "data/class_analysis-20161107.json",
   "orphan class analysis": "data/orphan_class_analysis-20161107.json",
+  "relevant class analysis": "data/relevant_class_analysis-20161107.json",
 
   "class property frequency": "data/plots/class_property_frequency.png",
   "class subclass frequency": "data/plots/class_subclass_frequency.png",
