@@ -1,3 +1,4 @@
+import json
 import logging
 
 import matplotlib.pyplot as plt
@@ -8,8 +9,11 @@ from sklearn.decomposition import PCA
 def main():
     logging.basicConfig(format='%(asctime)s : %(levelname)s : %(message)s', level=logging.INFO)
 
-    offsets_path = '../data/algorithm_io/subclass_offsets-20161107.csv'
-    plot_output = '../data/plots/2d_subclass_offsets.png'
+    with open('paths_config.json') as f:
+        paths_config = json.load(f)
+
+    offsets_path = paths_config['subclass offsets']
+    plot_output = paths_config['subclass offset plot']
     max_offset_amount = int(8e5)  # type: int
 
     offsets = list()

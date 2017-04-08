@@ -20,7 +20,6 @@ Output:
     difference: 0
 """
 import json
-
 import logging
 
 from evaluation.utils import load_embeddings_and_labels

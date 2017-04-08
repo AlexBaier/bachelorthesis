@@ -1,22 +1,33 @@
+import json
 import logging
 import time
 
-import gensim
 import numpy
 
-from algorithm.sentence_gen import SentenceIterator
+from algorithm.sentence_gen import SentenceIterable
+from evaluation.utils import load_embeddings_and_labels
 
 
 def main():
     logging.basicConfig(format='%(asctime)s : %(levelname)s : %(message)s', level=logging.INFO)
 
-    model_path = '../data/algorithm_io/simple_sentence_model-20161107'
-    triple_sentences_path = '../data/algorithm_io/simple_sentences-20161107.txt'
-    offsets_output_path = '../data/algorithm_io/subclass_offsets-20161107.csv'
+    model = 'triple sentence sgns'
+    sequence_gen = 'triple sentences'
+
+    with open('algorithm_config.json') as f:
+        algorithm_config = json.load(f)
+
+    with open('paths_config.json') as f:
+        paths_config = json.load(f)
+
+    embeddings_path = algorithm_config[model]
+    triple_sentences_path = paths_config[sequence_gen]
+    offsets_output_path = paths_config['subclass offsets']
     progress_report_interval = 500
 
-    model = gensim.models.Word2Vec.load(model_path)  # type: gensim.models.Word2Vec
-    model.delete_temporary_training_data()
+    embeddings, labels = load_embeddings_and_labels(embeddings_path)
+
+    id2embedding = dict(zip(labels, embeddings))
 
     c = 0
     start_time = time.time()
@@ -25,10 +36,10 @@ def main():
     with open(offsets_output_path, mode='w') as f:
         for subclass, superclass in map(lambda r: (r[0], r[2]),
                                         filter(lambda s: s[1] == 'P279',
-                                               SentenceIterator(triple_sentences_path))):
+                                               SentenceIterable([triple_sentences_path]))):
             try:
-                superclass_vec = model[superclass]
-                subclass_vec = model[subclass]
+                superclass_vec = id2embedding[superclass]
+                subclass_vec = id2embedding[subclass]
             except KeyError as e:
                 logging.log(logging.WARNING, msg='Class not found in vocabulary: {}'.format(e))
                 continue
@@ -40,6 +51,7 @@ def main():
     duration = time.time() - start_time
 
     logging.log(level=logging.INFO, msg='computation finished in {} seconds. computed {} offsets'.format(duration, c))
+    logging.log(level=logging.INFO, msg='wrote offsets to {}'.format(offsets_output_path))
 
 
 if __name__ == '__main__':
