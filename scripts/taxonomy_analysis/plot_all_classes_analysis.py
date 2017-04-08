@@ -11,7 +11,7 @@ def main():
         paths_config = json.load(f)
 
     with open(paths_config['wikidata labels']) as f:
-        labels = json.load(f)
+        labels = dict([l.strip().split(',') for l in f])
     logging.log(level=logging.INFO, msg='loaded labels')
 
     with open(paths_config['class analysis']) as f:

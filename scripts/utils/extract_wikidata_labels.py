@@ -14,13 +14,10 @@ def main():
     wikidata_path = config['wikidata dump']
     wikidata_labels_path = config['wikidata labels']
 
-    labels = dict()
-    for e in JSONDumpReader(wikidata_path):
-        if get_english_label(e):
-            labels[e['id']] = get_english_label(e)
-
     with open(wikidata_labels_path, mode='w') as f:
-        json.dump(labels, f)
+        for e in JSONDumpReader(wikidata_path):
+            if get_english_label(e):
+                f.write(','.join([e['id'], get_english_label(e)]) + '\n')
     logging.log(level=logging.INFO, msg='wrote class ids to {}'.format(wikidata_labels_path))
 
 

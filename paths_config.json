@@ -5,7 +5,7 @@
   "relevant class dump": "data/relevant_classes-20161107.json",
 
   "class ids": "data/class_ids-20161107.txt",
-  "wikidata labels": "data/wikidata_labels-20161107.json",
+  "wikidata labels": "data/wikidata_labels-20161107.csv",
   "irrelevant properties": "irrelevant_properties.txt",
 
   "class characteristics": "data/class_characteristics-20161107.json",
