@@ -14,7 +14,7 @@ def main():
     classes_path = config['relevant class dump']
     test_data_output = config['test data']
     training_data_output = config['training data']
-    test_sample_count = 50000
+    test_sample_count = 10000
 
     samples = data_gen.generate_wikidata_classification_samples(dumpio.JSONDumpReader(classes_path), property_id='P279')
     test_samples, training_samples = data_gen.generate_training_test_data(samples, test_sample_count)
@@ -25,11 +25,13 @@ def main():
         f.write(str(len(test_samples)) + '\n')
         for test_sample in test_samples:
             f.write(test_sample.to_csv_row(',', '\n'))
+    logging.log(level=logging.INFO, msg='wrote test data to {}'.format(test_data_output))
 
     with open(training_data_output, mode='w') as f:
         f.write(str(len(training_samples)) + '\n')
         for training_sample in training_samples:
             f.write(training_sample.to_csv_row(',', '\n'))
+    logging.log(level=logging.INFO, msg='wrote training data to {}'.format(training_data_output))
 
 
 if __name__ == '__main__':
