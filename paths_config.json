@@ -14,10 +14,13 @@
   "relevant class analysis": "data/relevant_class_analysis-20161107.json",
 
   "class property frequency": "data/plots/class_property_frequency.png",
-  "class subclass frequency": "data/plots/class_subclass_frequency.png",
   "class property counts": "data/plots/class_property_counts.png",
   "class subclass counts": "data/plots/class_subclass_counts.png",
   "class instance counts": "data/plots/class_instance_counts.png",
+  "orphan class property frequency": "data/plots/orphan_class_property_frequency.png",
+  "orphan class property counts": "data/plots/orphan_class_property_counts.png",
+  "orphan class subclass counts": "data/plots/orphan_class_subclass_counts.png",
+  "orphan class instance counts": "data/plots/orphan_class_instance_counts.png",
 
   "training data": "evaluation/training_data-20161107.csv",
   "test data": "evaluation/test_data-20161107.csv",
