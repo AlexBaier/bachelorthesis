@@ -17,14 +17,16 @@ def main():
     with open('paths_config.json') as f:
         paths_config = json.load(f)
 
-    classes_path = paths_config['class ids']
+    classes_path = paths_config['relevant class ids']
     sentences_path = paths_config[sequence_gen]
     output_path = paths_config[model]
 
     sentences = Sequences(sentences_path)
 
-    cids = list(map(lambda l: l.strip(), open(classes_path).readlines()))
+    with open(classes_path) as f:
+        cids = [l.strip() for l in f]
     sgm.train_and_store_sgns(config=model_config, required_words=cids, sentences=sentences, output_path=output_path)
+    logging.log(level=logging.INFO, msg='stored {} to {}'.format(model, output_path))
 
 
 if __name__ == '__main__':
