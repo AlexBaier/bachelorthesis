@@ -1,6 +1,9 @@
 import json
 import logging
 import random
+import sys
+
+from typing import List, Tuple
 
 from algorithm.sequence_gen import GraphWalkSentences
 
@@ -11,11 +14,30 @@ def main():
     with open('paths_config.json') as f:
         config = json.load(f)
 
-    node_id_path = config['class ids']
-    edge_store_path = config['edges db']
+    node_id_path = config['relevant class ids']
+    triple_sentence_path = config['triple sentences']
     output_path = config['graph walk sentences']
 
-    node_count = 2500
+    min_source = -1
+    max_source = -1
+    with open(triple_sentence_path) as f:
+        for ft in map(lambda t: list(map(lambda k: int(k[1:]), t)), filter(lambda s: len(s) == 3, map(lambda l: l.strip().split(), f))):
+            if ft[0] > max_source:
+                max_source = ft[0]
+            if ft[0] < min_source or min_source == -1:
+                min_source = ft[0]
+
+    edges = [list() for _ in range(max_source - min_source+1)]  # type: List[List[Tuple[int, int]]]
+    with open(triple_sentence_path) as f:
+        for ft in map(lambda t: list(map(lambda k: int(k[1:]), t)), filter(lambda s: len(s) == 3, map(lambda l: l.strip().split(), f))):
+            edges[ft[0]-min_source].append((ft[1], ft[2]))
+    logging.log(level=logging.INFO, msg='loaded edges, memory usage={} MByte'.format(sys.getsizeof(edges)*10e-6))
+
+    def get_out_edges(node_id: str)->List[Tuple[str, str]]:
+        node_id = int(node_id[1:])
+        return list(map(lambda out: ('P' + str(out[0]), 'Q' + str(out[1])), edges[node_id-min_source]))
+
+    node_count = 10
 
     random.seed()
 
@@ -28,7 +50,7 @@ def main():
         nodes[:node_count],
         depth=4,  # RDF2Vec: depth = 4
         max_walks_per_v=10,  # RDF2Vec: max walks per vertice = 100
-        edge_store_path=edge_store_path,
+        get_out_edges=get_out_edges,
         workers=4
     )
     logging.log(level=logging.INFO, msg='initialized graph walk sentence gen')

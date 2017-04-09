@@ -1,12 +1,11 @@
 import abc
 import logging
 import random
-import sqlite3
 import time
 
 import numpy as np
 import pathos.multiprocessing as mp
-from typing import Callable, Iterable, List, Set
+from typing import Callable, Iterable, List, Set, Tuple
 
 
 class SequenceGen(object, metaclass=abc.ABCMeta):
@@ -53,11 +52,12 @@ class GraphWalkSentences(SequenceGen):
     """
     GraphWalk has exponential runtime.
     """
-    def __init__(self, vertices: List[str], depth: int, max_walks_per_v: int, edge_store_path: str, workers: int=4):
+    def __init__(self, vertices: List[str], depth: int, max_walks_per_v: int,
+                 get_out_edges: Callable[[str], List[Tuple[str, str]]], workers: int=4):
         self.__vertices = vertices  # type: List[str]
         self.__depth = depth  # type: int
         self.__max_walks = max_walks_per_v  # type: int
-        self.__edge_store_path = edge_store_path  # type: str
+        self.__get_out_edges = get_out_edges  # type: Callable[[str], List[Tuple[str, str]]]
         self.__workers = workers  # type: int
 
     def get_sequences(self)->Iterable[List[str]]:
@@ -81,30 +81,27 @@ class GraphWalkSentences(SequenceGen):
         walks = [[vertice if idx == 0 else '' for idx, _ in enumerate(range(2*self.__depth+1))]
                  for _ in range(self.__max_walks)]
 
-        out_edge_cache = dict()
-
-        with sqlite3.connect(self.__edge_store_path) as conn:
-            for current_depth in range(1, self.__depth):
-                for current_walk in range(self.__max_walks):
-                    current_vertice = walks[current_walk][2*current_depth-2]
-                    # current walk already stopped
-                    if current_vertice == '':
-                        continue
-                    out_edges = out_edge_cache.get(current_vertice, None)
-                    if not out_edges:
-                        out_edges = self.__get_out_edges(current_vertice, conn)
-                        out_edge_cache[current_vertice] = out_edges
-                    m = len(out_edges)
-                    # current vertice has no out-edges => skip this vertice
-                    if m == 0:
-                        continue
-                    if m == 1:
-                        r = 0
-                    else:
-                        r = np.random.randint(0, m-1, 1)[0]
-                    chosen_edge = out_edges[r]
-                    walks[current_walk][2*current_depth-1] = chosen_edge[1]  # add edge weight to walk
-                    walks[current_walk][2*current_depth] = chosen_edge[2]  # add target to walk
+        for current_depth in range(1, self.__depth):
+            for current_walk in range(self.__max_walks):
+                current_vertice = walks[current_walk][2*current_depth-2]
+                # current walk already stopped
+                if current_vertice == '':
+                    continue
+                try:
+                    out_edges = self.__get_out_edges(current_vertice)
+                except IndexError:
+                    out_edges = list()
+                m = len(out_edges)
+                # current vertice has no out-edges => skip this vertice
+                if m == 0:
+                    continue
+                if m == 1:
+                    r = 0
+                else:
+                    r = np.random.randint(0, m-1, 1)[0]
+                chosen_edge = out_edges[r]
+                walks[current_walk][2*current_depth-1] = chosen_edge[1]  # add edge weight to walk
+                walks[current_walk][2*current_depth] = chosen_edge[2]  # add target to walk
 
         # strip empty strings of walk
         for walk_id in range(self.__max_walks):
@@ -115,14 +112,6 @@ class GraphWalkSentences(SequenceGen):
 
         logging.log(level=logging.INFO, msg='{} walks from {} in {} seconds'.format(len(walks), vertice, duration))
         return walks
-
-    @staticmethod
-    def __get_out_edges(v: str, conn)->List[List[str]]:
-        c = conn.cursor()
-        node = int(v[1:])
-        c.execute('SELECT * FROM edges WHERE s=?', [node])
-        results = c.fetchall()
-        return list(map(lambda e: ['Q'+str(e[0]), 'P'+str(e[1]), 'Q'+str(e[2])], results))
 
 
 class Sequences(Iterable[List[str]]):
