@@ -11,17 +11,18 @@ def main():
     with open('paths_config.json') as f:
         config = json.load(f)
 
-    orphan_classes_path = config['relevant class dump']
+    relevant_class_ids_path = config['relevant class ids']
     characteristics_path = config['class characteristics']
     analysis_path = config['relevant class analysis']
 
-    orphan_class_ids = set(map(lambda c: c['id'], JSONDumpReader(orphan_classes_path)))
+    with open(relevant_class_ids_path) as f:
+        relevant_class_ids = set(l.strip() for l in f)
     logging.log(level=logging.INFO, msg='loaded relevant class ids')
 
     with open(analysis_path, mode='w') as f:
         json.dump(
             analyze_characteristics(
-                filter(lambda c: c['id'] in orphan_class_ids, JSONDumpReader(characteristics_path))
+                filter(lambda c: c['id'] in relevant_class_ids, JSONDumpReader(characteristics_path))
             ), f)
     logging.log(level=logging.INFO, msg='wrote analysis to {}'.format(analysis_path))
 

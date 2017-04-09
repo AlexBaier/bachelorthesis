@@ -5,6 +5,7 @@
   "relevant class dump": "data/relevant_classes-20161107.json",
 
   "class ids": "data/class_ids-20161107.txt",
+  "relevant class ids": "data/relevant_class_ids-20161107.txt",
   "wikidata labels": "data/wikidata_labels-20161107.csv",
   "irrelevant properties": "irrelevant_properties.txt",
 
@@ -17,10 +18,16 @@
   "class property counts": "data/plots/class_property_counts.png",
   "class subclass counts": "data/plots/class_subclass_counts.png",
   "class instance counts": "data/plots/class_instance_counts.png",
+
   "orphan class property frequency": "data/plots/orphan_class_property_frequency.png",
   "orphan class property counts": "data/plots/orphan_class_property_counts.png",
   "orphan class subclass counts": "data/plots/orphan_class_subclass_counts.png",
   "orphan class instance counts": "data/plots/orphan_class_instance_counts.png",
+
+  "relevant class property frequency": "data/plots/relevant_class_property_frequency.png",
+  "relevant class property counts": "data/plots/relevant_class_property_counts.png",
+  "relevant class subclass counts": "data/plots/relevant_class_subclass_counts.png",
+  "relevant class instance counts": "data/plots/relevant_class_instance_counts.png",
 
   "training data": "evaluation/training_data-20161107.csv",
   "test data": "evaluation/test_data-20161107.csv",

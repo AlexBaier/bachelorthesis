@@ -14,7 +14,8 @@ def main():
 
     analysis_paths = [
         paths_config['class analysis'],
-        paths_config['orphan class analysis']
+        paths_config['orphan class analysis'],
+        paths_config['relevant class analysis']
     ]
 
     analysis = dict()
@@ -37,6 +38,11 @@ def main():
         {'title': 'most common properties in orphan classes',
          'analysis': paths_config['orphan class analysis'],
          'out path': paths_config['orphan class property frequency'],
+         'key': 'property histogram'},
+
+        {'title': 'most common properties in relevant classes',
+         'analysis': paths_config['relevant class analysis'],
+         'out path': paths_config['relevant class property frequency'],
          'key': 'property histogram'},
     ]
 
@@ -72,6 +78,22 @@ def main():
          'x': 'number of instances',
          'analysis': paths_config['orphan class analysis'],
          'out path': paths_config['orphan class instance counts'],
+         'key': 'instance count histogram'},
+
+        {'title': 'property count histogram for relevant classes',
+         'x': 'number of properties',
+         'analysis': paths_config['relevant class analysis'],
+         'out path': paths_config['relevant class property counts'],
+         'key': 'property count histogram'},
+        {'title': 'subclass count histogram for relevant classes',
+         'x': 'number of subclasses',
+         'analysis': paths_config['relevant class analysis'],
+         'out path': paths_config['relevant class subclass counts'],
+         'key': 'subclass count histogram'},
+        {'title': 'instance count histogram for relevant classes',
+         'x': 'number of instances',
+         'analysis': paths_config['relevant class analysis'],
+         'out path': paths_config['relevant class instance counts'],
          'key': 'instance count histogram'}
     ]
 
