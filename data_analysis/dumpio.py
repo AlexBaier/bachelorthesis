@@ -15,7 +15,7 @@ class JSONDumpReader(typing.Iterator[dict]):
                 l = JSONDumpReader.__clean_line(l)
                 try:
                     yield json.loads(l)
-                except ValueError as e:
+                except ValueError:
                     logging.log(level=logging.DEBUG, msg="encountered illegal string while parsing JSON dump")
 
     @staticmethod

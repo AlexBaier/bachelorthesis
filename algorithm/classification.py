@@ -1,6 +1,5 @@
 import abc
 import logging
-from typing import List, Tuple
 
 import numpy as np
 from scipy.optimize import minimize
@@ -8,6 +7,7 @@ from sklearn.cluster import MiniBatchKMeans
 from sklearn.linear_model import SGDRegressor
 from sklearn.metrics.pairwise import cosine_similarity
 from sklearn.neighbors import KNeighborsClassifier, NearestNeighbors
+from typing import List, Tuple
 
 
 class Classifier(object, metaclass=abc.ABCMeta):
@@ -85,11 +85,11 @@ class KRIKNNClassifier(KNNClassifier):
         for i in range(n):
             indexes = index_matrix[i]
             neighbors = np.array([self.__x[idx] for idx in indexes])
-            S = cosine_similarity(neighbors, neighbors)
+            sim = cosine_similarity(neighbors, neighbors)
             s = cosine_similarity(unknowns[i].reshape(1, -1), neighbors)[0]
 
             def f(w):
-                return 0.5 * (w.T @ S @ w) - (s.T @ w) + (0.5 * self.__reg) * (w.T @ w)
+                return 0.5 * (w.T @ sim @ w) - (s.T @ w) + (0.5 * self.__reg) * (w.T @ w)
             constraints = ({'type': 'ineq', 'fun': lambda w: 1 if (1 - np.sum(w)) > 0 and np.alltrue(w > 0) else -1})
             w0 = np.random.random(self.__neighbors)
             w0 /= np.linalg.norm(w0)
