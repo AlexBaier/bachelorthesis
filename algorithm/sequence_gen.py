@@ -6,7 +6,7 @@ import time
 
 import numpy as np
 import pathos.multiprocessing as mp
-from typing import Iterable, List, Set
+from typing import Callable, Iterable, List, Set
 
 
 class SequenceGen(object, metaclass=abc.ABCMeta):
@@ -18,8 +18,10 @@ class SequenceGen(object, metaclass=abc.ABCMeta):
 
 class TripleSentences(SequenceGen):
 
-    def __init__(self, items: Iterable[dict], forbidden_properties: Set[str]):
-        self.__forbidden_properties = forbidden_properties
+    def __init__(self, items: Iterable[dict], forbidden_properties: Set[str],
+                 is_forbidden_triple: Callable[[List[str]], bool]):
+        self.__forbidden_properties = forbidden_properties  # type: Set[str]
+        self.__is_forbidden_triple = is_forbidden_triple  # type: Callable[[List[str]], bool]
         self.__items = items  # type: Iterable[dict]
 
     def get_sequences(self)->Iterable[List[str]]:
@@ -39,7 +41,11 @@ class TripleSentences(SequenceGen):
                                 value = 'P' + str(stmt['mainsnak']['datavalue']['value']['numeric-id'])
                             else:
                                 value = ''
-                            yield [item_id, pid, value] if value else [item_id, pid]
+                            sentence = [item_id, pid, value] if value else [item_id, pid]
+                            # if sentence is triple and forbidden, don't generate it
+                            if len(sentence) == 3 and self.__is_forbidden_triple(sentence):
+                                continue
+                            yield sentence
         return __get_sentences()
 
 
