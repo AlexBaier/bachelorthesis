@@ -16,9 +16,9 @@ def main():
     with open('algorithm_config.json') as f:
         algorithm_config = json.load(f)
 
-    class_id_path = paths_config['class ids']
+    class_id_path = paths_config['relevant class ids']
     model_path = paths_config[model]
-    output_path = algorithm_config[model]
+    output_path = algorithm_config[model]['embeddings path']
 
     model = Word2Vec.load(model_path)
 
@@ -35,6 +35,7 @@ def main():
             except KeyError as e:
                 logging.log(level=logging.DEBUG, msg='no embedding for {}'.format(e))
         logging.log(level=logging.INFO, msg='wrote embeddings for {} out of {} classes'.format(c, len(class_ids)))
+    logging.log(level=logging.INFO, msg='wrote embeddings to {}'.format(output_path))
 
 
 if __name__ == '__main__':

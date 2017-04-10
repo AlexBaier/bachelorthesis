@@ -15,6 +15,7 @@
     "subsampling": 0.00001,
     "negative sampling": 15,
     "iterations": 5,
+    "max vocab": 3500000,
     "embeddings path": "/home/alex/PycharmProjects/thesis/data/algorithm_io/simple_sentence_class_embeddings-20161107"
   },
   "graph walk sentence sgns": {
@@ -25,6 +26,7 @@
     "subsampling": 0.00001,
     "negative sampling": 15,
     "iterations": 5,
+    "max vocab": 3500000,
     "embeddings path": "/home/alex/PycharmProjects/thesis/data/algorithm_io/graph_walk_class_embeddings-20161107"
   },
   "distance-knn (k=15)": {

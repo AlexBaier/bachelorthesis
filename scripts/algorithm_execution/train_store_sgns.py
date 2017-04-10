@@ -2,7 +2,6 @@ import json
 import logging
 
 import algorithm.skipgram_model as sgm
-from algorithm.sequence_gen import Sequences
 
 
 def main():
@@ -21,11 +20,11 @@ def main():
     sentences_path = paths_config[sequence_gen]
     output_path = paths_config[model]
 
-    sentences = Sequences(sentences_path)
-
     with open(classes_path) as f:
         cids = [l.strip() for l in f]
-    sgm.train_and_store_sgns(config=model_config, required_words=cids, sentences=sentences, output_path=output_path)
+
+    sgm.train_and_store_sgns(config=model_config, required_words=cids, sentence_path=sentences_path,
+                             output_path=output_path)
     logging.log(level=logging.INFO, msg='stored {} to {}'.format(model, output_path))
 
 
