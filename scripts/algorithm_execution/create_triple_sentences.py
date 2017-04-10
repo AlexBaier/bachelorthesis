@@ -15,11 +15,22 @@ def main():
         config = json.load(f)
 
     dump_path = config['wikidata dump']
+    class_charac_path = config['class characteristics']
     test_data_path = config['test data']
     output_path = config['triple sentences']
 
     with open(config['irrelevant properties']) as f:
         irrelevant_properties = set(l.strip() for l in f)
+
+    with open(config['relevant class ids']) as f:
+        relevant_class_ids = set(l.strip() for l in f)
+
+    relevant_item_ids = set()
+    for charac in filter(lambda c: c['id'] in relevant_class_ids, JSONDumpReader(class_charac_path)):
+        relevant_item_ids.update(charac['instances'])
+        relevant_item_ids.update((charac['subclasses']))
+        relevant_item_ids.add(charac['id'])
+    logging.log(level=logging.INFO, msg='identified {} relevant itemds'.format(len(relevant_item_ids)))
 
     # triple sentences should not include the test samples
     sources = set(load_test_inputs(test_data_path))
@@ -31,7 +42,7 @@ def main():
         return False
 
     sentences = TripleSentences(
-        JSONDumpReader(dump_path),
+        filter(lambda o: o['id'] in relevant_item_ids, JSONDumpReader(dump_path)),
         forbidden_properties=irrelevant_properties,
         is_forbidden_triple=is_forbidden_triple
     ).get_sequences()
