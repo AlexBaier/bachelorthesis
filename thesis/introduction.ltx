@@ -1,50 +1,51 @@
-\textbf{Knowledge bases (KB)} like DBpedia, YAGO and Wikidata try to store information about every significant real-world entity and the relations between those entities.
-Using different approaches like human collaboration in Wikidata or information from Wikipedia databoxes in YAGO, these KBs are populated \cite{Galarraga2016}.
-The issue of incompleteness arises in this context, as it is not realistic to assume that every bit of knowledge can and should be captured in the KBs.
+\textbf{Knowledge bases (KB)} like DBpedia, YAGO and Wikidata store information about every significant real-world entity and the relations between those entities.
+Using different approaches like human collaboration in Wikidata or information from Wikipedia data boxes in YAGO, these KBs are populated \cite{Galarraga2016}.
+The issue of incompleteness arises in this context, as it is not realistic to assume that every bit of knowledge can or should be captured in the KBs.
 \textbf{Ontologies} are necessary for modeling, sharing, and exchanging knowledge \cite{Hazman2011}, and are therefore integral in the functioning of a KB \cite{Wong2012}.
 They provide data schemas, concept vocabularies and rules \cite{Maedche2001} to which a KB has to adhere.
 Therefore, it should be a priority to ensure the completeness of the ontology in a KB.
 Types of ontologies range from lightweight ontologies like glossaries and taxonomies (concept hierarchies) to heavyweight ontologies like data models and description logics
 \cite{Wong2012}.
 
-The thesis' goal is development and evaluation of approaches to increase the completeness of ontological taxonomies.
-Specifically, the problem of classifying \textbf{orphan classes} is solved.
-Orphan classes are classes in a taxonomy, which have no superclasses (parents) and are not the root of the taxonomy.
-A hybrid algorithm is developed and evaluated with the task of classifying classes in a taxonomy.
-Such an algorithm will allow the placement of new classes and orphan classes into the taxonomy and the refinement of already classified superclasses.
-The algorithm will use a neural network approach. This is motivated by the effectiveness of neural networks in other context-sensitive tasks
-like language processing \cite{Mikolov2013} \cite{Kalchbrenner2014} \cite{Arisoy2012}, graph representation \cite{Cao2016}, image generation \cite{Gregor2015} etc.
-Especially interesting are neural word embeddings \cite{Mikolov2013}, which have been used to great effect in the task of generating concept hierarchies by
-\fullcite{Fu2014}. Different approaches in using neural word embeddings for classification of orphan classes will be considered and evaluated in this work.
-
-\begin{figure}
+\begin{figure}[H]
 \centering
 \includegraphics[width=\textwidth]{images/introduction/example_taxonomy.pdf}
 \caption{Classification of orphan class in Wikidata's taxonomy}
 \label{fig:problem example}
 \end{figure}
 
-In this work, the taxonomy of Wikidata is considered as case example, as it provides a high number of entities ($24507102$ in \dumpdate{} \cite{WikidataDump}).
-and a high degree of ''correctness'', since human editors constantly curate the existing knowledge.
-In a complete taxonomy, a single \textbf{root class} exists, which is considered the most general concept \cite{Cimiano2006}. All other classes should therefore have a superclass.
-The root class in Wikidata is \entity{}.
-Wikidata's taxonomy is incomplete in regards to this criteria. $16373$ orphan classes were identified by the author in the dump of \dumpdate{} \cite{WikidataDump}.
-The work focuses on developing a hybrid algorithm for classification of orphan classes to reduce the incompleteness of taxonomies.
-In Figure~\ref{fig:problem example}, a small section of Wikidata's taxonomy is shown. The classes \textit{reversal film}  and \textit{ribbon} are orphan classes, as they have 
-no superclasses and are not the root class \textit{entity}. For example, \textit{data storage device} is no orphan class, because it has $2$ superclasses.
-Assuming classification of the orphan class \textit{reversal film} is attempted. A possible correct classification is to label \textit{reversal film} as subclass
-of \textit{photographic film}, which is indicated by the red arrow.
-In theory, labeling \textit{reversal film} as subclass of \textit{data storage device} would also be correct, since the subclass-of relation is transitive.
-However, the most specific possible classification should be targeted to provide a higher quality taxonomy \cite{Doan2003}.
-The developed hybrid algorithm should similarly find the most specific superclass for a given class.
+The thesis' goal is the development and evaluation of approaches to increase the completeness of ontological taxonomies.
+Specifically, the problem of classifying \textbf{orphan classes} is solved.
+Orphan classes are classes in a taxonomy, which have no superclasses (parents) and are not the root of the taxonomy.
+An example, for such a classification problem is given in Figure~\ref{fig:problem example}.
+An extract of the Wikidata taxonomy is shown. 
+The class \textit{reversal film} is an orphan class in the taxonomy, since it is has no superclass.
+A possible solution is represented by the dotted arrow, which places \textit{photographic film} as superclass of \textit{reversal film}.
+It has to be noted that additionally all superclasses of \textit{photographic film} are also valid solutions to the problem for the orphan class \textit{reversal film},
+since the subclass-of relationship is transitive.
+A solution to the problem should find the most specific superclass for a given orphan class \cite{Doan2002}.
+An algorithm is developed with the task of classifying such orphan classes into a given taxonomy.
+The algorithm will use neural word embeddings, as developed by \fullcite{Mikolov2013}. This is motivated by the effectiveness of neural networks in other context-sensitive tasks
+like language processing \cite{Mikolov2013} \cite{Kalchbrenner2014} \cite{Arisoy2012}, image generation \cite{Gregor2015} etc.
+Neural word embeddings are especially interesting, since they have been used to great effect in the construction of taxonomies \cite{Fu2014},
+graph representation \cite{Cao2016} and semantic similarity tasks \cite{Mikolov2013a} \cite{Levy2014}.
+Different approaches in using neural word embeddings for classification of orphan classes will be considered and evaluated in this work.
+
+In this work, the taxonomy of Wikidata is considered as case example, as it provides a high number of entities ($24,507,102$ in \dumpdate{} \cite{WikidataDump}),
+and a big taxonomy consisting of $1,299,501$ classes \cite{WikidataDump}.
+At this time, Wikidata's taxonomy is maintained by human editors.
+The solution developed by the thesis should be able to support the editors in improving the completeness of the taxonomy by reducing the number of orphan classes
+and refining the existing taxonomic relations between classes.
+$16,373$ orphan classes were identified by the author in the dump of \dumpdate{} \cite{WikidataDump}.
+\textbf{TODO: describe this more}
 
 The thesis is structured as follows.
-In Chapter~\ref{section:foundations} the problem will be formally defined and related work in the fields of neural networks and ontology learning discussed for the use in this work.
+In Chapter~\ref{section:foundations} the problem will be formally defined (\ref{section:wikidata}, \ref{section:taxonomy}, \ref{section:similarity}, \ref{section:problem statement})
+and related work in the fields of neural networks (\ref{section:neural networks}) and ontology learning (\ref{section:ontology learning}) discussed for the use in this work.
 Section~\ref{section:neural networks} introduces the notion of neural networks and discusses work dealing with neural word and graph embeddings.
 Section~\ref{section:ontology learning} compares the problem, solved by the thesis, to related work in the field of ontology learning. 
-The problem is classified and solutions to similar problems analyzed.
-The novelty of the work is justified.
-Chapter~\ref{section:taxonomy analysis} presents the Wikidata data set used as case example for the implementation and evaluation of the proposed hybrid algorithm. 
+Subsequently, the problem is classified, solutions to similar problems analyzed and the novelty of the work justified.
+Chapter~\ref{section:taxonomy analysis} describes the Wikidata data set used as case example for the implementation and evaluation of the proposed hybrid algorithm. 
 Chapter~\ref{section:algorithm} describes the components of the developed baseline algorithm and variations, which potentially improve the effectiveness of the method.
 Chapter~\ref{section:evaluation} describes the evaluation methodology and presents the results.
 The baseline algorithm and proposed improvements are evaluated.
@@ -53,5 +54,4 @@ Formatting of text obeys the following rules.
 Italic text indicates Wikidata entities like \entity{} or \textit{instance of (P31)}.
 Bold text indicates the first occurrence of a relevant concept, such as \textbf{orphan class}.
 Such concepts are described in the following sentences and, if necessary, formally defined.
-Citations appear in quotation marks.
 

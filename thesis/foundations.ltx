@@ -4,7 +4,8 @@ Wikidata is an open, free, multilingual and collaborative KB. It is a structured
 It tries to model the real world, meaning every concept, object, animal, person, etc.
 Wikidata is mostly edited and extended by humans, which in general improves the quality of entries compared to fully-automated systems, 
 because different editors can validate and correct occurring errors.
-However, Wikidata, like most knowledge bases, is incomplete and therefore has to be operated under the \textbf{Open World Assumption (OWA)}.
+However, Wikidata, like most knowledge bases, is incomplete in terms of missing facts about different entities \cite{Darari2016}
+and therefore has to be operated under the \textbf{Open World Assumption (OWA)}.
 OWA states that if a statement is not contained in a knowledge base, it is not necessarily false but rather unknown \cite{Galarraga2016}.
 
 In Wikidata \textbf{items} and \textbf{properties} exist. Items are the aforementioned concepts, objects, etc. Properties are used to make claims about
@@ -14,7 +15,7 @@ The identifiers in Wikidata are essential to avoid ambiguity and make items and 
 
 Items consist of labels, aliases and descriptions in different languages. 
 Sitelinks connect items to their corresponding pages of Wikimedia projects like Wikipedia articles.
-Most importantly item are described by \textbf{statements}. 
+Most importantly, an item is described by \textbf{statements}. 
 Statements are in their simplest form a pair of property and value, assigned to a specific item. A value is either a literal value or another item.
 It should be noted that an item can have multiple statements with the same property. The set of statements with the same property is called statement group.
 Statements can be annotated with qualifiers, which specify the context of the statement, e.g. population at a certain point of time.
@@ -23,11 +24,22 @@ Additionally, references can be used for statements to include its source. See F
 \begin{figure}
 \centering
 \includegraphics[width=0.9\textwidth]{images/foundations/item_example.png}
-\caption{Example of Wikidata class: photographic film (Q6239)}
+\caption{Example excerpt of Wikidata item: photographic film (Q6239). \\
+The item has the \textbf{label} "photographic film" and the \textbf{unique identifier} "Q6239".
+Below the label and identifier, the \textbf{description} (short sentence describing the item) can be found.
+The \textbf{alias} "film" follows in the next line. An item can have multiple aliases.
+Statements are grouped into \textbf{statement groups} (blue boxes) by their \textbf{property}.
+In this example, two statement groups with properties \textit{topic's main category (P910)} and \textbf{subclass of (P279)} are shown.
+Each \textbf{statement} can have a value (orange box), \textbf{references} (green box), and \textbf{qualifiers}.
+In this example, the only statement with property \textit{topic's main category (P910)} has the value \textit{Category: Photographic film (Q8363301)} and a reference, which consists of
+a property \textit{imported from (P143)} and a value \textit{Chinese Wikipedia (Q30239)}. References represent the sources and other meta-data about the source of the statement.
+In this example, no qualifiers exist. Qualifiers are used to give additional details to statements.
+A common use for qualifiers is the annotation of statements with time stamps, if the a different value is true for different points in time
+e.g. population of a country over time.}
 \label{fig:class example}
 \end{figure}
 
-Following, the terms of item and statement are defined in the context of Wikidata.
+Following, the concepts item and statement are formally defined:
 \begin{definition}[Item]\label{definition:item}
 An \textbf{item} is a tuple $(\mathit{id},  \mathit{label}, \mathit{aliases}, \mathit{description}, \mathit{sitelinks})$:
 	\begin{itemize}
@@ -39,6 +51,18 @@ An \textbf{item} is a tuple $(\mathit{id},  \mathit{label}, \mathit{aliases}, \m
 	 projects, e.g. enwiki, and $\mathit{title}$ is the corresponding article title of the item on this site.
 	\end{itemize}
 \end{definition}
+
+For example, the item \textit{photographic film (Q6239)} (Figure~\ref{fig:class example}) can be formally represented, as follows:
+\begin{align*}
+&(\\
+&6239,\\
+&\textnormal{"photographic film"},\\
+&\{ \textnormal{"film"} \},\\
+&\textnormal{"sheet of plastic coated with light-sensitive chemicals"},\\
+&\{ (\textnormal{"enwiki"}, \textnormal{"Photographic film"}), (\textnormal{"dewiki"}, \textnormal{"Fotografischer Film"}), \dots \}\\
+)
+\end{align*}
+
 \begin{definition}[Statement]
 A \textbf{statement} is a tuple $(\mathit{itemid}, \mathit{pid}, \mathit{value}, \mathit{refs}, \mathit{qualifiers})$:
 \begin{itemize}
@@ -49,6 +73,12 @@ A \textbf{statement} is a tuple $(\mathit{itemid}, \mathit{pid}, \mathit{value},
 \item $\mathit{qualifiers}$ is a set of qualifiers, which further specifies the statement.
 \end{itemize}
 \end{definition}
+
+For example, \textit{photographic film (Q6239)} (Figure~\ref{fig:class example}) can be formally represented, as follows:
+\begin{align*}
+&(6239, 910, \textnormal{Q30239}, \{ \dots \}, \varnothing)
+\end{align*}
+
 In Wikidata, there is no strict distinction between classes and instances. Both groups are represented as items.
 This leads to the issue, that recognizing, whether an item is a class or instance is not trivial.
 Based on which statements connect two items, a distinction can be made.

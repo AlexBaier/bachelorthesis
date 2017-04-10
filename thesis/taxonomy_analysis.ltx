@@ -1,3 +1,37 @@
+% stats
+% all classes
+% total: 1299501
+% label: 1275907
+% ewiki:  113892
+% pavg: 6.650
+% savg: 1.255
+% iavg: 14.942
+% pmed: 7
+% smed: 0
+% imed: 0
+%
+% orphan classes
+% total: 16373
+% label: 13807
+% ewiki:  11534
+% pavg: 4.78
+% savg: 0.852
+% iavg: 4.655
+% pmed: 3
+% smed: 0
+% imed: 1
+%
+% relevant classes
+% total: 224873
+% label: 201280
+% ewiki:  101796
+% pavg: 4.49
+% savg: 6.5
+% iavg: 86.35
+% pmed: 3
+% smed: 0
+% imed: 0
+
 For the task of developing an algorithm, which takes orphan classes as input, it is necessary to know,
 what information the classes carry and if there are certain patterns among the classes.
 For this purpose an analysis of the taxonomy needs to be carried out, which may answer questions.
@@ -5,7 +39,6 @@ For this purpose an analysis of the taxonomy needs to be carried out, which may 
 The taxonomy contained in the Wikidata dump of \dumpdate{} was analyzed.
 It contains a total of $24507102$ items, of which $1299501$ are classes.
 Classes were recognized as defined in Section~\ref{section:wikidata}. 
-Orphan classes were identified by checking whether a class does not have the \textit{subclass of (P279)} property.
 
 \subsection{Root taxonomy}
 The state of the taxonomy was captured in regards to the root class \entity{} (see Figure~\ref{fig:root distance}).
@@ -30,119 +63,73 @@ The developed algorithm will likely place orphan classes into the same levels of
 If the algorithm places classes in levels close to the root, it would indicate that the classification method is not specific enough but not necessarily.
 On the opposite, placing classes into distant levels would indicate incorrectness of the algorithm, since only a very specific subset of classes occur there.
 
+\subsection{All classes}
+
+\begin{figure}
+\centering
+\includegraphics[width=0.8\textwidth]{images/taxonomy_analysis/class_property_frequency.png}
+\caption{Frequency of properties in all classes. Wikidata (\dumpdate{})}
+\label{fig:all property frequency}
+
+\includegraphics[width=0.8\textwidth]{images/taxonomy_analysis/class_property_counts.png}
+\caption{Percentage of all classes with a specific amount of unique properties. Wikidata (\dumpdate{})}
+\label{fig:all property count}
+\end{figure}
+\begin{figure}
+\centering
+\includegraphics[width=0.8\textwidth]{images/taxonomy_analysis/class_instance_counts.png}
+\caption{Percentage of all classes with a specific amount of instances. Wikidata (\dumpdate{})}
+\label{fig:all instance count}
+
+\includegraphics[width=0.8\textwidth]{images/taxonomy_analysis/class_subclass_counts.png}
+\caption{Percentage of all classes with a specific amount of subclasses. Wikidata (\dumpdate{})}
+\label{fig:all subclass count}
+\end{figure}
+
+\subsection{Relevant classes}
+
+\begin{figure}
+\centering
+\includegraphics[width=0.8\textwidth]{images/taxonomy_analysis/relevant_class_property_frequency.png}
+\caption{Frequency of properties in relevant classes. Wikidata (\dumpdate{})}
+\label{fig:relevant property frequency}
+
+\includegraphics[width=0.8\textwidth]{images/taxonomy_analysis/relevant_class_property_counts.png}
+\caption{Percentage of relevant classes with a specific amount of unique properties. Wikidata (\dumpdate{})}
+\label{fig:relevant property count}
+\end{figure}
+\begin{figure}
+\centering
+\includegraphics[width=0.8\textwidth]{images/taxonomy_analysis/relevant_class_instance_counts.png}
+\caption{Percentage of relevant classes with a specific amount of instances. Wikidata (\dumpdate{})}
+\label{fig:relevant instance count}
+
+\includegraphics[width=0.8\textwidth]{images/taxonomy_analysis/relevant_class_subclass_counts.png}
+\caption{Percentage of relevant classes with a specific amount of subclasses. Wikidata (\dumpdate{})}
+\label{fig:relevant subclass count}
+\end{figure}
+
 \subsection{Orphan classes}
-The characteristics of all orphan classes and the root class were analyzed.
-This set contains a total of $16373$ classes. $13807$ classes have an English label
-and $11534$ classes have a corresponding English Wikipedia page.
-
-Regarding the  number of unique properties (or statement groups) per class 
-(see Figure~\ref{fig:unlinked property count}) the median is $3$ and the average is $\approx 4.8$.
-Combined with the analyzed unique property frequency (see Figure~\ref{fig:unlinked property frequency}),
-it can be seen that many orphan classes are linked to other knowledge bases and taxonomies
-, e.g. Freebase or GND, using an identifier.
- Another  observation is that $901$ of the orphan classes have properties related to taxons,
- which is a, to some degree, separate taxonomy in Wikidata, created with properties like
- \textit{taxon name (P225)}, \textit{parent taxon (P171)}, etc.
- 
-Most orphan classes have only $0$ to $1$ instances, the median is $1$ and the average
-is $\approx 4.65$ instances per class (see Figure~\ref{fig:unlinked instance count}).
-There are however outliers with big numbers of instances, which skew the average number of instances per class.
-This may for example imply, that classes are created mainly for the purpose of grouping newly created
-instances.
-
-The median and average for subclasses per class are $0$ and $\approx 0.85$ respectively 
-(see Figure~\ref{fig:unlinked subclass count}). This implies that the graph components of
-the orphan classes are very small, and in most cases contain only the respective orphan class.
+Orphan classes were identified by checking whether a class does not have the \textit{subclass of (P279)} property.
  
 \begin{figure}
 \centering
-\includegraphics[width=\textwidth]{images/taxonomy_analysis/unlinked_property_count.png}
-\caption{Percentage of orphan classes with a specific amount of unique properties. Wikidata (\dumpdate{})}
-\label{fig:unlinked property count}
-\includegraphics[width=\textwidth]{images/taxonomy_analysis/unlinked_property_frequency.png}
+\includegraphics[width=0.8\textwidth]{images/taxonomy_analysis/orphan_class_property_frequency.png}
 \caption{Frequency of properties in orphan classes. Wikidata (\dumpdate{})}
-\label{fig:unlinked property frequency}
+\label{fig:orphan property frequency}
+
+\includegraphics[width=0.8\textwidth]{images/taxonomy_analysis/orphan_class_property_counts.png}
+\caption{Percentage of orphan classes with a specific amount of unique properties. Wikidata (\dumpdate{})}
+\label{fig:orphan property count}
 \end{figure}
 \begin{figure}
-\includegraphics[width=\textwidth]{images/taxonomy_analysis/unlinked_instance_count.png}
+\centering
+\includegraphics[width=0.8\textwidth]{images/taxonomy_analysis/orphan_class_instance_counts.png}
 \caption{Percentage of orphan classes with a specific amount of instances. Wikidata (\dumpdate{})}
-\label{fig:unlinked instance count}
-\centering
-\includegraphics[width=\textwidth]{images/taxonomy_analysis/unlinked_subclass_count.png}
+\label{fig:orphan instance count}
+
+\includegraphics[width=0.8\textwidth]{images/taxonomy_analysis/orphan_class_subclass_counts.png}
 \caption{Percentage of orphan classes with a specific amount of subclasses. Wikidata (\dumpdate{})}
-\label{fig:unlinked subclass count}
+\label{fig:orphan subclass count}
 \end{figure}
 
-The question has to be asked,  whether an algorithm should try to handle the complete set of
-orphan classes, or only a specific subset, which fulfills certain requirements.
-The answer depends on what information such an algorithm requires as input.
-The full set of orphan classes is problematic for use in an algorithm as there are few shared characteristics
-over all classes.
-$\approx 16\%$ of classes are not labeled and $\approx 31.4\%$ of classes have no instances.
-Both labels and instances are useful characteristics for a class to have.
-The label allows the recognition of the class in natural text and ensures that the class fulfills a basic quality criteria,
-since the label is the first characteristic of a Wikidata item, which should be created by a user \cite{WikidataNewItem}.
-Instances represent classes and thereby describe them. For example, \fullcite{Rodriguez2003} use
-instances  to compute semantic similarity between classes.
-Therefore, I propose to only consider the set of classes, which have a label in the English language 
-and at least $1$ instance, as input for the algorithm.
-
-\subsection{Labeled, instantiated orphan classes}
-Following this argument, the subset of labeled and instantiated orphan classes was analyzed.
-This set contains a total of $9157$ classes. $7557$ classes have an English Wikipedia page, which is 
-$\approx 82.5\%$ of all analyzed classes in the subset, and an increase of $\approx 12\%$ in comparison 
-to the full set of orphan classes.
-
-The average of unique properties per class increases from $4.8$ to $5.5$, while the median remains at $3$
-(see Figure~\ref{fig:unlinked labeled instantiated property count}).
-The frequency of different properties appearing in classes however is more distributed 
-(see Figure~\ref{fig:unlinked labeled instantiated property frequency}).
-This implies that the classes of this subset are related to different topics, and share only few commonalities.
-
-As expected the average of instances per class increased to $\approx 7.37$ from $\approx 4.65$.
-However the median is still $1$ (see Figure~\ref{fig:unlinked labeled instantiated instance count}).
-$\approx 59\%$ of classes have only $1$ instance.
-
-At the same time the average of subclasses per class halved to $\approx 0.4$ 
-(see Figure~\ref{fig:unlinked labeled instantiated subclass count}). 
-Combined with the 
-unchanged median of $1$ instance per class, supports the assumption, that classes are mainly
-created for the purpose of grouping instances,
-while adding the newly created class to the main taxonomy is being neglected.
-
-\begin{figure}
-\centering
-\includegraphics[width=\textwidth]{images/taxonomy_analysis/unlinked_labeled_instantiated_property_count.png}
-\caption{Percentage of labeled and instantiated orphan classes with a specific amount of unique properties. Wikidata (\dumpdate{})}
-\label{fig:unlinked labeled instantiated property count}
-\includegraphics[width=\textwidth]{images/taxonomy_analysis/unlinked_labeled_instantiated_property_frequency.png}
-\caption{Frequency of properties in labeled and instantiated orphan classes. Wikidata (\dumpdate{}))}
-\label{fig:unlinked labeled instantiated property frequency}
-\end{figure}
-\begin{figure}
-\centering
-\includegraphics[width=\textwidth]{images/taxonomy_analysis/unlinked_labeled_instantiated_instance_count.png}
-\caption{Percentage of labeled and instantiated orphan classes with a specific amount of instances. Wikidata (\dumpdate{}))}
-\label{fig:unlinked labeled instantiated instance count}
-\includegraphics[width=\textwidth]{images/taxonomy_analysis/unlinked_labeled_instantiated_subclass_count.png}
-\caption{Percentage of labeled and instantiated orphan classes with a specific amount of subclasses. Wikidata 
-(\dumpdate{})}
-\label{fig:unlinked labeled instantiated subclass count}
-\end{figure}
-
-The classes of the subset have, on average, a better level of description, more unique properties and instances,
-than the full set of unlinked classes. Between these classes the number of commonalities
-is lower, because the same properties occur not as frequently for different classes.
-The lack of commonalties between unlinked classes is not very problematic, as the algorithm
-would not compare unlinked classes with each other but with classes in the root taxonomy.
-
-\subsection{Results}
-After completing the analysis, it can be seen that \entity{} is the root class of the taxonomy,
-and Wikidata's taxonomy is in a relatively good state regarding number of orphan classes and unlinked components, since $97\%$ of classes are part of the root taxonomy.
-Unlinked classes share few commonalities, and as shown above, a high percentage of classes lack even basic information like labels. 
-For developing an algorithm it is necessary to set a baseline, of what can be expected from the input.
-In this case, input is required to be labeled and have at least one instance.
-The benefit of this specific restriction is, that a basic level of descriptiveness can be assumed for
-every class. A label additionally allows supplementing the information, provided by Wikidata, to
-be supplemented with natural text sources, like Wikipedia, since it is now possible to recognize
-occurrences of the class in text.
