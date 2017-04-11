@@ -9,7 +9,6 @@ from algorithm.utils import map_to_knn_training_input, map_to_proj_training_inpu
 from evaluation.data_sample import MultiLabelSample
 from evaluation.utils import load_config, load_embeddings_and_labels, load_test_inputs, load_training_data
 
-__KRI_KNN_REGEX = re.compile(r'kri-knn \(k=[1-9][0-9]*&r=[0-9]+\)')
 __DIST_KNN_REGEX = re.compile(r'distance-knn \(k=[1-9][0-9]*\)')
 __LIN_PROJ_REGEX = re.compile(r'linear projection')
 __PW_LIN_PROJ_REGEX = re.compile(r'piecewise linear projection \(c=[1-9][0-9]*\)')
@@ -87,11 +86,9 @@ def execute_classification(algorithm: str, config: dict,
 
     classifier = None  # type: alg.Classifier
 
-    if __KRI_KNN_REGEX.fullmatch(algorithm) or __DIST_KNN_REGEX.fullmatch(algorithm):
-        print('recognized knn algorithm')
+    if __DIST_KNN_REGEX.fullmatch(algorithm):
         mapping = map_to_knn_training_input
     elif __LIN_PROJ_REGEX.fullmatch(algorithm) or __PW_LIN_PROJ_REGEX.fullmatch(algorithm):
-        print('recognized linear projection algorithm')
         mapping = map_to_proj_training_input
     else:
         raise NotImplementedClassifierError(algorithm)
@@ -99,14 +96,7 @@ def execute_classification(algorithm: str, config: dict,
     training_input = mapping(training_samples, id2embedding)
     logging.log(level=logging.INFO, msg='prepared training data')
 
-    if __KRI_KNN_REGEX.fullmatch(algorithm):
-        try:
-            neighbors = config['neighbors']
-            reg_param = config['regularization param']
-        except KeyError as e:
-            raise MissingParameterError(str(e), algorithm)
-        classifier = alg.KRIKNNClassifier(neighbors=neighbors, regularization_param=reg_param, n_jobs=workers)
-    elif __DIST_KNN_REGEX.fullmatch(algorithm):
+    if __DIST_KNN_REGEX.fullmatch(algorithm):
         try:
             neighbors = config['neighbors']
         except KeyError as e:
@@ -140,12 +130,25 @@ def execute_classification(algorithm: str, config: dict,
     classifier.train(training_input)
     logging.log(level=logging.INFO, msg='trained {} classifier'.format(algorithm))
 
-    results = list()  # type: List[Tuple[str, str]]
-    test_input_matrix = np.array(list(map(lambda t: id2embedding(t), test_inputs)))
+    test_input_matrix = list()
+    is_valid_test = list()
+    for idx, test_input in enumerate(test_inputs):
+        try:
+            test_input_matrix.append(id2embedding(test_input))
+            is_valid_test.append(True)
+        except KeyError as e:
+            logging.log(level=logging.DEBUG, msg='missing embedding for test input {}'.format(e))
+            test_input_matrix.append(np.zeros(embeddings.shape[1]))
+            is_valid_test.append(False)
+    logging.log(level=logging.INFO, msg='only {}/{} valid test cases'
+                .format(np.array(is_valid_test).sum(), len(test_inputs)))
+    test_input_matrix = np.array(test_input_matrix)
     labels = classifier.classify(test_input_matrix)
     del classifier
+
+    results = list()  # type: List[Tuple[str, str]]
     for i in range(len(test_inputs)):
-        results.append((test_inputs[i], labels[i]))
+        results.append((test_inputs[i], labels[i] if is_valid_test[i] else 'NO_INPUT_EMBEDDING'))
     logging.log(level=logging.INFO, msg='executed classification for all test inputs')
 
     return results

@@ -19,14 +19,14 @@ def main():
     col_sep = ','
     row_sep = '\n'
 
-    combined_algorithms = ['ts+pwlinproj(c=85)', 'ts+pwlinproj(c=100)', 'ts+pwlinproj(c=70)']
+    combined_algorithms = ['ts+distknn(k=15)']
 
     results = execute_combined_algorithms(
         combined_algorithms=combined_algorithms,
         config_path=config_path,
         training_data_path=training_data_path,
         test_data_path=test_data_path,
-        workers=1
+        workers=3
     )
 
     for combined_algorithm in combined_algorithms:

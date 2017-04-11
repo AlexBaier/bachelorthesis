@@ -2,10 +2,8 @@ import abc
 import logging
 
 import numpy as np
-from scipy.optimize import minimize
 from sklearn.cluster import MiniBatchKMeans
 from sklearn.linear_model import SGDRegressor
-from sklearn.metrics.pairwise import cosine_similarity
 from sklearn.neighbors import KNeighborsClassifier, NearestNeighbors
 from typing import List, Tuple
 
@@ -56,60 +54,6 @@ class DistanceKNNClassifier(KNNClassifier):
             return self.__classifier.predict(unknowns.reshape(1, -1)).tolist()
         else:
             return self.__classifier.predict(unknowns).tolist()
-
-
-class KRIKNNClassifier(KNNClassifier):
-
-    def __init__(self, neighbors: int, regularization_param: float, n_jobs: int=-1):
-        self.__x = None
-        self.__y = None
-        self.__nearest_neighbors = NearestNeighbors(
-            metric='minkowski',
-            n_neighbors=neighbors,
-            p=2,
-            n_jobs=n_jobs
-        )
-        self.__neighbors = neighbors
-        self.__reg = regularization_param
-
-    def train(self, training_data: Tuple[np.array, np.array]):
-        self.__x, self.__y = training_data
-        self.__nearest_neighbors.fit(training_data[0])
-
-    def classify(self, unknowns: np.array)->List[str]:
-        labels = list()
-        n = unknowns.shape[0]
-        _, index_matrix = self.__nearest_neighbors.kneighbors(unknowns, return_distance=True)
-        logging.log(level=logging.INFO, msg='KRI-kNN: found {}-nearest neighbors for {} unknowns'
-                    .format(self.__neighbors, n))
-        for i in range(n):
-            indexes = index_matrix[i]
-            neighbors = np.array([self.__x[idx] for idx in indexes])
-            sim = cosine_similarity(neighbors, neighbors)
-            s = cosine_similarity(unknowns[i].reshape(1, -1), neighbors)[0]
-
-            def f(w):
-                return 0.5 * (w.T @ sim @ w) - (s.T @ w) + (0.5 * self.__reg) * (w.T @ w)
-            constraints = ({'type': 'ineq', 'fun': lambda w: 1 if (1 - np.sum(w)) > 0 and np.alltrue(w > 0) else -1})
-            w0 = np.random.random(self.__neighbors)
-            w0 /= np.linalg.norm(w0)
-            result = minimize(f, x0=w0, method='COBYLA', constraints=constraints)
-
-            if not result.success:
-                logging.log(level=logging.INFO,
-                            msg='KRI-kNN: weights did not converge for unknowns[{}], use similarity-based weights'
-                            .format(i))
-                weights = s/np.linalg.norm(s)
-            else:
-                weights = result.x
-            votes = dict()
-            for neighbor, idx in enumerate(indexes):
-                if not votes.get(self.__y[idx], None):
-                    votes[self.__y[idx]] = 0.0
-                votes[self.__y[idx]] += weights[neighbor]
-            labels.append(max(votes.items(), key=lambda t: t[1])[0])
-            logging.log(level=logging.INFO, msg='KRI-kNN: classification progress: {}%'.format(100.0*float(i)/n))
-        return labels
 
 
 class LinearProjectionClassifier(ProjectionClassifier):
