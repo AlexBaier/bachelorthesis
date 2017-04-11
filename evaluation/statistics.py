@@ -29,7 +29,7 @@ def get_accuracy(predictions: Dict[str, str], golds: List[MultiLabelSample], rou
     return np.round(accuracy, decimals=round_to)
 
 
-def get_local_taxonomic_precision(computed: str, references: List[str], superclasses: Dict[str, Set[str]])->float:
+def get_local_taxonomic_overlap(computed: str, references: List[str], superclasses: Dict[str, Set[str]])->float:
     """
     See Dellschaft,Staab: On how to perform a gold standard based evaluation of ontology learning. 2006.
     => Taxonomic precision and recall.
@@ -45,10 +45,10 @@ def get_local_taxonomic_precision(computed: str, references: List[str], supercla
         reference_cotopy = get_semantic_one_directional_cotopy(reference, superclasses)
         reference_cotopies.append(reference_cotopy)
 
-    taxonomic_precision = max(len(computed_cotopy.intersection(reference_cotopy)) / len(computed_cotopy)
-                              for reference_cotopy in reference_cotopies)
+    taxonomic_overlap = max(len(computed_cotopy.intersection(reference_cotopy)) /
+                            len(computed_cotopy.union(reference_cotopy)) for reference_cotopy in reference_cotopies)
 
-    return taxonomic_precision
+    return taxonomic_overlap
 
 
 def get_semantic_one_directional_cotopy(node: str, successors: Dict[str, Set[str]])->Set[str]:

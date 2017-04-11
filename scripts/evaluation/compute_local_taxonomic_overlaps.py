@@ -2,14 +2,14 @@ import json
 import logging
 
 from evaluation.execution import NO_INPUT_EMBEDDING
-from evaluation.statistics import get_local_taxonomic_precision
+from evaluation.statistics import get_local_taxonomic_overlap
 from evaluation.utils import load_test_data
 
 
 def main():
     logging.basicConfig(format='%(asctime)s : %(levelname)s : %(message)s', level=logging.DEBUG)
 
-    algorithm = 'ts+linproj'
+    algorithm = 'ts+distknn(k=15)'
 
     with open('paths_config.json') as f:
         config = json.load(f)
@@ -17,7 +17,7 @@ def main():
     predictions_path = config['execution results']
     gold_path = config['test data']
     subclass_of_path = config['subclass of relations']
-    output_path = config['local taxonomic precisions']
+    output_path = config['local taxonomic overlaps']
 
     golds = load_test_data(gold_path)
     logging.log(level=logging.INFO, msg='loaded golds')
@@ -39,15 +39,15 @@ def main():
     local_precisions = list()
     for idx, gold in enumerate(filter(lambda g: predictions.get(g.input_arg, None), golds)):
         local_precision = \
-            get_local_taxonomic_precision(predictions[gold.input_arg], gold.possible_outputs, superclasses)
+            get_local_taxonomic_overlap(predictions[gold.input_arg], gold.possible_outputs, superclasses)
         local_precisions.append(local_precision)
     logging.log(level=logging.INFO, msg='computed local precisions for {}'.format(algorithm))
 
-    logging.log(level=logging.INFO, msg='average precision: {}'.format(sum(local_precisions)/len(local_precisions)))
+    logging.log(level=logging.INFO, msg='average overlap: {}'.format(sum(local_precisions)/len(local_precisions)))
 
     with open(output_path.format(algorithm), mode='w') as f:
         f.write(','.join(map(str, local_precisions)) + '\n')
-    logging.log(level=logging.INFO, msg='wrote local precisions to {}'.format(output_path.format(algorithm)))
+    logging.log(level=logging.INFO, msg='wrote local overlaps to {}'.format(output_path.format(algorithm)))
 
 
 if __name__ == '__main__':
