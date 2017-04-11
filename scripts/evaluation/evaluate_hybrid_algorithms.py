@@ -1,6 +1,7 @@
 import json
 import logging
 
+import numpy as np
 from typing import Dict, List
 
 from evaluation.data_sample import MultiLabelSample
@@ -18,6 +19,7 @@ def main():
         algorithm_config = json.load(f)
 
     predictions_path = paths_config['execution results']
+    taxonomic_overlap_path = paths_config['local taxonomic overlaps']
     test_data_path = paths_config['test data']
     evaluation_output = paths_config['evaluation']
 
@@ -25,6 +27,7 @@ def main():
         'ts+distknn(k=15)',
         'ts+linproj'
     ]
+    round_to = 5
 
     golds = load_test_data(test_data_path)  # type: List[MultiLabelSample]
     logging.log(level=logging.INFO, msg='loaded gold standard')
@@ -35,10 +38,17 @@ def main():
             predictions[algorithm] = dict((u, p) for u, p in map(lambda l: l.strip().split(','), f))
         logging.log(level=logging.INFO, msg='loaded predictions of {}'.format(algorithm))
 
+    overlaps = dict()  # type: Dict[str, List[float]]
+    for algorithm in algorithms:
+        with open(taxonomic_overlap_path.format(algorithm)) as f:
+            overlaps[algorithm] = list(map(float, f.readline().strip().split(',')))
+        logging.log(level=logging.INFO, msg='loaded taxonomic overlaps of {}'.format(algorithm))
+
     training_samples = dict()  # type: Dict[str, int]
     test_samples = dict()  # type: Dict[str, int]
     tp_counts = dict()  # type: Dict[str, int]
-    accuracies = dict()  # type: Dict[str, int]
+    accuracies = dict()  # type: Dict[str, float]
+    avg_overlaps = dict()  # type: Dict[str, float]
 
     for algorithm in algorithms:
         training_samples[algorithm] = algorithm_config['combinations'][algorithm]['training samples']
@@ -47,22 +57,27 @@ def main():
         tp_counts[algorithm] = get_true_positive_count(predictions[algorithm], golds)
         logging.log(level=logging.INFO, msg='computed TP count and accuracy for {}'.format(algorithm))
 
-        accuracies[algorithm] = get_accuracy(predictions[algorithm], golds, round_to=5)
+        accuracies[algorithm] = np.round(get_accuracy(predictions[algorithm], golds), decimals=round_to)
         logging.log(level=logging.INFO, msg='computed accuracy for {}'.format(algorithm))
+
+        avg_overlaps[algorithm] = np.round(sum(overlaps[algorithm])/len(overlaps[algorithm]), decimals=round_to)
+        logging.log(level=logging.INFO, msg='computed average taxonomic overlap for {}'.format(algorithm))
 
     with open(evaluation_output, mode='w') as f:
         f.write(','.join(['algorithm',
                           'training_samples',
                           'test samples',
                           'TPs',
-                          'accuracy']) + '\n')
+                          'accuracy',
+                          'average taxonomic overlap']) + '\n')
         for algorithm in algorithms:
             row = [
                 algorithm,
                 str(training_samples[algorithm]),
                 str(test_samples[algorithm]),
                 str(tp_counts[algorithm]),
-                str(accuracies[algorithm])
+                str(accuracies[algorithm]),
+                str(avg_overlaps[algorithm])
             ]
             f.write(','.join(row) + '\n')
 

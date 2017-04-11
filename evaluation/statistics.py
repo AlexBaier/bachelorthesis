@@ -20,13 +20,13 @@ def get_valid_test_input_count(predictions: Dict[str, str], golds: List[MultiLab
     return n - missing_input_count
 
 
-def get_accuracy(predictions: Dict[str, str], golds: List[MultiLabelSample], round_to: int=3)->float:
+def get_accuracy(predictions: Dict[str, str], golds: List[MultiLabelSample])->float:
     tps = get_true_positive_count(predictions, golds)
     n = get_valid_test_input_count(predictions, golds)
 
     accuracy = float(tps) / float(n)
 
-    return np.round(accuracy, decimals=round_to)
+    return accuracy
 
 
 def get_local_taxonomic_overlap(computed: str, references: List[str], superclasses: Dict[str, Set[str]])->float:
