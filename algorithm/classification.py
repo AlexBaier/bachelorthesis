@@ -71,13 +71,16 @@ class LinearProjectionClassifier(ProjectionClassifier):
         self.__sgd_iter = sgd_iter
         self.__sgd_regressors = [SGDRegressor() for _ in range(self.__embedding_size)]
 
-    def train(self, training_data: List[Tuple[np.array, np.array]], batch_size: int=500):
+    def train(self, training_data: List[Tuple[np.array, np.array]], batch_size: int=1000):
         self.__nearest_neighbors.fit(self.__embeddings)
 
         n = len(training_data)
 
         x, y = list(map(np.array, zip(*training_data)))
         del training_data
+
+        x = np.append(x, np.ones((n, 1)), axis=1)
+        y = np.append(y, np.ones((n, 1)), axis=1)
 
         batches = [batch_size for _ in range(int(n / batch_size) + 1)]
         batches[-1] = n % batch_size
@@ -93,7 +96,7 @@ class LinearProjectionClassifier(ProjectionClassifier):
                             msg='iter={}/{},batch progress: {}/{}'.format(i+1, self.__sgd_iter, k+1, len(batches)))
 
     def classify(self, unknowns: np.array)->List[str]:
-        labels = list()
+        unknowns = np.append(unknowns, np.ones((unknowns.shape[0], 1)), axis=1)
 
         y = list()
         for target in range(self.__embedding_size):
@@ -103,6 +106,7 @@ class LinearProjectionClassifier(ProjectionClassifier):
         # get indices of most similar embedding
         _, indexes = self.__nearest_neighbors.kneighbors(y, return_distance=True)
 
+        labels = list()
         for index in indexes:
             labels.append(self.__labels[index[0]])
 
@@ -128,8 +132,13 @@ class PiecewiseLinearProjectionClassifier(ProjectionClassifier):
         self.__sgd_regressors = [[SGDRegressor() for _ in range(self.__embedding_size)] for _ in range(self.__clusters)]
 
     def train(self, training_data: List[Tuple[np.array, np.array]], batch_size: int=500):
+        n = len(training_data)
+
         x, y = list(map(np.array, zip(*training_data)))
         del training_data
+
+        x = np.append(x, np.ones((n, 1)), axis=1)
+        y = np.append(y, np.ones((n, 1)), axis=1)
 
         # compute clusters based on x (inputs)
         cluster_labels = self.__kmeans.fit_predict(x)
@@ -144,7 +153,6 @@ class PiecewiseLinearProjectionClassifier(ProjectionClassifier):
         clustered_y = list(map(np.array, clustered_y))
         logging.log(level=logging.INFO, msg='sorted training samples into clusters')
 
-        # use sgd regression on <self.__embedding_size> targets to learn <self.__clusters> projection matrices
         for c in range(self.__clusters):
             n = len(clustered_x[c])
 
@@ -169,11 +177,7 @@ class PiecewiseLinearProjectionClassifier(ProjectionClassifier):
         logging.log(level=logging.INFO, msg='finished fitting all-embeddings nearest neighbor')
 
     def classify(self, unknowns: np.array)->List[str]:
-        labels = list()
-
-        # only one sample, reshape to prevent warnings
-        if unknowns.shape[0] == 1:
-            unknowns = unknowns.reshape(1, -1)
+        unknowns = np.append(unknowns, np.ones((unknowns.shape[0], 1)), axis=1)
 
         # assign clusters to each unknown
         cluster_labels = self.__kmeans.predict(unknowns)
@@ -195,6 +199,7 @@ class PiecewiseLinearProjectionClassifier(ProjectionClassifier):
         del projections
 
         # find corresponding label of each superclass
+        labels = list()
         for index in indexes:
             label = self.__labels[index[0]]
             labels.append(label)

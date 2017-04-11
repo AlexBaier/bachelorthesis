@@ -31,11 +31,11 @@
     "neighbors": 15
   },
   "linear projection": {
-    "sgd iterations": 5
+    "sgd iterations": 10
   },
   "piecewise linear projection (c=50)": {
     "clusters": 50,
-    "sgd iterations": 5
+    "sgd iterations": 10
   },
   "combinations": {
     "ts+distknn(k=15)": {
