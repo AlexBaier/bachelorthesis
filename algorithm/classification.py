@@ -177,6 +177,8 @@ class PiecewiseLinearProjectionClassifier(ProjectionClassifier):
         logging.log(level=logging.INFO, msg='finished fitting all-embeddings nearest neighbor')
 
     def classify(self, unknowns: np.array)->List[str]:
+        n = unknowns.shape[0]
+
         unknowns = np.append(unknowns, np.ones((unknowns.shape[0], 1)), axis=1)
 
         # assign clusters to each unknown
@@ -184,7 +186,7 @@ class PiecewiseLinearProjectionClassifier(ProjectionClassifier):
         logging.log(level=logging.INFO, msg='clustered unknowns, clusters={}'.format(self.__clusters))
 
         # compute projection for each unknown
-        projections = np.zeros(unknowns.shape)
+        projections = np.zeros((n, self.__embedding_size))
         for idx, cluster in enumerate(cluster_labels):
             for target in range(self.__embedding_size):
                 projections[idx][target] = self.__sgd_regressors[cluster][target].predict(unknowns[idx].reshape(1, -1))
