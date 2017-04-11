@@ -47,7 +47,7 @@ def main():
         tp_counts[algorithm] = get_true_positive_count(predictions[algorithm], golds)
         logging.log(level=logging.INFO, msg='computed TP count and accuracy for {}'.format(algorithm))
 
-        accuracies[algorithm] = get_accuracy(predictions[algorithm], golds)
+        accuracies[algorithm] = get_accuracy(predictions[algorithm], golds, round_to=5)
         logging.log(level=logging.INFO, msg='computed accuracy for {}'.format(algorithm))
 
     with open(evaluation_output, mode='w') as f:

@@ -7,6 +7,7 @@
   "class ids": "data/class_ids-20161107.txt",
   "relevant class ids": "data/relevant_class_ids-20161107.txt",
   "wikidata labels": "data/wikidata_labels-20161107.csv",
+  "subclass of relations": "data/subclass_ofs-20161107.csv",
   "irrelevant properties": "irrelevant_properties.txt",
 
   "class characteristics": "data/class_characteristics-20161107.json",
@@ -45,9 +46,5 @@
 
   "execution results": "evaluation/results_{}-20161107.csv",
   "evaluation": "evaluation/hybrid_evaluation-20161107.csv",
-
-  "similarity histogram": "evaluation/plots/sim_hist_{}-20161107.png",
-  "similarity distribution": "evaluation/plots/cumul_sim_distr_{}-20161107.png",
-  "combined similarity histogram": "evaluation/plots/comb_sim_hist_{}-20161107.png",
-  "combined similarity distribution": "evaluation/plots/comb_cumul_sim_distr_{}-20161107.png"
+  "local taxonomic precisions": "data/evaluation/local_tax_prec_{}-20161107.csv"
 }

@@ -1,5 +1,5 @@
 import numpy as np
-from typing import Dict, List, Tuple
+from typing import Dict, List, Set, Tuple
 
 from evaluation.data_sample import MultiLabelSample
 from evaluation.execution import NO_INPUT_EMBEDDING
@@ -27,6 +27,46 @@ def get_accuracy(predictions: Dict[str, str], golds: List[MultiLabelSample], rou
     accuracy = float(tps) / float(n)
 
     return np.round(accuracy, decimals=round_to)
+
+
+def get_local_taxonomic_precision(computed: str, references: List[str], superclasses: Dict[str, Set[str]])->float:
+    """
+    See Dellschaft,Staab: On how to perform a gold standard based evaluation of ontology learning. 2006.
+    => Taxonomic precision and recall.
+    Taxonomic upwards cotopy is used as characteristic extract.
+    :param computed: 
+    :param references: 
+    :param superclasses: 
+    :return: 
+    """
+    computed_cotopy = get_semantic_one_directional_cotopy(computed, superclasses)
+    reference_cotopies = list()
+    for reference in references:
+        reference_cotopy = get_semantic_one_directional_cotopy(reference, superclasses)
+        reference_cotopies.append(reference_cotopy)
+
+    taxonomic_precision = max(len(computed_cotopy.intersection(reference_cotopy)) / len(computed_cotopy)
+                              for reference_cotopy in reference_cotopies)
+
+    return taxonomic_precision
+
+
+def get_semantic_one_directional_cotopy(node: str, successors: Dict[str, Set[str]])->Set[str]:
+    """
+    :param node: 
+    :param successors: 
+    :return: semantic cotopy in one direction given by successors, typically set of all transitive sub- or superclasses
+        of node.
+    """
+    trans_superclasses = set()
+    q = {node}
+
+    while len(q) > 0:
+        current = q.pop()
+        trans_superclasses.add(current)
+        q.update(successors.get(current, set()).difference(trans_superclasses))
+
+    return trans_superclasses
 
 
 def get_confusion_matrix(predictions: Dict[str, str], golds: List[MultiLabelSample])\
