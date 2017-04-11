@@ -13,6 +13,8 @@ __DIST_KNN_REGEX = re.compile(r'distance-knn \(k=[1-9][0-9]*\)')
 __LIN_PROJ_REGEX = re.compile(r'linear projection')
 __PW_LIN_PROJ_REGEX = re.compile(r'piecewise linear projection \(c=[1-9][0-9]*\)')
 
+NO_INPUT_EMBEDDING = 'NO_INPUT_EMBEDDING'
+
 
 def execute_combined_algorithms(combined_algorithms: List[str], config_path: str, training_data_path: str,
                                 test_data_path: str, workers)->Dict[str, List[Tuple[str, str]]]:
@@ -148,7 +150,7 @@ def execute_classification(algorithm: str, config: dict,
 
     results = list()  # type: List[Tuple[str, str]]
     for i in range(len(test_inputs)):
-        results.append((test_inputs[i], labels[i] if is_valid_test[i] else 'NO_INPUT_EMBEDDING'))
+        results.append((test_inputs[i], labels[i] if is_valid_test[i] else NO_INPUT_EMBEDDING))
     logging.log(level=logging.INFO, msg='executed classification for all test inputs')
 
     return results
