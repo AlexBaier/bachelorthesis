@@ -1,6 +1,7 @@
 import abc
 import logging
 import random
+import sqlite3
 import time
 
 import numpy as np
@@ -50,30 +51,26 @@ class TripleSentences(SequenceGen):
 
 class GraphWalkSentences(SequenceGen):
     """
-    GraphWalk has exponential runtime.
+    In-memory, not parallel.
     """
+
     def __init__(self, vertices: List[str], depth: int, max_walks_per_v: int,
-                 get_out_edges: Callable[[str], List[Tuple[str, str]]], workers: int=4):
+                 get_out_edges: Callable[[str], List[Tuple[str, str]]]):
         self.__vertices = vertices  # type: List[str]
         self.__depth = depth  # type: int
         self.__max_walks = max_walks_per_v  # type: int
         self.__get_out_edges = get_out_edges  # type: Callable[[str], List[Tuple[str, str]]]
-        self.__workers = workers  # type: int
 
     def get_sequences(self)->Iterable[List[str]]:
-        logging.log(level=logging.INFO, msg='Graph walk sequences with depth={}, max walks={}, workers={}'.format(
-            self.__depth, self.__max_walks, self.__workers
-        ))
+        logging.log(level=logging.INFO, msg='Graph walk sequences with depth={}, max walks={}'.format(
+            self.__depth, self.__max_walks)
+        )
+        walks = list()
+        for vertice in self.__vertices:
+            walks.append(self.__get_walks(vertice))
+        return walks
 
-        def __get_sequences():
-            with mp.Pool(processes=self.__workers) as p:
-                for walks in p.imap_unordered(self.__get_walks, self.__vertices):
-                    for w in walks:
-                        yield w
-
-        return __get_sequences()
-
-    def __get_walks(self, vertice: str):
+    def __get_walks(self, vertice: str)->List[List[str]]:
         start_time = time.time()
 
         random.seed()
@@ -112,6 +109,86 @@ class GraphWalkSentences(SequenceGen):
 
         logging.log(level=logging.INFO, msg='{} walks from {} in {} seconds'.format(len(walks), vertice, duration))
         return walks
+
+
+class DbGraphWalkSentences(SequenceGen):
+    """
+    From disk using sqlite3 and caching. Parallel.
+    """
+    def __init__(self, vertices: List[str], depth: int, max_walks_per_v: int, edge_store_path: str, workers: int=4):
+        self.__vertices = vertices  # type: List[str]
+        self.__depth = depth  # type: int
+        self.__max_walks = max_walks_per_v  # type: int
+        self.__edge_store_path = edge_store_path  # type: str
+        self.__workers = workers  # type: int
+
+    def get_sequences(self)->Iterable[List[str]]:
+        logging.log(level=logging.INFO, msg='Graph walk sequences with depth={}, max walks={}, workers={}'.format(
+            self.__depth, self.__max_walks, self.__workers
+        ))
+
+        # partition source vertices into self.__workers batches
+        batches = [self.__vertices[i::self.__workers] for i in range(self.__workers)]
+
+        def __get_sequences():
+            with mp.Pool(processes=self.__workers) as p:
+                for walks in p.imap_unordered(self.__get_walks, batches):
+                    for w in walks:
+                        yield w
+
+        return __get_sequences()
+
+    def __get_walks(self, vertices: List[str])->List[List[str]]:
+        start_time = time.time()
+        random.seed()
+        out_edge_cache = dict()
+
+        results = list()
+
+        with sqlite3.connect(self.__edge_store_path) as conn:
+            for vertice in vertices:
+                walks = [[vertice if idx == 0 else '' for idx, _ in enumerate(range(2*self.__depth+1))]
+                         for _ in range(self.__max_walks)]
+
+                for current_depth in range(1, self.__depth):
+                    for current_walk in range(self.__max_walks):
+                        current_vertice = walks[current_walk][2*current_depth-2]
+                        # current walk already stopped
+                        if current_vertice == '':
+                            continue
+                        out_edges = out_edge_cache.get(current_vertice, None)
+                        if not out_edges:
+                            out_edges = self.__get_out_edges(current_vertice, conn)
+                            out_edge_cache[current_vertice] = out_edges
+                        m = len(out_edges)
+                        # current vertice has no out-edges => skip this vertice
+                        if m == 0:
+                            continue
+                        if m == 1:
+                            r = 0
+                        else:
+                            r = np.random.randint(0, m-1, 1)[0]
+                        chosen_edge = out_edges[r]
+                        walks[current_walk][2*current_depth-1] = chosen_edge[1]  # add edge weight to walk
+                        walks[current_walk][2*current_depth] = chosen_edge[2]  # add target to walk
+
+            # strip empty strings of walk
+            for walk_id in range(self.__max_walks):
+                walks[walk_id] = list(filter(lambda s: s != '', walks[walk_id]))
+            walks = list(filter(lambda walk: len(walk) > 1, walks))
+            results.extend(walks)
+
+            duration = time.time() - start_time
+            logging.log(level=logging.INFO, msg='{} walks from {} in {} seconds'.format(len(walks), vertice, duration))
+        return results
+
+    @staticmethod
+    def __get_out_edges(v: str, conn)->List[List[str]]:
+        c = conn.cursor()
+        node = int(v[1:])
+        c.execute('SELECT * FROM edges WHERE s=?', [node])
+        results = c.fetchall()
+        return list(map(lambda e: ['Q'+str(e[0]), 'P'+str(e[1]), 'Q'+str(e[2])], results))
 
 
 class Sequences(Iterable[List[str]]):

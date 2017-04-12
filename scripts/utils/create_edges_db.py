@@ -7,8 +7,7 @@ from typing import Iterable, List
 
 def generate_edge_store(db_path: str, edges: Iterable[List[str]]):
     logging.log(level=logging.INFO, msg='start generating edge store')
-    conn = sqlite3.connect(db_path)
-    with conn:
+    with sqlite3.connect(db_path) as conn:
         c = conn.cursor()
         c.execute('DROP TABLE IF EXISTS edges')
         c.execute('CREATE TABLE edges (s int, r int, t int)')
@@ -31,7 +30,7 @@ def main():
 
     with open(triple_sentence_path) as f:
         edges = filter(lambda s: len(s) == 3, (l.strip().split() for l in f))
-    generate_edge_store(edge_store_path, edges)
+        generate_edge_store(edge_store_path, edges)
     logging.log(level=logging.INFO, msg='stored edge db to {}'.format(edge_store_path))
 
 

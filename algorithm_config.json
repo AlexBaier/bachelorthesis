@@ -3,7 +3,7 @@
   },
   "graph walk sentences": {
     "depth": 4,
-    "max walks": 100
+    "max walks": 10
   },
   "triple sentence sgns": {
     "embedding size": 300,
