@@ -36,6 +36,9 @@
   "distance-knn (k=15)": {
     "neighbors": 15
   },
+  "distance-knn (k=20)": {
+    "neighbors": 20
+  },
   "linear projection": {
     "sgd iterations": 10
   },
@@ -68,6 +71,12 @@
       "sequences": "triple sentences",
       "sgns": "triple sentence sgns",
       "classification": "distance-knn (k=15)",
+      "training samples": 198502
+    },
+    "ts+distknn(k=20)": {
+      "sequences": "triple sentences",
+      "sgns": "triple sentence sgns",
+      "classification": "distance-knn (k=20)",
       "training samples": 198502
     },
     "ts+linproj": {

@@ -2,5 +2,7 @@ algorithm,training_samples,test samples,TPs,accuracy,average taxonomic overlap
 ts+distknn(k=5),198502,9073,2182,0.24049,0.43929
 ts+distknn(k=10),198502,9073,2292,0.25262,0.44825
 ts+distknn(k=15),198502,9073,2334,0.25725,0.45335
+ts+distknn(k=20),198502,9073,2354,0.25945,0.45285
 ts+linproj,198502,9073,589,0.06492,0.29833
 ts+pwlinproj(c=25),198502,9073,911,0.10041,0.33764
+ts+pwlinproj(c=50),198502,9073,1075,0.11848,0.34861
