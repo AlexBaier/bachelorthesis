@@ -27,10 +27,24 @@
     "max vocab": 3500000,
     "embeddings path": "/home/alex/PycharmProjects/thesis/data/algorithm_io/graph_walk_class_embeddings-20161107"
   },
+  "distance-knn (k=5)": {
+    "neighbors": 5
+  },
+  "distance-knn (k=10)": {
+    "neighbors": 10
+  },
   "distance-knn (k=15)": {
     "neighbors": 15
   },
   "linear projection": {
+    "sgd iterations": 10
+  },
+  "piecewise linear projection (c=10)": {
+    "clusters": 10,
+    "sgd iterations": 10
+  },
+  "piecewise linear projection (c=25)": {
+    "clusters": 25,
     "sgd iterations": 10
   },
   "piecewise linear projection (c=50)": {
@@ -38,6 +52,18 @@
     "sgd iterations": 10
   },
   "combinations": {
+    "ts+distknn(k=5)": {
+      "sequences": "triple sentences",
+      "sgns": "triple sentence sgns",
+      "classification": "distance-knn (k=5)",
+      "training samples": 198502
+    },
+    "ts+distknn(k=10)": {
+      "sequences": "triple sentences",
+      "sgns": "triple sentence sgns",
+      "classification": "distance-knn (k=10)",
+      "training samples": 198502
+    },
     "ts+distknn(k=15)": {
       "sequences": "triple sentences",
       "sgns": "triple sentence sgns",
@@ -48,6 +74,18 @@
       "sequences": "triple sentences",
       "sgns": "triple sentence sgns",
       "classification": "linear projection",
+      "training samples": 198502
+    },
+    "ts+pwlinproj(c=10)": {
+      "sequences": "triple sentences",
+      "sgns": "triple sentence sgns",
+      "classification": "piecewise linear projection (c=10)",
+      "training samples": 198502
+    },
+    "ts+pwlinproj(c=25)": {
+      "sequences": "triple sentences",
+      "sgns": "triple sentence sgns",
+      "classification": "piecewise linear projection (c=25)",
       "training samples": 198502
     },
     "ts+pwlinproj(c=50)": {

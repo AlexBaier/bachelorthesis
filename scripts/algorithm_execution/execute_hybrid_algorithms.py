@@ -19,7 +19,7 @@ def main():
     col_sep = ','
     row_sep = '\n'
 
-    combined_algorithms = ['ts+linproj']
+    combined_algorithms = ['ts+pwlinproj(c=25)', 'ts+distknn(k=5)', 'ts+distknn(k=10)']
 
     results = execute_combined_algorithms(
         combined_algorithms=combined_algorithms,

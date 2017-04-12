@@ -23,10 +23,7 @@ def main():
     test_data_path = paths_config['test data']
     evaluation_output = paths_config['evaluation']
 
-    algorithms = [
-        'ts+distknn(k=15)',
-        'ts+linproj'
-    ]
+    algorithms = ['ts+distknn(k=5)', 'ts+distknn(k=10)', 'ts+distknn(k=15)', 'ts+linproj', 'ts+pwlinproj(c=25)']
     round_to = 5
 
     golds = load_test_data(test_data_path)  # type: List[MultiLabelSample]

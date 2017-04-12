@@ -9,7 +9,7 @@ from evaluation.utils import load_test_data
 def main():
     logging.basicConfig(format='%(asctime)s : %(levelname)s : %(message)s', level=logging.DEBUG)
 
-    algorithms = ['ts+distknn(k=15)', 'ts+linproj']
+    algorithms = ['ts+distknn(k=5)', 'ts+distknn(k=10)', 'ts+distknn(k=15)', 'ts+linproj', 'ts+pwlinproj(c=25)']
 
     with open('paths_config.json') as f:
         config = json.load(f)
