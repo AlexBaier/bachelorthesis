@@ -46,5 +46,6 @@
 
   "execution results": "evaluation/results_{}-20161107.csv",
   "evaluation": "evaluation/hybrid_evaluation-20161107.csv",
-  "local taxonomic overlaps": "data/evaluation/local_tax_overlaps_{}-20161107.csv"
+  "local taxonomic overlaps": "data/evaluation/local_tax_overlaps_{}-20161107.csv",
+  "local taxonomic overlap histogram": "evaluation/plots/tax_overlap_hist_{}-20161107.png"
 }
