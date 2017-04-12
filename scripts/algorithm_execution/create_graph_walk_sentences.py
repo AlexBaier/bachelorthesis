@@ -56,12 +56,12 @@ def main():
     logging.log(level=logging.INFO, msg='initialized graph walk sentence gen')
 
     sentences = gen.get_sequences()
-    with open(output_path, mode='w') as f:
+    with open(output_path, mode='a') as f:
         c = 1
         for sentence in map(lambda s: ' '.join(s) + '\n', sentences):
             f.write(sentence)
             if c % 1000 == 0:
-                print('written', str(c), 'sentences')
+                print('appended', str(c), 'sentences')
             c += 1
 
 if __name__ == '__main__':
