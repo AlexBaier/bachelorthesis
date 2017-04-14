@@ -139,7 +139,7 @@ class DbGraphWalkSentences(SequenceGen):
         return __get_sequences()
 
     def __get_walks(self, vertices: List[str])->List[List[str]]:
-        start_time = time.time()
+        print('started...', len(vertices))
         random.seed()
         out_edge_cache = dict()
 
@@ -147,9 +147,10 @@ class DbGraphWalkSentences(SequenceGen):
 
         with sqlite3.connect(self.__edge_store_path) as conn:
             for vertice in vertices:
+                start_time = time.time()
+
                 walks = [[vertice if idx == 0 else '' for idx, _ in enumerate(range(2*self.__depth+1))]
                          for _ in range(self.__max_walks)]
-
                 for current_depth in range(1, self.__depth):
                     for current_walk in range(self.__max_walks):
                         current_vertice = walks[current_walk][2*current_depth-2]
@@ -172,14 +173,15 @@ class DbGraphWalkSentences(SequenceGen):
                         walks[current_walk][2*current_depth-1] = chosen_edge[1]  # add edge weight to walk
                         walks[current_walk][2*current_depth] = chosen_edge[2]  # add target to walk
 
-            # strip empty strings of walk
-            for walk_id in range(self.__max_walks):
-                walks[walk_id] = list(filter(lambda s: s != '', walks[walk_id]))
-            walks = list(filter(lambda walk: len(walk) > 1, walks))
-            results.extend(walks)
+                # strip empty strings of walk
+                for walk_id in range(self.__max_walks):
+                    walks[walk_id] = list(filter(lambda s: s != '', walks[walk_id]))
+                walks = list(filter(lambda walk: len(walk) > 1, walks))
+                results.extend(walks)
 
-            duration = time.time() - start_time
-            logging.log(level=logging.INFO, msg='{} walks from {} in {} seconds'.format(len(walks), vertice, duration))
+                duration = time.time() - start_time
+                logging.log(level=logging.INFO,
+                            msg='{} walks from {} in {} seconds'.format(len(walks), vertice, duration))
         return results
 
     @staticmethod

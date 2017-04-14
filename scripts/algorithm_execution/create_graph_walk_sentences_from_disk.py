@@ -18,7 +18,7 @@ def main():
     edge_store_path = config['edges db']
     output_path = config['graph walk sentences']
 
-    node_count = 10
+    node_count = 10000
     offset = 0
 
     random.seed()
@@ -26,8 +26,8 @@ def main():
     with open(node_id_path) as f:
         nodes = [l.strip() for l in f]
     logging.log(level=logging.INFO, msg='node count: {}'.format(len(nodes)))
+    logging.log(level=logging.INFO, msg='compute walks for {} nodes'.format(node_count))
 
-    random.shuffle(nodes)
     gen = DbGraphWalkSentences(
         nodes[node_count*offset:node_count*(offset+1)],
         depth=gw_config['depth'],  # RDF2Vec: depth = 4
