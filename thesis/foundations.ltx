@@ -1,4 +1,6 @@
+%%%%%%
 % Wikidata
+%%%%%%
 \subsection{Wikidata}\label{section:wikidata}
 Wikidata is an open, free, multilingual and collaborative KB. It is a structured knowledge source for other Wikimedia projects. 
 It tries to model the real world, meaning every concept, object, animal, person, etc.
@@ -23,8 +25,9 @@ Additionally, references can be used for statements to include its source. See F
 
 \begin{figure}
 \centering
-\includegraphics[width=0.9\textwidth]{images/foundations/item_example.png}
-\caption{Example excerpt of Wikidata item: photographic film (Q6239). \\
+\includegraphics[width=\textwidth]{images/foundations/item_example.png}
+\caption{Example excerpt of Wikidata item: photographic film (Q6239).}
+\medskip
 The item has the \textbf{label} "photographic film" and the \textbf{unique identifier} "Q6239".
 Below the label and identifier, the \textbf{description} (short sentence describing the item) can be found.
 The \textbf{alias} "film" follows in the next line. An item can have multiple aliases.
@@ -35,7 +38,7 @@ In this example, the only statement with property \textit{topic's main category 
 a property \textit{imported from (P143)} and a value \textit{Chinese Wikipedia (Q30239)}. References represent the sources and other meta-data about the source of the statement.
 In this example, no qualifiers exist. Qualifiers are used to give additional details to statements.
 A common use for qualifiers is the annotation of statements with time stamps, if the a different value is true for different points in time
-e.g. population of a country over time.}
+e.g. population of a country over time.
 \label{fig:class example}
 \end{figure}
 
@@ -85,7 +88,7 @@ Based on which statements connect two items, a distinction can be made.
 A class is any item, which has instances, subclasses or is the subclass of another class.
 In Wikidata, the properties \textit{instance of (P31)} and \textit{subclass of (P279)} exist, which describe these relations between items.
 Therefore to identify whether an item is a class, it needs to be checked, whether the items fulfills any of the three mentioned criteria.
-\begin{definition}[Class]
+\begin{definition}[Class]\label{def:class}
 Given a set of items $I$ and a set of statements $R$. $c = (\mathit{classid}, \_, \_, \_, \_)  \in I$ is a \textbf{class}, if at least one of the following assertions are true:
 \begin{align*}
 &\exists i=(\mathit{instanceid}, \_, \_, \_, \_) \in I \; \exists s=(\mathit{itemid}, \mathit{pid}, \mathit{value}, \_, \_) \in R :  \\
@@ -100,7 +103,9 @@ Given a set of items $I$ and a set of statements $R$. $c = (\mathit{classid}, \_
 $\_$ is used as an anonymous placeholder, for the purpose of not naming unused elements in tuples.
 For example, \textit{photographic film (Q6293)} (Figure~\ref{fig:class example}) is a class, because it is the subclass of three other classes.
 
+%%%%%%%
 % Taxonomy
+%%%%%%%
 \subsection{Taxonomy}\label{section:taxonomy}
 
 ``Ontologies are (meta)data schemas, 
@@ -108,23 +113,24 @@ providing a controlled vocabulary of concepts, each with an explicitly defined a
 contain axioms used for validation and constraint enforcement. Ontologies enable the modeling and sharing of knowledge in a specific domain and support
 the knowledge exchange via web by extending syntactic to semantic interoperability \cite{Hazman2011}.
 In comparison, a KB like Wikidata can be seen as an instantiation of such an ontology,
-since every KB has to be conceptualized by an ontology \cite{Wong2012}. Different types of ontologies can grouped by their level of formality and expressiveness.
+since every KB has to be conceptualized by an ontology \cite{Wong2012}. Different types of ontologies can be grouped by their level of formality and expressiveness.
 \fullcite{Wong2012} differentiates ontologies as lightweight and heavyweight ontologies (see Figure~\ref{fig:ontology spectrum}). 
 \textbf{Taxonomies} are concept or class hierarchies.
 They typically represent a parent-child structure, which can be formalized with a single relationship called for example \textit{subclass-of} in the case of Wikidata.
 The observed taxonomy in Wikidata belongs to the category of lightweight ontologies, specifically principled, informal hierarchies, 
 as the only enforced rule for the subclass-of relation is that it should connect two entities \cite{WikidataP279}.
 
-\begin{figure}
+\begin{figure}[H]
 \centering
 \includegraphics[width=\textwidth]{images/foundations/wong2012_spectrum_of_ontology_kinds.png}
-\caption{The spectrum of ontology kinds. \cite{Wong2012}}
+\caption{The spectrum of ontology kinds \cite{Wong2012}}
 \label{fig:ontology spectrum}
 \end{figure}
 
 For the purpose of developing a formal definition of the thesis' problem statement the notion of taxonomy needs to be formalized.
-\fullcite{Cimiano2006} defines a heavyweight ontology, which includes a taxonomy, as follows:\\
-``
+\citeauthor{Cimiano2006} defines a heavyweight ontology, which includes a taxonomy, as follows \cite{Cimiano2006}:
+
+\begin{quotation}
 	\begin{definition*}[Ontology]\label{Ontology}
 		An \textbf{ontology} is a structure
 		\begin{equation*} 
@@ -151,26 +157,34 @@ For the purpose of developing a formal definition of the thesis' problem stateme
 		&\forall x \forall y \exists z (z \ge \land z \ge y \land \forall w (w \ge x \land w \ge y \implies w \ge z)) \: \text{(supremum)}
 	\end{align*}
 	So every two elements have a unique most specific supremum.
-''\\
+\end{quotation}
 
-A taxonomy can be modeled as a semi-upper lattice. This induces two important assumptions about the structure and to some degree completeness of the
-observed taxonomies. First, there is only one \textit{root class}, top element of the lattice, of which every other class is (transitively) a subclass. Second,
-because of the supremum property, the taxonomy is fully connected, which means each class, but the root class, has a superclass.
-Wikidata's taxonomy does therefore not fulfill the definition by \fullcite{Cimiano2006}, as it is not fully connected.\\
-In the following, definitions wil bel presented, which attempt to model an incomplete taxonomy based on the already presented data model and structure of Wikidata.
+This definition by \fullcite{Cimiano2006} can be mapped to Wikidata.
+In the Wikidata context, $C$ is the set of classes (see Definition~\ref{def:class} (Class)), $R$ is the set of properties, which target other items,
+and $A$ is the set of properties, which target literals like strings.
+
+As shown in the preceding definition by \fullcite{Cimiano2006}, a taxonomy can be modeled as a semi-upper lattice $\taxon$. 
+This induces two important assumptions about the structure and to some degree completeness of the
+observed taxonomies.
+ First, there is only one \textit{root class}, top element of the lattice, of which every other class is (transitively) a subclass. 
+Second, because of the supremum property, the taxonomy is fully connected, which implies that every class has at least one root class,
+excluding the root class $\rootc$.
+Wikidata's taxonomy does therefore not fulfill the definition, as it is not fully connected.
+
+In the following, definitions will be presented, which attempt to model an incomplete taxonomy based on the already presented data model and structure of Wikidata.
 Refer to Appendix~\ref{section:graphs} for the necessary definitions on graphs.
 
 In Wikidata, a class can have multiple superclasses, therefore a tree structure is not sufficient to model the taxonomy.
-However a directed acyclic graph, can model the taxonomy. The acyclic constraint is necessary to ensure that no class is transitively a subclass of itself.
-\begin{definition}[Taxonomy]
-A \textbf{taxonomy} $T=(C, S)$ is a directed  acyclic graph, where $C$ is a set of \textnormal{class identifiers}, 
+However a \textbf{directed acyclic graph (DAG)}, can model the taxonomy. 
+The acyclic constraint is necessary to ensure that no class is transitively a subclass of itself.
+\begin{definition}[Taxonomy]\label{def:taxonomy}
+A \textbf{taxonomy} $T=(C, S)$ is a DAG, where $C$ is a set of \textnormal{class identifiers}, 
 and $S$ is the set of edges, which describe the \textnormal{subclass-of relation}  between two classes. such that $c_1$ is the subclass of $c_2$, if $(c_1, c_2) \in S$.
 \end{definition}
 \begin{definition}[Subclass-of relation]\label{subclass of}
-The transitive binary relation $\subclassof{T}$ on the taxonomy $T=(C, S)$ represents the subclass relationship
-of two classes in $T$. Given $c_1, c_2 \in C$, $c_1 \subclassof{T} c_2$, if there is a walk $W=(c_1, \ldots, c_2)$ with length 
-$n \ge 1$, which connects $c_1$ and $c_2$. \subclassof{T} is transitive,  $\forall c_1, c_2, c_3 \in C:
-c_1 \subclassof{T} c_2 \land c_2 \subclassof{T} c_3 \implies c_1 \subclassof{T} c_3$.
+The transitive binary relation $\subclassof{T}$ on the taxonomy $T=(C, S)$ represents the transitive subclass relationship of two classes in $T$. 
+Given $c_1, c_2 \in C$, $c_1 \subclassof{T} c_2$ applies, if there is a walk $W=(c_1, \ldots, c_2)$ with length  $n \ge 1$, which connects $c_1$ and $c_2$. 
+\subclassof{T} is transitive,  $\forall c_1, c_2, c_3 \in C: c_1 \subclassof{T} c_2 \land c_2 \subclassof{T} c_3 \implies c_1 \subclassof{T} c_3$.
 \end{definition}
 If the taxonomy defined by \fullcite{Cimiano2006} is mapped on this graph-based taxonomy model, the following
 assumption is true, for $T=(C,S)$: 
@@ -196,7 +210,24 @@ All other classes, which are not subclasses of \entity{}, are therefore either o
 In Chapter~\ref{section:taxonomy analysis}, it is shown that $97\%$ of all classes are subclasses of the root class \entity{}.
 This set $R = \{ c \in C | c \subclassof{T} \mathit{root}_T \lor c = \mathit{root}_T \}$ will be referred to as \textbf{root taxonomy} in later sections.
 
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.8\textwidth]{images/foundations/taxonomy_dag_example.pdf}
+\caption{Example: Taxonomy DAG}
+\medskip
+A \textbf{taxonomy} $T = (C, S)$ with \textbf{root class} $root_T = 1$ can be defined as DAG (see Definition~\ref{def:taxonomy}).
+Each node represents a class with its class identifier.
+The directed edges represent the \textbf{subclass-of} relation between the classes.
+Node $1$ is the root of the taxonomy. 
+All gray-colored nodes are connected to $root_T$ and therefore part of the \textbf{root taxonomy}.
+It can be seen that the white-colored classes $7$ and $8$ are not connected to $root_T = 1$, therefore they do not belong to the root taxonomy.
+Class $7$ is an \textbf{orphan class}, since it is not the root class and has no outgoing edges.
+\label{fig:ontology spectrum}
+\end{figure}
+
+%%%%%%
 % Similarity
+%%%%%%
 \subsection{Similarity}\label{section:similarity}
 For the task of ontology learning \cite{Hazman2011} as well as classification, e.g. k-nearest-neighbors \cite{Chen2009},
 the concept of \textbf{similarity} is of importance. A basic intuition of similarity is for example given by 
@@ -275,7 +306,9 @@ of irrelevant of features is high. This is typically solved by reducing the dime
 to include only relevant features \cite{Domingos2012}. 
 Neural embeddings however seem to implicitly capture only relevant features \cite{Mikolov2013}.
 
+%%%%%%%%%%%
 % Problem statement 
+%%%%%%%%%%%
 \subsection{Problem statement}\label{section:problem statement}
 The task of this thesis is the classification of orphan classes in Wikidata. In other words a function is needed, 
 which given an orphan class $u$ of a taxonomy $T = (C, S)$ with a root class $root_T$, find an appropriate superclass for $u$.
@@ -317,7 +350,9 @@ neural networks. Neural networks, which are introduced in Section~\ref{section:n
 require input to be represented as vectors. Therefore it will be necessary to map items to vectors.
 \end{enumerate}
 
+%%%%%%%%%%%%%%%
 % Similarity-based classification
+%%%%%%%%%%%%%%%
 \subsection{k-nearest-neighbors classification}\label{section:knn}
 Based on the characteristics of the classification problem, described by the problem statement, and the challenges attached to it,
 the \textbf{k-nearest-neighbor algorithm (kNN)} seems like an appropriate tool for solving the task.
