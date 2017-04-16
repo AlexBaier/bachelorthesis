@@ -33,16 +33,15 @@
 % imed: 0
 
 For the task of developing an algorithm, which takes orphan classes as input, it is necessary to know,
-what information the classes carry and if there are certain patterns among the classes.
-For this purpose an analysis of the taxonomy needs to be carried out, which may answer questions.
+what information the classes carry and if there are common characteristics among classes.
 
 The taxonomy contained in the Wikidata dump of \dumpdate{} was analyzed.
-It contains a total of $24507102$ items, of which $1299501$ are classes.
+It contains a total of $24,507,102$ items, of which $1,299,501$ are classes.
 Classes were recognized as defined in Section~\ref{section:wikidata}. 
 
 \subsection{Root taxonomy}
 The state of the taxonomy was captured in regards to the root class \entity{} (see Figure~\ref{fig:root distance}).
-$1260842$ classes are currently subclasses of \entity{}.
+$1,260,842$ classes are currently subclasses of \entity{}.
 $97\%$ of all classes are  therefore nodes in the root taxonomy.
 This implies a high agreement in the Wikidata community on which class is considered root,
 and thereby also supports the modeling decision made in Section~\ref{section:taxonomy},
@@ -60,21 +59,33 @@ The most distant classes generally belong to concepts of biological taxonomies.
 The most distant classes are subclasses of the genus \textit{Homo (Q171283)}.
 
 The developed algorithm will likely place orphan classes into the same levels of the taxonomy, in which most classes already reside.
-If the algorithm places classes in levels close to the root, it would indicate that the classification method is not specific enough but not necessarily.
-On the opposite, placing classes into distant levels would indicate incorrectness of the algorithm, since only a very specific subset of classes occur there.
+If the algorithm places classes in levels close to the root, it would indicate that the classification method is not specific enough.
+On the opposite, placing classes into distant levels would indicate incorrectness of the algorithm, since only a small subset of classes occurs in these levels.
 
 \subsection{All classes}
 
-\begin{figure}
-\centering
-\includegraphics[width=0.8\textwidth]{images/taxonomy_analysis/class_property_frequency.png}
-\caption{Frequency of properties in all classes. Wikidata (\dumpdate{})}
-\label{fig:all property frequency}
+All $1,299,501$ classes were analyzed. $98.2\%$ of all classes are labeled.
+In Figure~\ref{fig:all instance count}, the percentage of classes with a specific amount of instances is shown.
+It can be seen that a majority of classes have no instances. 
+The median of instances per class is $0$, while the average is $\approx 15$. 
+The high average in comparison to the low median implies that there are some classes with a very high amount of instances.
+Figure~\ref{fig:all subclass count} shows the percentage of classes with a specific amount of subclasses.
+The median of subclasses per class $0$, while the average is $\approx 1.3\%$.
+Most classes do not have subclasses or instances. 
+Subsequently, this implies that almost all classes should have the \textit{subclass of (P279)},
+since the other two criteria used to identify classes do not apply.
+In Figure~\ref{fig:all property count}, the percentage of classes with a certain amount of properties is shown.
+The median of properties is $7$, while the average is $\approx 6.65\%$.
+The similar median and average implies that few outliers exist.
+Figure~\ref{fig:all property frequency} supports this conclusion that the majority of classes have the \textit{subclass of (P279)} property. 
+Other very common properties like \textit{found in taxon (P703)}, \textit{Entrez Gene ID} and \textit{UniProt ID (P637)} indicate that at least $\approx 80\%$ of all classes
+are related to genes and proteins.
+The set of classes identified with these properties is mostly entered by bots, which map information from other knowledge bases like NCBI Entrez to Wikidata \cite{Putman2017}.
+The characteristics of these classes is dissimilar to the human curated part of Wikidata, which is shown in the following Section~\ref{section:relevant classes}.
+Additionally, the method developed by this thesis should find practical application by supporting humans in improving Wikidata's taxonomy.
+Therefore, the set of classes related to proteins and genes is not of relevance to the problem, and should not be considered in the development of an solution.
+Following, the set of relevant classes, which are of interest to human editors, is analyzed.
 
-\includegraphics[width=0.8\textwidth]{images/taxonomy_analysis/class_property_counts.png}
-\caption{Percentage of all classes with a specific amount of unique properties. Wikidata (\dumpdate{})}
-\label{fig:all property count}
-\end{figure}
 \begin{figure}
 \centering
 \includegraphics[width=0.8\textwidth]{images/taxonomy_analysis/class_instance_counts.png}
@@ -85,8 +96,19 @@ On the opposite, placing classes into distant levels would indicate incorrectnes
 \caption{Percentage of all classes with a specific amount of subclasses. Wikidata (\dumpdate{})}
 \label{fig:all subclass count}
 \end{figure}
+\begin{figure}
+\centering
+\includegraphics[width=0.8\textwidth]{images/taxonomy_analysis/class_property_frequency.png}
+\caption{Frequency of properties in all classes. Wikidata (\dumpdate{})}
+\label{fig:all property frequency}
 
-\subsection{Relevant classes}
+\includegraphics[width=0.8\textwidth]{images/taxonomy_analysis/class_property_counts.png}
+\caption{Percentage of all classes with a specific amount of unique properties. Wikidata (\dumpdate{})}
+\label{fig:all property count}
+\end{figure}
+
+
+\subsection{Relevant classes}\label{section:relevant classes}
 
 \begin{figure}
 \centering
