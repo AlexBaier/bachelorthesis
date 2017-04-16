@@ -70,12 +70,12 @@ It can be seen that a majority of classes have no instances.
 The median of instances per class is $0$, while the average is $\approx 15$. 
 The high average in comparison to the low median implies that there are some classes with a very high amount of instances.
 Figure~\ref{fig:all subclass count} shows the percentage of classes with a specific amount of subclasses.
-The median of subclasses per class $0$, while the average is $\approx 1.3\%$.
+The median of subclasses per class $0$, while the average is $\approx 1.3$.
 Most classes do not have subclasses or instances. 
 Subsequently, this implies that almost all classes should have the \textit{subclass of (P279)},
 since the other two criteria used to identify classes do not apply.
 In Figure~\ref{fig:all property count}, the percentage of classes with a certain amount of properties is shown.
-The median of properties is $7$, while the average is $\approx 6.65\%$.
+The median of properties is $7$, while the average is $\approx 6.65$.
 The similar median and average implies that few outliers exist.
 Figure~\ref{fig:all property frequency} supports this conclusion that the majority of classes have the \textit{subclass of (P279)} property. 
 Other very common properties like \textit{found in taxon (P703)}, \textit{Entrez Gene ID} and \textit{UniProt ID (P637)} indicate that at least $\approx 80\%$ of all classes
@@ -98,28 +98,59 @@ Following, the set of relevant classes, which are of interest to human editors, 
 \end{figure}
 \begin{figure}
 \centering
-\includegraphics[width=0.8\textwidth]{images/taxonomy_analysis/class_property_frequency.png}
-\caption{Frequency of properties in all classes. Wikidata (\dumpdate{})}
-\label{fig:all property frequency}
-
 \includegraphics[width=0.8\textwidth]{images/taxonomy_analysis/class_property_counts.png}
 \caption{Percentage of all classes with a specific amount of unique properties. Wikidata (\dumpdate{})}
 \label{fig:all property count}
+
+\includegraphics[width=0.8\textwidth]{images/taxonomy_analysis/class_property_frequency.png}
+\caption{Frequency of properties in all classes. Wikidata (\dumpdate{})}
+\label{fig:all property frequency}
 \end{figure}
 
 
 \subsection{Relevant classes}\label{section:relevant classes}
+Following the observations in the previous section, the set of relevant classes was analyzed.
+A class is considered relevant, if it does not have an irrelevant property.
+The properties considered irrelevant identify classes representing genes and proteins.
+The following properties are irrelevant:
+\begin{multicols}{2}
+\begin{itemize}
+\item \textit{Entrez Gene ID (P351)}
+\item \textit{genomic start (P644)}
+\item \textit{genomic end (P645)}
+\item \textit{strand orientation (P2548)}
+\item \textit{UniProt ID  (P352)}
+\item \textit{NCBI Locus tag (P2393)}
+\item \textit{encoded by (P702)}
+\item \textit{encodes (P688)}
+\item \textit{molecular function (P680)}
+\item \textit{RefSeq RNA ID (P639)}
+\item \textit{Mouse Genome Informatics ID  (P671)}
+\item \textit{Ensembl Transcript ID (P704)}
+\item \textit{HGNC gene symbol (P353)}
+\item \textit{HomoloGene ID (P593)}
+\item \textit{Gene Ontology ID (P686)}
+\end{itemize}
+\end{multicols}
+These properties were handpicked based on the property frequency in Figure~\ref{fig:all property frequency}.
 
-\begin{figure}
-\centering
-\includegraphics[width=0.8\textwidth]{images/taxonomy_analysis/relevant_class_property_frequency.png}
-\caption{Frequency of properties in relevant classes. Wikidata (\dumpdate{})}
-\label{fig:relevant property frequency}
+A total of $224,873$ classes are relevant classes, which $\approx 17.3\%$ of all classes.
+$89.5\%$ classes are labeled.
+The distribution of instances and subclasses is similar to the set of all classes (Figures~\ref{fig:relevant instance count} and~\ref{fig:relevant subclass count}).
+The percentage of classes with $0$ instances is about $15\%$ lower and the percentage of classes with $0$ subclasses is $20\%$ lower.
+Accordingly the instance average increases from $\approx 15$ to $\approx 86.34$, and the subclass average increases from $\approx 1.3$ to $\approx 6.5$.
+The median remains unchanged at $0$ for both instances and subclasses.
+Comparing the distribution of properties of all classes (Figure~\ref{fig:all property count}) to relevant classes (Figure~\ref{fig:relevant property count}) shows a shift to the left,
+which implies a decrease of properties per class in the set of relevant classes.
+The average decreased from $\approx 6.65$ to $4.49$ and the median decreased from $7$ to $3$.
+Genes have simultaneously occurring properties, e.g. \textit{genomic end (P645)}, \textit{genomic start (P644)}, \textit{strand orientation (P2548)}, and \textit{Entrez Gene ID (P351)},
+which results in a high percentage of classes having a similar number of properties, which is $7$ for the set of all classes.
+Removing these classes consequently lowers the property median.
+The property frequency (see Figure~\ref{fig:relevant property frequency}) shows a range of different properties,
+which are not concerned with the same subject, as it was the case for the set of all classes.
+The analysis does not show a bias to a certain topic for the set of relevant classes.
+Therefore the developed algorithm will be developed and evaluated in regards to relevant classes rather than all classes.
 
-\includegraphics[width=0.8\textwidth]{images/taxonomy_analysis/relevant_class_property_counts.png}
-\caption{Percentage of relevant classes with a specific amount of unique properties. Wikidata (\dumpdate{})}
-\label{fig:relevant property count}
-\end{figure}
 \begin{figure}
 \centering
 \includegraphics[width=0.8\textwidth]{images/taxonomy_analysis/relevant_class_instance_counts.png}
@@ -129,6 +160,16 @@ Following, the set of relevant classes, which are of interest to human editors, 
 \includegraphics[width=0.8\textwidth]{images/taxonomy_analysis/relevant_class_subclass_counts.png}
 \caption{Percentage of relevant classes with a specific amount of subclasses. Wikidata (\dumpdate{})}
 \label{fig:relevant subclass count}
+\end{figure}
+\begin{figure}
+\centering
+\includegraphics[width=0.8\textwidth]{images/taxonomy_analysis/relevant_class_property_counts.png}
+\caption{Percentage of relevant classes with a specific amount of unique properties. Wikidata (\dumpdate{})}
+\label{fig:relevant property count}
+
+\includegraphics[width=0.8\textwidth]{images/taxonomy_analysis/relevant_class_property_frequency.png}
+\caption{Frequency of properties in relevant classes. Wikidata (\dumpdate{})}
+\label{fig:relevant property frequency}
 \end{figure}
 
 \subsection{Orphan classes}
