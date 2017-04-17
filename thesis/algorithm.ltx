@@ -6,7 +6,7 @@ For each component, possible implementations are proposed and implemented.
 The hybrid algorithm exploits neural word embeddings to solve the classification task,
 which is motivated by the power of word embeddings in similarity tasks \cite{Mikolov2013} and in taxonomy construction \cite{Fu2014}.
 
-For the task of computing word embeddings, the SGNS model will be used, which has shown to generate effective word embeddings relatively fast 
+For the task of computing word embeddings, the SGNS model (Section~\ref{section:word2vec}) will be used, which has shown to generate effective word embeddings relatively fast 
 \cite{Mikolov2013} \cite{Levy2015}.
 It has been proven through theoretic analysis as well as experiments that SGNS creates very effective
 word embeddings, if its hyperparameters are chosen well \cite{Mikolov2013} \cite{Levy2015}.
@@ -56,7 +56,6 @@ These properties can be exploited by different classifiers.
 kNN can exploit the first characteristic using a similarity or distance measure.
 The second characteristic can be exploited by computing the vector offset or learning a linear projection representing the subclass-of relationship between two classes \cite{Fu2014}.
 The classification component should implement a single-label multiclass classification.
-This will simplify the evaluation and comparibility of the different algorithms.
 \end{enumerate}
 
 \subsection{SequenceGen}\label{section:sequencegen}
@@ -96,25 +95,14 @@ The following parameters are used for the graph walk :
 Because of time and hardware constraints only $10$ walks per vertice are computed,
 which should allow a "good" coverage of classes in the generated sequences.
 
-\subsubsection{Variation: Wikipedia}
-
 \subsection{Classification}
 
 \subsubsection{k-nearest-neighbors}
 Similar classes are grouped close to each other in the embedding vector space.
 Intuitively a kNN classifier (see Section \ref{section:knn}) should be able to use this property to great effect.
 
-The KRI-kNN classifier by \cite{Chen2009} is implemented as classification component.
-The KRI-kNN classifier should be superior to a uniform or distance-based kNN classifier, 
-since it not only includes the similarity of neighbors to the unclassified object into the classification decision, but also the similarity between the neighbors.
-Additionally, a distance-based kNN classifier using euclidian distance implemented, which can be compared to KRI-kNN.
-Depending on the distribution of embeddings in the vector space, the benefits of KRI-kNN could be minimal.
-If this is the case, distance-based kNN should be preferred as it has a better runtime.
-
-In the implementation of KRI-kNN, the scipy.optimize library \cite{Jones2001} is used to compute the KRI weights.
-It is possible, that the weights do not converge for a set of nearest neighbors. 
-If this exception occurs, the similarity-based weights will be used.
-Distance-based kNN is implemented by the scikit-learn library \cite{scikit-learn}.
+Distance-based kNN using the euclidean norm is implemented as classification component.
+The kNN implementation provided by the scikit-learn library \cite{scikit-learn} is used.
 
 \subsubsection{Vector offset}
 
