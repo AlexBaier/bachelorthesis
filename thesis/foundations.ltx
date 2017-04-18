@@ -24,6 +24,7 @@ Statements can be annotated with qualifiers, which specify the context of the st
 Additionally, references can be used for statements to include its source. See Figure~\ref{fig:class example} for an example of a Wikidata item.
 
 \begin{figure}
+\begin{mdframed}
 \centering
 \includegraphics[width=\textwidth]{images/foundations/item_example.png}
 \caption{Example excerpt of Wikidata item: photographic film (Q6239).}
@@ -40,6 +41,7 @@ In this example, no qualifiers exist. Qualifiers are used to give additional det
 A common use for qualifiers is the annotation of statements with time stamps, if the a different value is true for different points in time
 e.g. population of a country over time.
 \label{fig:class example}
+\end{mdframed}
 \end{figure}
 
 Following, the concepts item and statement are formally defined:
@@ -211,6 +213,7 @@ In Chapter~\ref{section:taxonomy analysis}, it is shown that $97\%$ of all class
 This set $R = \{ c \in C | c \subclassof{T} \mathit{root}_T \lor c = \mathit{root}_T \}$ will be referred to as \textbf{root taxonomy} in later sections.
 
 \begin{figure}[H]
+\begin{mdframed}
 \centering
 \includegraphics[width=0.8\textwidth]{images/foundations/taxonomy_dag_example.pdf}
 \caption{Example: Taxonomy DAG}
@@ -223,6 +226,7 @@ All gray-colored nodes are connected to $root_T$ and therefore part of the \text
 It can be seen that the white-colored classes $7$ and $8$ are not connected to $root_T = 1$, therefore they do not belong to the root taxonomy.
 Class $7$ is an \textbf{orphan class}, since it is not the root class and has no outgoing edges.
 \label{fig:ontology spectrum}
+\end{mdframed}
 \end{figure}
 
 %%%%%%
@@ -334,20 +338,16 @@ fulfilling the following criteria:
 The stated problem induces several challenges, which will be listed here, but addressed in later sections.
 
 \begin{enumerate}
-\item \textbf{Multi-label classification}. Algorithms for classification typically map entered objects to one label.
-In Wikidata and other ontologies, it is possible for one class to have multiple superclasses.
-It has to be decided whether the solution will be simplified to a single-label classification,
-or attempt multi-label classification.
 \item \textbf{High number of labels}. An orphan class has to be assigned to a class in the root taxonomy.
 The only restricting condition is that the chosen class cannot be a subclass of the orphan class.
-As shown in Section~\ref{section:taxonomy analysis} $97\%$ of $12999501$ classes are part of the root
+As shown in Section~\ref{section:taxonomy analysis}, $97\%$ of $12999501$ classes are part of the root
 taxonomy. Classification methods, like SVM or neural networks, usually classify with a small number of labels.
 A classification method, which is able to handle over a million labels, is required.
 \item \textbf{Representation of items}. Items in Wikidata are structured information, similar to nodes in RDF graphs
 and Wikidata can be represented as such \cite{Ristoski2016} \cite{Erxleben2014}.
 As motivated in Section~\ref{section:introduction}, the solution should exploit the apparent power of
 neural networks. Neural networks, which are introduced in Section~\ref{section:neural networks},
-require input to be represented as vectors. Therefore it will be necessary to map items to vectors.
+require input to be represented as vectors. Therefore, it will be necessary to map items to vectors.
 \end{enumerate}
 
 %%%%%%%%%%%%%%%
@@ -365,39 +365,62 @@ kNNs can be defined as a similarity-based classification method.
 kNN uses a pairwise similarity or distance measure (see Section~\ref{section:similarity}).
 Access to the features of the classified objects is therefore not required \cite{Chen2009}.
 
+Given a set of classified objects $\Phi \subset \mathbb{R}^n$ with the set of classes $C$, where the function $h: \Phi \mapsto C$ returns the class for a given object.
+Given an unclassified object $\vec{u} \in \mathbb{R}^n$, the parameter $k$ defines the number of nearest neighbors $\{ \vec{n_i} \in \Phi | k=1, \dots, k \}$ of $\vec{u}$, which are
+considered for the classification decision.
+The unknown is classified by a vote.
+Each nearest neighbor $n_i$ votes for its own class $c_i = h(n_i)$. 
+The class, which has the majority vote, is then chosen as the class of $\vec{u}$.
+
+The votes of each neighbor can be weighted based on different criteria.
+Uniform weights give each vote the same weight, therefore the distance between the neighbors to the unknown is not relevant for this weighting scheme.
+Figure~\ref{fig:knn example} describes a classification using kNN with uniform weights.
+
 \begin{figure}
+\begin{mdframed}
 \centering
 \includegraphics[width=0.5\textwidth]{images/foundations/knn_example.pdf}
-\caption{Example for k-nearest neighbors for 3 classes with k=4 and k=10.}
-\label{fig:kNN example}
+\caption{Example for kNN with uniform weights.}
+\label{fig:knn example}
+\begin{flushleft}
+kNN considers only the closest k neighbors in its classification decision.
+In this example, the circle with name $u$ is the unknown class, which has to be classified.
+$10$ other objects, where each belongs to one of the $3$ classes (square, pentagon, octagon), are present.
+Different weighting schemes are used by kNN. 
+Each neighbor votes on the class of $u$. 
+The weight controls to what degree a single neighbor can influence the class of $u$.
+The simplest approach is uniform weighting, which is used in this example.
+Uniform weighting assigns each object the same weight.
+Therefore, the distance of the neighbors to $u$ does not matter in the classification decision.
+
+If $k=4$ then all objects in the inner circle are considered.
+$2$ objects have the class pentagon, while the classes square and octagon are represented with $1$ object each in the $4$ neighbors.
+Using uniform weighting, the class pentagon gets $2$ votes and therefore $u$ would be classified as pentagon.
+
+Changing the parameter $k$ has influence on the results produced by kNN.
+If $k$ would be set as $10$ instead of $4$, all object in the outer dashed circle would be considered.
+The classes square and pentagon have each $3$ objects in this set of neighbors,
+while the class octagon has $4$ objects in the set.
+Using uniform weights would therefore classify $u$ as octagon.
+
+It could be argued that the classification result using $k=10$ may be inaccurate, since all objects of class octagon have a high distance to $u$
+ in comparison to the objects in class pentagon.
+Therefore the decision made by $k=4$ may be more accurate.
+This problem can be solved by applying other weighting schemes than uniform weights to kNN.
+A typical approach, described in Section~\ref{section:knn}, is distance-based weights.
+This approach assigns higher weights to closer neighbors and could therefore solve the previously mentioned inaccuracy.
+\end{flushleft}
+\end{mdframed}
 \end{figure}
 
-The basic notion of kNN is presented in Figure~\ref{fig:kNN example}.
-Given a set of points in $\mathbb{R}^2$ with classes blue, red and yellow. 
-To classify an unknown class $u$, the closest $k$ classes are selected.
-In the example, the solid circle indicates $k=4$ and the dashed circle indicates $k=10$.
-The $k$ selected neighbors vote for their own class with a given weight, which is typically dependent on its similarity to $u$.
-In this simple example, it is assumed that all points have a uniform weight.
-Following, for $k=4$ $u$ is classified as yellow and for $k=10$ as red.
-
-In comparison to the example, the weights assigned to each neighbor are not uniform.
-Weights are assigned, so that similar neighbors are given larger weights (affinity).
-Because in practical applications many neighbors may be very similar to each other, which can skew the classification results, 
-\fullcite{Chen2009} propose to additionally down-weight very similar neighbors (diversity).
-This can be accomplished by using \textbf{kernel ridge interpolation (KRI)} \cite{Chen2009}. The following quadratic programming has to be solved to calculate the weights:
-\begin{align}\label{def:kri knn}
-\begin{split}
-& \min_{w} \frac{1}{2} w^T S w - s^T w + \frac{\lambda}{2} w^T w \\
-& \textnormal{subject to} \: \sum_{i=1}^{k} w_i = 1, w_i \ge 0, i=1,\dots,k,
-\end{split}
-\end{align}
-where $w \in \mathbb{R}^{k \times 1}$ the weights of the nearest neighbors,
- $S \in [0,1]^{k \times k}$ is the similarity matrix between the nearest neighbors of $u$, $s \in [0,1]^{k \times 1}$ is the similarity between $u$ and its nearest neighbors,
-$\lambda > 0$ is a regularization parameter.
-It is common to assume that weights are positive and the sum of weights is $1$.
-Minimizing $- s^T w$ alone would return all weight on the nearest neighbor with $w_1 = 1$.
-The ridge regularization term $\frac{\lambda}{2} w^T w$, which controls the variance of the weights in $w$, counteracts this by pushing the weights closer to uniform weights.
-Increasing $\lambda$ increases the uniformity of the weights. Together these terms fulfill the affinity requirement.
-The term $ \frac{1}{2} w^T S w$ represents the diversity requirement, as the weights of very similar neighbors are down-weighted to minimize the term.
-Solving this problem therefore returns weights, which fulfill the requirements of affinity and diversity.
-Experiments show that KRI-kNN on average generates better results than uniformly or distance-weighted kNN \cite{Chen2009}.
+Results produced by uniform weighted kNN are not always desirable.
+Assume the case, in which the parameter $k$ was chosen too high for a given unknown, which leads to the problem that very dissimilar objects
+could be part of the $k$ nearest neighbors.
+Using uniform weighting would be problematic, since the dissimilar objects would negatively influence the majority vote.
+Votes of distant objects are not as relevant to the classification as close objects \cite{Chen2009}.
+This leads to the criteria of \textbf{affinity}, which states that similar neighbor should be given larger weights \cite{Chen2009}.
+A typical weighting approach to achieve affinity is distance-based weighting.
+The distance between each neighbor and the unknown is computed.
+For example in $\mathbb{R}^n$, the euclidean norm $\delta_2$ could be used.
+Each neighbor $\vec{n_i}$ of $\vec{u}$ is assigned the inverse distance as weight $w_i = \delta_2(\vec{u}, \vec{n_i})^{-1}$.
+Therefore the weight of each neighbor is directly proportional to its similarity to $\vec{u}$.

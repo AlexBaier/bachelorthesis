@@ -78,36 +78,72 @@ Instead of exploiting the hierarchic structure of the taxonomy, a variant of k-n
 (mentioned in Section~\ref{section:problem statement}).
 
 \subsubsection{Neural networks in ontology learning}
-\fullcite{Fu2014} develop a method to construct semantic hierarchies given a hyponym (subclass) 
-and a list of corresponding superclasses. The solution uses neural word embeddings generated with
-the Skip-gram model \cite{Mikolov2013}, which was presented in Section~\ref{section:word2vec}.
-Using the linguistic regularities of these word embeddings, \citeauthor{Fu2014} train a linear projection
-on existing sets of hypernym-hyponym pairs. A linear projection is used instead of an offset, because
-it was observed that the subclass-of relation is too complex to be represented as a simple offset.
-The embeddings are trained on a 30 million Chinese sentence corpus. And the projection is trained
-on  $15247$ hypernym-hyponym word pairs. The handpicked testing data consists of
-$418$ entities and their hypernyms. The method achieves an F-score of $73.74\%$ on a manually labeled dataset,
+\fullcite{Fu2014} develop a method to construct a semantic hierarchy (taxonomy) given a hyponym (subclass) and a list of corresponding hypernyms (superclasses),
+as shown in Figure~\ref{fig:concept hierarchy}. In this example, the input is the subclass \textit{computer (Q68)} and its superclasses \textit{tool (Q39546)} etc.
+\fullcite{Fu2014}'s solution uses neural word embeddings, as discussed in Section~\ref{section:word2vec}, to construct a more specific and precise concept hierarchy.
+For this example, the direct superclasses of \textit{computer (Q68)} are \textit{tool (Q39546)} and \textit{electrical apparatus (Q2425052)},
+while the other superclasses are transitive superclasses to \textit{computer (Q68)}.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{images/ontology_learning/concept_hierarchy.pdf}
+\caption{Construction of semantic hierarchy in \fullcite{Fu2014}.}
+\label{fig:concept hierarchy}
+\end{figure}
+
+The approach proposed by \fullcite{Fu2014} exploits the linguistic regularities of neural word embeddings.
+It is assumed that there is a subclass vector offset between the subclass and its superclass embeddings,
+which behaves similar to the prominent example by \fullcite{Mikolov2013}:
+$\textnormal{Queen} = \textnormal{King} - \textnormal{Man} + \textnormal{Woman}$.
+Computing such subclass offsets for random subclass-superclass pairs for \citeauthor{Fu2014}'s dataset as well as the Wikidata dataset \cite{WikidataDump}
+analyzed in this thesis (see Section~\ref{section:vector offset}) shows that clusters of very similar subclass offsets exist.
+Analysis by \citeauthor{Fu2014} reveals that the offsets in one cluster refer to similar topic, e.g. single cluster concerned about people's occupations \cite{Fu2014}.
+The subclass offsets in the Wikidata dataset reveal similar characteristic (see Section~\ref{section:vector offset}).
+
+\fullcite{Fu2014} conclude that the subclass-of relation is too complex to be described by a translation.
+Instead a linear projection is trained by minimizing the mean squared error between projection of the subclass $\vec{x} \in \mathbb{R}^d$
+and the actual superclass $\vec{y} \in \mathbb{R}^d$, where $d$ is the embedding size.
+The following minimization problem is thereby solved:
+\begin{align}
+&\Phi^* = \min_\Phi \frac{1}{N} \sum_{(\vec{x}, \vec{y})} \norm{\Phi \vec{x} - \vec{y}}^2 
+\end{align}
+where $N$ is the number of $(\vec{x}, \vec{y})$ subclass-superclass pairs in the training data \cite{Fu2014}.
+The problem described by this minimization problem is a multivariate linear regression problem \cite{Fu2014}.
+
+\citeauthor{Fu2014} argues that because of the varied types of subclass-of relations, a single matrix is not adequate at fitting all subclass-superclass pairs.
+Therefore piecewise linear projection is implemented. 
+The subclass-superclass pairs are clustered by their subclass-of offsets  and a projection for each cluster is trained.
+Piecewise linear projection learns a projection matrix $\Phi_k$ for each identified cluster in the data set \cite{Fu2014}:
+
+\begin{align}
+&\Phi^* = \min_{\Phi_k} \frac{1}{N_k} \sum_{(\vec{x}, \vec{y})\in C_k} \norm{\Phi_k \vec{x} - \vec{y}}^2 
+\end{align}
+where $N_k$ is the amount of word pairs in the $k^\mathit{th}$ cluster $C_k$ \cite{Fu2014}.
+The number of clusters is fine-tuned based on the data set \cite{Fu2014}.
+
+To determine whether a given pair of concepts $\vec{x}, \vec{y} \in \mathbb{R}^d$ have a subclass-superclass relation, 
+the cluster $k$, which has the closest cluster center to the subclass offset $\vec{y} - \vec{x}$, is chosen and the projection $\Phi_k \vec{x}$ computed \cite{Fu2014}.
+The pair $(\vec{x}, \vec{y})$ is a subclass-superclass pair, if either the distance between the projection $\Phi_k \vec{x}$ and $\vec{y}$ falls below a certain threshold $\delta$
+or if there exist another concept $\vec{z}$, which is superclass of $\vec{x}$ and subclass of $\vec{y}$, and therefore allows the use of the transitivity of the subclass-of relation
+\cite{Fu2014}. This approach allows one subclass to have multiple superclasses and is also able to identify the case, in which no valid subclass-of relation exists.
+
+\citeauthor{Fu2014} evaluated the piecewise linear projection on a test set of $418$ subclasses and their superclasses.
+The embeddings are trained on a 30 million Chinese sentence corpus and the projection is trained
+on  $15247$ hypernym-hyponym word pairs. The approach achieves an F-score of $73.74\%$ on a manually labeled dataset,
 and outperforms existing state-of-the-art methods.
 
-\fullcite{Petrucci16} develop a recurrent neural network for ontology learning.
-The purpose of the work is a first step to verify whether neural networks are able to 
-support the ontology learning process.
-The task solved by the specific network is the translation of encyclopedic text to logical formulas.
-This task is divided into the task of sentence transduction, identify logical structure 
-and generate corresponding formula template,
-and sentence tagging, identifying the roles of words in the input sentence.
-The tagged sentence can then be mapped unto the generated formula template.
-This is achieved by the use of a  recurrent neural network for sentence tagging and a
-recurrent encoder-decoder for sentence transduction. Both are supported by gated recursive units,
-which provide a short-term-memory effect. The developed network is, at this time, under evaluation.
-Therefore, no statement about the effectiveness of recursive neural networks for the task of ontology
-learning can be made based on their work.
-
-In regards to this work, the use of word embeddings for enriching the taxonomy seems promising, as the approach by \fullcite{Fu2014} generated very good results. 
-Additionally, research in neural word embeddings has shown a high effectivness in similarity-based tasks \textbf{citations}, which is relevant for the described problem.
-This work will in comparison to \fullcite{Fu2014} attempt the task of adding taxonomic relations to an existing rather than constructing a taxonomy if given a subclass and a set
-of superclasses. Multiple approaches using neural word embeddings will be evaluated on the full Wikidata dataset, which has a greater size than for example the Chinese word corpus
-used in the previously mentioned related work.
-Therefore the novelty of this work, at the time of writing, is assumed.
+As argued in Chapter~\ref{section:neural networks}, the use of neural word embeddings seems promising, which is supported by the good results of \citeauthor{Fu2014}'s work.
+A similar approach, which is presented in Chapter~\ref{section:hybrid algorithm}, can be applied in the given task.
+The main difference in the problems is the expected input, which is one of the reasons why \fullcite{Fu2014}'s approach works so well.
+\citeauthor{Fu2014} assumes that a subclass and its superclasses are given as input.
+This is advantageous for multiple reasons.
+Only a small set of classes has to be considered for the classification decision, which are all related to subclass and are therefore related to similar topics.
+Additionally, the input already provides a set of correct subclass-of relations.
+In the thesis' case, the only given input is the subclass. 
+Therefore every class in the taxonomy has to be assumed as a possible superclass rather than a small subset.
+The problem statement also assumes that for each class a superclass has to be found.
+Consequently the identification of subclass-of relations by \citeauthor{Fu2014} is not applicable anymore and another approach has to be implemented.
+Although piecewise linear projection is still a promising approach to use neural word embeddings for the subclass classification,
+the difficulty of the given problem implies worse results than in the presented work by \fullcite{Fu2014}.
 
 
