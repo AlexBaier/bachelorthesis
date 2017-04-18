@@ -64,7 +64,7 @@ On the opposite, placing classes into distant levels would indicate incorrectnes
 
 \subsection{All classes}
 
-All $1,299,501$ classes were analyzed. $98.2\%$ of all classes are labeled.
+All $1,299,501$ classes were analyzed. $98.2\%$ of all classes have an English label.
 In Figure~\ref{fig:all instance count}, the percentage of classes with a specific amount of instances is shown.
 It can be seen that a majority of classes have no instances. 
 The median of instances per class is $0$, while the average is $\approx 15$. 
@@ -85,8 +85,8 @@ The characteristics of these classes is dissimilar to the human curated part of 
 Additionally, the method developed by this thesis should find practical application by supporting humans in improving Wikidata's taxonomy.
 Therefore, the set of classes related to proteins and genes is not of relevance to the problem, and should not be considered in the development of an solution.
 Following, the set of relevant classes, which are of interest to human editors, is analyzed.
-
-\begin{figure}
+\newpage
+\begin{figure}[H]
 \centering
 \includegraphics[width=0.8\textwidth]{images/taxonomy_analysis/class_instance_counts.png}
 \caption{Percentage of all classes with a specific amount of instances. Wikidata (\dumpdate{})}
@@ -96,7 +96,7 @@ Following, the set of relevant classes, which are of interest to human editors, 
 \caption{Percentage of all classes with a specific amount of subclasses. Wikidata (\dumpdate{})}
 \label{fig:all subclass count}
 \end{figure}
-\begin{figure}
+\begin{figure}[H]
 \centering
 \includegraphics[width=0.8\textwidth]{images/taxonomy_analysis/class_property_counts.png}
 \caption{Percentage of all classes with a specific amount of unique properties. Wikidata (\dumpdate{})}
@@ -135,7 +135,7 @@ The following properties are irrelevant:
 These properties were handpicked based on the property frequency in Figure~\ref{fig:all property frequency}.
 
 A total of $224,873$ classes are relevant classes, which $\approx 17.3\%$ of all classes.
-$89.5\%$ classes are labeled.
+Of all relevant classes $89.5\%$ have an English label, which is almost $10\%$ percent less than the ratio of all classes.
 The distribution of instances and subclasses is similar to the set of all classes (Figures~\ref{fig:relevant instance count} and~\ref{fig:relevant subclass count}).
 The percentage of classes with $0$ instances is about $15\%$ lower and the percentage of classes with $0$ subclasses is $20\%$ lower.
 Accordingly the instance average increases from $\approx 15$ to $\approx 86.34$, and the subclass average increases from $\approx 1.3$ to $\approx 6.5$.
@@ -150,8 +150,8 @@ The property frequency (see Figure~\ref{fig:relevant property frequency}) shows 
 which are not concerned with the same subject, as it was the case for the set of all classes.
 The analysis does not show a bias to a certain topic for the set of relevant classes.
 Therefore the developed algorithm will be developed and evaluated in regards to relevant classes rather than all classes.
-
-\begin{figure}
+\newpage
+\begin{figure}[H]
 \centering
 \includegraphics[width=0.8\textwidth]{images/taxonomy_analysis/relevant_class_instance_counts.png}
 \caption{Percentage of relevant classes with a specific amount of instances. Wikidata (\dumpdate{})}
@@ -161,7 +161,7 @@ Therefore the developed algorithm will be developed and evaluated in regards to 
 \caption{Percentage of relevant classes with a specific amount of subclasses. Wikidata (\dumpdate{})}
 \label{fig:relevant subclass count}
 \end{figure}
-\begin{figure}
+\begin{figure}[H]
 \centering
 \includegraphics[width=0.8\textwidth]{images/taxonomy_analysis/relevant_class_property_counts.png}
 \caption{Percentage of relevant classes with a specific amount of unique properties. Wikidata (\dumpdate{})}
@@ -174,18 +174,36 @@ Therefore the developed algorithm will be developed and evaluated in regards to 
 
 \subsection{Orphan classes}
 Orphan classes were identified by checking whether a class does not have the \textit{subclass of (P279)} property.
- 
-\begin{figure}
-\centering
-\includegraphics[width=0.8\textwidth]{images/taxonomy_analysis/orphan_class_property_frequency.png}
-\caption{Frequency of properties in orphan classes. Wikidata (\dumpdate{})}
-\label{fig:orphan property frequency}
+The final goal of the thesis is to develop a method, which is able to classify orphan classes with a good accuracy.
+However, orphan classes can not be used for testing the method, because a gold standard for orphan classes is missing.
+Instead a gold standard can be extracted from the set of relevant classes.
+To ensure that the gold standard evaluation is relevant to the given problem, the set of orphan classes has to be analyzed and compared to the set of relevant classes.
+If the characteristics of both sets are similar, the gold standard evaluation is directly relevant to the performance in classifying orphan classes.
 
-\includegraphics[width=0.8\textwidth]{images/taxonomy_analysis/orphan_class_property_counts.png}
-\caption{Percentage of orphan classes with a specific amount of unique properties. Wikidata (\dumpdate{})}
-\label{fig:orphan property count}
-\end{figure}
-\begin{figure}
+$16,373$ classes were identified as orphan classes, which is $\approx 1.26\%$ of all classes.
+$\approx 84.33\%$ of all orphan classes have an English label, which is only $\approx 5\%$ lower than the relevant classes.
+The distribution of instances for orphan classes (Figure~\ref{fig:orphan instance count} is very different to the relevant classes (Figure~\ref{fig:relevant class count}).
+The majority of orphan classes have at least $1$ instance rather than $0$ instances.
+Consequentially, the median of instances per class is $1$ for orphan classes and the average is $\approx 4.66$, which is much lower than the average $\approx 86.34$ of relevant classes.
+This, in combination with the higher median for orphan classes, implies that orphan classes have none to very few outliers in regards to many instances.
+Additionally, it can be hypothesized that orphan classes are often created for the purpose of classifying single instances by human editors, as a mean to provide a better description
+for the instance, but the orphan class itself is not further described.
+The subclass distribution (Figure~\ref{fig:orphan subclass count}) shows that $\approx 25\%$ of orphan classes have at least $1$ subclass, which is $\approx 20\%$ higher than
+the relevant classes.
+However, the median of subclasses per class remains $0$, while the average is $\approx 0.852$ and therefore lower than the average $6.5$ of relevant classes,
+which indicates very low or not existing amount of outliers in the set of orphan classes. The same behavior was already observed for the instance distribution.
+The distribution of properties per class (Figure~\ref{fig:orphan property count}) is very similar to the relevant classes (Figure~\ref{fig:relevant property count}).
+The only difference is the percentage of classes with $0$ properties, which is $\approx 12.5\%$ for orphan classes and lower than $1\%$ for relevant classes.
+This observation supports the previously made hypothesis, which claims that orphan classes are mainly created for the purpose of classifying instances,
+since $12.5\%$ of orphan classes is not described at all. The corresponding property median remains at $3$ and the average is  $\approx 4.78$,
+which is almost identical to the relevant classes.
+The most frequent properties for orphan classes, as shown in Figure~\ref{fig:orphan property frequency}, shows very similar properties to the relevant classes
+(Figure~\ref{fig:relevant property frequency}). 
+This, in addition to the similar property median, is a good indicator that orphan and relevant classes have common characteristics, since their descriptions are similar.
+Therefore, it can be concluded that the set of relevant classes should be adequate at representing the set of orphan classes in the implementation and evaluation of the thesis' hybrid algorithm.
+\newpage
+ 
+\begin{figure}[H]
 \centering
 \includegraphics[width=0.8\textwidth]{images/taxonomy_analysis/orphan_class_instance_counts.png}
 \caption{Percentage of orphan classes with a specific amount of instances. Wikidata (\dumpdate{})}
@@ -195,4 +213,15 @@ Orphan classes were identified by checking whether a class does not have the \te
 \caption{Percentage of orphan classes with a specific amount of subclasses. Wikidata (\dumpdate{})}
 \label{fig:orphan subclass count}
 \end{figure}
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.8\textwidth]{images/taxonomy_analysis/orphan_class_property_counts.png}
+\caption{Percentage of orphan classes with a specific amount of unique properties. Wikidata (\dumpdate{})}
+\label{fig:orphan property count}
+
+\includegraphics[width=0.8\textwidth]{images/taxonomy_analysis/orphan_class_property_frequency.png}
+\caption{Frequency of properties in orphan classes. Wikidata (\dumpdate{})}
+\label{fig:orphan property frequency}
+\end{figure}
+
 
