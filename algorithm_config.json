@@ -103,10 +103,28 @@
       "classification": "piecewise linear projection (c=50)",
       "training samples": 198502
     },
+    "gw+distknn(k=5)": {
+      "sequences": "graph walk sentences",
+      "sgns": "graph walk sentence sgns",
+      "classification": "distance-knn (k=5)",
+      "training samples": 198502
+    },
+    "gw+distknn(k=10)": {
+      "sequences": "graph walk sentences",
+      "sgns": "graph walk sentence sgns",
+      "classification": "distance-knn (k=10)",
+      "training samples": 198502
+    },
     "gw+distknn(k=15)": {
       "sequences": "graph walk sentences",
       "sgns": "graph walk sentence sgns",
       "classification": "distance-knn (k=15)",
+      "training samples": 198502
+    },
+    "gw+distknn(k=20)": {
+      "sequences": "graph walk sentences",
+      "sgns": "graph walk sentence sgns",
+      "classification": "distance-knn (k=20)",
       "training samples": 198502
     },
     "gw+linproj" : {
