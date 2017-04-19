@@ -133,6 +133,12 @@
       "classification": "linear projection",
       "training samples": 198502
     },
+    "gw+pwlinproj(c=25)" : {
+      "sequences": "graph walk sentences",
+      "sgns": "graph walk sentence sgns",
+      "classification": "piecewise linear projection (c=25)",
+      "training samples": 198502
+    },
     "gw+pwlinproj(c=50)" : {
       "sequences": "graph walk sentences",
       "sgns": "graph walk sentence sgns",

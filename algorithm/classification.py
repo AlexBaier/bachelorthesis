@@ -1,11 +1,11 @@
 import abc
 import logging
+from typing import List, Tuple
 
 import numpy as np
 from sklearn.cluster import MiniBatchKMeans
 from sklearn.linear_model import SGDRegressor
 from sklearn.neighbors import KNeighborsClassifier, NearestNeighbors
-from typing import List, Tuple
 
 
 class Classifier(object, metaclass=abc.ABCMeta):
@@ -128,6 +128,12 @@ class PiecewiseLinearProjectionClassifier(ProjectionClassifier):
             p=2,
             n_jobs=n_jobs
         )
+        self.__nearest_neighbors_clusters = NearestNeighbors(
+            metric='minkowski',
+            n_neighbors=1,
+            p=2,
+            n_jobs=n_jobs
+        )
         self.__sgd_iter = sgd_iter
         self.__sgd_regressors = [[SGDRegressor() for _ in range(self.__embedding_size)] for _ in range(self.__clusters)]
 
@@ -140,9 +146,17 @@ class PiecewiseLinearProjectionClassifier(ProjectionClassifier):
         x = np.append(x, np.ones((n, 1)), axis=1)
         y = np.append(y, np.ones((n, 1)), axis=1)
 
+        offsets = y - x
+
+        # fit nearest neighbors on word embeddings
+        self.__nearest_neighbors_embeddings.fit(self.__embeddings)
+        logging.log(level=logging.INFO, msg='finished fitting all-embeddings nearest neighbor')
+
         # compute clusters based on x (inputs)
-        cluster_labels = self.__kmeans.fit_predict(x)
+        cluster_labels = self.__kmeans.fit_predict(offsets)
         logging.log(level=logging.INFO, msg='finished fit and predict of clusters, clusters={}'.format(self.__clusters))
+        # fit nearest neighbor on cluster centers
+        self.__nearest_neighbors_clusters.fit(self.__kmeans.cluster_centers_)
         clustered_x = [list() for _ in range(self.__clusters)]
         clustered_y = [list() for _ in range(self.__clusters)]
         for i, c in enumerate(cluster_labels):
@@ -172,38 +186,29 @@ class PiecewiseLinearProjectionClassifier(ProjectionClassifier):
                             .format(c+1, self.__clusters, i+1, self.__sgd_iter))
         logging.log(level=logging.INFO, msg='finished training projections')
 
-        # fit nearest neighbors on word embeddings
-        self.__nearest_neighbors_embeddings.fit(self.__embeddings)
-        logging.log(level=logging.INFO, msg='finished fitting all-embeddings nearest neighbor')
-
     def classify(self, unknowns: np.array)->List[str]:
-        n = unknowns.shape[0]
-
         unknowns = np.append(unknowns, np.ones((unknowns.shape[0], 1)), axis=1)
+        projections = np.zeros(unknowns.shape)
 
-        # assign clusters to each unknown
-        cluster_labels = self.__kmeans.predict(unknowns)
-        logging.log(level=logging.INFO, msg='clustered unknowns, clusters={}'.format(self.__clusters))
+        for idx, unknown in enumerate(unknowns):
+            # compute projections for unknown for each cluster
+            possible_projections = np.zeros((self.__clusters, self.__embedding_size))
+            for cluster in range(self.__clusters):
+                for target in range(self.__embedding_size):
+                    possible_projections[cluster][target] = self.__sgd_regressors[cluster][target].predict(unknown)
+            possible_projections = np.append(unknowns, np.ones((self.__clusters, 1)), axis=1)
+            # compute subset of all embeddings and unknown
+            offsets = possible_projections - unknown
+            # for each offset find the nearest cluster center
+            distances, indexes = self.__nearest_neighbors_clusters.kneighbors(offsets, return_distance=True)
+            # find the offset closest to a cluster center
+            closest_cluster = indexes[np.argmin(distances)][0]
+            projections[idx] = possible_projections[closest_cluster]
 
-        # compute projection for each unknown
-        projections = np.zeros((n, self.__embedding_size))
-        for idx, cluster in enumerate(cluster_labels):
-            for target in range(self.__embedding_size):
-                projections[idx][target] = self.__sgd_regressors[cluster][target].predict(unknowns[idx].reshape(1, -1))
-        logging.log(level=logging.INFO, msg='computed projections for all unknowns')
-
-        del cluster_labels
-
-        # find nearest neighbor to each projection
         _, indexes = self.__nearest_neighbors_embeddings.kneighbors(projections, return_distance=True)
-        logging.log(level=logging.INFO, msg='found corresponding superclass embeddings')
 
-        del projections
-
-        # find corresponding label of each superclass
         labels = list()
-        for index in indexes:
-            label = self.__labels[index[0]]
-            labels.append(label)
+        for i in range(indexes.shape[0]):
+            labels.append(self.__labels[indexes[i]])
 
         return labels
