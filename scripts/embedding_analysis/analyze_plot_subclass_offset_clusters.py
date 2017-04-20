@@ -1,6 +1,7 @@
 import json
 import logging
 import random
+from itertools import groupby
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -40,25 +41,27 @@ def main():
         paths_config = json.load(f)
 
     offsets_path = paths_config['subclass offsets']
+    labels_path = paths_config['wikidata labels']
     plot_output = paths_config['subclass offset plot']
-    max_offset_amount = int(8e5)  # type: int
+    result_path = paths_config['subclass offset cluster']
+
+    n_clusters = 10
+    max_labeled_pairs = 50
 
     offsets = list()
-    n_clusters = 10
-
+    ids = list()
     c_offset = 0
+
     with open(offsets_path) as f:
         for subclass, superclass, offset in map(lambda s: s.strip().split(';'), f):
             # i don't know why i would do this
             offset = np.array(offset.strip('[').strip(']').strip().split(), dtype=np.float32)
             offsets.append(offset)
+            ids.append((subclass, superclass))
             c_offset += 1
     logging.log(level=logging.INFO, msg='total of {} offsets loaded'.format(c_offset))
 
     offsets = np.array(offsets)
-    if max_offset_amount != -1:
-        offsets = np.random.permutation(offsets)[:max_offset_amount]
-        logging.log(level=logging.INFO, msg='random sampled {} offsets'.format(offsets.shape[0]))
 
     ms = KMeans(n_clusters=n_clusters, n_jobs=3)
     clusters = ms.fit_predict(offsets)
@@ -80,9 +83,51 @@ def main():
     logging.log(level=logging.INFO, msg='create plot with {} points'.format(c_offset))
     plt.scatter(xs, ys, s=0.1, edgecolors=[colors[cluster] for cluster in clusters])
     for c in range(n_clusters):
-        plt.text(c_xs[c], c_ys[c], str(c))
+        plt.text(c_xs[c], c_ys[c], str(c), fontsize='smaller')
     logging.log(level=logging.INFO, msg='save plot to {}'.format(plot_output))
     plt.savefig(plot_output)
+
+    result = dict()
+
+    # get number of pairs in each cluster
+    result['counts'] = [len(list(group)) for key, group in groupby(sorted(clusters.tolist()))]
+
+    # ignore the biggest cluster to improve label load time
+    ignore = np.argmax(result['counts'])
+    to_label = set()
+    for idx, cluster in enumerate(clusters):
+        if cluster != ignore:
+            to_label.update(ids[idx])
+    logging.log(level=logging.INFO, msg='labels required: {}'.format(len(to_label)))
+
+    labels = dict()
+    with open(labels_path) as g:
+        for eid, label in map(lambda l: l.strip().split(',', 1), g):
+            if eid in to_label:
+                labels[eid] = label
+    logging.log(level=logging.INFO, msg='loaded labels: {}/{}'.format(len(labels.items()), len(to_label)))
+
+    result['pairs'] = dict()
+    for idx, cluster in enumerate(clusters):
+        if cluster != ignore:
+            if not result['pairs'].get(str(cluster), None):
+                result['pairs'][str(cluster)] = list()
+            result['pairs'][str(cluster)].append({
+                'subclass': ids[idx][0],
+                'superclass': ids[idx][1],
+                'subclass label': labels.get(ids[idx][0], ''),
+                'superclass label': labels.get(ids[idx][1], '')
+            })
+
+    # shuffle pairs and cut off at limit
+    for cluster in range(n_clusters):
+        if cluster != ignore:
+            random.shuffle(result['pairs'][str(cluster)])
+            result['pairs'][str(cluster)] = result['pairs'][str(cluster)][:max_labeled_pairs]
+
+    with open(result_path, mode='w') as f:
+        json.dump(result, f)
+    logging.log(level=logging.INFO, msg='wrote subclass-superclass clusters to {}'.format(result_path))
 
 if __name__ == '__main__':
     main()
