@@ -88,7 +88,7 @@ def main():
     logging.log(level=logging.INFO, msg='create plot with {} points'.format(c_offset))
     plt.scatter(xs, ys, s=0.1, edgecolors=[colors[cluster] for cluster in clusters])
 
-    adjust_text([plt.text(c_xs[c], c_ys[c], str(c), fontsize='smaller') for c in range(n_clusters)],
+    adjust_text([plt.text(c_xs[c], c_ys[c], str(c)) for c in range(n_clusters)],
                 arrowprops=dict(arrowstyle="-", color='#000000'))
     logging.log(level=logging.INFO, msg='save plot to {}'.format(plot_output))
     plt.savefig(plot_output)
