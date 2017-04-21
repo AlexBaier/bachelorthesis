@@ -97,11 +97,23 @@ def main():
     result['counts'] = [len(list(group)) for key, group in groupby(sorted(clusters.tolist()))]
 
     # ignore the biggest cluster to improve label load time
-    ignore = np.argmax(result['counts'])
-    to_label = set()
+    result['pairs'] = dict()
     for idx, cluster in enumerate(clusters):
-        if cluster != ignore:
-            to_label.update(ids[idx])
+        if not result['pairs'].get(str(cluster), None):
+            result['pairs'][str(cluster)] = list()
+        result['pairs'][str(cluster)].append({
+            'subclass': ids[idx][0],
+            'superclass': ids[idx][1],
+            })
+
+    # shuffle pairs and cut off at limit and collect ids which need to be labeled
+    to_label = set()
+    for cluster in range(n_clusters):
+        random.shuffle(result['pairs'][str(cluster)])
+        result['pairs'][str(cluster)] = result['pairs'][str(cluster)][:max_labeled_pairs]
+        for pair in result['pairs'][str(cluster)]:
+            to_label.add(pair['subclass'])
+            to_label.add(pair['superclass'])
     logging.log(level=logging.INFO, msg='labels required: {}'.format(len(to_label)))
 
     labels = dict()
@@ -111,23 +123,11 @@ def main():
                 labels[eid] = label
     logging.log(level=logging.INFO, msg='loaded labels: {}/{}'.format(len(labels.items()), len(to_label)))
 
-    result['pairs'] = dict()
-    for idx, cluster in enumerate(clusters):
-        if cluster != ignore:
-            if not result['pairs'].get(str(cluster), None):
-                result['pairs'][str(cluster)] = list()
-            result['pairs'][str(cluster)].append({
-                'subclass': ids[idx][0],
-                'superclass': ids[idx][1],
-                'subclass label': labels.get(ids[idx][0], ''),
-                'superclass label': labels.get(ids[idx][1], '')
-            })
-
-    # shuffle pairs and cut off at limit
+    # add labels to results
     for cluster in range(n_clusters):
-        if cluster != ignore:
-            random.shuffle(result['pairs'][str(cluster)])
-            result['pairs'][str(cluster)] = result['pairs'][str(cluster)][:max_labeled_pairs]
+        for pair in result['pairs'][str(cluster)]:
+            pair['subclass label'] = labels.get(pair['subclass'], ''),
+            pair['superclass label'] = labels.get(pair['superclass'], '')
 
     with open(result_path, mode='w') as f:
         json.dump(result, f)
