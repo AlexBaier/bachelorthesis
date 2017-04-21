@@ -1,3 +1,4 @@
+adjustText
 pathos
 sklearn
 boto==2.45.0
