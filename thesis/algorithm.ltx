@@ -1,6 +1,8 @@
 As motivated in the previous chapters, a hybrid algorithm using neural word embeddings is implemented to solve the defined problem.
 In this chapter, the required components for the algorithm are presented.
 For each component, possible implementations are proposed and implemented.
+Additionally, only relevant classes, as described in Section~\ref{section:relevant classes}, are considered in this chapter.
+Therefore training of the algorithm uses only of relevant classes and their corresponding instances.
 
 \subsection{Components}
 The hybrid algorithm exploits neural word embeddings to solve the classification task,
@@ -110,14 +112,14 @@ The kNN implementation provided by the scikit-learn library \cite{scikit-learn} 
 \begin{mdframed}
 \centering
 \includegraphics[width=\textwidth]{images/algorithm/2d_subclass_offsets.png}
-\caption{Subclass offsets of $240789$ subclass-superclass pairs.}
+\caption{Subclass-of offsets of $240,789$ subclass-superclass pairs.}
 \medskip
-The subclass-superclass pairs were retrieved from the set of relevant classes (Section~\ref{section:relevant classes}).
-For each pair the offset $\vec{\textit{superclass}} - \vec{\textit{subclass}} \in \mathbb{R}^{300}$ was computed 
-using the triple sentence word embeddings (Section~\ref{section:triple sentences}).
-The offsets were clustered into $5$ clusters using KMeans clustering.
+$240,789$ subclass-superclass pairs were retrieved from the set of relevant classes (Section~\ref{section:relevant classes}).
+For each pair, the offset $\vec{\textit{superclass}} - \vec{\textit{subclass}} \in \mathbb{R}^{300}$ was computed 
+using triple sentence word embeddings (Section~\ref{section:triple sentences}).
+The offsets were clustered into $15$ clusters using KMeans clustering.
 PCA was applied on the clustered offsets for plotting.
-Each color indicates a cluster, the corresponding cluster number is placed on each cluster center.
+The legend indicates the color of each cluster $k \in [0, 14]$.
 \label{fig:2d offsets}
 \end{mdframed}
 \end{figure}
@@ -139,18 +141,49 @@ For the use case of Wikidata, it can be shown that the offsets do not fulfill th
 It can rather be seen that different clusters of similar subclass-of offsets exist. 
 Using the word embeddings created by SGNS trained on triple sentences,
 the subclass-of offsets for $240789$ subclass-superclass pairs were computed.
+The subclass-superclass pairs were extracted from the set of relevant classes (Section~\ref{section:relevant classes}).
 Using Principal Component Analysis (PCA), the 300-dimensional vectors were reduced to  2-dimensional vectors,
 which are shown in Figure~\ref{fig:2d offsets}.
 
-% TODO: look at clusters
+The subclass offsets with dimension $d=300$ were clustered into $K=15$ clusters using KMeans.
+The clusters $1$, $7$ and $13$, which attribute to $71.5\%$ of all offsets contain a variation subclass-of relation types,
+which is most likely the case because $15$ clusters are not sufficient to separate all different types of subclass-of relations.
+Therefore algorithms like piecewise linear projection \cite{Fu2014}, which exploit the similarity of specific types of subclass-of relations,
+need to use more clusters $K$ . 
+The other clusters show very specific types of offsets. Following is a list of clusters with their percentage of all offsets, their topic and example subclass-superclass pair:
 
-It can be seen, that clusters of offsets exist, which have completely different orientations in respect to the origin $(0,0)$.
+\begin{figure}[H]
+\begin{tabularx}{\textwidth}{l | l | l | X}
+$k$ & perc. & topic & example \\
+\hline
+$0$ & $1\%$    & wine (mostly Italian wines)                         & \textit{Greek wine} $\subclassof{}$ \textit{wine}, \textit{Alghero frizzante rosato} $\subclassof{}$ \textit{wine} \\
+$2$ & $8.3\%$ & protein families                                           & \textit{G kinase-anchoring protein 1} $\subclassof{}$ \textit{protein family} \\
+$3$ & $3.3\%$ & Spanish mayors (Alcalde)                           & \textit{mayor of Granollers} $\subclassof{}$ \textit{Alcalde} \\
+$4$ & $6.5\%$ & badminton championships                            & \textit{Jamaican International Badminton Championships} $\subclassof{}$ \textit{badminton championship} \\
+$5$ & $0.6\%$ & food                                                            & \textit{Sour cream doughnut} $\subclassof{}$ \textit{food} \\
+$6$ & $1.6\%$ & locomotives					& \textit{GWR 103 President} $\subclassof{}$ \textit{tender locomotive}, \textit{GE C31-8} $\subclassof{}$ \textit{diesel-electric locomotive} \\
+$8$ & $0.8\%$ & tennis tournaments 				& \textit{ECC Antwerp} $\subclassof{}$ \textit{tennis tournament} \\
+$9$ & $1.5\%$ & aircrafts						& \textit{Martin KF-1} $\subclassof{}$ \textit{aircraft} \\
+$10$ & $3.6\%$ & protein domains                                        & \textit{ISX02-like transposase domain} $\subclassof{}$ \textit{protein domain} \\
+$11$ & $0.4\%$ & military aircrafts                                        & \textit{Heinkel He 50} $\subclassof{}$ \textit{military aircraft} \\
+$12$ & $1\%$  & diseases                                                      & \textit{cervical squamotransitional carcinoma} $\subclassof{}$ \textit{disease} \\
+$14$ & $0.5\%$ & ambassadors                                            & \textit{Ambassador of the Republic of China to the United States} $\subclassof{}$ \textit{ambassador}
+\end{tabularx}
+\end{figure}
+
+Clusters, which describe similar topics are close together, e.g. clusters $2$ and $10$ are related to proteins, clusters $6$, $9$ and $11$ are related to vehicles.
+An error in filtering for relevant classes occurred (Section~\ref{section:relevant classes}), since two clusters in the set are related to proteins, which is $11.9\%$
+of all relevant subclass-superclass relations.
+Because the percentage of protein-related classes is relatively low, further filtering of the relevant dataset is not pursued.
+It can be seen, that the clusters $2$, $4$ and $10$ have very different orientations in respect to the origin $(0,0)$ than the other clusters.
 Therefore directly using vector offsets would not be applicable, as offsets can not represent the complex subclass-of relation.
 \fullcite{Fu2014} reached a similar conclusion and proposes the use of linear projections as means to represent the subclass-of relation.
+Additionally, it can be concluded that $15$ clusters is too low for usage in piecewise linear projection, since $3$ clusters, representing $71.5\%$ of all offsets, exist,
+which do not have definite topics. Therefore cluster sizes $k$ of at least $30$ should be considered as parameter for piecewise linear projection.
 In the following section, the approach by \citeauthor{Fu2014}, which is described in Section~\ref{section:ol nn},
 is adjusted for usage in the hybrid algorithm.
 
-\subsubsection{Linear projection}
+\subsubsection{Linear projection}\label{section:linear projection}
 Following the idea of using vector offsets to find the correct superclass $\vec{p} \in \mathbb{R}^d$ 
 for a given unknown $\vec{u} \in \mathbb{R}^d$,
 the translation represented by the subclass offset can be extended by adding a linear projection matrix $\Phi \in \mathbb{R}^{d \times d}$.
