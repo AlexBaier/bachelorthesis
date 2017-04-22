@@ -139,7 +139,8 @@ class PiecewiseLinearProjectionClassifier(ProjectionClassifier):
         )
         self.__sgd_iter = sgd_iter
         # fit predict shape (_, embedding_size+1)
-        self.__sgd_regressors = [[SGDRegressor() for _ in range(self.__embedding_size)] for _ in range(self.__clusters)]
+        self.__sgd_regressors = [[SGDRegressor(n_iter=self.__sgd_iter) for _ in range(self.__embedding_size)]
+                                 for _ in range(self.__clusters)]
 
     def train(self, training_data: List[Tuple[np.array, np.array]], batch_size: int=500):
         n = len(training_data)
@@ -174,13 +175,9 @@ class PiecewiseLinearProjectionClassifier(ProjectionClassifier):
         logging.log(level=logging.INFO, msg='sorted training samples into clusters')
 
         for c in range(self.__clusters):
-            in_cluster_n = len(clustered_x[c])
-
-            for i in range(self.__sgd_iter):
-                for target in range(self.__embedding_size):
-                    self.__sgd_regressors[c][target].fit(clustered_x[c], clustered_y[c][:, target])
-                logging.log(level=logging.INFO, msg='sgd regression: cluster={}/{}, iter={}/{}'
-                            .format(c+1, self.__clusters, i+1, self.__sgd_iter))
+            for target in range(self.__embedding_size):
+                self.__sgd_regressors[c][target].fit(clustered_x[c], clustered_y[c][:, target])
+            logging.log(level=logging.INFO, msg='sgd regression: cluster={}/{}'.format(c+1, self.__clusters))
         logging.log(level=logging.INFO, msg='finished training projections')
 
     def classify(self, unknowns: np.array)->List[str]:
