@@ -130,13 +130,6 @@ class PiecewiseLinearProjectionClassifier(ProjectionClassifier):
             p=2,
             n_jobs=n_jobs
         )
-        # nearest neighbors shape shape: (_, embedding_size)
-        self.__nearest_neighbors_clusters = NearestNeighbors(
-            metric='minkowski',
-            n_neighbors=1,
-            p=2,
-            n_jobs=n_jobs
-        )
         self.__sgd_iter = sgd_iter
         # fit predict shape (_, embedding_size+1)
         self.__sgd_regressors = [[SGDRegressor(n_iter=self.__sgd_iter) for _ in range(self.__embedding_size)]
@@ -144,30 +137,26 @@ class PiecewiseLinearProjectionClassifier(ProjectionClassifier):
 
     def train(self, training_data: List[Tuple[np.array, np.array]], batch_size: int=500):
         n = len(training_data)
+        print(n)
 
         x, y = list(map(np.array, zip(*training_data)))
         del training_data
 
-        x = np.append(x, np.ones((n, 1)), axis=1)
-        y = np.append(y, np.ones((n, 1)), axis=1)
-
-        # reshape to (n, 300)
-        offsets = (y - x)[:, :self.__embedding_size]
+        mod_x = np.append(x, np.ones((n, 1)), axis=1)
 
         # fit nearest neighbors on word embeddings
         self.__nearest_neighbors_embeddings.fit(self.__embeddings)
         logging.log(level=logging.INFO, msg='finished fitting all-embeddings nearest neighbor')
 
         # compute clusters based on x (inputs)
-        cluster_labels = self.__kmeans.fit_predict(offsets)
+        cluster_labels = self.__kmeans.fit_predict(x)
         logging.log(level=logging.INFO, msg='finished fit and predict of clusters, clusters={}'.format(self.__clusters))
 
         # fit nearest neighbor on cluster centers
-        self.__nearest_neighbors_clusters.fit(self.__kmeans.cluster_centers_)
         clustered_x = [list() for _ in range(self.__clusters)]
         clustered_y = [list() for _ in range(self.__clusters)]
         for i, c in enumerate(cluster_labels):
-            clustered_x[c].append(x[i])
+            clustered_x[c].append(mod_x[i])
             clustered_y[c].append(y[i])
 
         clustered_x = list(map(np.array, clustered_x))
@@ -181,26 +170,19 @@ class PiecewiseLinearProjectionClassifier(ProjectionClassifier):
         logging.log(level=logging.INFO, msg='finished training projections')
 
     def classify(self, unknowns: np.array)->List[str]:
+        # add 1 row to unknowns matrix for translation
         mod_unknowns = np.append(unknowns, np.ones((unknowns.shape[0], 1)), axis=1)
+        # find most appropiate cluster for all unknowns
+        clusters = self.__kmeans.predict(unknowns)
+        # compute projections for all unknowns
         projections = np.zeros((unknowns.shape[0], self.__embedding_size))
-
-        for idx, unknown in enumerate(mod_unknowns):
-            # compute projections for unknown for each cluster
-            possible_projections = np.zeros((self.__clusters, self.__embedding_size))
-            for cluster in range(self.__clusters):
-                for target in range(self.__embedding_size):
-                    possible_projections[cluster][target] = \
-                        self.__sgd_regressors[cluster][target].predict(unknown.reshape(1, -1))
-            # compute subset of all embeddings and unknown
-            offsets = possible_projections - unknown[:self.__embedding_size]
-            # for each offset find the nearest cluster center
-            distances, indexes = self.__nearest_neighbors_clusters.kneighbors(offsets, return_distance=True)
-            # find the offset closest to a cluster center
-            closest_cluster = indexes[np.argmin(distances)][0]
-            projections[idx] = possible_projections[closest_cluster]
-
+        for idx, cluster in enumerate(clusters):
+            for target in range(self.__embedding_size):
+                projections[idx][target] = self.__sgd_regressors[cluster][target]\
+                    .predict(mod_unknowns[idx].reshape(1, -1))
+        # find closest class to each projection => superclass
         _, indexes = self.__nearest_neighbors_embeddings.kneighbors(projections, return_distance=True)
-
+        # retrieve the label of each superclass
         labels = list()
         for i in range(indexes.shape[0]):
             labels.append(self.__labels[indexes[i][0]])
