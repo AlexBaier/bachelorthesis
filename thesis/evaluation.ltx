@@ -1,103 +1,78 @@
 \subsection{Method}
 The hybrid algorithms are evaluated using a gold standard.
-The gold standard is fetched from classes in the \dumpdate{} Wikidata dump \cite{WikidataDump}.
-$1,283,128$ classes with superclasses, where retrieved from the dump.
-As test data $200,000$ classes were randomly chosen. 
-The remaining $1,083,128$ classes are used as training data.
-The retrieved subclass-superclass relations should be sufficient as gold standard,
-because they are curated by experts of the Wikidata community.
+The gold standard is fetched from the set of relevant classes (Section~\ref{section:relevant classes}) in the \dumpdate{} Wikidata dump \cite{WikidataDump}.
+$208,502$ classes and their corresponding superclasses were retrieved.
 
-Precision, recall and F1-score cannot effectively be used to evaluate classification problems with high amounts of classes in a taxonomy \cite{Kosmopoulos2014}.
-These measures are typically used for flat classification problems with small amounts of classes, which are not related.
-It has to be recognized that a misclassification in the thesis' use case is not a binary problem.
-Assuming a pair of prediction and gold standard, the predicted class could be very similar or very different to the gold standard.
-The evaluation should consider the similarity between prediction and gold standard, rather than only differentiating between correct and incorrect classification.
-Good evaluation measures for ontologies should additionally evaluate the results in different dimensions \cite{Dellschaft2006}.
-Relevant dimensions, which can be used to evaluate the classification task, include the similarity of word embeddings and the distance in the taxonomy.
-The similarity of word embeddings can be computed using cosine similarity and represents a semantic similarity measure,
-because the embedding vectors encode the semantic information \cite{Mikolov2013} and therefore similar vectors equates to similar classes.
-Distance of prediction and gold standard also describes a type of semantic similarity, since classes describing similar concepts should be grouped close in the taxonomy.
-Additionally, the taxonomic distance allows to evaluate other characteristics of the classification algorithm, which are described in the following paragraph.
-
-\begin{figure}[H]
-\centering
-\includegraphics[width=0.75\textwidth]{images/evaluation/hierarchical_classification_cases.pdf}
-\caption{Possible taxonomic relations between prediction and gold standard}
-\label{fig:relation between prediction and gold}
-\medskip
-\small
-Legend: red box = gold standard, blue circle = prediction.
-\end{figure}
-
-Different taxonomic relations between the prediction and gold standard are possible in a hierarchical classification task \cite{Kosmopoulos2014}.
-The desired case is a correct classification, such that the prediction is equal to the gold standard. 
-In the case of misclassification, three cases of taxonomic relations are possible. These are represented in Figure~\ref{fig:relation between prediction and gold}.
-Evaluation should give an insight whether the evaluated algorithm tends to over- or underspecialization or if it tends to miss the appropriate branch 
-\textbf{Note: maybe find a better word than branch}.
-Additionally, the distance in the taxonomy between the prediction and gold standard should be included in this analysis,
-since the taxonomic distance can serve as a measure of similarity and therefore is therefore able to more accurately show the performance of the evaluated algorithm.
-\textbf{consider case where distance between gold and prediction is too high}
-
-A taxonomy is modeled as a directed acyclic graph. 
-Therefore it is possible for each class to have multiple superclasses, subsequently for each input class more than one class could be considered as gold standard.
-It has to be defined, how the predicted class is paired to the multiple gold standard classes.
-Following the decision by \fullcite{Kosmopoulos2014}, the predicted class is paired with the closest gold standard class for each measure.
-This achieves a minimization of the classification error, which is a sensible approach.
-
-
-
-Scores:
-\begin{itemize}
-\item \textbf{True positive ratio} $\mathit{TP}$.
-\item \textbf{Mean squared error} $\mathit{MSE}$.
-For an algorithm $\mathit{alg}$, the set $R_\mathit{alg}$ with $\abs{R_\mathit{alg}} = n$ consisting of prediction-gold standard pairs.
-The corresponding gold standard is chosen, as previously stated, to be the closest given option to the prediction.
-Based on this set, the classification error for a given algorithm can be computed using the mean squared error, as follows
+The gold standard set $G$ consists of sample tuples $(c_i, S_i)$, where $c_i \in R$ is a subclass and $S_i = \mathit{succ}(c_i)$ is the set of direct superclasses of $c_i$,
+where $R$ is the set of relevant classes and $i \in [1, |G|]$.
+Because it is assumed that every class, except the root class, should have a superclass, $|S_i| > 0$ applies for all gold samples $(c_i, S_i)$ with $i \in [1, |G|]$.
+Therefore the computation of the $F_1$-score as an evaluation measure is applicable, because only correct and false classification can occur.
+Instead the first applied evaluation measure is the accuracy $\mathit{acc}_\mathit{alg}$, which is calculated as follows for an algorithm $\mathit{alg}$:
 \begin{align}
-&\mathit{MSE} = \frac{1}{n} \sum_{(\vec{p}, \vec{g}) \in R_\mathit{alg}} (1 - \mathit{sim}_\mathit{cos}(\vec{p}, \vec{g}))^2
+&\mathit{acc}_\mathit{alg} = \frac{1}{|G|} \sum_{i=1}^{|G|} \begin{cases} 1, & \textit{for } p_\mathit{alg}(c_i) \in S_i \\ 0, & \textit{for } p_\mathit{alg}(c_i) \notin S_i \end{cases}
 \end{align}
-In comparison to the true positive ratio, the classification error $\mathit{MSE}$ also considers the severity of misclassifications.
-The $\mathit{MSE}$ signifies how far a prediction of the given algorithm is from the gold standard.
-Therefore a lower value is preferred since this induces that the classifier predicts on average very close to the gold standard.
-A low $\mathit{MSE}$ does not necessarly also imply a high $\mathit{TP}$. 
-A classifier could for example have a relatively high $\mathit{TP}$, because it predicts well for a specific subset of unknowns,
-which occurs frequently in the test samples, but otherwise predicts very badly. 
-Using the $\mathit{MSE}$, it is possible to identify this case.
+where $p_\mathit{alg} : R \mapsto R$ is the prediction function of $\mathit{alg}$, which returns the predicted superclass of $\mathit{alg}$ given an unknown class.
 
-\item weighted $F_1$-score
-\end{itemize}
+However, accuracy alone is not sufficient in evaluating a classification in a hierarchical context like taxonomies \cite{Kosmopoulos2014}.
+Accuracy ignores the taxonomy and other possible dimensions, as it only measures how often the algorithm is able to correctly guess the superclass.
+\citeauthor{Dellschaft2006} states that a good measure should "allow[s] to evaluate an ontology along multiple dimensions" \cite{Dellschaft2006}.
+Another dimension, next to the accuracy of the algorithm, which can be observed is the taxonomic relation between the predictions and their corresponding gold standards.
+Given two algorithms $\mathit{algA}$ and $\mathit{algB}$ with equal accuracies $\mathit{acc}_\mathit{algA} = \mathit{acc}_\mathit{algB}$,
+assume $\mathit{algB}$ predicts either correctly or predicts the root class, while $\mathit{algA}$ predicts either correctly or overspecializes by predicting the subclass of the gold standard.
+Which one of the two algorithms performs better? If only the accuracy is considered, both algorithms are equally good and it would not matter, which algorithm would be chosen
+for practical application. But in practice $\mathit{algA}$ would be preferred, since even false predictions are useful to some degree, while $\mathit{algB}$'s false predictions are
+not usable.
+Therefore the taxonomy dimension should be included in the evaluation. For this the \textbf{taxonomic overlap} measure, defined by \fullcite{Dellschaft2006}, is also used
+in the evaluation. The taxonomic overlap counts how many superclasses are shared by the prediction and the gold standard for each sample.
+This is called the \textbf{semantic upwards cotopy} $\mathit{sc}$ defined as follows \cite{Dellschaft2006}:
+\begin{align}
+&\mathit{sc}(c, T) = \{ c_i | c_i, c \in C \land c \subclassof{T} c_i \}
+\end{align}
+where $T=(C, \_)$ is a taxonomy and $c \in C$ is a class in the taxonomy $T$.
+Based on the semantic upwards cotopy, the taxonomic overlap $\mathit{to}_\mathit{sc}$ between classes $c_1$ and $c_2$ in $C$ is defined as follows \cite{Dellschaft2006}:
+\begin{align}
+&\mathit{to}_\mathit{sc}(c_1, c_2, T) = \frac{|\mathit{sc}(c_1, T) \cap \mathit{sc}(c_2, T) |}{|\mathit{sc}(c_1, T) \cup \mathit{sc}(c_2, T) |}
+\end{align}
+The taxonomic overlap between two classes ranges between $0$, if the classes have no common superclasses, and $1$ if the classes are identical or all direct superclasses are identical.
+To apply the taxonomic overlap in the evaluation the overlaps for all prediction-gold pairs have to summed up, which leads to the \textbf{average taxonomic overlap} 
+$\mathit{ato}_{\mathit{sc}, \mathit{alg}}$ for an algorithm $\mathit{alg}$:
+\begin{align}
+&\mathit{ato}_{\mathit{sc}, \mathit{alg}} =\frac{1}{|G|}  \sum_{i = 1}^{|G|} \max_{s \in S_i}(\mathit{to}_\mathit{sc}(p_\mathit{alg}(c_i), s, T))
+\end{align}
+where $G$ is gold standard, which samples $(c_i, S_i)$ with $i \in [1, |G|]$ and $p_\mathit{alg}$ the prediction function of an algorithm $\mathit{alg}$.
+The maximum overlap between prediction and gold is chosen, if there are multiple possible superclass for a sample,
+since the taxonomic overlap is a function, which should be maximized by the algorithm \cite{Kosmopoulos2014}.
 
-Plots:
+Each possible combination of components is evaluated as a separate hybrid algorithm.
+For each classification component different hyperparameters are tested to find a good configuration.
+A naming scheme is used to uniquely identify each hybrid algorithm with their corresponding hyperparameters.
+Because the SGNS configuration is constant over all hybrid algorithms, an algorithm combination can be identified by their SequenceGen and Classification component,
+as well as their classification parameters.
+Consequently, hybrid algorithms have the following name format:
+\begin{align*}
+&\text{<SequenceGen>}+\text{<Classification>}(\text{<hyperparameters>})
+\end{align*}
+To shorten the identifiers, the following abbreviations for components are used:
+\begin{figure}[H]
+\begin{tabular}{l l}
+component & abbreviation \\
+\hline
+triple sentences & ts \\
+graph walk sentences & gw \\
+distance-based kNN & distknn \\
+piecewise linear projection & linproj 
+\end{tabular}
+\end{figure}
+The following hybrid algorithms are evaluated:
 \begin{itemize}
-\item Density function over prediction to gold standard similarities.
-\item Distribution function $P[x \geq X]$ over similarities.
-\item Taxonomic distances for misclassification for 3 cases described in Figure~\ref{fig:relation between prediction and gold}
-\end{itemize}
+\item ts+distknn($k=?$) with $k=5,10,15,20$
+\item ts+linproj($c=?$) with $c=1,25,50$
+\item gw+distknn($k=?$) with $k=5,10,15,20$
+\item gw+linproj($c=?$) with $c=1,25,50$
+\end{itemize} 
+where $k$ is the number of neighbors in kNN and $c$ is the number of clusters in piecewise linear projection.
 
 \subsection{About the dataset}
-Triple sentences generated $112,904,736$ sentences, of which $66,258,922$ are triples.
 
 \subsection{Results}
-Different hybrid algorithms were executed based on the components proposed in Chapter~\ref{section:algorithm}.
-In Table~\ref{table:algorithms}, the evaluated hybrid algorithms and their components are listed.
 
-\begin{table}[H]
-\center
-\begin{tabular}{ l | l l}
-name & Wikidata2Sequence & Classification \\
-\hline
-baseline & triple sentences & KRI-kNN \\
-distknn & triple sentences & distance-based kNN \\
-linproj & triple sentences & linear projection \\
-pwlinproj & triple sentences & piecewise linear projection \\
-gw & graph walk sentences & KRI-kNN \\
-gw+pwlinproj & graph walk sentences & piecewise linear projection
-\end{tabular}
-\caption{Evaluated hybrid algorithms}
-\label{table:algorithms}
-\end{table}
-
-distknn uses the euclidian distance as weights. It is compared to baseline.
-It is expected that KRI-kNN provides better results than a distance-based kNN,
-since experiments by \fullcite{Chen2009} has shown generally better classification results for KRI-kNN.
-The comparison between these classifiers will check whether this is the case for the applied usecase.

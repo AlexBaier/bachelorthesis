@@ -196,7 +196,7 @@ assumption is true, for $T=(C,S)$:
 Only one class in this taxonomy has no superclasses. This class is called \textbf{root class}. However
 in the case of Wikidata, this assumption does not hold true. The following state is the case:
 \begin{align}
-\abs{\{  c \in C \mid \neg \exists s \in C: c \subclassof{T} s \}} > 
+\abs{\{  c \in C \mid \neg \exists s \in C: c \subclassof{T} s \}} \ge 1
 \end{align}
 There are classes other than the root class, which also have no superclasses. These classes will be called orphan classes.
 \begin{definition}[Root class]\label{root class}
@@ -233,33 +233,37 @@ Class $7$ is an \textbf{orphan class}, since it is not the root class and has no
 % Similarity
 %%%%%%
 \subsection{Similarity}\label{section:similarity}
-For the task of ontology learning \cite{Hazman2011} as well as classification, e.g. k-nearest-neighbors \cite{Chen2009},
-the concept of \textbf{similarity} is of importance. A basic intuition of similarity is for example given by 
-\fullcite{Lin1998}. Similarity is related to the commonalities and differences between two objects.
-More commonalities implies higher similarity. Vice versa, more differences implies lower similarity.
-Two identical objects should have the maximum similarity. In addition, only identical objects should be
-able to achieve maximum similarity. A \textbf{similarity measure} computes the similarity between two objects \cite{Weber2000}:
+For the task of ontology learning \cite{Hazman2011} as well as classification, e.g. k-nearest-neighbors and SVM \cite{Chen2009}, the concept of \textbf{similarity} is of importance. 
+A \textbf{similarity measure} computes the similarity between two objects \cite{Weber2000}:
 \begin{definition}[Similarity measure]
 $\mathit{sim}: \Omega \times \Omega \mapsto [ 0, 1 ]$ is called \textbf{similarity measure} for a set of objects $\Omega$.
+Given two objects $A, B \in \Omega$, $\mathit{sim}(A, B) = 1$ if $A = B$ and $\mathit{sim}(A, B) < 1$ if $A \neq B$.
 \end{definition}
-A similarity of $1$ implies identical objects and a similarity of $0$ implies that there are no commonalities between the input objects. The information-theoretic definition of similarity states that a similarity measure
-should factor in both commonalities as well as differences to compute the similarity between objects \cite{Lin1998}.
+\fullcite{Lin1998} states three intuitions, which a similarity measure between two objects $A$ and $B$ should fulfill:
+\begin{itemize}
+\item "The similarity between $A$ and $B$ is related to their commonality. The more commonality they share, the more similar they are." \cite{Lin1998}
+\item "The similarity between $A$ and $B$ is related to the differences between them. The more differences they have, the less similar they are." \cite{Lin1998}
+\item "The maximum similarity between $A$ and $B$ is reached when $A$ and $B$ are identical, no matter how much commonality they share." \cite{Lin1998}
+\end{itemize}
+Therefore a similarity measure $\mathit{sim(A, B)}$ should return $1$ only if $A = B$ and $0$ if the $A$ and $B$ share no commonalities.
+A similarity measure should factor in both commonalities and differences to compute the similarity between objects \cite{Lin1998}.
 
-Many types of information can be encoded as feature vectors in $\mathbb{R}^n$, e.g.
-words \cite{Levy2015} \cite{Mikolov2013}, graphs \cite{Ristoski2016} \cite{Cao2016}, etc.
-The similarity between feature vectors can be measured using the distance $\delta_S(\vec{p}, \vec{q})$ 
-between two vectors $\vec{p}$ and $\vec{q}$. 
-The distance represents the differences between two feature vectors. 
+Many types of information can be encoded as feature vectors in $\mathbb{R}^d$, e.g.
+words \cite{Levy2015} \cite{Mikolov2013}, graphs \cite{Ristoski2016} \cite{Cao2016}, etc., where $d \in \mathbb{N}$ is the dimension of the vector space.
+The similarity between feature vectors can be measured using a distance measure between two vectors $\vec{p}, \vec{q} \in \mathbb{R}^d$ \cite{Weber2000}.
+Distance measures $\delta$ have the signature: $\delta: \mathbb{R}^d \times \mathbb{R}^d \mapsto \mathbb{R}_0^+$.
+$\delta (\vec{p}, \vec{q}) = 0$ implies $\mathit{sim}(\vec{p}, \vec{q}) = 1$, while $\delta (\vec{p}, \vec{q}) \rightarrow \infty$ implies $\mathit{sim}(\vec{p}, \vec{q}) = 0$.
+Therefore it is necessary to find a mapping of distance to similarity, if a distance measure should be used as similarity measure.
 A typical distance measure is the \textbf{$L_S$-Norm} \cite{Weber2000}:
 \begin{align}
-&L_s: \delta_S (\vec{p}, \vec{q}) = \sqrt[S]{\sum_{i=0}^{n-1}\abs{\vec{p}_i - \vec{q}_i}^S}
+&L_S: \delta_S (\vec{p}, \vec{q}) = \sqrt[S]{\sum_{i=0}^{n-1}\abs{\vec{p}_i - \vec{q}_i}^S}
 \end{align}
+with $S \in \mathbb{R}^+$.
 For example, the $L_2$-Norm is the euclidean distance:
 \begin{align}
 &L_2: \delta_2 (\vec{p}, \vec{q}) = \sqrt{\sum_{i=0}^{n-1}\abs{\vec{p}_i - \vec{q}_i}^2}
 \end{align}
-Similarity between vectors can now be defined by mapping the distances to similarity values using a correspondence
-function \cite{Weber2000}:
+Similarity between vectors can now be defined by mapping the distances to similarity values using a correspondence function \cite{Weber2000}:
 \begin{definition}[Correspondence function]
 $h: \mathbb{R}^+ \mapsto [0,1]$ is a \textbf{correspondence function}, if it fulfills the following properties:
 \begin{enumerate}
@@ -271,20 +275,10 @@ $h: \mathbb{R}^+ \mapsto [0,1]$ is a \textbf{correspondence function}, if it ful
 increasing values of $S$. The curse of dimensionality implies that
 ''the ratio of the distances of the nearest and farthest neighbors to a given target in high dimensional space 
 is almost $1$ for a wide variety of data distributions and distance functions'' \cite{Aggarwal2001}.
-\textbf{Cosine similarity} can offset this problem to some degree by including the direction of the vectors
-into the calculation of the similarity \cite{Houle2010}. 
-This is done by computing the dot product between two vector. It is defined as follows:
-\begin{align}
-& \mathit{sim}_\mathit{cos}(\vec{p}, \vec{q}) = 
-\frac{\vec{p}^T \cdot \vec{q}}{||\vec{p}||_2 \cdot ||\vec{q}||_2}
-\end{align}  
-Cosine similarity maps to $[-1,1]$. It returns $1$ if the vectors are identical, $0$ if the vectors are orthogonal,
-and $-1$ if the angle between the vectors is $\pi$ and therefore the vectors are opposites.
-However, if the feature vector space $\Omega$ contains only positive vectors, 
-$\forall \vec{p} \in \Omega: \vec{p}_i \ge 0 \forall i=0,\dots,n-1$,
-then the cosine similarity maps to $[0, 1]$ and fulfills the definition of a similarity measure.
-For example, feature vectors representing word frequencies in documents are positive,
-as a word can not occur less than $0$ times.
+\fullcite{Aggarwal2001} also show that for increasing dimensions, the distance between the nearest and farthest neighbors converges against $\infty$ for $L_1$,
+against some constant $c \in \mathbb{R}$ for $L_2$, and for higher $L_S$-norms the distance converges against $0$.
+This implies that $L_S$ norms with higher $S$ are bad at contrasting between vectors in high-dimensional space \cite{Aggarwal2001}.
+Therefore the distance-based kNN used in the thesis should use either the $L_1$- or the $L_2$-norm as distance measure to avoid the low contrast associated with the other $L_S$ measures.
 
 In ontology learning, \textbf{semantic similarity} is used to great effect, 
 e.g  for clustering objects to create hierarchies\cite{Hazman2011} \cite{Wong2012} 
@@ -293,22 +287,24 @@ Semantic similarity compares the semantic content of objects or documents .
 This can be achieved by comparing which features can be found in both objects (commonalities) 
 and which features are unique to the compared objects (differences).
 \fullcite{Rodriguez2003} develops a semantic similarity measure for comparing entity classes in ontologies.
-Given two objects $a, b \in \Omega$. $A$ and $B$ are their corresponding descriptions sets,
+Given two objects $a, b \in \Omega$, $A$ and $B$ are their corresponding descriptions sets,
 e.g. for Wikidata the aliases and statements. $\alpha$ is a function, which defines the importance of
 differences between $a$ and $b$. $A \cap B$ is the set of commonalities, and $A/B$ the set of differences between
-the $a$ and $b$. The defined similarity function is not symmetric, $\mathit{sim}(a,b) \neq \mathit{sim}(a,b)$.
+the $a$ and $b$. The defined similarity function is not symmetric, $\mathit{sim}(a,b) \neq \mathit{sim}(b, a)$.
 \begin{align}
 &\mathit{sim}(a, b) = \frac{\abs{A \cap B}}{\abs{A \cap B} + \alpha (a,b) \abs{A/B} + (1 - \alpha (a,b)) \abs{B/A}}
 \end{align}
-for $0 \le \alpha \le 1$.
+for $0 \le \alpha \le 1$ \cite{Rodriguez2003}.
 
-Calculating the similarity between vectors is an easier task than calculating the similarity between objects in
-an ontology. Using neural word or graph embeddings, which are presented in Sections~\ref{section:word2vec}
+Calculating the similarity between vectors is advantageous to calculating the similarity between objects in an ontology, 
+because vectors abstract from the specific objects and their relations to other objects in the ontology.
+Using neural word or graph embeddings, which are presented in Sections~\ref{section:word2vec}
 and~\ref{section:graph embeddings}, enables the representation of classes and instances in ontologies
 as feature vectors. The mentioned curse of dimensionality is a non-issue as it applies, if the the number
 of irrelevant of features is high. This is typically solved by reducing the dimension of the feature vectors
 to include only relevant features \cite{Domingos2012}. 
-Neural embeddings however seem to implicitly capture only relevant features \cite{Mikolov2013}.
+Neural embeddings however seem to implicitly capture only relevant features \cite{Mikolov2013},
+therefore no dimensionality reduction is necessary, if neural embeddings are used.
 
 %%%%%%%%%%%
 % Problem statement 

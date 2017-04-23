@@ -205,36 +205,28 @@ where $N$ is the number of $(\vec{x}, \vec{y})$ subclass-superclass pairs in the
 
 \fullcite{Fu2014} proposes an improvement to the linear projection.
 As shown in Figure~\ref{fig:2d offsets}, the subclass offsets appear in clusters,
-therefore it is intuitive to assume that training a matrix $T_k \in \mathbb{R}^{d \times d}$ for each cluster $k$
+therefore it is intuitive to assume that training a matrix $T_k \in \mathbb{R}^{d \times d}$ for different clusters $k$
 increases the accuracy of the method \cite{Fu2014}.
-
-\fullcite{Fu2014} defines the piecewise linear projection training objective, as follows:
+However, the approach by \fullcite{Fu2014} is not applicable for the given problem.
+In \citeauthor{Fu2014}'s stated problem, a an unknown class can have zero, one, or multiple superclasses, but in the thesis' problem an unknown class is always assigned
+one superclass.
+Additionally, the input for the thesis' classification is a single unknown class, therefore it cannot be decided in which subclass-of offset cluster the unknown class belongs.
+Instead of using subclass-of clusters to train the piecewise projections, the subclass-superclass pairs $(\vec{x}, \vec{y})$ are clustered by their input vector $\vec{x}$.
+This leads to the following training objective for piecewise linear projections \cite{Fu2014}:
 \begin{align}
 &T_k^* = \argmin_{T_k} \frac{1}{N_k} \sum_{(\vec{x}, \vec{y})\in C_k} \norm{T_k \vec{x} - \vec{y}}
 \end{align}
-where $N_k \in \mathbb{N}$ is the amount of word pairs in the $k^\mathit{th}$ cluster $C_k = \{ (\vec{x_i}, \vec{y_i}) | \vec{y_i} - \vec{x_i} \textit{ in cluster } k, i \in [1, N] \}$ \cite{Fu2014}.
+where $N_k \in \mathbb{N}$ is the amount of word pairs in the $k^\mathit{th}$ cluster $C_k = \{ (\vec{x_i}, \vec{y_i}) |  \vec{x_i} \textit{ in cluster } k, i \in [1, N] \}$ \cite{Fu2014}.
 Both training objectives describe multivariate linear regression tasks.
 \fullcite{Fu2014} uses stochastic gradient descent (SGD) to solve the objective.
 SciPy's SGD regressor \cite{Jones2001} is used to train the linear projection matrices.
 
-In \fullcite{Fu2014}'s work, the classification allows a given unknown class to have $0$, $1$ or multiple superclasses.
-In the thesis' case, an unknown class should always be assigned $1$ superclass.
-Therefore the identification of subclass-of relations implemented by \fullcite{Fu2014} cannot be applied
-in the thesis' use case. The reasons are further discussed in Section~\ref{section:ol nn}.
-Because linear projection is piecewise linear projection with $1$ cluster,
-the classification approach is only explained for piecewise linear projection.
-Because only $\vec{u}$ is given the corresponding cluster of $\vec{u}$ is not known.
-Therefore the classification needs to identify the appropriate cluster $k^* \in [1, K]$ for $\vec{u}$,
-where $K \in \mathbb{N}$ is the total number of clusters.
-The correct cluster is identified by finding the offset of projection and unknown $T^*_k$ and $\vec{u}$ for each cluster $k \in [1,K]$,
-which has the closest distance to its corresponding cluster center $c_k \in \mathbb{R}^d$:
+The projection for a given unknown $\vec{u}$ using piecewise linear projection can then be computed as follows:
 \begin{align}
-&k^* = \argmin_{k \in K} \delta_2(T_k^* \vec{u} - \vec{u}, \vec{c_k})
+&\vec{p} = T_k^* \begin{bmatrix}\vec{u} \\ 1 \end{bmatrix}
 \end{align}
-where $c_k \in \mathbb{R}^d$ is the center of cluster $k \in [1, K]$.
-Consequently, the chosen projection for $\vec{u}$ is $\vec{p} = T^*_{k^*}$.
-The closest superclass to this projection $\vec{p}$ is then chosen as superclass of $\vec{u}$
-using euclidean distance.
+where $\vec{u}$ in cluster $k$.
+The appropiate superclass is subsequently the closest class embedding to the computed projection.
 
 The thesis' evaluation will show whether linear projection is superior to the distance-based kNN in the given task,
 and to what degree it benefits from word embeddings using graph walk sentences instead of triple sentences.
