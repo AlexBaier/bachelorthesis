@@ -1,8 +1,8 @@
 import json
 import logging
+from typing import Dict, List
 
 import numpy as np
-from typing import Dict, List
 
 from evaluation.data_sample import MultiLabelSample
 from evaluation.statistics import get_accuracy, get_true_positive_count, get_valid_test_input_count
@@ -23,9 +23,10 @@ def main():
     test_data_path = paths_config['test data']
     evaluation_output = paths_config['evaluation']
 
-    algorithms = ['ts+distknn(k=5)', 'ts+distknn(k=10)', 'ts+distknn(k=15)', 'ts+distknn(k=20)', 'ts+linproj',
-                  'ts+pwlinproj(c=25)', 'ts+pwlinproj(c=50)', 'gw+distknn(k=5)', 'gw+distknn(k=10)', 'gw+distknn(k=15)',
-                  'gw+distknn(k=20)', 'gw+linproj']
+    algorithms = ['ts+distknn(k=5)', 'ts+distknn(k=10)', 'ts+distknn(k=15)', 'ts+distknn(k=20)',
+                  'ts+linproj', 'ts+pwlinproj(c=25)', 'ts+pwlinproj(c=50)',
+                  'gw+distknn(k=5)', 'gw+distknn(k=10)', 'gw+distknn(k=15)', 'gw+distknn(k=20)',
+                  'gw+linproj', 'gw+pwlinproj(c=25)', 'gw+pwlinproj(c=50)']
     round_to = 5
 
     golds = load_test_data(test_data_path)  # type: List[MultiLabelSample]
