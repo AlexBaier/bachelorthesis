@@ -32,7 +32,7 @@ The implementation of SGNS in the gensim library by \fullcite{Rehurek2010} is us
 Two additional components can be identified for the hybrid classification algorithm using SGNS.
 The data flow and IO of the components is visualized in Figure~\ref{fig:algorithm data flow}.
 
-\begin{figure}[]
+\begin{figure}
 \centering
 \includegraphics[width=\textwidth]{images/algorithm/hybrid_algorithm_components.pdf}
 \caption{Data flow between components}
@@ -68,11 +68,21 @@ Statements in Wikidata can be represented as triples of $(\mathit{source}, \math
 where $\mathit{source}$ is a Wikidata item ID, $\mathit{property}$ is a Wikidata property ID, and $\mathit{target}$ is either a Wikidata item ID or a literal.
 These triples represents simple 3-word sentences, which are sufficient as training input for Word2Vec.
 Appereances of literals are removed from the generated sentences to reduce the amount of noise in the data.
-In comparison to natural text, the triple sentence contain a very low amount of noise, which may improve the quality of embeddings in comparison to using for example
-Wikipedia as data set.
+In comparison to natural text, the triple sentence contain a very low amount of noise, which may improve the quality of embeddings in comparison to using for example Wikipedia as data set.
+
+Figure~\ref{fig:triple sentences} shows an example mapping of Wikidata to triple sentences.
+Edges between entities, e.g. $(Q42, P31, Q5)$, are expressed as triple sentences, e.g. ''Q$42$ P$31$ Q$5$'',
+while edges between an entity and a literal, e.g. $(Q42, P1559, \textit{''Douglas Adams''})$, ignore the literal
+and are therefore double sentences, e.g. ''Q$42$ P$1559$''.
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.8\textwidth]{images/algorithm/triple_sentences.pdf}
+\caption{Generation of triple sentences from Wikidata}
+\label{fig:triple sentences}
+\end{figure}
 
 \subsubsection{Graph walk sentences}
-A graph walk, developed by \fullcite{Ristoski2016} and explained in Section~\ref{section:rdf2vec}
+A graph walk, developed by \fullcite{Ristoski2016} and explained in Section~\ref{section:graph embeddings},
 can be used for generating longer sentences instead of triple sentences. 
 The longer sequences are able to better capture contextual information than triples.
 This is achieved by creating walks of a depth $d$, starting from each class.
@@ -85,8 +95,7 @@ The quality of word embeddings in regards to classes is a major concern, while t
 of classification. The proposed measure will ensure that each class occurs at least once in the graph walk sequences and
 the frequency of classes in the generated set will be higher than by random sampling from all items.
 
-The set of random walk sequences will be combined with the set of triple sentences, which are used in the baseline, to constitute a new training data set
-for the SGNS.
+The set of random walk sequences will be combined with the set of triple sentences, which are used in the baseline, to constitute a new training data set for the SGNS.
 
 The following parameters are used for the graph walk :
 \begin{itemize}
