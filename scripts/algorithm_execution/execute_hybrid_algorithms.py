@@ -19,23 +19,26 @@ def main():
     col_sep = ','
     row_sep = '\n'
 
-    combined_algorithms = ['ts+pwlinproj(c=50)', 'ts+distknn(k=20)']
+    algorithms = ['ts+distknn(k=5)', 'ts+distknn(k=10)', 'ts+distknn(k=15)', 'ts+distknn(k=20)',
+                  'ts+linproj', 'ts+pwlinproj(c=25)', 'ts+pwlinproj(c=50)',
+                  'gw+distknn(k=5)', 'gw+distknn(k=10)', 'gw+distknn(k=15)', 'gw+distknn(k=20)',
+                  'gw+linproj', 'gw+pwlinproj(c=25)', 'gw+pwlinproj(c=50)']
 
     results = execute_combined_algorithms(
-        combined_algorithms=combined_algorithms,
+        combined_algorithms=algorithms,
         config_path=config_path,
         training_data_path=training_data_path,
         test_data_path=test_data_path,
         workers=3
     )
 
-    for combined_algorithm in combined_algorithms:
-        computed_output_path = output_path.format(combined_algorithm)
+    for algorithm in algorithms:
+        computed_output_path = output_path.format(algorithm)
         with open(computed_output_path, mode='w') as f:
-            for test_input, output in results[combined_algorithm]:
+            for test_input, output in results[algorithm]:
                 f.write('{}{}{}{}'.format(test_input, col_sep, output, row_sep))
         logging.log(level=logging.INFO,
-                    msg='stored results for {} in {}'.format(combined_algorithm, computed_output_path))
+                    msg='stored results for {} in {}'.format(algorithm, computed_output_path))
 
 if __name__ == '__main__':
     main()
