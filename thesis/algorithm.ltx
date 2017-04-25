@@ -96,7 +96,6 @@ of classification. The proposed measure will ensure that each class occurs at le
 the frequency of classes in the generated set will be higher than by random sampling from all items.
 
 The set of random walk sequences will be combined with the set of triple sentences, which are used in the baseline, to constitute a new training data set for the SGNS.
-
 The following parameters are used for the graph walk :
 \begin{itemize}
 \item Depth of walks: $4$
@@ -105,6 +104,25 @@ The following parameters are used for the graph walk :
 \fullcite{Ristoski2016} applies $200$ maximum walks per vertice for the Wikidata dataset. 
 Because of time and hardware constraints only $10$ walks per vertice are computed,
 which should allow a "good" coverage of classes in the generated sequences.
+
+Figure~\ref{fig:graph walk sentences} shows an excerpt of the Wikidata graph. $2$ random walks of depth $4$ are generated beginning at the node \textit{Q42}.
+The walks by the Arabic and Roman numerals. The walk indicated by Arabic numerals has a length of $3$ and ends at the node \textit{Q223557}.
+If no further successors can be found from a given node, the walk ends prematurely.
+The walks indicated by roman numerals has a length of $4$ and ends at node \textit{Q215627}.
+The Wikidata graph contains cycles, as is shown between nodes \textit{Q5} and \textit{Q8205328}. The random walks can therefore also display cycles
+and therefore visit nodes multiple times.
+The output of graph walk sentences with $2$ maximum walks and depth $4$ with source node \textit{Q42} (based on Figure~\ref{fig:graph walk sentences} is the following:
+\begin{itemize}
+\item "Q42 P31 Q5 P1542 Q8205328 P279 Q223557" ($1, 2, 3, 4$)
+\item ""Q42 P31 Q5 P1542 Q8205328 P170 Q5 P279 Q215627" (\textit{\rom{1}, \rom{2}, \rom{3}, \rom{4}, \rom{5}})
+\end{itemize}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.8\textwidth]{images/algorithm/graph_walk_sentences.pdf}
+\caption{Two random graph walks in Wikidata with depth $4$.}
+\label{fig:graph walk sentences}
+\end{figure}
 
 \subsection{Classification}
 
@@ -117,7 +135,7 @@ The kNN implementation provided by the scikit-learn library \cite{scikit-learn} 
 
 \subsubsection{Vector offset}\label{section:vector offset}
 
-\begin{figure}[H]
+\begin{figure}
 \begin{mdframed}
 \centering
 \includegraphics[width=\textwidth]{images/algorithm/2d_subclass_offsets.png}
@@ -159,9 +177,22 @@ The clusters $1$, $7$ and $13$, which attribute to $71.5\%$ of all offsets conta
 which is most likely the case because $15$ clusters are not sufficient to separate all different types of subclass-of relations.
 Therefore algorithms like piecewise linear projection \cite{Fu2014}, which exploit the similarity of specific types of subclass-of relations,
 need to use more clusters $K$ . 
-The other clusters show very specific types of offsets. Following is a list of clusters with their percentage of all offsets, their topic and example subclass-superclass pair:
+The other clusters show very specific types of offsets.
+Table~\ref{table:offset cluster} shows the list of $15$ clusters with their percentage of all offsets, their topic and a subclass-superclass pair in the cluster.
 
-\begin{figure}[H]
+Clusters, which describe similar topics are close together, e.g. clusters $2$ and $10$ are related to proteins, clusters $6$, $9$ and $11$ are related to vehicles.
+An error in filtering for relevant classes occurred (Section~\ref{section:relevant classes}), since two clusters in the set are related to proteins, which is $11.9\%$
+of all relevant subclass-superclass relations.
+Because the percentage of protein-related classes is relatively low, further filtering of the relevant dataset is not pursued.
+It can be seen, that the clusters $2$, $4$ and $10$ have very different orientations in respect to the origin $(0,0)$ than the other clusters.
+Therefore directly using vector offsets would not be applicable, as offsets can not represent the complex subclass-of relation.
+\fullcite{Fu2014} reached a similar conclusion and proposes the use of linear projections as means to represent the subclass-of relation.
+Additionally, it can be concluded that $15$ clusters is too low for usage in piecewise linear projection, since $3$ clusters, representing $71.5\%$ of all offsets, exist,
+which do not have definite topics. Therefore cluster sizes $k$ of at least $30$ should be considered as parameter for piecewise linear projection.
+In the following section, the approach by \citeauthor{Fu2014}, which is described in Section~\ref{section:ol nn},
+is adjusted for usage in the hybrid algorithm.
+
+\begin{table}
 \begin{tabularx}{\textwidth}{l | l | l | X}
 $k$ & perc. & topic & example \\
 \hline
@@ -178,19 +209,9 @@ $11$ & $0.4\%$ & military aircrafts                                        & \te
 $12$ & $1\%$  & diseases                                                      & \textit{cervical squamotransitional carcinoma} $\subclassof{}$ \textit{disease} \\
 $14$ & $0.5\%$ & ambassadors                                            & \textit{Ambassador of the Republic of China to the United States} $\subclassof{}$ \textit{ambassador}
 \end{tabularx}
-\end{figure}
-
-Clusters, which describe similar topics are close together, e.g. clusters $2$ and $10$ are related to proteins, clusters $6$, $9$ and $11$ are related to vehicles.
-An error in filtering for relevant classes occurred (Section~\ref{section:relevant classes}), since two clusters in the set are related to proteins, which is $11.9\%$
-of all relevant subclass-superclass relations.
-Because the percentage of protein-related classes is relatively low, further filtering of the relevant dataset is not pursued.
-It can be seen, that the clusters $2$, $4$ and $10$ have very different orientations in respect to the origin $(0,0)$ than the other clusters.
-Therefore directly using vector offsets would not be applicable, as offsets can not represent the complex subclass-of relation.
-\fullcite{Fu2014} reached a similar conclusion and proposes the use of linear projections as means to represent the subclass-of relation.
-Additionally, it can be concluded that $15$ clusters is too low for usage in piecewise linear projection, since $3$ clusters, representing $71.5\%$ of all offsets, exist,
-which do not have definite topics. Therefore cluster sizes $k$ of at least $30$ should be considered as parameter for piecewise linear projection.
-In the following section, the approach by \citeauthor{Fu2014}, which is described in Section~\ref{section:ol nn},
-is adjusted for usage in the hybrid algorithm.
+\caption{Analysis of $15$ subclass-of clusters, which are plotted in Figure~\ref{fig:2d offsets}}
+\label{table:offset cluster}
+\end{table}
 
 \subsubsection{Linear projection}\label{section:linear projection}
 Following the idea of using vector offsets to find the correct superclass $\vec{p} \in \mathbb{R}^d$ 
@@ -230,7 +251,7 @@ Both training objectives describe multivariate linear regression tasks.
 \fullcite{Fu2014} uses stochastic gradient descent (SGD) to solve the objective.
 SciPy's SGD regressor \cite{Jones2001} is used to train the linear projection matrices.
 
-The projection for a given unknown $\vec{u}$ using piecewise linear projection can then be computed as follows:
+The projection for a given unknown $\vec{u}$ using piecewise linear projection can be computed as follows:
 \begin{align}
 &\vec{p} = T_k^* \begin{bmatrix}\vec{u} \\ 1 \end{bmatrix}
 \end{align}
