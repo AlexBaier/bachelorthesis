@@ -109,6 +109,16 @@ Following, the set of relevant classes, which are of interest to human editors, 
 
 
 \subsection{Relevant classes}\label{section:relevant classes}
+% total : 195124
+% labeled: 171549
+% enwiki: 101538
+% pavg: 4.82
+% savg: 7.02
+% iavg: 99.5
+% pmed: 4
+% smed: 0
+% imed: 0
+
 Following the observations in the previous section, the set of relevant classes was analyzed.
 A class is considered relevant, if it does not have an irrelevant property.
 The properties considered irrelevant identify classes representing genes and proteins.
@@ -130,26 +140,29 @@ The following properties are irrelevant:
 \item \textit{HGNC gene symbol (P353)}
 \item \textit{HomoloGene ID (P593)}
 \item \textit{Gene Ontology ID (P686)}
+\item \textit{InterPro ID (P2926)}
 \end{itemize}
 \end{multicols}
-These properties were handpicked based on the property frequency in Figure~\ref{fig:all property frequency}.
+These properties were handpicked mostly based on the property frequency in Figure~\ref{fig:all property frequency}.
 
-A total of $224,873$ classes are relevant classes, which $\approx 17.3\%$ of all classes.
-Of all relevant classes $89.5\%$ have an English label, which is almost $10\%$ percent less than the ratio of all classes.
+A total of $195,124$ classes are relevant classes, which $\approx 15.01\%$ of all classes.
+Of all relevant classes $87.92\%$ have an English label, which is $\approx 10\%$ percent less than the ratio of all classes.
 The distribution of instances and subclasses is similar to the set of all classes (Figures~\ref{fig:relevant instance count} and~\ref{fig:relevant subclass count}).
-The percentage of classes with $0$ instances is about $15\%$ lower and the percentage of classes with $0$ subclasses is $20\%$ lower.
-Accordingly the instance average increases from $\approx 15$ to $\approx 86.34$, and the subclass average increases from $\approx 1.3$ to $\approx 6.5$.
+Both the percentage of classes with $0$ instances, as well as the classes with $0$ subclasses, are about $15\%$ lower than all classes. 
+Accordingly the instance average increases from $\approx 15$ to $\approx 99.5$, and the subclass average increases from $\approx 1.3$ to $\approx 7.02$.
 The median remains unchanged at $0$ for both instances and subclasses.
 Comparing the distribution of properties of all classes (Figure~\ref{fig:all property count}) to relevant classes (Figure~\ref{fig:relevant property count}) shows a shift to the left,
 which implies a decrease of properties per class in the set of relevant classes.
-The average decreased from $\approx 6.65$ to $4.49$ and the median decreased from $7$ to $3$.
+The average decreased from $\approx 6.65$ to $4.82$ and the median decreased from $7$ to $4$.
 Genes have simultaneously occurring properties, e.g. \textit{genomic end (P645)}, \textit{genomic start (P644)}, \textit{strand orientation (P2548)}, and \textit{Entrez Gene ID (P351)},
 which results in a high percentage of classes having a similar number of properties, which is $7$ for the set of all classes.
 Removing these classes consequently lowers the property median.
 The property frequency (see Figure~\ref{fig:relevant property frequency}) shows a range of different properties,
 which are not concerned with the same subject, as it was the case for the set of all classes.
-The analysis does not show a bias to a certain topic for the set of relevant classes.
-Therefore the developed algorithm will be developed and evaluated in regards to relevant classes rather than all classes.
+The property frequency shows that classes concerned with countries (\textit{country (P17)}) and sports (\textit{sport (P641)}) are relatively common.
+But even the most common topic related properties occur with a frequency of less than $30\%$, therefore it is concluded that the data is not biased to a certain topic,
+as it was for the set of all classes.
+As a result, the hybrid algorithm will be developed and evaluated in regards to relevant classes rather than all classes.
 \newpage
 \begin{figure}[H]
 \centering
