@@ -39,18 +39,19 @@
   "distance-knn (k=20)": {
     "neighbors": 20
   },
-  "linear projection": {
+  "linear projection (c=1)": {
+    "clusters": 1,
     "sgd iterations": 10
   },
-  "piecewise linear projection (c=10)": {
+  "linear projection (c=10)": {
     "clusters": 10,
     "sgd iterations": 10
   },
-  "piecewise linear projection (c=25)": {
+  "linear projection (c=25)": {
     "clusters": 25,
     "sgd iterations": 10
   },
-  "piecewise linear projection (c=50)": {
+  "linear projection (c=50)": {
     "clusters": 50,
     "sgd iterations": 10
   },
@@ -58,92 +59,77 @@
     "ts+distknn(k=5)": {
       "sequences": "triple sentences",
       "sgns": "triple sentence sgns",
-      "classification": "distance-knn (k=5)",
-      "training samples": 198502
+      "classification": "distance-knn (k=5)"
     },
     "ts+distknn(k=10)": {
       "sequences": "triple sentences",
       "sgns": "triple sentence sgns",
-      "classification": "distance-knn (k=10)",
-      "training samples": 198502
+      "classification": "distance-knn (k=10)"
     },
     "ts+distknn(k=15)": {
       "sequences": "triple sentences",
       "sgns": "triple sentence sgns",
-      "classification": "distance-knn (k=15)",
-      "training samples": 198502
+      "classification": "distance-knn (k=15)"
     },
     "ts+distknn(k=20)": {
       "sequences": "triple sentences",
       "sgns": "triple sentence sgns",
-      "classification": "distance-knn (k=20)",
-      "training samples": 198502
+      "classification": "distance-knn (k=20)"
     },
-    "ts+linproj": {
+    "ts+linproj(c=1)": {
       "sequences": "triple sentences",
       "sgns": "triple sentence sgns",
-      "classification": "linear projection",
-      "training samples": 198502
+      "classification": "linear projection (c=1)"
     },
-    "ts+pwlinproj(c=10)": {
+    "ts+linproj(c=10)": {
       "sequences": "triple sentences",
       "sgns": "triple sentence sgns",
-      "classification": "piecewise linear projection (c=10)",
-      "training samples": 198502
+      "classification": "linear projection (c=10)"
     },
-    "ts+pwlinproj(c=25)": {
+    "ts+linproj(c=25)": {
       "sequences": "triple sentences",
       "sgns": "triple sentence sgns",
-      "classification": "piecewise linear projection (c=25)",
-      "training samples": 198502
+      "classification": "linear projection (c=25)"
     },
-    "ts+pwlinproj(c=50)": {
+    "ts+linproj(c=50)": {
       "sequences": "triple sentences",
       "sgns": "triple sentence sgns",
-      "classification": "piecewise linear projection (c=50)",
-      "training samples": 198502
+      "classification": "linear projection (c=50)"
     },
     "gw+distknn(k=5)": {
       "sequences": "graph walk sentences",
       "sgns": "graph walk sentence sgns",
-      "classification": "distance-knn (k=5)",
-      "training samples": 198502
+      "classification": "distance-knn (k=5)"
     },
     "gw+distknn(k=10)": {
       "sequences": "graph walk sentences",
       "sgns": "graph walk sentence sgns",
-      "classification": "distance-knn (k=10)",
-      "training samples": 198502
+      "classification": "distance-knn (k=10)"
     },
     "gw+distknn(k=15)": {
       "sequences": "graph walk sentences",
       "sgns": "graph walk sentence sgns",
-      "classification": "distance-knn (k=15)",
-      "training samples": 198502
+      "classification": "distance-knn (k=15)"
     },
     "gw+distknn(k=20)": {
       "sequences": "graph walk sentences",
       "sgns": "graph walk sentence sgns",
-      "classification": "distance-knn (k=20)",
-      "training samples": 198502
+      "classification": "distance-knn (k=20)"
     },
-    "gw+linproj" : {
+    "gw+linproj(c=1)" : {
       "sequences": "graph walk sentences",
       "sgns": "graph walk sentence sgns",
-      "classification": "linear projection",
-      "training samples": 198502
+      "classification": "linear projection (c=1)"
     },
-    "gw+pwlinproj(c=25)" : {
+    "gw+linproj(c=25)" : {
       "sequences": "graph walk sentences",
       "sgns": "graph walk sentence sgns",
-      "classification": "piecewise linear projection (c=25)",
-      "training samples": 198502
+      "classification": "linear projection (c=25)"
     },
-    "gw+pwlinproj(c=50)" : {
+    "gw+linproj(c=50)" : {
       "sequences": "graph walk sentences",
       "sgns": "graph walk sentence sgns",
-      "classification": "piecewise linear projection (c=50)",
-      "training samples": 198502
+      "classification": "linear projection (c=50)"
     }
   }
 }

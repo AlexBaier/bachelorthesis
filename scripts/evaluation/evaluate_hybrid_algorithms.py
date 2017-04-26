@@ -42,14 +42,12 @@ def main():
             overlaps[algorithm] = list(map(float, f.readline().strip().split(',')))
         logging.log(level=logging.INFO, msg='loaded taxonomic overlaps of {}'.format(algorithm))
 
-    training_samples = dict()  # type: Dict[str, int]
     test_samples = dict()  # type: Dict[str, int]
     tp_counts = dict()  # type: Dict[str, int]
     accuracies = dict()  # type: Dict[str, float]
     avg_overlaps = dict()  # type: Dict[str, float]
 
     for algorithm in algorithms:
-        training_samples[algorithm] = algorithm_config['combinations'][algorithm]['training samples']
         test_samples[algorithm] = get_valid_test_input_count(predictions[algorithm], golds)
 
         tp_counts[algorithm] = get_true_positive_count(predictions[algorithm], golds)
@@ -71,7 +69,6 @@ def main():
         for algorithm in algorithms:
             row = [
                 algorithm,
-                str(training_samples[algorithm]),
                 str(test_samples[algorithm]),
                 str(tp_counts[algorithm]),
                 str(accuracies[algorithm]),

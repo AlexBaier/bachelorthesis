@@ -1,8 +1,8 @@
 import logging
 import re
+from typing import Dict, List, Tuple
 
 import numpy as np
-from typing import Dict, List, Tuple
 
 import algorithm.classification as alg
 from algorithm.utils import map_to_knn_training_input, map_to_proj_training_input
@@ -10,7 +10,6 @@ from evaluation.data_sample import MultiLabelSample
 from evaluation.utils import load_config, load_embeddings_and_labels, load_test_inputs, load_training_data
 
 __DIST_KNN_REGEX = re.compile(r'distance-knn \(k=[1-9][0-9]*\)')
-__LIN_PROJ_REGEX = re.compile(r'linear projection')
 __PW_LIN_PROJ_REGEX = re.compile(r'piecewise linear projection \(c=[1-9][0-9]*\)')
 
 NO_INPUT_EMBEDDING = 'NO_INPUT_EMBEDDING'
@@ -33,11 +32,6 @@ def execute_combined_algorithms(combined_algorithms: List[str], config_path: str
             components = config['combinations'][hybrid_algorithm]
         except KeyError as e:
             raise UnknownAlgorithmError(str(e))
-
-        try:
-            training_samples_count = components['training samples']
-        except KeyError:
-            raise MissingSampleCountError(hybrid_algorithm)
 
         try:
             sgns = components['sgns']
@@ -66,7 +60,7 @@ def execute_combined_algorithms(combined_algorithms: List[str], config_path: str
                                         config=classification_config,
                                         embeddings=embeddings,
                                         class_ids=class_ids,
-                                        training_samples=training_samples[:training_samples_count],
+                                        training_samples=training_samples,
                                         test_inputs=test_inputs,
                                         workers=workers
                                         )
@@ -90,7 +84,7 @@ def execute_classification(algorithm: str, config: dict,
 
     if __DIST_KNN_REGEX.fullmatch(algorithm):
         mapping = map_to_knn_training_input
-    elif __LIN_PROJ_REGEX.fullmatch(algorithm) or __PW_LIN_PROJ_REGEX.fullmatch(algorithm):
+    elif __PW_LIN_PROJ_REGEX.fullmatch(algorithm):
         mapping = map_to_proj_training_input
     else:
         raise NotImplementedClassifierError(algorithm)
@@ -104,16 +98,6 @@ def execute_classification(algorithm: str, config: dict,
         except KeyError as e:
             raise MissingParameterError(str(e), algorithm)
         classifier = alg.DistanceKNNClassifier(neighbors=neighbors, n_jobs=workers)
-    elif __LIN_PROJ_REGEX.fullmatch(algorithm):
-        try:
-            sgd_iter = config['sgd iterations']
-        except KeyError as e:
-            raise MissingParameterError(str(e), algorithm)
-        classifier = alg.LinearProjectionClassifier(embedding_size=embeddings.shape[1],
-                                                    embeddings=embeddings,
-                                                    labels=class_ids,
-                                                    sgd_iter=sgd_iter,
-                                                    n_jobs=workers)
     elif __PW_LIN_PROJ_REGEX.fullmatch(algorithm):
         try:
             clusters = config['clusters']
@@ -123,8 +107,6 @@ def execute_classification(algorithm: str, config: dict,
 
         classifier = alg.PiecewiseLinearProjectionClassifier(embedding_size=embeddings.shape[1],
                                                              clusters=clusters,
-                                                             embeddings=embeddings,
-                                                             labels=class_ids,
                                                              sgd_iter=sgd_iter,
                                                              n_jobs=workers)
     logging.log(level=logging.INFO, msg='initialized {} classifier'.format(algorithm))
@@ -160,11 +142,6 @@ class UnknownAlgorithmError(LookupError):
     def __init__(self, algorithm):
         self.strerror = 'hybrid algorithm with name {} not found in config'.format(algorithm)
         self.args = {self.strerror}
-
-
-class MissingSampleCountError(LookupError):
-    def __init__(self, algorithm):
-        self.strerror = 'not "training samples" defined for algorithm "{}"'.format(algorithm)
 
 
 class MissingComponentError(LookupError):

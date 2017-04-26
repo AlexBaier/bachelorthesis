@@ -56,75 +56,17 @@ class DistanceKNNClassifier(KNNClassifier):
             return self.__classifier.predict(unknowns).tolist()
 
 
-class LinearProjectionClassifier(ProjectionClassifier):
-
-    def __init__(self, embedding_size: int, embeddings: np.array, labels: List[str], sgd_iter: int=5, n_jobs: int=-1):
-        self.__embedding_size = embedding_size  # type: int
-        self.__embeddings = embeddings  # type: np.array
-        self.__labels = labels  # type: List[str]
-        self.__nearest_neighbors = NearestNeighbors(
-            metric='minkowski',
-            n_neighbors=1,
-            p=2,
-            n_jobs=n_jobs
-        )
-        self.__sgd_iter = sgd_iter
-        self.__sgd_regressors = [SGDRegressor() for _ in range(self.__embedding_size)]
-
-    def train(self, training_data: List[Tuple[np.array, np.array]], batch_size: int=1000):
-        self.__nearest_neighbors.fit(self.__embeddings)
-
-        n = len(training_data)
-
-        x, y = list(map(np.array, zip(*training_data)))
-        del training_data
-
-        x = np.append(x, np.ones((n, 1)), axis=1)
-        y = np.append(y, np.ones((n, 1)), axis=1)
-
-        batches = [batch_size for _ in range(int(n / batch_size) + 1)]
-        batches[-1] = n % batch_size
-
-        for i in range(self.__sgd_iter):
-            p = np.random.permutation(n)
-            for k in range(len(batches)):
-                begin = sum(batches[:k])
-                end = sum(batches[:k+1])
-                for target in range(self.__embedding_size):
-                    self.__sgd_regressors[target].partial_fit(x[p[begin:end]], y[p[begin:end]][:, target])
-                logging.log(level=logging.INFO,
-                            msg='iter={}/{},batch progress: {}/{}'.format(i+1, self.__sgd_iter, k+1, len(batches)))
-
-    def classify(self, unknowns: np.array)->List[str]:
-        unknowns = np.append(unknowns, np.ones((unknowns.shape[0], 1)), axis=1)
-
-        y = list()
-        for target in range(self.__embedding_size):
-            y.append(self.__sgd_regressors[target].predict(unknowns))
-        y = np.array(y).T
-        # calculate similarities between projections and all embeddings
-        # get indices of most similar embedding
-        _, indexes = self.__nearest_neighbors.kneighbors(y, return_distance=True)
-
-        labels = list()
-        for index in indexes:
-            labels.append(self.__labels[index[0]])
-
-        return labels
-
-
 class PiecewiseLinearProjectionClassifier(ProjectionClassifier):
 
-    def __init__(self, embedding_size: int, embeddings: np.array, labels: List[str], clusters: int, sgd_iter: int=5,
+    def __init__(self, embedding_size: int, clusters: int, sgd_iter: int=5,
                  n_jobs: int=-1):
         self.__clusters = clusters  # type: int
         self.__embedding_size = embedding_size  # type: int
-        self.__embeddings = embeddings
         # fit predict shape: (_, embedding_size)
         self.__kmeans = MiniBatchKMeans(n_clusters=clusters)  # type: MiniBatchKMeans
-        self.__labels = labels  # type: List[str]
+        self.__labels = None  # type: List[str]
         # nearest neighbors shape: (_, embedding_size)
-        self.__nearest_neighbors_embeddings = NearestNeighbors(
+        self.__nearest_neighbors_superclasses = NearestNeighbors(
             metric='minkowski',
             n_neighbors=1,
             p=2,
@@ -135,17 +77,25 @@ class PiecewiseLinearProjectionClassifier(ProjectionClassifier):
         self.__sgd_regressors = [[SGDRegressor(n_iter=self.__sgd_iter) for _ in range(self.__embedding_size)]
                                  for _ in range(self.__clusters)]
 
-    def train(self, training_data: List[Tuple[np.array, np.array]], batch_size: int=500):
-        n = len(training_data)
+    def train(self, training_data: Tuple[List[Tuple[np.array, np.array]], List[str]]):
+        """
+        Train the piecewise linear projection on subclass-superclass embeddings pairs.
+        :param training_data: (training_samples, superclass_labels). training_samples is a list of subclass-superclass
+            embeddings. superclass_labels are the corresponding labels (IDs) of the superclasses.
+        :return: PiecewiseLinearProjectionClassifier is trained as side-effect, nothing is returned.
+        """
+        training_samples, self.__labels = training_data
+
+        n = len(training_samples)
         print(n)
 
-        x, y = list(map(np.array, zip(*training_data)))
-        del training_data
+        x, y = list(map(np.array, zip(*training_samples)))
+        del training_samples
 
         mod_x = np.append(x, np.ones((n, 1)), axis=1)
 
         # fit nearest neighbors on word embeddings
-        self.__nearest_neighbors_embeddings.fit(self.__embeddings)
+        self.__nearest_neighbors_superclasses.fit(y)
         logging.log(level=logging.INFO, msg='finished fitting all-embeddings nearest neighbor')
 
         # compute clusters based on x (inputs)
@@ -181,7 +131,7 @@ class PiecewiseLinearProjectionClassifier(ProjectionClassifier):
                 projections[idx][target] = self.__sgd_regressors[cluster][target]\
                     .predict(mod_unknowns[idx].reshape(1, -1))
         # find closest class to each projection => superclass
-        _, indexes = self.__nearest_neighbors_embeddings.kneighbors(projections, return_distance=True)
+        _, indexes = self.__nearest_neighbors_superclasses.kneighbors(projections, return_distance=True)
         # retrieve the label of each superclass
         labels = list()
         for i in range(indexes.shape[0]):

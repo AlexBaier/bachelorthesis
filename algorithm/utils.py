@@ -1,7 +1,7 @@
 import logging
+from typing import Callable, List, Tuple
 
 import numpy as np
-from typing import Callable, List, Tuple
 
 from evaluation.data_sample import MultiLabelSample
 
@@ -28,8 +28,9 @@ def map_to_knn_training_input(training_samples: List[MultiLabelSample[str]], id2
 
 
 def map_to_proj_training_input(training_samples: List[MultiLabelSample[str]], id2embedding: Callable[[str], np.array])\
-        ->List[Tuple[np.array, np.array]]:
+        ->Tuple[List[Tuple[np.array, np.array]], List[str]]:
     training_data = list()
+    labels = list()
     valid_sample_count = 0
     for sample in training_samples:
         try:
@@ -41,9 +42,10 @@ def map_to_proj_training_input(training_samples: List[MultiLabelSample[str]], id
             try:
                 superclass = id2embedding(label)
                 training_data.append((obj, superclass))
+                labels.append(label)
             except KeyError as e:
                 logging.log(level=logging.DEBUG, msg='no embedding for {}'.format(e))
         valid_sample_count += 1
     logging.log(level=logging.INFO, msg='generated lin proj training samples: {}/{} samples used'
                 .format(len(training_samples), valid_sample_count))
-    return training_data
+    return training_data, labels
