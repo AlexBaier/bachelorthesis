@@ -87,7 +87,6 @@ class PiecewiseLinearProjectionClassifier(ProjectionClassifier):
         training_samples, self.__labels = training_data
 
         n = len(training_samples)
-        print(n)
 
         x, y = list(map(np.array, zip(*training_samples)))
         del training_samples

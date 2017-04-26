@@ -3,10 +3,10 @@ import logging
 import random
 import sqlite3
 import time
+from typing import Callable, Iterable, List, Set, Tuple
 
 import numpy as np
 import pathos.multiprocessing as mp
-from typing import Callable, Iterable, List, Set, Tuple
 
 
 class SequenceGen(object, metaclass=abc.ABCMeta):
@@ -139,7 +139,6 @@ class DbGraphWalkSentences(SequenceGen):
         return __get_sequences()
 
     def __get_walks(self, vertices: List[str])->List[List[str]]:
-        print('started...', len(vertices))
         random.seed()
         out_edge_cache = dict()
 
