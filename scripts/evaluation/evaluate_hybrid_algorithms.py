@@ -15,9 +15,6 @@ def main():
     with open('paths_config.json') as f:
         paths_config = json.load(f)
 
-    with open('algorithm_config.json') as f:
-        algorithm_config = json.load(f)
-
     predictions_path = paths_config['execution results']
     taxonomic_overlap_path = paths_config['local taxonomic overlaps']
     test_data_path = paths_config['test data']

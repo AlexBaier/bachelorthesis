@@ -10,7 +10,7 @@ from evaluation.data_sample import MultiLabelSample
 from evaluation.utils import load_config, load_embeddings_and_labels, load_test_inputs, load_training_data
 
 __DIST_KNN_REGEX = re.compile(r'distance-knn \(k=[1-9][0-9]*\)')
-__PW_LIN_PROJ_REGEX = re.compile(r'piecewise linear projection \(c=[1-9][0-9]*\)')
+__PW_LIN_PROJ_REGEX = re.compile(r'linear projection \(c=[1-9][0-9]*\)')
 
 NO_INPUT_EMBEDDING = 'NO_INPUT_EMBEDDING'
 

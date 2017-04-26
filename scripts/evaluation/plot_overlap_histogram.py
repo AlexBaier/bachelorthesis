@@ -2,6 +2,7 @@ import json
 import logging
 
 import matplotlib.pyplot as plt
+import numpy as np
 
 from evaluation.utils import algo2color
 
@@ -28,7 +29,7 @@ def main():
         plt.figure(1)
         plt.clf()
 
-        plt.hist(x=overlaps, bins=n_bins, label=algorithm, color=algo2color(algorithm), cumulative=True, normed=True)
+        plt.hist(x=overlaps / np.sum(overlaps), bins=n_bins, label=algorithm, color=algo2color(algorithm))
         plt.title('{}: cumulative local taxonomic overlap histogram'.format(algorithm))
         plt.xlabel('$P[t \leq T]$: local taxonomic overlap')
         plt.ylabel('percentage of predictions')
