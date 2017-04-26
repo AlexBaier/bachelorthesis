@@ -31,15 +31,17 @@ def main():
     plt.figure(1)
     plt.clf()
 
+    plt.ylim([0, 1])
     knn_accuracies = np.array([accuracies['ts+distknn(k={})'.format(k)] for k in k_neighbors])
     knn_overlaps = np.array([overlaps['ts+distknn(k={})'.format(k)] for k in k_neighbors])
     acc_rect = plt.bar(k_neighbors-0.2, knn_accuracies, width=0.4, color='#15b01a')
     over_rect = plt.bar(k_neighbors+0.2, knn_overlaps, width=0.4, color='#0343df')
     plt.xticks(k_neighbors)
-    plt.legend((acc_rect, over_rect), ('accuracy', 'taxonomic overlap'), loc=4)
+    plt.yticks(np.arange(0, 1.1, 0.1))
+    plt.legend((acc_rect, over_rect), ('accuracy', 'taxonomic overlap'))
+    plt.grid(True)
     plt.savefig(knn_plot_output)
     logging.log(level=logging.INFO, msg='stored knn evaluation plot to {}'.format(knn_plot_output))
-
 
 
 if __name__ == '__main__':
