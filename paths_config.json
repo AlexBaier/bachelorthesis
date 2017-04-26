@@ -50,6 +50,6 @@
   "evaluation": "evaluation/hybrid_evaluation-20161107.csv",
   "local taxonomic overlaps": "data/evaluation/local_tax_overlaps_{}-20161107.csv",
   "local taxonomic overlap histogram": "evaluation/plots/tax_overlap_hist_{}-20161107.png",
-  "knn evaluation plot": "evaluation/plots/knn_evaluation-20161107.png",
-  "linproj evaluation plot": "evaluation/plots/linproj_evaluation-20161107.png"
+  "ts+distknn evaluation plot": "evaluation/plots/knn_evaluation-20161107.png",
+  "ts+linproj evaluation plot": "evaluation/plots/linproj_evaluation-20161107.png"
 }

@@ -5,6 +5,26 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 
+def plot_accuracy_overlap_plot(title, xlabel, xticks, accuracies, overlaps, output_path):
+    width = np.max(xticks) / 10.0
+    offset = width / 2.0
+
+    plt.figure(1)
+    plt.clf()
+    plt.ylim([0, 1])
+    acc_rect = plt.bar(xticks-offset*2, accuracies, width=width, color='#15b01a')
+    over_rect = plt.bar(xticks, overlaps, width=width, color='#0343df')
+    plt.xticks(xticks)
+    plt.yticks(np.arange(0, 1.1, 0.1))
+    plt.legend((acc_rect, over_rect), ('accuracy', 'taxonomic overlap'))
+    plt.grid(True)
+    plt.xlabel(xlabel)
+    plt.ylabel('accuracy/taxonomic overlap')
+    plt.title(title)
+    plt.savefig(output_path)
+    logging.log(level=logging.INFO, msg='stored ts+distknn evaluation plot to {}'.format(output_path))
+
+
 def main():
     logging.basicConfig(format='%(asctime)s : %(levelname)s : %(message)s', level=logging.DEBUG)
 
@@ -15,8 +35,8 @@ def main():
         config = json.load(f)
 
     evaluation_path = config['evaluation']
-    knn_plot_output = config['knn evaluation plot']
-    linproj_plot_output = config['linproj evaluation plot']
+    ts_knn_plot_output = config['ts+distknn evaluation plot']
+    ts_linproj_plot_output = config['ts+linproj evaluation plot']
 
     accuracies = dict()
     overlaps = dict()
@@ -27,21 +47,23 @@ def main():
             overlaps[r[0]] = float(r[4])
     logging.log(level=logging.INFO, msg='loaded evaluation results')
 
-    # plot ts+distknn(k=?) accuracies and overlaps
-    plt.figure(1)
-    plt.clf()
+    plot_accuracy_overlap_plot(
+        'comparison of ts+distknn with different k',
+        'k neighbors',
+        k_neighbors,
+        np.array([accuracies['ts+distknn(k={})'.format(k)] for k in k_neighbors]),
+        np.array([overlaps['ts+distknn(k={})'.format(k)] for k in k_neighbors]),
+        ts_knn_plot_output
+    )
 
-    plt.ylim([0, 1])
-    knn_accuracies = np.array([accuracies['ts+distknn(k={})'.format(k)] for k in k_neighbors])
-    knn_overlaps = np.array([overlaps['ts+distknn(k={})'.format(k)] for k in k_neighbors])
-    acc_rect = plt.bar(k_neighbors-0.2, knn_accuracies, width=0.4, color='#15b01a')
-    over_rect = plt.bar(k_neighbors+0.2, knn_overlaps, width=0.4, color='#0343df')
-    plt.xticks(k_neighbors)
-    plt.yticks(np.arange(0, 1.1, 0.1))
-    plt.legend((acc_rect, over_rect), ('accuracy', 'taxonomic overlap'))
-    plt.grid(True)
-    plt.savefig(knn_plot_output)
-    logging.log(level=logging.INFO, msg='stored knn evaluation plot to {}'.format(knn_plot_output))
+    plot_accuracy_overlap_plot(
+        'comparison of ts+linproj with different c',
+        'c clusters',
+        c_clusters,
+        np.array([accuracies['ts+linproj(c={})'.format(c)] for c in c_clusters]),
+        np.array([overlaps['ts+linproj(c={})'.format(c)] for c in c_clusters]),
+        ts_linproj_plot_output
+    )
 
 
 if __name__ == '__main__':
