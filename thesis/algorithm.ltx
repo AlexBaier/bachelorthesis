@@ -141,7 +141,7 @@ The kNN implementation provided by the scikit-learn library \cite{scikit-learn} 
 \includegraphics[width=\textwidth]{images/algorithm/2d_subclass_offsets.png}
 \caption{Subclass-of offsets of $240,789$ subclass-superclass pairs.}
 \medskip
-$240,789$ subclass-superclass pairs were retrieved from the set of relevant classes (Section~\ref{section:relevant classes}).
+$204,158$ subclass-superclass pairs were retrieved from the set of relevant classes (Section~\ref{section:relevant classes}).
 For each pair, the offset $\vec{\textit{superclass}} - \vec{\textit{subclass}} \in \mathbb{R}^{300}$ was computed 
 using triple sentence word embeddings (Section~\ref{section:triple sentences}).
 The offsets were clustered into $15$ clusters using KMeans clustering.
@@ -167,28 +167,27 @@ This is however only possible, if the subclass-of offset is similar for all exis
 For the use case of Wikidata, it can be shown that the offsets do not fulfill this criteria. 
 It can rather be seen that different clusters of similar subclass-of offsets exist. 
 Using the word embeddings created by SGNS trained on triple sentences,
-the subclass-of offsets for $240789$ subclass-superclass pairs were computed.
+the subclass-of offsets for $204,158$ subclass-superclass pairs were computed.
 The subclass-superclass pairs were extracted from the set of relevant classes (Section~\ref{section:relevant classes}).
+The offsets were clustered using KMeans with $K=15$ clusters.
 Using Principal Component Analysis (PCA), the 300-dimensional vectors were reduced to  2-dimensional vectors,
 which are shown in Figure~\ref{fig:2d offsets}.
+Table~\ref{table:offset cluster} shows the corresponding percentage of offsets in each cluster,
+as well as the type of offsets in the cluster.
 
-The subclass offsets with dimension $d=300$ were clustered into $K=15$ clusters using KMeans.
-The clusters $1$, $7$ and $13$, which attribute to $71.5\%$ of all offsets contain a variation subclass-of relation types,
+The clusters $1$ ($9.9\%$), $6$ ($23.27\%$)  and $13$ ($45.06\%$), 
+which attribute to $78.23\%$ of all offsets, contain a variation  of different subclass-of relation types,
 which is most likely the case because $15$ clusters are not sufficient to separate all different types of subclass-of relations.
-Therefore algorithms like piecewise linear projection \cite{Fu2014}, which exploit the similarity of specific types of subclass-of relations,
-need to use more clusters $K$ . 
+Therefore algorithms like piecewise linear projection \cite{Fu2014}, which exploit the similarity of specific types of subclass-of relations, need to use more clusters $K$ . 
 The other clusters show very specific types of offsets.
-Table~\ref{table:offset cluster} shows the list of $15$ clusters with their percentage of all offsets, their topic and a subclass-superclass pair in the cluster.
-
-Clusters, which describe similar topics are close together, e.g. clusters $2$ and $10$ are related to proteins, clusters $6$, $9$ and $11$ are related to vehicles.
-An error in filtering for relevant classes occurred (Section~\ref{section:relevant classes}), since two clusters in the set are related to proteins, which is $11.9\%$
-of all relevant subclass-superclass relations.
-Because the percentage of protein-related classes is relatively low, further filtering of the relevant dataset is not pursued.
-It can be seen, that the clusters $2$, $4$ and $10$ have very different orientations in respect to the origin $(0,0)$ than the other clusters.
+It can be seen in Figure~\ref{fig:2d offsets}, that the clusters $2$, $7$ and $10$ have very different orientations
+in respect to the origin $(0,0)$ than the other clusters.
 Therefore directly using vector offsets would not be applicable, as offsets can not represent the complex subclass-of relation.
+
 \fullcite{Fu2014} reached a similar conclusion and proposes the use of linear projections as means to represent the subclass-of relation.
-Additionally, it can be concluded that $15$ clusters is too low for usage in piecewise linear projection, since $3$ clusters, representing $71.5\%$ of all offsets, exist,
-which do not have definite topics. Therefore cluster sizes $k$ of at least $30$ should be considered as parameter for piecewise linear projection.
+Additionally, it can be concluded that $15$ clusters is too low for usage in piecewise linear projection, since $3$ clusters, representing $78.23\%$ of all offsets, exist,
+which do not have specific topics. 
+Therefore higher cluster sizes $K$ should be considered as parameter for piecewise linear projection.
 In the following section, the approach by \citeauthor{Fu2014}, which is described in Section~\ref{section:ol nn},
 is adjusted for usage in the hybrid algorithm.
 
@@ -196,18 +195,19 @@ is adjusted for usage in the hybrid algorithm.
 \begin{tabularx}{\textwidth}{l | l | l | X}
 $k$ & perc. & topic & example \\
 \hline
-$0$ & $1\%$    & wine (mostly Italian wines)                         & \textit{Greek wine} $\subclassof{}$ \textit{wine}, \textit{Alghero frizzante rosato} $\subclassof{}$ \textit{wine} \\
-$2$ & $8.3\%$ & protein families                                           & \textit{G kinase-anchoring protein 1} $\subclassof{}$ \textit{protein family} \\
-$3$ & $3.3\%$ & Spanish mayors (Alcalde)                           & \textit{mayor of Granollers} $\subclassof{}$ \textit{Alcalde} \\
-$4$ & $6.5\%$ & badminton championships                            & \textit{Jamaican International Badminton Championships} $\subclassof{}$ \textit{badminton championship} \\
-$5$ & $0.6\%$ & food                                                            & \textit{Sour cream doughnut} $\subclassof{}$ \textit{food} \\
-$6$ & $1.6\%$ & locomotives					& \textit{GWR 103 President} $\subclassof{}$ \textit{tender locomotive}, \textit{GE C31-8} $\subclassof{}$ \textit{diesel-electric locomotive} \\
-$8$ & $0.8\%$ & tennis tournaments 				& \textit{ECC Antwerp} $\subclassof{}$ \textit{tennis tournament} \\
-$9$ & $1.5\%$ & aircrafts						& \textit{Martin KF-1} $\subclassof{}$ \textit{aircraft} \\
-$10$ & $3.6\%$ & protein domains                                        & \textit{ISX02-like transposase domain} $\subclassof{}$ \textit{protein domain} \\
-$11$ & $0.4\%$ & military aircrafts                                        & \textit{Heinkel He 50} $\subclassof{}$ \textit{military aircraft} \\
-$12$ & $1\%$  & diseases                                                      & \textit{cervical squamotransitional carcinoma} $\subclassof{}$ \textit{disease} \\
-$14$ & $0.5\%$ & ambassadors                                            & \textit{Ambassador of the Republic of China to the United States} $\subclassof{}$ \textit{ambassador}
+$2$ & $0.42\%$ & cheeses & \textit{Rigotte de Sainte-Colombe} $\subclassof{}$  \textit{cow's-milk cheese} \\
+$3$ & $7.61\%$ & badminton tournaments & \textit{1987 Swiss Badminton Championships} $\subclassof{}$ \textit{badminton tournament} \\
+$4$ & $0.32\%$ & chemicals & \textit{Actinomycin} $\subclassof{}$ \textit{chemical compound} \\
+$5$ & $1.18\%$ & diseases & \textit{African swine fever} $\subclassof{}$ \textit{disease} \\
+$7$ & $3.16\%$ & locomotives, military aircrafts & \textit{GWR 103 President} $\subclassof{}$ \textit{tender locomotive} \textit{Heinkel He 50} $\subclassof{}$ \textit{military aircraft}  \\
+$8$ & $3.94\%$ & Alcalde (Spanish mayors) & \textit{mayor of Granollers} $\subclassof{}$ \textit{Alcalde} \\
+$9$ & $0.41\%$ & automobiles & \textit{Acura TLX} $\subclassof{}$ \textit{automobile} \\
+$10$ & $0.67\%$ & food & \textit{Sour cream doughnut} $\subclassof{}$ \textit{food} \\
+$11$ & $1.8\%$ & aircrafts & \textit{Bell XH-15} $\subclassof{}$ \textit{aircraft} \\
+$12$ & $1.22\%$ & wine (mostly Italian wines)  & \textit{Greek wine} $\subclassof{}$ \textit{wine}, 
+	\textit{Alghero frizzante rosato} $\subclassof{}$ \textit{wine} \\
+$14$ & $0.42\%$ & RNA & \textit{Small nucleolar RNA SNORD86} $\subclassof{}$  \textit{RNA} \\
+$15$ & $0.65\%$ & ambassadors & \textit{Ambassador of the Republic of China to the United States}
 \end{tabularx}
 \caption{Analysis of $15$ subclass-of clusters, which are plotted in Figure~\ref{fig:2d offsets}}
 \label{table:offset cluster}
