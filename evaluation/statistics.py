@@ -1,5 +1,6 @@
-import numpy as np
 from typing import Dict, List, Set, Tuple
+
+import numpy as np
 
 from evaluation.data_sample import MultiLabelSample
 from evaluation.execution import NO_INPUT_EMBEDDING
@@ -45,8 +46,8 @@ def get_local_taxonomic_overlap(computed: str, references: List[str], superclass
         reference_cotopy = get_semantic_one_directional_cotopy(reference, superclasses)
         reference_cotopies.append(reference_cotopy)
 
-    taxonomic_overlap = max(len(computed_cotopy.intersection(reference_cotopy)) /
-                            len(computed_cotopy.union(reference_cotopy)) for reference_cotopy in reference_cotopies)
+    taxonomic_overlap = max([len(computed_cotopy.intersection(reference_cotopy)) /
+                            len(computed_cotopy.union(reference_cotopy)) for reference_cotopy in reference_cotopies])
 
     return taxonomic_overlap
 
@@ -65,7 +66,6 @@ def get_semantic_one_directional_cotopy(node: str, successors: Dict[str, Set[str
         current = q.pop()
         trans_superclasses.add(current)
         q.update(successors.get(current, set()).difference(trans_superclasses))
-
     return trans_superclasses
 
 

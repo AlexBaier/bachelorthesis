@@ -10,9 +10,7 @@ def main():
     logging.basicConfig(format='%(asctime)s : %(levelname)s : %(message)s', level=logging.DEBUG)
 
     algorithms = ['ts+distknn(k=5)', 'ts+distknn(k=10)', 'ts+distknn(k=15)', 'ts+distknn(k=20)',
-                  'ts+linproj(c=1)', 'ts+linproj(c=25)', 'ts+linproj(c=50)',
-                  'gw+distknn(k=5)', 'gw+distknn(k=10)', 'gw+distknn(k=15)', 'gw+distknn(k=20)',
-                  'gw+linproj(c=1)', 'gw+linproj(c=25)', 'gw+linproj(c=50)']
+                  'ts+linproj(c=1)', 'ts+linproj(c=25)', 'ts+linproj(c=50)']
 
     with open('paths_config.json') as f:
         config = json.load(f)
@@ -29,7 +27,7 @@ def main():
     for algorithm in algorithms:
         with open(predictions_path.format(algorithm)) as f:
             predictions[algorithm] = dict((u, p) for u, p in filter(lambda s: s[1] != NO_INPUT_EMBEDDING,
-                                                         map(lambda l: l.strip().split(','), f)))
+                                                                    map(lambda l: l.strip().split(','), f)))
         logging.log(level=logging.INFO, msg='loaded predictions of {}'.format(algorithm))
 
     superclasses = dict()
