@@ -1,8 +1,8 @@
-algorithm,training_samples,test samples,TPs,accuracy,average taxonomic overlap
-ts+distknn(k=5),198502,8943,1912,0.2138,0.45169
-ts+distknn(k=10),198502,8943,1991,0.22263,0.46171
-ts+distknn(k=15),198502,8943,2023,0.22621,0.46563
-ts+distknn(k=20),198502,8943,2042,0.22834,0.47103
-ts+linproj,198502,8943,673,0.07525,0.39602
-ts+pwlinproj(c=25),198502,8943,875,0.09784,0.39105
-ts+pwlinproj(c=50),198502,8943,1053,0.11775,0.39875
+algorithm,test samples,TPs,accuracy,average taxonomic overlap
+ts+distknn(k=5),8943,1912,0.2138,0.45169
+ts+distknn(k=10),8943,1991,0.22263,0.46171
+ts+distknn(k=15),8943,2023,0.22621,0.46563
+ts+distknn(k=20),8943,2042,0.22834,0.47103
+ts+linproj,8943,673,0.07525,0.39602
+ts+pwlinproj(c=25),8943,875,0.09784,0.39105
+ts+pwlinproj(c=50),8943,1053,0.11775,0.39875
