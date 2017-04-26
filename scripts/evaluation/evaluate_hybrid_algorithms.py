@@ -61,7 +61,6 @@ def main():
 
     with open(evaluation_output, mode='w') as f:
         f.write(','.join(['algorithm',
-                          'training_samples',
                           'test samples',
                           'TPs',
                           'accuracy',
