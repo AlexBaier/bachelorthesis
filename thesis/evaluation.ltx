@@ -3,7 +3,7 @@ The hybrid algorithms are evaluated using a gold standard.
 The gold standard is fetched from the set of relevant classes (Section~\ref{section:relevant classes}) in the \dumpdate{} Wikidata dump \cite{WikidataDump}.
 $208,502$ classes and their corresponding superclasses were retrieved.
 
-The gold standard set $G$ consists of sample tuples $(c_i, S_i)$, where $c_i \in R$ is a subclass and $S_i = \mathit{succ}(c_i)$ is the set of direct superclasses of $c_i$,
+The gold standard test set $G$ consists of sample tuples $(c_i, S_i)$, where $c_i \in R$ is a subclass and $S_i = \mathit{succ}(c_i)$ is the set of direct superclasses of $c_i$,
 where $R$ is the set of relevant classes and $i \in [1, |G|]$.
 Because it is assumed that every class, except the root class, should have a superclass, $|S_i| > 0$ applies for all gold samples $(c_i, S_i)$ with $i \in [1, |G|]$.
 Therefore the computation of the $F_1$-score as an evaluation measure is applicable, because only correct and false classification can occur.
@@ -73,6 +73,26 @@ The following hybrid algorithms are evaluated:
 where $k$ is the number of neighbors in kNN and $c$ is the number of clusters in piecewise linear projection.
 
 \subsection{About the dataset}
+% How gold standard was retrieved? (What dump?)
+% Number of training/test samples.
+% Triple sentences
+% Graph walk sentences
+% Problem with embeddings (not all relevant class embeddings are represented in SGNS, because of memory issues, subsampling)
+% => how many are lost for testing
+% characteristic of relevant classes, see Taxonomy analysis.
+\begin{figure}[H]
+\begin{mdframed}
+\centering
+\includegraphics[width=0.8\textwidth]{images/evaluation/gold_standard_example.pdf}
+\caption{Example for creating a gold standard sample.}
+\label{fig:gold standard example}
+\begin{flushleft}
+A subclass, e.g. \textit{province of Ireland (Q202156)}, and its direct superclasses are retrieved from Wikidata.
+The numeric item ids are extracted from these classes, e.g. $\textit{Q202156} \mapsto 202156$, and yields the gold sample $(202156, \{ 3356092, 1620908, 34876 \}) \in G$,
+where $G$ is the set of all gold test samples.
+\end{flushleft}
+\end{mdframed}
+\end{figure}
 
 \subsection{Results}
 
