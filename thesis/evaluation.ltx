@@ -53,7 +53,8 @@ Consequently, hybrid algorithms have the following name format:
 &\text{<SequenceGen>}+\text{<Classification>}(\text{<hyperparameters>})
 \end{align*}
 To shorten the identifiers, the following abbreviations for components are used:
-\begin{figure}[H]
+\begin{table}[H]
+\center
 \begin{tabular}{l l}
 component & abbreviation \\
 \hline
@@ -62,7 +63,8 @@ graph walk sentences & gw \\
 distance-based kNN & distknn \\
 piecewise linear projection & linproj 
 \end{tabular}
-\end{figure}
+\caption{Abbreviations for components}
+\end{table}
 The following hybrid algorithms are evaluated:
 \begin{itemize}
 \item ts+distknn($k=?$) with $k=5,10,15,20$
@@ -80,6 +82,11 @@ where $k$ is the number of neighbors in kNN and $c$ is the number of clusters in
 % Problem with embeddings (not all relevant class embeddings are represented in SGNS, because of memory issues, subsampling)
 % => how many are lost for testing
 % characteristic of relevant classes, see Taxonomy analysis.
+The Wikidata dump from \dumpdate{} \cite{WikidataDump} was used in the evaluation.
+The gold standard is retrieved from the set of relevant classes (Section~\ref{section:relevant classes}).
+A total of $178,771$ gold sample tuples $(t_i, S_i)$ was retrieved.
+$10,000$ of the samples are used for testing, the $168,771$ remaining samples are used for training.
+Figure~\ref{fig:gold standard example} depicts the extraction of gold samples from the Wikidata taxonomy.
 \begin{figure}[H]
 \begin{mdframed}
 \centering
@@ -94,5 +101,55 @@ where $G$ is the set of all gold test samples.
 \end{mdframed}
 \end{figure}
 
+A total of $-1$ triple sentences were extracted from the Wikidata dump \cite{WikidataDump}.
+All entities, which have irrelevant properties, as defined in Section~\ref{section:relevant classes}, were excluded.
+All sentences representing test sample subclass-of relations were also excluded.
+
+A total of $-1$ graph walk sentences were generated.
+The sentences originated from $-1$ distinct classes. %atm 10,000
+Sources for graph walk sentences were randomly chosen from the set of relevant classes.
+Graph walk sentences cover $\%$ of all relevant classes and $\%$ of all entities (excluding irrelevant entities).
+
+Due to memory limitations, SGNS is only able to capture a certain vocabulary size. Therefore only $5,000,000$ words are represented by SGNS.
+Less frequent words have therefore no embeddings. This also affects a small number of relevant classes, which occur in the test samples.
+Therefore only $8,943$ of $10,000$ test samples can be used in the evaluation.
+
 \subsection{Results}
 
+\begin{table}
+\center
+\begin{tabular}{| l | c | c |}
+\hline
+algorithm & accuracy & taxonomic overlap \\
+\hline
+\hline
+ts+distknn (k=5) & $21.38\%$ & $45.17\%$ \\
+\hline
+ts+distknn (k=10) & $22.26\%$ & $46.17\%$ \\
+\hline
+\textbf{ts+distknn (k=15)} & $22.62\%$ & $46.56\%$ \\
+\hline
+\hline
+ts+linproj (c=1) & $7.85\%$ & $31.83\%$ \\
+\hline
+ts+linproj (c=25) & $12.88\%$ & $36.06\%$\\
+\hline
+ts+linproj (c=50) & $11.38\%$ & $33.28\%$\\
+\hline
+\end{tabular}
+\caption{Evaluation results for all hybrid algorithms}
+\end{table}
+
+\begin{figure}
+\centering
+\includegraphics[width=0.8\textwidth]{images/evaluation/ts_knn_overlaps_hist-20161107.png}
+\caption{Local taxonomic overlaps for ts+distknn algorithms.}
+\label{fig:ts+linproj overlap histogram}
+\end{figure}
+
+\begin{figure}
+\centering
+\includegraphics[width=0.8\textwidth]{images/evaluation/ts_linproj_overlaps_hist-20161107.png}
+\caption{Local taxonomic overlaps for ts+linproj algorithms.}
+\label{fig:ts+linproj overlap histogram}
+\end{figure}
