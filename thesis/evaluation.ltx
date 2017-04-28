@@ -115,8 +115,10 @@ Less frequent words have therefore no embeddings. This also affects a small numb
 Therefore only $8,943$ of $10,000$ test samples can be used in the evaluation.
 
 \subsection{Results}
+The hybrid algorithms with the previously described parameters were executed.
+The accuracies and average taxonomic overlaps are  listed in Table~\ref{table:evaluation results}.
 
-\begin{table}
+\begin{table}[H]
 \center
 \begin{tabular}{| l | c | c |}
 \hline
@@ -138,16 +140,36 @@ ts+linproj (c=50) & $11.38\%$ & $33.28\%$\\
 \hline
 \end{tabular}
 \caption{Evaluation results for all hybrid algorithms}
+\label{table:evaluation results}
 \end{table}
+
+Comparing the algorithms using triple sentences, shows that ts+distknn algorithms outperform ts+linproj in all configurations.
+ts+distknn(k=15) is the best performing algorithm with an accuracy of $22.62\%$ and a taxonomic overlap of $46.56\%$.
+However, the parameter $k$ only influences the performance of the classification slightly.
+
+The best performing ts+linproj algorithm is ts+linproj(c=25) with an accuracy of $12.88\%$ and an taxonomic overlap of $36.06\%$.
+The clustering parameter $c$ has a relevant influence on the performance of the linear projection algorithms.
+With no clustering $c=1$ the algorithm performs worst. More clusters seem to improve the performance of the algorithm.
+However, a maximum can be found between $c=1$ and $c=50$. Choosing $c$ too high worsens the performance.
+A high number of clusters implies that less training samples per projection matrix are available,
+which consequently means that each separate projection get more inaccurate, if more clusters exist.
+Therefore the trade-off between increasing the overall performance by separating classes into similar topic clusters
+and decreasing the performance of each projection by lowering the number of training samples has to be considered.
+For the given data set a optimal clustering can likely be found between $c=1$ and $c=50$.
+
+The accuracy and taxonomic overlap are to some degree related measures, since the taxonomic overlap can never be worse than the accuracy.
+For the best kNN algorithm ts+distknn(k=15), the ratio of taxonomic overlap to accuracy to p is $\approx 206\%$, while the for the best linear projection algorithm ts+linproj(c=25)
+the ratio is approximately $280\%$. Linear projection seems to have some type of advantage in choosing the correct location in the taxonomy in comparison to kNN.
+Observing the distribution of local taxonomic overlaps in Figures~\ref{fig:ts+distknn overlap histogram} and~\ref{fig:ts+linproj overlap histogram} however shows
+that both classification methods seem to be generally ineffective at prediction the correct part of the taxonomy, since most predictions for both algorithms
+have a very low taxonomic overlap to the gold standard.
 
 \begin{figure}
 \centering
 \includegraphics[width=0.8\textwidth]{images/evaluation/ts_knn_overlaps_hist-20161107.png}
 \caption{Local taxonomic overlaps for ts+distknn algorithms.}
-\label{fig:ts+linproj overlap histogram}
-\end{figure}
+\label{fig:ts+distknn overlap histogram}
 
-\begin{figure}
 \centering
 \includegraphics[width=0.8\textwidth]{images/evaluation/ts_linproj_overlaps_hist-20161107.png}
 \caption{Local taxonomic overlaps for ts+linproj algorithms.}
