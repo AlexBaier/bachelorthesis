@@ -129,7 +129,9 @@ ts+distknn (k=5) & $21.38\%$ & $45.17\%$ \\
 \hline
 ts+distknn (k=10) & $22.26\%$ & $46.17\%$ \\
 \hline
-\textbf{ts+distknn (k=15)} & $22.62\%$ & $46.56\%$ \\
+ts+distknn (k=15) & $22.62\%$ & $46.56\%$ \\
+\hline
+ts+distknn (k=20) & $22.83\%$ & $47.10\%$ \\
 \hline
 \hline
 ts+linproj (c=1) & $7.85\%$ & $31.83\%$ \\
@@ -138,14 +140,31 @@ ts+linproj (c=25) & $12.88\%$ & $36.06\%$\\
 \hline
 ts+linproj (c=50) & $11.38\%$ & $33.28\%$\\
 \hline
+\hline
+gw+distknn(k=5) & $\%$ & $\%$ \\
+\hline
+gw+distknn(k=10) & $\%$ & $\%$ \\
+\hline
+gw+distknn(k=15) & $\%$ & $\%$ \\
+\hline
+gw+distknn(k=20) & $\%$ & $\%$ \\
+\hline
+\hline
+gw+linproj (c=1) & $\%$ & $\%$ \\
+\hline
+gw+linproj (c=25) & $\%$ & $\%$ \\
+\hline
+gw+linproj (c=50) & $\%$ & $\%$ \\
+\hline
 \end{tabular}
 \caption{Evaluation results for all hybrid algorithms}
 \label{table:evaluation results}
 \end{table}
 
 Comparing the algorithms using triple sentences, shows that ts+distknn algorithms outperform ts+linproj in all configurations.
-ts+distknn(k=15) is the best performing algorithm with an accuracy of $22.62\%$ and a taxonomic overlap of $46.56\%$.
-However, the parameter $k$ only influences the performance of the classification slightly.
+ts+distknn(k=20) is the best performing algorithm with an accuracy of $22.83\%$ and a taxonomic overlap of $47.10\%$.
+An increasing $k$ seems to  improve the performance of the kNN classifier.
+However,  the improvements are only minimal, as only an accuracy increase of $\approx 1.5\%$ can be observed from $k=5$ to $k=20$.
 
 The best performing ts+linproj algorithm is ts+linproj(c=25) with an accuracy of $12.88\%$ and an taxonomic overlap of $36.06\%$.
 The clustering parameter $c$ has a relevant influence on the performance of the linear projection algorithms.
@@ -158,11 +177,11 @@ and decreasing the performance of each projection by lowering the number of trai
 For the given data set a optimal clustering can likely be found between $c=1$ and $c=50$.
 
 The accuracy and taxonomic overlap are to some degree related measures, since the taxonomic overlap can never be worse than the accuracy.
-For the best kNN algorithm ts+distknn(k=15), the ratio of taxonomic overlap to accuracy to p is $\approx 206\%$, while the for the best linear projection algorithm ts+linproj(c=25)
+For the best kNN algorithm ts+distknn(k=20), the ratio of taxonomic overlap to accuracy to p is $\approx 206\%$, while the for the best linear projection algorithm ts+linproj(c=25)
 the ratio is approximately $280\%$. Linear projection seems to have some type of advantage in choosing the correct location in the taxonomy in comparison to kNN.
-Observing the distribution of local taxonomic overlaps in Figures~\ref{fig:ts+distknn overlap histogram} and~\ref{fig:ts+linproj overlap histogram} however shows
-that both classification methods seem to be generally ineffective at prediction the correct part of the taxonomy, since most predictions for both algorithms
-have a very low taxonomic overlap to the gold standard.
+Observing the distribution of local taxonomic overlaps in Figures~\ref{fig:ts+distknn overlap histogram} and~\ref{fig:ts+linproj overlap histogram} shows
+that both classification approaches generally fail at placing a prediction in the correct section of the taxonomy,
+since the for both classifiers the majority of predictions has a taxonomic overlap of less than $10\%$.
 
 \begin{figure}
 \centering
@@ -175,3 +194,17 @@ have a very low taxonomic overlap to the gold standard.
 \caption{Local taxonomic overlaps for ts+linproj algorithms.}
 \label{fig:ts+linproj overlap histogram}
 \end{figure}
+
+\subsection{Interpretation}
+
+The problem of classification with a very high number of labels ($>100,000$) is difficult.
+
+The implemented linear projection classifier is flawed.
+Because subclass-superclass pairs are clustered by the subclass and one subclass can have multiple superclasses, different types of subclass-of relations are grouped
+into one cluster.
+This leads to problems in training the corresponding projection, since dissimilar offsets have to represented by a single projection and therefore the projection
+cannot converge to an optimal solution.
+Instead clustering by subclass-of offsets, as done by \fullcite{Fu2014}, could provide better results, if an effective method for identifying the correct cluster for an unknown class
+can be found.
+Since subclass-of clusters are related to single topics  as shown in Section~\ref{section:vector offset},
+it may be feasible to identify the correct cluster for an unknown class by analyzing its properties and matching it to the most common properties in a subclass-of cluster.
