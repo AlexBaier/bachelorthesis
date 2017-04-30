@@ -195,9 +195,17 @@ since the for both classifiers the majority of predictions has a taxonomic overl
 \label{fig:ts+linproj overlap histogram}
 \end{figure}
 
-\subsection{Interpretation}
+\subsection{Discussion}
 
-The problem of classification with a very high number of labels ($>100,000$) is difficult.
+The problem of classification with a very high number of labels ($>100,000$) is very difficult.
+No easily comparable problem was found in literature, therefore no comparison with state-of-the-art methods was possible.
+The worst case in classification occurs, if there is no difference between classifiying and randomly picking a label.
+In this evaluation, every relevant class other than the classes in the test set are possible labels.
+Given $195,124-1,000=194,124$ possible labels, the accuracy for randomly choosing the correct label is $5.15e4\%$.
+All evaluated methods return significantly higher accuracies than the worst case.
+Therefore it is at least possible to confirm that the hybrid algorithms proposed in this work could help users in identifying appropiate superclasses for given orphan classes.
+
+The following  problems could be identified, which future work could attempt to solve.
 
 The implemented linear projection classifier is flawed.
 Because subclass-superclass pairs are clustered by the subclass and one subclass can have multiple superclasses, different types of subclass-of relations are grouped
@@ -208,3 +216,11 @@ Instead clustering by subclass-of offsets, as done by \fullcite{Fu2014}, could p
 can be found.
 Since subclass-of clusters are related to single topics  as shown in Section~\ref{section:vector offset},
 it may be feasible to identify the correct cluster for an unknown class by analyzing its properties and matching it to the most common properties in a subclass-of cluster.
+
+The problem statement is too difficult. A classification problem with over $100k$ labels is difficult to solve.
+Approaches in reducing the number of possible superclasses should be considered. 
+Most classes have a distance of $6$ to $10$ to the root class (Section~\ref{section:root taxonomy}),
+therefore it may be applicable to only consider classes with distance $5$ to $9$ as superclasses.
+A topic-based reduction of possible superclasses may have benefits, since classes with similar topics are closely related in the taxonomy,
+it may be sensible to only observe a certain excerpt of the taxonomy for each classification decision.
+This approach would however require a method of clustering the taxonomy into topic-based subgraphs and also identifying the correct topic for a given unknown class.
