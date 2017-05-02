@@ -14,6 +14,8 @@ def plot_accuracy_overlap_plot(title, xlabel, xticks, accuracies, overlaps, outp
     plt.ylim([0, 1])
     acc_rect = plt.bar(xticks-offset*2, accuracies, width=width, color='#15b01a')
     over_rect = plt.bar(xticks, overlaps, width=width, color='#0343df')
+    _ = plt.plot(xticks-offset*2, accuracies, color='#15b01a')
+    _ = plt.plot(xticks, overlaps, color='#0343df')
     plt.xticks(xticks)
     plt.yticks(np.arange(0, 1.1, 0.1))
     plt.legend((acc_rect, over_rect), ('accuracy', 'taxonomic overlap'))

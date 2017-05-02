@@ -19,9 +19,9 @@ def main():
     output_path = config['graph walk sentences']
 
     node_count = 10000
-    offset = 0
+    offset = 2
 
-    random.seed()
+    random.seed(1)
 
     with open(node_id_path) as f:
         nodes = [l.strip() for l in f]
