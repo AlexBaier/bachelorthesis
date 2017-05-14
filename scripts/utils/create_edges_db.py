@@ -1,4 +1,3 @@
-import json
 import logging
 import sqlite3
 
@@ -22,11 +21,8 @@ def generate_edge_store(db_path: str, edges: Iterable[List[str]]):
 def main():
     logging.basicConfig(format='%(asctime)s : %(levelname)s : %(message)s', level=logging.INFO)
 
-    with open('paths_config.json') as f:
-        config = json.load(f)
-
-    triple_sentence_path = config['triple sentences']
-    edge_store_path = config['edges db']
+    triple_sentence_path = 'triple_sentences.txt'
+    edge_store_path = 'edges_db.sqlite3'
 
     with open(triple_sentence_path) as f:
         edges = filter(lambda s: len(s) == 3, (l.strip().split() for l in f))

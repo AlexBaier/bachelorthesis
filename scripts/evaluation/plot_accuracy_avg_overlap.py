@@ -38,7 +38,9 @@ def main():
 
     evaluation_path = config['evaluation']
     ts_knn_plot_output = config['ts+distknn evaluation plot']
+    gw_knn_plot_output = config['gw+distknn evaluation plot']
     ts_linproj_plot_output = config['ts+linproj evaluation plot']
+    gw_linproj_plot_output = config['gw+linproj evaluation plot']
 
     accuracies = dict()
     overlaps = dict()
@@ -59,6 +61,15 @@ def main():
     )
 
     plot_accuracy_overlap_plot(
+        'comparison of gw+distknn with different k',
+        'k neighbors',
+        k_neighbors,
+        np.array([accuracies['gw+distknn(k={})'.format(k)] for k in k_neighbors]),
+        np.array([overlaps['gw+distknn(k={})'.format(k)] for k in k_neighbors]),
+        gw_knn_plot_output
+    )
+
+    plot_accuracy_overlap_plot(
         'comparison of ts+linproj with different c',
         'c clusters',
         c_clusters,
@@ -66,6 +77,16 @@ def main():
         np.array([overlaps['ts+linproj(c={})'.format(c)] for c in c_clusters]),
         ts_linproj_plot_output
     )
+
+    plot_accuracy_overlap_plot(
+        'comparison of gw+linproj with different c',
+        'c clusters',
+        c_clusters,
+        np.array([accuracies['gw+linproj(c={})'.format(c)] for c in c_clusters]),
+        np.array([overlaps['gw+linproj(c={})'.format(c)] for c in c_clusters]),
+        gw_linproj_plot_output
+    )
+
 
 
 if __name__ == '__main__':

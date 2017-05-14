@@ -20,6 +20,7 @@ def main():
 
     node_count = 10000
     offset = 2
+    # computed: to 35000
 
     random.seed(1)
 
@@ -29,7 +30,7 @@ def main():
     logging.log(level=logging.INFO, msg='compute walks for {} nodes'.format(node_count))
 
     gen = DbGraphWalkSentences(
-        nodes[node_count*offset:node_count*(offset+1)],
+        nodes[30000:35000],
         depth=gw_config['depth'],  # RDF2Vec: depth = 4
         max_walks_per_v=gw_config['max walks'],  # RDF2Vec: max walks per vertice = 100
         edge_store_path=edge_store_path,
