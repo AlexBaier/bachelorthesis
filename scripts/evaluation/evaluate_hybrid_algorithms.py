@@ -20,7 +20,8 @@ def main():
     test_data_path = paths_config['test data']
     evaluation_output = paths_config['evaluation']
 
-    algorithms = ['ts+distknn(k=5)', 'ts+distknn(k=10)', 'ts+distknn(k=15)', 'ts+distknn(k=20)',
+    algorithms = ['baseline',
+                  'ts+distknn(k=5)', 'ts+distknn(k=10)', 'ts+distknn(k=15)', 'ts+distknn(k=20)',
                   'ts+linproj(c=1)', 'ts+linproj(c=25)', 'ts+linproj(c=50)',
                   'gw+distknn(k=5)', 'gw+distknn(k=10)', 'gw+distknn(k=15)', 'gw+distknn(k=20)',
                   'gw+linproj(c=1)', 'gw+linproj(c=25)', 'gw+linproj(c=50)']

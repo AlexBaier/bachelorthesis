@@ -40,7 +40,7 @@ class MostCommonClassClassifier(Classifier):
         self.__common_class = None  # type: str
 
     def train(self, training_data: List[str]):
-        return max(map(len, itertools.groupby(training_data)))
+        self.__common_class = max(itertools.groupby(sorted(training_data)), key=lambda t: len(list(t[1])))[0]
 
     def classify(self, unknowns: np.array) -> List[str]:
         n = unknowns.shape[0]
