@@ -54,6 +54,7 @@
   "ts+linproj evaluation plot": "evaluation/plots/ts_linproj_evaluation-20161107.png",
   "gw+distknn evaluation plot": "evaluation/plots/gw_knn_evaluation-20161107.png",
   "gw+linproj evaluation plot": "evaluation/plots/gw_linproj_evaluation-20161107.png",
+  "best classifier evaluation plot": "evaluation/plots/best_classifier_evaluation-20161107.png",
   "ts+distknn overlap hist": "evaluation/plots/ts_knn_overlaps_hist-20161107.png",
   "ts+linproj overlap hist": "evaluation/plots/ts_linproj_overlaps_hist-20161107.png",
   "ts+distknn overlap distribution": "evaluation/plots/ts_knn_overlaps_distr-20161107.png",

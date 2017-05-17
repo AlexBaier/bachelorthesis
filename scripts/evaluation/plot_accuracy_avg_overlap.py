@@ -11,17 +11,16 @@ def plot_accuracy_overlap_plot(title, xlabel, xticks, accuracies, overlaps, outp
 
     plt.figure(1)
     plt.clf()
+    plt.tick_params(bottom='off')
     plt.ylim([0, 1])
     acc_rect = plt.bar(xticks-offset*2, accuracies, width=width, color='#15b01a')
     over_rect = plt.bar(xticks, overlaps, width=width, color='#0343df')
-    _ = plt.plot(xticks-offset*2, accuracies, color='#15b01a')
-    _ = plt.plot(xticks, overlaps, color='#0343df')
     plt.xticks(xticks)
     plt.yticks(np.arange(0, 1.1, 0.1))
     plt.legend((acc_rect, over_rect), ('accuracy', 'taxonomic overlap'))
     plt.grid(True)
     plt.xlabel(xlabel)
-    plt.ylabel('accuracy/taxonomic overlap')
+    plt.ylabel('accuracy and taxonomic overlap')
     plt.title(title)
     plt.savefig(output_path)
     logging.log(level=logging.INFO, msg='stored ts+distknn evaluation plot to {}'.format(output_path))
@@ -41,6 +40,7 @@ def main():
     gw_knn_plot_output = config['gw+distknn evaluation plot']
     ts_linproj_plot_output = config['ts+linproj evaluation plot']
     gw_linproj_plot_output = config['gw+linproj evaluation plot']
+    best_classifier_plot_output = config['best classifier evaluation plot']
 
     accuracies = dict()
     overlaps = dict()
@@ -50,6 +50,29 @@ def main():
             accuracies[r[0]] = float(r[3])
             overlaps[r[0]] = float(r[4])
     logging.log(level=logging.INFO, msg='loaded evaluation results')
+
+    plt.figure(1)
+    plt.clf()
+
+    plt.tick_params(bottom='off')
+
+    algos = ['baseline', 'ts+distknn(k=20)', 'gw+linproj(c=50)']
+
+    plt.title("comparison of best classifier variants")
+    x = np.arange(len(algos))
+    width = np.max(x) / 10.0
+    offset = width / 2.0
+    acc_rect = plt.bar(x, [accuracies[algo] for algo in algos], width=width, color='#15b01a')
+    over_rect = plt.bar(x+2*offset, [overlaps[algo] for algo in algos], width=width, color='#0343df')
+    plt.xticks(x+0.2, algos, rotation=8)
+    plt.yticks(np.arange(0, 1.1, 0.1))
+    plt.xlabel('algorithm')
+    plt.ylabel('accuracy and taxonomic overlap')
+    plt.legend((acc_rect, over_rect), ('accuracy', 'taxonomic overlap'))
+    plt.grid(True)
+
+    plt.savefig(best_classifier_plot_output)
+    logging.log(level=logging.INFO, msg='stored best classifier evaluation plot to '.format(best_classifier_plot_output))
 
     plot_accuracy_overlap_plot(
         'comparison of ts+distknn with different k',
