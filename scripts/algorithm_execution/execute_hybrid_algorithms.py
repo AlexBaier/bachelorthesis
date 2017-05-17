@@ -19,10 +19,7 @@ def main():
     col_sep = ','
     row_sep = '\n'
 
-    algorithms = ['ts+distknn(k=5)', 'ts+distknn(k=10)', 'ts+distknn(k=15)', 'ts+distknn(k=20)',
-                  'ts+linproj(c=1)', 'ts+linproj(c=25)', 'ts+linproj(c=50)',
-                  'gw+distknn(k=5)', 'gw+distknn(k=10)', 'gw+distknn(k=15)', 'gw+distknn(k=20)',
-                  'gw+linproj(c=1)', 'gw+linproj(c=25)', 'gw+linproj(c=50)']
+    algorithms = ['baseline']
 
     results = execute_combined_algorithms(
         combined_algorithms=algorithms,

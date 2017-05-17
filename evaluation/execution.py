@@ -1,3 +1,4 @@
+import itertools
 import logging
 import re
 from typing import Dict, List, Tuple
@@ -9,9 +10,9 @@ from algorithm.utils import map_to_knn_training_input, map_to_proj_training_inpu
 from evaluation.data_sample import MultiLabelSample
 from evaluation.utils import load_config, load_embeddings_and_labels, load_test_inputs, load_training_data
 
-__BASELINE_REGEX = re.compile(r'baseline')
-__DIST_KNN_REGEX = re.compile(r'distance-knn \(k=[1-9][0-9]*\)')
-__PW_LIN_PROJ_REGEX = re.compile(r'linear projection \(c=[1-9][0-9]*\)')
+__MOST_COMMON_REGEX = re.compile(r'^most-common$')
+__DIST_KNN_REGEX = re.compile(r'^distance-knn \(k=[1-9][0-9]*\)$')
+__PW_LIN_PROJ_REGEX = re.compile(r'^linear projection \(c=[1-9][0-9]*\)$')
 
 NO_INPUT_EMBEDDING = 'NO_INPUT_EMBEDDING'
 
@@ -58,8 +59,8 @@ def execute_combined_algorithms(combined_algorithms: List[str], config_path: str
         if embeddings_path:
             embeddings, class_ids = load_embeddings_and_labels(embeddings_path)
         else:
-            embeddings = np.array([])
-            class_ids = list()
+            embeddings = np.zeros((len(test_inputs), 1))
+            class_ids = list(itertools.islice(itertools.cycle(test_inputs), len(test_inputs)))
 
         result = execute_classification(algorithm=classification,
                                         config=classification_config,
@@ -91,7 +92,7 @@ def execute_classification(algorithm: str, config: dict,
         mapping = map_to_knn_training_input
     elif __PW_LIN_PROJ_REGEX.fullmatch(algorithm):
         mapping = map_to_proj_training_input
-    elif __BASELINE_REGEX.fullmatch(algorithm):
+    elif __MOST_COMMON_REGEX.fullmatch(algorithm):
         mapping = map_to_baseline_training_input
     else:
         raise NotImplementedClassifierError(algorithm)
@@ -116,7 +117,7 @@ def execute_classification(algorithm: str, config: dict,
                                                              clusters=clusters,
                                                              sgd_iter=sgd_iter,
                                                              n_jobs=workers)
-    elif __BASELINE_REGEX.fullmatch(algorithm):
+    elif __MOST_COMMON_REGEX.fullmatch(algorithm):
         classifier = alg.MostCommonClassClassifier()
     logging.log(level=logging.INFO, msg='initialized {} classifier'.format(algorithm))
 
@@ -133,7 +134,7 @@ def execute_classification(algorithm: str, config: dict,
             logging.log(level=logging.DEBUG, msg='missing embedding for test input {}'.format(e))
             test_input_matrix.append(np.zeros(embeddings.shape[1]))
             is_valid_test.append(False)
-    logging.log(level=logging.INFO, msg='only {}/{} valid test cases'
+    logging.log(level=logging.INFO, msg='{}/{} valid test cases'
                 .format(np.array(is_valid_test).sum(), len(test_inputs)))
     test_input_matrix = np.array(test_input_matrix)
     labels = classifier.classify(test_input_matrix)

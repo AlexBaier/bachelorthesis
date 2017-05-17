@@ -1,4 +1,5 @@
 import abc
+import itertools
 import logging
 from typing import List, Tuple
 
@@ -39,7 +40,7 @@ class MostCommonClassClassifier(Classifier):
         self.__common_class = None  # type: str
 
     def train(self, training_data: List[str]):
-        self.__common_class = max(map(lambda e: training_data.count(e), set(training_data)))
+        return max(map(len, itertools.groupby(training_data)))
 
     def classify(self, unknowns: np.array) -> List[str]:
         n = unknowns.shape[0]

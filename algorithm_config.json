@@ -1,9 +1,14 @@
 {
+  "no sequences": {
+  },
   "triple sentences": {
   },
   "graph walk sentences": {
     "depth": 4,
     "max walks": 10
+  },
+  "no sgns": {
+    "embeddings path": ""
   },
   "triple sentence sgns": {
     "embedding size": 300,
@@ -59,8 +64,8 @@
   },
   "combinations": {
     "baseline": {
-      "sequences": "",
-      "sgns": "",
+      "sequences": "no sequences",
+      "sgns": "no sgns",
       "classification": "most-common"
     },
     "ts+distknn(k=5)": {
