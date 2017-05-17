@@ -33,6 +33,19 @@ class ProjectionClassifier(Classifier, metaclass=abc.ABCMeta):
         pass
 
 
+class MostCommonClassClassifier(Classifier):
+
+    def __init__(self):
+        self.__common_class = None  # type: str
+
+    def train(self, training_data: List[str]):
+        self.__common_class = max(map(lambda e: training_data.count(e), set(training_data)))
+
+    def classify(self, unknowns: np.array) -> List[str]:
+        n = unknowns.shape[0]
+        return [self.__common_class for _ in range(n)]
+
+
 class DistanceKNNClassifier(KNNClassifier):
 
     def __init__(self, neighbors: int, n_jobs: int=-1):

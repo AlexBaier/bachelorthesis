@@ -5,10 +5,11 @@ from typing import Dict, List, Tuple
 import numpy as np
 
 import algorithm.classification as alg
-from algorithm.utils import map_to_knn_training_input, map_to_proj_training_input
+from algorithm.utils import map_to_knn_training_input, map_to_proj_training_input, map_to_baseline_training_input
 from evaluation.data_sample import MultiLabelSample
 from evaluation.utils import load_config, load_embeddings_and_labels, load_test_inputs, load_training_data
 
+__BASELINE_REGEX = re.compile(r'baseline')
 __DIST_KNN_REGEX = re.compile(r'distance-knn \(k=[1-9][0-9]*\)')
 __PW_LIN_PROJ_REGEX = re.compile(r'linear projection \(c=[1-9][0-9]*\)')
 
@@ -54,7 +55,11 @@ def execute_combined_algorithms(combined_algorithms: List[str], config_path: str
         except KeyError as e:
             raise MissingParameterError('embeddings path', str(e))
 
-        embeddings, class_ids = load_embeddings_and_labels(embeddings_path)
+        if embeddings_path:
+            embeddings, class_ids = load_embeddings_and_labels(embeddings_path)
+        else:
+            embeddings = np.array([])
+            class_ids = list()
 
         result = execute_classification(algorithm=classification,
                                         config=classification_config,
@@ -86,6 +91,8 @@ def execute_classification(algorithm: str, config: dict,
         mapping = map_to_knn_training_input
     elif __PW_LIN_PROJ_REGEX.fullmatch(algorithm):
         mapping = map_to_proj_training_input
+    elif __BASELINE_REGEX.fullmatch(algorithm):
+        mapping = map_to_baseline_training_input
     else:
         raise NotImplementedClassifierError(algorithm)
 
@@ -109,6 +116,8 @@ def execute_classification(algorithm: str, config: dict,
                                                              clusters=clusters,
                                                              sgd_iter=sgd_iter,
                                                              n_jobs=workers)
+    elif __BASELINE_REGEX.fullmatch(algorithm):
+        classifier = alg.MostCommonClassClassifier()
     logging.log(level=logging.INFO, msg='initialized {} classifier'.format(algorithm))
 
     classifier.train(training_input)

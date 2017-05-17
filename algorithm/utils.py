@@ -49,3 +49,8 @@ def map_to_proj_training_input(training_samples: List[MultiLabelSample[str]], id
     logging.log(level=logging.INFO, msg='generated lin proj training samples: {}/{} samples used'
                 .format(len(training_samples), valid_sample_count))
     return training_data, labels
+
+
+def map_to_baseline_training_input(training_samples: List[MultiLabelSample[str]], id2embedding: Callable[[str], np.array])\
+        ->List[str]:
+    return [output for sample in training_samples for output in sample.possible_outputs]

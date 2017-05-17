@@ -27,6 +27,8 @@
     "max vocab": 5000000,
     "embeddings path": "/home/alex/PycharmProjects/thesis/data/algorithm_io/graph_walk_class_embeddings-20161107"
   },
+  "most-common": {
+  },
   "distance-knn (k=5)": {
     "neighbors": 5
   },
@@ -56,6 +58,11 @@
     "sgd iterations": 10
   },
   "combinations": {
+    "baseline": {
+      "sequences": "",
+      "sgns": "",
+      "classification": "most-common"
+    },
     "ts+distknn(k=5)": {
       "sequences": "triple sentences",
       "sgns": "triple sentence sgns",
