@@ -19,7 +19,8 @@ def main():
     col_sep = ','
     row_sep = '\n'
 
-    algorithms = ['baseline']
+    algorithms = ['ts+linproj(c=1)', 'ts+linproj(c=25)', 'ts+linproj(c=50)',]
+                  #'gw+linproj(c=1)', 'gw+linproj(c=25)', 'gw+linproj(c=50)']
 
     results = execute_combined_algorithms(
         combined_algorithms=algorithms,

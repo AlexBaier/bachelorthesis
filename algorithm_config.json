@@ -5,7 +5,7 @@
   },
   "graph walk sentences": {
     "depth": 4,
-    "max walks": 10
+    "max walks": 100
   },
   "no sgns": {
     "embeddings path": ""
@@ -48,19 +48,19 @@
   },
   "linear projection (c=1)": {
     "clusters": 1,
-    "sgd iterations": 10
+    "sgd iterations": 15
   },
   "linear projection (c=10)": {
     "clusters": 10,
-    "sgd iterations": 10
+    "sgd iterations": 15
   },
   "linear projection (c=25)": {
     "clusters": 25,
-    "sgd iterations": 10
+    "sgd iterations": 15
   },
   "linear projection (c=50)": {
     "clusters": 50,
-    "sgd iterations": 10
+    "sgd iterations": 15
   },
   "combinations": {
     "baseline": {
