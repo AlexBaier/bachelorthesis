@@ -67,7 +67,7 @@ class GraphWalkSentences(SequenceGen):
         )
         walks = list()
         for vertice in self.__vertices:
-            walks.append(self.__get_walks(vertice))
+            walks.extend(self.__get_walks(vertice))
         return walks
 
     def __get_walks(self, vertice: str)->List[List[str]]:
@@ -97,8 +97,8 @@ class GraphWalkSentences(SequenceGen):
                 else:
                     r = np.random.randint(0, m-1, 1)[0]
                 chosen_edge = out_edges[r]
-                walks[current_walk][2*current_depth-1] = chosen_edge[1]  # add edge weight to walk
-                walks[current_walk][2*current_depth] = chosen_edge[2]  # add target to walk
+                walks[current_walk][2*current_depth-1] = chosen_edge[0]  # add edge weight to walk
+                walks[current_walk][2*current_depth] = chosen_edge[1]  # add target to walk
 
         # strip empty strings of walk
         for walk_id in range(self.__max_walks):

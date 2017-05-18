@@ -34,6 +34,7 @@
   "test data": "evaluation/test_data-20161107.csv",
 
   "edges db": "data/algorithm_io/edges-20161107.sqlite3",
+  "subgraph triples": "data/algorithm_io/subgraph_edges-20161107.txt",
 
   "triple sentences": "data/algorithm_io/triple_sentences-20161107.txt",
   "graph walk sentences": "data/algorithm_io/graph_walk_sentences-20161107.txt",
