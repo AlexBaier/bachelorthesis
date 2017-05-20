@@ -1,8 +1,6 @@
 import abc
-import logging
 import random
 import sqlite3
-import time
 from typing import Callable, Iterable, List, Set, Tuple
 
 import numpy as np
@@ -62,17 +60,12 @@ class GraphWalkSentences(SequenceGen):
         self.__get_out_edges = get_out_edges  # type: Callable[[str], List[Tuple[str, str]]]
 
     def get_sequences(self)->Iterable[List[str]]:
-        logging.log(level=logging.INFO, msg='Graph walk sequences with depth={}, max walks={}'.format(
-            self.__depth, self.__max_walks)
-        )
         walks = list()
         for vertice in self.__vertices:
             walks.extend(self.__get_walks(vertice))
         return walks
 
     def __get_walks(self, vertice: str)->List[List[str]]:
-        start_time = time.time()
-
         random.seed()
 
         walks = [[vertice if idx == 0 else '' for idx, _ in enumerate(range(2*self.__depth+1))]
@@ -84,10 +77,7 @@ class GraphWalkSentences(SequenceGen):
                 # current walk already stopped
                 if current_vertice == '':
                     continue
-                try:
-                    out_edges = self.__get_out_edges(current_vertice)
-                except IndexError:
-                    out_edges = list()
+                out_edges = self.__get_out_edges(current_vertice)
                 m = len(out_edges)
                 # current vertice has no out-edges => skip this vertice
                 if m == 0:
@@ -96,18 +86,17 @@ class GraphWalkSentences(SequenceGen):
                     r = 0
                 else:
                     r = np.random.randint(0, m-1, 1)[0]
-                chosen_edge = out_edges[r]
-                walks[current_walk][2*current_depth-1] = chosen_edge[0]  # add edge weight to walk
-                walks[current_walk][2*current_depth] = chosen_edge[1]  # add target to walk
+                pred, obj = out_edges[r]
+                walks[current_walk][2*current_depth-1] = pred  # add edge weight to walk
+                walks[current_walk][2*current_depth] = obj  # add target to walk
 
         # strip empty strings of walk
         for walk_id in range(self.__max_walks):
             walks[walk_id] = list(filter(lambda s: s != '', walks[walk_id]))
         walks = list(filter(lambda walk: len(walk) > 1, walks))
+        # remove duplicates
+        walks = list(map(list, set(map(tuple, walks))))
 
-        duration = time.time() - start_time
-
-        logging.log(level=logging.INFO, msg='{} walks from {} in {} seconds'.format(len(walks), vertice, duration))
         return walks
 
 
@@ -123,10 +112,6 @@ class DbGraphWalkSentences(SequenceGen):
         self.__workers = workers  # type: int
 
     def get_sequences(self)->Iterable[List[str]]:
-        logging.log(level=logging.INFO, msg='Graph walk sequences with depth={}, max walks={}, workers={}'.format(
-            self.__depth, self.__max_walks, self.__workers
-        ))
-
         # partition source vertices into self.__workers batches
         batches = [self.__vertices[i::self.__workers] for i in range(self.__workers)]
 
@@ -146,8 +131,6 @@ class DbGraphWalkSentences(SequenceGen):
 
         with sqlite3.connect(self.__edge_store_path) as conn:
             for vertice in vertices:
-                start_time = time.time()
-
                 walks = [[vertice if idx == 0 else '' for idx, _ in enumerate(range(2*self.__depth+1))]
                          for _ in range(self.__max_walks)]
                 for current_depth in range(1, self.__depth):
@@ -178,9 +161,6 @@ class DbGraphWalkSentences(SequenceGen):
                 walks = list(filter(lambda walk: len(walk) > 1, walks))
                 results.extend(walks)
 
-                duration = time.time() - start_time
-                logging.log(level=logging.INFO,
-                            msg='{} walks from {} in {} seconds'.format(len(walks), vertice, duration))
         return results
 
     @staticmethod

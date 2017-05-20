@@ -34,7 +34,7 @@ def main():
     # subgraph contains all classes
     nodes = class_ids.copy()
     # subgraph contains instances of classes
-    random.seed(1)
+    random.seed()
     for characteristic in dumpio.JSONDumpReader(characteristics_path):
         if characteristic['id'] in class_ids:
             nodes.update(characteristic['instances'])
