@@ -56,7 +56,6 @@ def main():
 
     relevant_class_coverage = len(relevant_classes.intersection(unique_items)) / float(n_relevant_classes)
     all_item_coverage = float(n_unique_items) / n_all_items
-    source_coverage = float(n_unique_sources) / n_relevant_classes
 
     print('triple_sentences = {}'.format(n_triple_sentences))
     print()
@@ -65,7 +64,6 @@ def main():
     print('unique sources = {}'.format(n_unique_sources))
     print('unique_items = {}'.format(n_unique_items))
     print('relevant class coverage = {:.2f}%'.format(100.0*relevant_class_coverage))
-    print('source coverage = {:.2f}%'.format(100.0*source_coverage))
     print('all item coverage = {:2f}%'.format(100.0*all_item_coverage))
 
 

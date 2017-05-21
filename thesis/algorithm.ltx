@@ -99,11 +99,9 @@ The set of random walk sequences will be combined with the set of triple sentenc
 The following parameters are used for the graph walk :
 \begin{itemize}
 \item Depth of walks: $4$
-\item Maximum number of walks per vertice: $10$
+\item Maximum number of walks per vertice: $200$
 \end{itemize}
-\fullcite{Ristoski2016} applies $200$ maximum walks per vertice for the Wikidata dataset. 
-Because of time and hardware constraints only $10$ walks per vertice are computed,
-which should allow a "good" coverage of classes in the generated sequences.
+These parameters are given by \fullcite{Ristoski2016} and have shown good results in their work.
 
 Figure~\ref{fig:graph walk sentences} shows an excerpt of the Wikidata graph. $2$ random walks of depth $4$ are generated beginning at the node \textit{Q42}.
 The walks by the Arabic and Roman numerals. The walk indicated by Arabic numerals has a length of $3$ and ends at the node \textit{Q223557}.

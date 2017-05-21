@@ -2,8 +2,6 @@ import json
 import logging
 import random
 
-from data_analysis import dumpio
-
 
 def collect_nodes(subjects, triples_path):
     nodes = set()
@@ -35,9 +33,9 @@ def main():
     nodes = class_ids.copy()
     # subgraph contains instances of classes
     random.seed()
-    for characteristic in dumpio.JSONDumpReader(characteristics_path):
-        if characteristic['id'] in class_ids:
-            nodes.update(characteristic['instances'])
+    # for characteristic in dumpio.JSONDumpReader(characteristics_path):
+    #     if characteristic['id'] in class_ids:
+    #         nodes.update(characteristic['instances'])
 
     current_depth = 0
 
