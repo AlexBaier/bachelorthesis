@@ -23,7 +23,7 @@
   },
   "graph walk sentence sgns": {
     "embedding size": 300,
-    "window size": 4,
+    "window size": 2,
     "initial learning rate": 0.25,
     "min count": 5,
     "subsampling": 0.00001,
