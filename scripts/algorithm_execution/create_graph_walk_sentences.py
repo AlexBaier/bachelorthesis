@@ -1,5 +1,6 @@
 import json
 import logging
+import random
 
 from algorithm.sequence_gen import GraphWalkSentences
 
@@ -16,33 +17,56 @@ def main():
     subgraph_path = config['subgraph triples']
     output_path = config['graph walk sentences']
 
+    n_sources = 5000000
+
     source_ids = set()
+    with open(subgraph_path) as f:
+        for subj, _, _ in map(lambda l: l.strip().split(), f):
+            source_ids.add(subj)
+    source_ids = set(random.sample(source_ids, n_sources))
+
+    subgraph_nodes = source_ids.copy()
+    for current_depth in range(1, gw_config['depth'] + 1):
+        with open(subgraph_path) as f:
+            temp_nodes = set()
+            for subj, _, obj in map(lambda l: l.strip().split(), f):
+                if subj in subgraph_nodes:
+                    temp_nodes.add(obj)
+            subgraph_nodes.update(temp_nodes)
+    logging.info('{} nodes in subgraph'.format(len(subgraph_nodes)))
+
     id2idx = dict()
     current_idx = 0
     edges = list()
     c = 0
     with open(subgraph_path) as f:
-        for subj, pred, obj in filter(lambda t: len(t) == 3, map(lambda l: l.strip().split(), f)):
+        for subj, pred, obj in map(lambda l: l.strip().split(), f):
+            if subj not in subgraph_nodes:
+                continue
             if not id2idx.get(subj, None):
                 id2idx[subj] = current_idx
-                edges.append(list())
+                edges.append(set())
                 current_idx += 1
-            edges[id2idx[subj]].append((pred, obj))
-            source_ids.add(subj)
+            edges[id2idx[subj]].add((pred, obj))
             c += 1
             if c % 500000 == 0:
                 logging.info('{} edges'.format(c))
-    source_ids = list(source_ids)
 
     def get_out_edges(node_id):
         if id2idx.get(node_id, None):
-            return edges[id2idx[node_id]]
+            return list(edges[id2idx[node_id]])
         else:
             return list()
 
-    chunks = 5000
+    # write triples
+    with open(subgraph_path) as f, open(output_path, mode='w') as g:
+        for subj, pred, obj in map(lambda l: l.strip().split(), f):
+            g.write('{} {} {}\n'.format(subj, pred, obj))
+
+    # write graph walks
+    chunks = 50000
     progress = 0
-    for node_ids in [source_ids[i:i+chunks] for i in range(0, len(source_ids), chunks)]:
+    for node_ids in [list(source_ids)[i:i+chunks] for i in range(0, len(source_ids), chunks)]:
         gen = GraphWalkSentences(
             node_ids,
             depth=gw_config['depth'],  # RDF2Vec: depth = 4

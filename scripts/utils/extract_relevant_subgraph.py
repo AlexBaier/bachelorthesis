@@ -2,6 +2,8 @@ import json
 import logging
 import random
 
+import data_analysis.dumpio as dumpio
+
 
 def collect_nodes(subjects, triples_path):
     nodes = set()
@@ -15,6 +17,7 @@ def collect_nodes(subjects, triples_path):
 def main():
     logging.basicConfig(format='%(asctime)s : %(levelname)s : %(message)s', level=logging.INFO)
 
+    edge_ratio = 0.5
     depth = 4
     assert depth >= 2
 
@@ -33,9 +36,9 @@ def main():
     nodes = class_ids.copy()
     # subgraph contains instances of classes
     random.seed()
-    # for characteristic in dumpio.JSONDumpReader(characteristics_path):
-    #     if characteristic['id'] in class_ids:
-    #         nodes.update(characteristic['instances'])
+    for characteristic in dumpio.JSONDumpReader(characteristics_path):
+        if characteristic['id'] in class_ids:
+            nodes.update(characteristic['instances'])
 
     current_depth = 0
 
@@ -49,9 +52,10 @@ def main():
     all_nodes = nodes.copy()
     with open(triples_path) as f, open(subgraph_path, mode='w') as g:
         for subj, pred, obj in filter(lambda t: len(t) == 3 and t[0] in nodes, map(lambda l: l.strip().split(), f)):
-            g.write(' '.join((subj, pred, obj)) + '\n')
-            edge_count += 1
-            all_nodes.add(obj)
+            if random.random() < edge_ratio:
+                g.write(' '.join((subj, pred, obj)) + '\n')
+                edge_count += 1
+                all_nodes.add(obj)
     logging.info('subgraph contains {} nodes and {} edges'.format(len(all_nodes), edge_count))
     logging.info('wrote subgraph edges to {}'.format(subgraph_path))
 
