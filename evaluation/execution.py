@@ -6,13 +6,15 @@ from typing import Dict, List, Tuple
 import numpy as np
 
 import algorithm.classification as alg
-from algorithm.utils import map_to_knn_training_input, map_to_proj_training_input, map_to_baseline_training_input
+from algorithm.utils import map_to_knn_training_input, map_to_proj_training_input, map_to_baseline_training_input, \
+    map_to_neural_network_training_input
 from evaluation.data_sample import MultiLabelSample
 from evaluation.utils import load_config, load_embeddings_and_labels, load_test_inputs, load_training_data
 
 __MOST_COMMON_REGEX = re.compile(r'^most-common$')
 __DIST_KNN_REGEX = re.compile(r'^distance-knn \(k=[1-9][0-9]*\)$')
 __PW_LIN_PROJ_REGEX = re.compile(r'^linear projection \(c=[1-9][0-9]*\)$')
+__DNN_REGEX = re.compile(r'^deep neural network \(h=[1-9][0-9]*, n=[1-9][0-9]*\)$')
 
 NO_INPUT_EMBEDDING = 'NO_INPUT_EMBEDDING'
 
@@ -94,6 +96,8 @@ def execute_classification(algorithm: str, config: dict,
         mapping = map_to_proj_training_input
     elif __MOST_COMMON_REGEX.fullmatch(algorithm):
         mapping = map_to_baseline_training_input
+    elif __DNN_REGEX.fullmatch(algorithm):
+        mapping = map_to_neural_network_training_input
     else:
         raise NotImplementedClassifierError(algorithm)
 
@@ -119,6 +123,22 @@ def execute_classification(algorithm: str, config: dict,
                                                              n_jobs=workers)
     elif __MOST_COMMON_REGEX.fullmatch(algorithm):
         classifier = alg.MostCommonClassClassifier()
+    elif __DNN_REGEX.fullmatch(algorithm):
+        try:
+            n_hidden_layers = config['hidden layers']
+            n_hidden_neurons = config['hidden neurons']
+            dropout_rate = config['dropout rate']
+            epochs = config['epochs']
+            batch_size = config['batch size']
+        except KeyError as e:
+            raise MissingParameterError(str(e), algorithm)
+        classifier = alg.DeepFeedForwardClassifier(embedding_size=embeddings.shape[1],
+                                                   n_hidden_layers=n_hidden_layers,
+                                                   n_hidden_neurons=n_hidden_neurons,
+                                                   dropout_rate=dropout_rate,
+                                                   epochs=epochs,
+                                                   batch_size=batch_size,
+                                                   n_jobs=workers)
     logging.log(level=logging.INFO, msg='initialized {} classifier'.format(algorithm))
 
     classifier.train(training_input)

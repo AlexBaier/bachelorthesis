@@ -54,3 +54,26 @@ def map_to_proj_training_input(training_samples: List[MultiLabelSample[str]], id
 def map_to_baseline_training_input(training_samples: List[MultiLabelSample[str]], id2embedding: Callable[[str], np.array])\
         ->List[str]:
     return [output for sample in training_samples for output in sample.possible_outputs]
+
+
+def map_to_neural_network_training_input(training_samples: List[MultiLabelSample[str]],
+                                         id2embedding: Callable[[str], np.array])->Tuple[np.array, np.array, List[str]]:
+    x_ls = list()
+    y_ls = list()
+    y_labels = list()
+
+    for sample in training_samples:
+        try:
+            x = id2embedding(sample.input_arg)
+        except KeyError as e:
+            logging.log(level=logging.DEBUG, msg='no embedding for {}'.format(e))
+            continue
+        for y_label in sample.possible_outputs:
+            try:
+                y = id2embedding(y_label)
+                x_ls.append(x)
+                y_ls.append(y)
+                y_labels.append(y_label)
+            except KeyError as e:
+                logging.log(level=logging.DEBUG, msg='no embedding for {}'.format(e))
+        return np.array(x_ls), np.array(y_ls), y_labels

@@ -4,6 +4,9 @@ import logging
 from typing import List, Tuple
 
 import numpy as np
+from keras.layers import Dense, Dropout
+from keras.models import Sequential
+from keras.optimizers import SGD
 from sklearn.cluster import MiniBatchKMeans
 from sklearn.linear_model import SGDRegressor
 from sklearn.neighbors import KNeighborsClassifier, NearestNeighbors
@@ -31,6 +34,13 @@ class ProjectionClassifier(Classifier, metaclass=abc.ABCMeta):
 
     @abc.abstractclassmethod
     def train(self, training_data: List[Tuple[np.array, np.array]]):
+        pass
+
+
+class NeuralNetworkClassifier(Classifier, metaclass=abc.ABCMeta):
+
+    @abc.abstractclassmethod
+    def train(self, training_data: Tuple[np.array, np.array, List[str]]):
         pass
 
 
@@ -150,4 +160,46 @@ class PiecewiseLinearProjectionClassifier(ProjectionClassifier):
         for i in range(indexes.shape[0]):
             labels.append(self.__labels[indexes[i][0]])
 
+        return labels
+
+
+class DeepFeedForwardClassifier(NeuralNetworkClassifier):
+
+    def __init__(self, embedding_size: int, n_hidden_neurons: int, n_hidden_layers: int, dropout_rate: float,
+                 batch_size: int, epochs: int, n_jobs: int):
+        self.__batch_size = batch_size
+        self.__epochs = epochs
+        self.__superclass_embeddings = np.array(list())
+        self.__superclass_labels = list()
+
+        self.__nearest_neighbors = NearestNeighbors(
+            metric='minkowski',
+            n_neighbors=1,
+            p=2,
+            n_jobs=n_jobs
+        )
+
+        self.__model = Sequential()
+        self.__model.add(Dense(input_shape=(embedding_size,), units=n_hidden_neurons, activation='tanh'))
+        for _ in range(n_hidden_layers):
+            self.__model.add(Dense(units=n_hidden_neurons, activation='tanh'))
+            self.__model.add(Dropout(rate=0.5))
+        self.__model.add(Dense(units=embedding_size, activation='softmax'))
+        sgd = SGD(lr=0.01, decay=1e-6, momentum=0.9, nesterov=True)
+        self.__model.compile(loss='categorical crossentropy', optimizer=sgd, metrics='accuracy')
+
+    def train(self, training_data: Tuple[np.array, np.array, List[str]]):
+        x, self.__superclass_embeddings, self.__superclass_labels = training_data
+
+        self.__nearest_neighbors.fit(self.__superclass_embeddings)
+
+        self.__model.fit(x, self.__superclass_embeddings, verbose=1, batch_size=self.__batch_size, epochs=self.__epochs,
+                         shuffle=True)
+
+    def classify(self, unknowns: np.array)->List[str]:
+        predictions = self.__model.predict(unknowns)
+        _, indexes = self.__nearest_neighbors.kneighbors(predictions, return_distance=True)
+        labels = list()
+        for index in indexes:
+            labels.append(self.__superclass_labels[index[0]])
         return labels
