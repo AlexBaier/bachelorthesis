@@ -5,7 +5,7 @@ from typing import List, Tuple
 
 import numpy as np
 from keras.layers import Dense, Dropout
-from keras.models import Sequential
+from keras.models import Sequential, load_model
 from sklearn.cluster import MiniBatchKMeans
 from sklearn.linear_model import SGDRegressor
 from sklearn.neighbors import KNeighborsClassifier, NearestNeighbors
@@ -165,7 +165,7 @@ class PiecewiseLinearProjectionClassifier(ProjectionClassifier):
 class DeepFeedForwardClassifier(NeuralNetworkClassifier):
 
     def __init__(self, embedding_size: int, n_hidden_neurons: int, n_hidden_layers: int, dropout_rate: float,
-                 batch_size: int, epochs: int, n_jobs: int):
+                 batch_size: int, epochs: int, n_jobs: int, model_path: str=None):
         self.__batch_size = batch_size
         self.__epochs = epochs
         self.__superclass_embeddings = np.array(list())
@@ -178,13 +178,17 @@ class DeepFeedForwardClassifier(NeuralNetworkClassifier):
             n_jobs=n_jobs
         )
 
+        if model_path:
+            self.__model = load_model(model_path)
+            return
+
         self.__model = Sequential()
         self.__model.add(Dense(input_shape=(embedding_size,), units=n_hidden_neurons, activation='relu',
                                kernel_initializer='random_uniform', bias_initializer='zeros'))
         for _ in range(n_hidden_layers):
             self.__model.add(Dense(units=n_hidden_neurons, activation='relu', kernel_initializer='random_uniform',
                                    bias_initializer='zeros'))
-            self.__model.add(Dropout(rate=0.5))
+            self.__model.add(Dropout(rate=dropout_rate))
         self.__model.add(Dense(units=embedding_size, activation='linear', kernel_initializer='random_uniform',
                                bias_initializer='zeros'))
         self.__model.compile(loss='mean_squared_error', optimizer='adam', metrics=['accuracy'])
@@ -204,3 +208,6 @@ class DeepFeedForwardClassifier(NeuralNetworkClassifier):
         for index in indexes:
             labels.append(self.__superclass_labels[index[0]])
         return labels
+
+    def save_to_file(self, file_path: str):
+        self.__model.save(file_path)

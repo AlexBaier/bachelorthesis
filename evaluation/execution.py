@@ -1,5 +1,6 @@
 import itertools
 import logging
+import os
 import re
 from typing import Dict, List, Tuple
 
@@ -132,17 +133,25 @@ def execute_classification(algorithm: str, config: dict,
             batch_size = config['batch size']
         except KeyError as e:
             raise MissingParameterError(str(e), algorithm)
+        try:
+            model_path = config['model path'] if os.path.isfile(config['model path']) else None
+        except KeyError:
+            model_path = None
         classifier = alg.DeepFeedForwardClassifier(embedding_size=embeddings.shape[1],
                                                    n_hidden_layers=n_hidden_layers,
                                                    n_hidden_neurons=n_hidden_neurons,
                                                    dropout_rate=dropout_rate,
                                                    epochs=epochs,
                                                    batch_size=batch_size,
-                                                   n_jobs=workers)
+                                                   n_jobs=workers,
+                                                   model_path=model_path)
     logging.log(level=logging.INFO, msg='initialized {} classifier'.format(algorithm))
 
     classifier.train(training_input)
     logging.log(level=logging.INFO, msg='trained {} classifier'.format(algorithm))
+    if __DNN_REGEX.fullmatch(algorithm) and config.get('model path', None):
+        classifier.save_to_file(config['model path'])
+        logging.info('stored trained model {} to {}'.format(algorithm, config['model path']))
 
     test_input_matrix = list()
     is_valid_test = list()
