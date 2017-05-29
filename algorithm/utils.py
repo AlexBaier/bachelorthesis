@@ -76,4 +76,4 @@ def map_to_neural_network_training_input(training_samples: List[MultiLabelSample
                 y_labels.append(y_label)
             except KeyError as e:
                 logging.log(level=logging.DEBUG, msg='no embedding for {}'.format(e))
-        return np.array(x_ls), np.array(y_ls), y_labels
+    return np.array(x_ls), np.array(y_ls), y_labels

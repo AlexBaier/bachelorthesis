@@ -6,7 +6,6 @@ from typing import List, Tuple
 import numpy as np
 from keras.layers import Dense, Dropout
 from keras.models import Sequential
-from keras.optimizers import SGD
 from sklearn.cluster import MiniBatchKMeans
 from sklearn.linear_model import SGDRegressor
 from sklearn.neighbors import KNeighborsClassifier, NearestNeighbors
@@ -180,13 +179,15 @@ class DeepFeedForwardClassifier(NeuralNetworkClassifier):
         )
 
         self.__model = Sequential()
-        self.__model.add(Dense(input_shape=(embedding_size,), units=n_hidden_neurons, activation='tanh'))
+        self.__model.add(Dense(input_shape=(embedding_size,), units=n_hidden_neurons, activation='relu',
+                               kernel_initializer='random_uniform', bias_initializer='zeros'))
         for _ in range(n_hidden_layers):
-            self.__model.add(Dense(units=n_hidden_neurons, activation='tanh'))
+            self.__model.add(Dense(units=n_hidden_neurons, activation='relu', kernel_initializer='random_uniform',
+                                   bias_initializer='zeros'))
             self.__model.add(Dropout(rate=0.5))
-        self.__model.add(Dense(units=embedding_size, activation='softmax'))
-        sgd = SGD(lr=0.01, decay=1e-6, momentum=0.9, nesterov=True)
-        self.__model.compile(loss='categorical crossentropy', optimizer=sgd, metrics='accuracy')
+        self.__model.add(Dense(units=embedding_size, activation='linear', kernel_initializer='random_uniform',
+                               bias_initializer='zeros'))
+        self.__model.compile(loss='mean_squared_error', optimizer='adam', metrics=['accuracy'])
 
     def train(self, training_data: Tuple[np.array, np.array, List[str]]):
         x, self.__superclass_embeddings, self.__superclass_labels = training_data
