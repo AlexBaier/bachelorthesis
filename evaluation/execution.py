@@ -128,7 +128,6 @@ def execute_classification(algorithm: str, config: dict,
         try:
             n_hidden_layers = config['hidden layers']
             n_hidden_neurons = config['hidden neurons']
-            dropout_rate = config['dropout rate']
             epochs = config['epochs']
             batch_size = config['batch size']
         except KeyError as e:
@@ -140,7 +139,6 @@ def execute_classification(algorithm: str, config: dict,
         classifier = alg.DeepFeedForwardClassifier(embedding_size=embeddings.shape[1],
                                                    n_hidden_layers=n_hidden_layers,
                                                    n_hidden_neurons=n_hidden_neurons,
-                                                   dropout_rate=dropout_rate,
                                                    epochs=epochs,
                                                    batch_size=batch_size,
                                                    n_jobs=workers,

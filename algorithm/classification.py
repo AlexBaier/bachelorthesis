@@ -164,7 +164,7 @@ class PiecewiseLinearProjectionClassifier(ProjectionClassifier):
 
 class DeepFeedForwardClassifier(NeuralNetworkClassifier):
 
-    def __init__(self, embedding_size: int, n_hidden_neurons: int, n_hidden_layers: int, dropout_rate: float,
+    def __init__(self, embedding_size: int, n_hidden_neurons: int, n_hidden_layers: int,
                  batch_size: int, epochs: int, n_jobs: int, model_path: str=None):
         self.__batch_size = batch_size
         self.__epochs = epochs
