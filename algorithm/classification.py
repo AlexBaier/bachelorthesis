@@ -4,7 +4,7 @@ import logging
 from typing import List, Tuple
 
 import numpy as np
-from keras.layers import Dense, Dropout
+from keras.layers import Dense
 from keras.models import Sequential, load_model
 from sklearn.cluster import MiniBatchKMeans
 from sklearn.linear_model import SGDRegressor
@@ -183,23 +183,19 @@ class DeepFeedForwardClassifier(NeuralNetworkClassifier):
             return
 
         self.__model = Sequential()
-        self.__model.add(Dense(input_shape=(embedding_size,), units=n_hidden_neurons, activation='relu',
-                               kernel_initializer='random_uniform', bias_initializer='zeros'))
+        self.__model.add(Dense(input_shape=(embedding_size,), units=embedding_size, activation='linear'))
         for _ in range(n_hidden_layers):
-            self.__model.add(Dense(units=n_hidden_neurons, activation='relu', kernel_initializer='random_uniform',
-                                   bias_initializer='zeros'))
-            self.__model.add(Dropout(rate=dropout_rate))
-        self.__model.add(Dense(units=embedding_size, activation='linear', kernel_initializer='random_uniform',
-                               bias_initializer='zeros'))
-        self.__model.compile(loss='mean_squared_error', optimizer='adam', metrics=['accuracy'])
+            self.__model.add(Dense(units=n_hidden_neurons, activation='relu'))
+        self.__model.add(Dense(units=embedding_size, activation='linear'))
+        self.__model.compile(optimizer='adam', loss='mean_squared_error', metrics=['accuracy'])
 
     def train(self, training_data: Tuple[np.array, np.array, List[str]]):
         x, self.__superclass_embeddings, self.__superclass_labels = training_data
 
         self.__nearest_neighbors.fit(self.__superclass_embeddings)
 
-        self.__model.fit(x, self.__superclass_embeddings, verbose=1, batch_size=self.__batch_size, epochs=self.__epochs,
-                         shuffle=True)
+        self.__model.fit(x, self.__superclass_embeddings, verbose=1, batch_size=self.__batch_size,
+                         epochs=self.__epochs, shuffle=True)
 
     def classify(self, unknowns: np.array)->List[str]:
         predictions = self.__model.predict(unknowns)

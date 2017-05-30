@@ -62,12 +62,21 @@
     "clusters": 50,
     "sgd iterations": 15
   },
-  "deep neural network (h=8, n=600)": {
-    "hidden layers": 8,
-    "hidden neurons": 600,
+  "deep neural network (h=4, n=3600)": {
+    "hidden layers": 4,
+    "hidden neurons": 3600,
     "dropout rate": 0.5,
-    "epochs": 50,
-    "batch size": 64
+    "epochs": 5,
+    "batch size": 32,
+    "model path": "data/algorithm_io/dnn_4_3600.h5"
+  },
+  "deep neural network (h=8, n=3600)": {
+    "hidden layers": 8,
+    "hidden neurons": 3600,
+    "dropout rate": 0.5,
+    "epochs": 8,
+    "batch size": 32,
+    "model path": "data/algorithm_io/dnn_8_3600.h5"
   },
   "combinations": {
     "baseline": {
@@ -115,10 +124,15 @@
       "sgns": "triple sentence sgns",
       "classification": "linear projection (c=50)"
     },
-    "ts+dnn(h=8,n=600)": {
+    "ts+dnn(h=4,n=3600)": {
       "sequences": "triple sentences",
       "sgns": "triple sentence sgns",
-      "classification": "deep neural network (h=8, n=600)"
+      "classification": "deep neural network (h=4, n=3600)"
+    },
+    "ts+dnn(h=8,n=3600)": {
+      "sequences": "triple sentences",
+      "sgns": "triple sentence sgns",
+      "classification": "deep neural network (h=8, n=3600)"
     },
     "gw+distknn(k=5)": {
       "sequences": "graph walk sentences",
