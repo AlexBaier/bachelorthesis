@@ -4,8 +4,9 @@ import logging
 from typing import List, Tuple
 
 import numpy as np
-from keras.layers import Dense
-from keras.models import Sequential, load_model
+from keras import Input
+from keras.layers import Dense, Concatenate
+from keras.models import Model, Sequential, load_model
 from sklearn.cluster import MiniBatchKMeans
 from sklearn.linear_model import SGDRegressor
 from sklearn.neighbors import KNeighborsClassifier, NearestNeighbors
@@ -40,6 +41,10 @@ class NeuralNetworkClassifier(Classifier, metaclass=abc.ABCMeta):
 
     @abc.abstractclassmethod
     def train(self, training_data: Tuple[np.array, np.array, List[str]]):
+        pass
+
+    @abc.abstractclassmethod
+    def save_to_file(self, model_path: str):
         pass
 
 
@@ -205,5 +210,59 @@ class DeepFeedForwardClassifier(NeuralNetworkClassifier):
             labels.append(self.__superclass_labels[index[0]])
         return labels
 
-    def save_to_file(self, file_path: str):
-        self.__model.save(file_path)
+    def save_to_file(self, model_path: str):
+        self.__model.save(model_path)
+
+
+class ConcatFeedForwardClassifier(NeuralNetworkClassifier):
+
+    def __init__(self, embedding_size: int, n_networks: int, n_hidden_neurons: int, batch_size: int, epochs: int,
+                 n_jobs: int, model_path: str=None):
+        # Check that combination n_networks and embedding_size is valid.
+        assert embedding_size % n_networks == 0 and embedding_size >= n_networks
+        self.__n_networks = n_networks
+        self.__n_outputs = int(embedding_size / n_networks)
+        self.__batch_size = batch_size
+        self.__epochs = epochs
+        self.__superclass_embeddings = np.array(list())
+        self.__superclass_labels = list()
+
+        self.__nearest_neighbors = NearestNeighbors(
+            metric='minkowski',
+            n_neighbors=1,
+            p=2,
+            n_jobs=n_jobs
+        )
+
+        if model_path:
+            self.__model = load_model(model_path)
+            return
+
+        inputs = [Input(name='input' + str(idx), shape=(embedding_size,)) for idx in range(n_networks)]
+        hidden_layers = [Dense(name='spread' + str(idx), activation='relu', units=n_hidden_neurons)(inp)
+                         for idx, inp in enumerate(inputs)]
+        outputs = [Dense(name='combine' + str(idx), activation='relu', units=self.__n_outputs)(hidden_layer)
+                   for idx, hidden_layer in enumerate(hidden_layers)]
+        concat = Concatenate(name='concat')(outputs)
+        linear_output = Dense(name='output', activation='linear', units=embedding_size)(concat)
+        self.__model = Model(inputs=inputs, outputs=linear_output)
+        self.__model.compile(optimizer='adam', loss='mean_squared_error', metrics=['accuracy'])
+
+    def train(self, training_data: Tuple[np.array, np.array, List[str]]):
+        x, self.__superclass_embeddings, self.__superclass_labels = training_data
+
+        self.__nearest_neighbors.fit(self.__superclass_embeddings)
+
+        self.__model.fit([x for _ in range(self.__n_networks)], self.__superclass_embeddings, verbose=1,
+                         batch_size=self.__batch_size, epochs=self.__epochs, shuffle=True)
+
+    def classify(self, unknowns: np.array) -> List[str]:
+        predictions = self.__model.predict([unknowns for _ in range(self.__n_networks)])
+        _, indexes = self.__nearest_neighbors.kneighbors(predictions, return_distance=True)
+        labels = list()
+        for index in indexes:
+            labels.append(self.__superclass_labels[index[0]])
+        return labels
+
+    def save_to_file(self, model_path: str):
+        self.__model.save(model_path)

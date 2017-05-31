@@ -16,6 +16,7 @@ __MOST_COMMON_REGEX = re.compile(r'^most-common$')
 __DIST_KNN_REGEX = re.compile(r'^distance-knn \(k=[1-9][0-9]*\)$')
 __PW_LIN_PROJ_REGEX = re.compile(r'^linear projection \(c=[1-9][0-9]*\)$')
 __DNN_REGEX = re.compile(r'^deep neural network \(h=[1-9][0-9]*, n=[1-9][0-9]*\)$')
+__CONCAT_NN_REGEX = re.compile(r'^concat neural network \(net=[1-9][0-9]*, n=[1-9][0-9]*\)$')
 
 NO_INPUT_EMBEDDING = 'NO_INPUT_EMBEDDING'
 
@@ -97,7 +98,7 @@ def execute_classification(algorithm: str, config: dict,
         mapping = map_to_proj_training_input
     elif __MOST_COMMON_REGEX.fullmatch(algorithm):
         mapping = map_to_baseline_training_input
-    elif __DNN_REGEX.fullmatch(algorithm):
+    elif __DNN_REGEX.fullmatch(algorithm) or __CONCAT_NN_REGEX.fullmatch(algorithm):
         mapping = map_to_neural_network_training_input
     else:
         raise NotImplementedClassifierError(algorithm)
@@ -143,11 +144,30 @@ def execute_classification(algorithm: str, config: dict,
                                                    batch_size=batch_size,
                                                    n_jobs=workers,
                                                    model_path=model_path)
+    elif __CONCAT_NN_REGEX.fullmatch(algorithm):
+        try:
+            n_networks = config['networks']
+            n_hidden_neurons = config['hidden neurons']
+            epochs = config['epochs']
+            batch_size = config['batch size']
+        except KeyError as e:
+            raise MissingParameterError(str(e), algorithm)
+        try:
+            model_path = config['model path'] if os.path.isfile(config['model path']) else None
+        except KeyError:
+            model_path = None
+        classifier = alg.ConcatFeedForwardClassifier(embedding_size=embeddings.shape[1],
+                                                     n_networks=n_networks,
+                                                     n_hidden_neurons=n_hidden_neurons,
+                                                     epochs=epochs,
+                                                     batch_size=batch_size,
+                                                     n_jobs=workers,
+                                                     model_path=model_path)
     logging.log(level=logging.INFO, msg='initialized {} classifier'.format(algorithm))
 
     classifier.train(training_input)
     logging.log(level=logging.INFO, msg='trained {} classifier'.format(algorithm))
-    if __DNN_REGEX.fullmatch(algorithm) and config.get('model path', None):
+    if (__DNN_REGEX.fullmatch(algorithm) or __CONCAT_NN_REGEX.fullmatch(algorithm)) and config.get('model path', None):
         classifier.save_to_file(config['model path'])
         logging.info('stored trained model {} to {}'.format(algorithm, config['model path']))
 
