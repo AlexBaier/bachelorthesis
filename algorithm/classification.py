@@ -216,11 +216,13 @@ class DeepFeedForwardClassifier(NeuralNetworkClassifier):
 
 class ConcatFeedForwardClassifier(NeuralNetworkClassifier):
 
-    def __init__(self, embedding_size: int, n_networks: int, n_hidden_neurons: int, batch_size: int, epochs: int,
-                 n_jobs: int, model_path: str=None):
+    def __init__(self, embedding_size: int, n_networks: int, n_hidden_layers:int, n_hidden_neurons: int,
+                 batch_size: int, epochs: int, n_jobs: int, model_path: str=None):
         # Check that combination n_networks and embedding_size is valid.
         assert embedding_size % n_networks == 0 and embedding_size >= n_networks
+        assert n_hidden_layers >= 1 and n_hidden_neurons >= 1 and embedding_size >= 1 and n_networks >= 1
         self.__n_networks = n_networks
+        self.__n_hidden_layers = n_hidden_layers
         self.__n_outputs = int(embedding_size / n_networks)
         self.__batch_size = batch_size
         self.__epochs = epochs
@@ -239,8 +241,12 @@ class ConcatFeedForwardClassifier(NeuralNetworkClassifier):
             return
 
         inputs = [Input(name='input' + str(idx), shape=(embedding_size,)) for idx in range(n_networks)]
-        hidden_layers = [Dense(name='spread' + str(idx), activation='relu', units=n_hidden_neurons)(inp)
-                         for idx, inp in enumerate(inputs)]
+        # Init first hidden layer on input layer.
+        hidden_layers = [Dense(activation='relu', units=n_hidden_neurons)(inp) for inp in inputs]
+        # Init all other hidden layers on previous hidden layer.
+        for _ in range(1, n_hidden_layers):
+            hidden_layers = [Dense(activation='relu', units=n_hidden_neurons)(hidden_layer)
+                             for hidden_layer in hidden_layers]
         outputs = [Dense(name='combine' + str(idx), activation='relu', units=self.__n_outputs)(hidden_layer)
                    for idx, hidden_layer in enumerate(hidden_layers)]
         concat = Concatenate(name='concat')(outputs)

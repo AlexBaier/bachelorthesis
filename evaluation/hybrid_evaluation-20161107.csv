@@ -2,6 +2,7 @@ algorithm,test samples,TPs,accuracy,average taxonomic overlap
 baseline,10000,880,0.088,0.31256
 ts+dnn(h=4,n=3600),8943,1522,0.17019,0.29847
 ts+dnn(h=8,n=2400),8943,1565,0.175,0.30543
+ts+concatnn(net=30,n=2400),8943,1635,0.18282,0.33648
 ts+distknn(k=5),8943,1912,0.2138,0.45169
 ts+distknn(k=10),8943,1991,0.22263,0.46171
 ts+distknn(k=15),8943,2023,0.22621,0.46563

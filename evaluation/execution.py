@@ -16,7 +16,7 @@ __MOST_COMMON_REGEX = re.compile(r'^most-common$')
 __DIST_KNN_REGEX = re.compile(r'^distance-knn \(k=[1-9][0-9]*\)$')
 __PW_LIN_PROJ_REGEX = re.compile(r'^linear projection \(c=[1-9][0-9]*\)$')
 __DNN_REGEX = re.compile(r'^deep neural network \(h=[1-9][0-9]*, n=[1-9][0-9]*\)$')
-__CONCAT_NN_REGEX = re.compile(r'^concat neural network \(net=[1-9][0-9]*, n=[1-9][0-9]*\)$')
+__CONCAT_NN_REGEX = re.compile(r'^concat neural network \(net=[1-9][0-9]*, h=[1-9][0-9]*, n=[1-9][0-9]*\)$')
 
 NO_INPUT_EMBEDDING = 'NO_INPUT_EMBEDDING'
 
@@ -147,6 +147,7 @@ def execute_classification(algorithm: str, config: dict,
     elif __CONCAT_NN_REGEX.fullmatch(algorithm):
         try:
             n_networks = config['networks']
+            n_hidden_layers = config['hidden layers']
             n_hidden_neurons = config['hidden neurons']
             epochs = config['epochs']
             batch_size = config['batch size']
@@ -158,6 +159,7 @@ def execute_classification(algorithm: str, config: dict,
             model_path = None
         classifier = alg.ConcatFeedForwardClassifier(embedding_size=embeddings.shape[1],
                                                      n_networks=n_networks,
+                                                     n_hidden_layers=n_hidden_layers,
                                                      n_hidden_neurons=n_hidden_neurons,
                                                      epochs=epochs,
                                                      batch_size=batch_size,
