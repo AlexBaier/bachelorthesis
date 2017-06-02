@@ -167,7 +167,7 @@ class PiecewiseLinearProjectionClassifier(ProjectionClassifier):
         return labels
 
 
-class DeepFeedForwardClassifier(NeuralNetworkClassifier):
+class DeepFFRegressionClassifier(NeuralNetworkClassifier):
 
     def __init__(self, embedding_size: int, n_hidden_neurons: int, n_hidden_layers: int,
                  batch_size: int, epochs: int, n_jobs: int, model_path: str=None):
@@ -214,13 +214,14 @@ class DeepFeedForwardClassifier(NeuralNetworkClassifier):
         self.__model.save(model_path)
 
 
-class ConcatFeedForwardClassifier(NeuralNetworkClassifier):
+class ConcatFFRegressionClassifier(NeuralNetworkClassifier):
 
-    def __init__(self, embedding_size: int, n_networks: int, n_hidden_layers:int, n_hidden_neurons: int,
-                 batch_size: int, epochs: int, n_jobs: int, model_path: str=None):
+    def __init__(self, activation: str, embedding_size: int, n_networks: int, n_hidden_layers: int,
+                 n_hidden_neurons: int, batch_size: int, epochs: int, n_jobs: int, model_path: str=None):
         # Check that combination n_networks and embedding_size is valid.
         assert embedding_size % n_networks == 0 and embedding_size >= n_networks
         assert n_hidden_layers >= 1 and n_hidden_neurons >= 1 and embedding_size >= 1 and n_networks >= 1
+        self.__activation = activation
         self.__n_networks = n_networks
         self.__n_hidden_layers = n_hidden_layers
         self.__n_outputs = int(embedding_size / n_networks)
@@ -242,12 +243,12 @@ class ConcatFeedForwardClassifier(NeuralNetworkClassifier):
 
         inputs = [Input(name='input' + str(idx), shape=(embedding_size,)) for idx in range(n_networks)]
         # Init first hidden layer on input layer.
-        hidden_layers = [Dense(activation='relu', units=n_hidden_neurons)(inp) for inp in inputs]
+        hidden_layers = [Dense(activation=self.__activation, units=n_hidden_neurons)(inp) for inp in inputs]
         # Init all other hidden layers on previous hidden layer.
         for _ in range(1, n_hidden_layers):
-            hidden_layers = [Dense(activation='relu', units=n_hidden_neurons)(hidden_layer)
+            hidden_layers = [Dense(activation=self.__activation, units=n_hidden_neurons)(hidden_layer)
                              for hidden_layer in hidden_layers]
-        outputs = [Dense(name='combine' + str(idx), activation='relu', units=self.__n_outputs)(hidden_layer)
+        outputs = [Dense(name='combine' + str(idx), activation='linear', units=self.__n_outputs)(hidden_layer)
                    for idx, hidden_layer in enumerate(hidden_layers)]
         concat = Concatenate(name='concat')(outputs)
         linear_output = Dense(name='output', activation='linear', units=embedding_size)(concat)
