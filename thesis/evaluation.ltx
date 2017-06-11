@@ -43,6 +43,8 @@ where $G$ is gold standard, which samples $(c_i, S_i)$ with $i \in [1, |G|]$ and
 The maximum overlap between prediction and gold is chosen, if there are multiple possible superclass for a sample,
 since the taxonomic overlap is a function, which should be maximized by the algorithm \cite{Kosmopoulos2014}.
 
+\textbf{TODO: Introduce most common classifier and how it should compare to the other methods}
+
 Each possible combination of components is evaluated as a separate hybrid algorithm.
 For each classification component different hyperparameters are tested to find a good configuration.
 A naming scheme is used to uniquely identify each hybrid algorithm with their corresponding hyperparameters.
@@ -53,6 +55,7 @@ Consequently, hybrid algorithms have the following name format:
 &\text{<SequenceGen>}+\text{<Classification>}(\text{<hyperparameters>})
 \end{align*}
 To shorten the identifiers, the following abbreviations for components are used:
+\textbf{TODO: add new component names}
 \begin{table}[H]
 \center
 \begin{tabular}{l l}
@@ -66,6 +69,7 @@ piecewise linear projection & linproj
 \caption{Abbreviations for components}
 \end{table}
 The following hybrid algorithms are evaluated:
+\textbf{TODO: add new algorithms}
 \begin{itemize}
 \item ts+distknn($k=?$) with $k=5,10,15,20$
 \item ts+linproj($c=?$) with $c=1,25,50$
@@ -105,6 +109,7 @@ A total of $109,267,818$ triple sentences were extracted from the Wikidata dump 
 All entities, which have irrelevant properties, as defined in Section~\ref{section:relevant classes}, were excluded.
 All sentences representing test sample subclass-of relations were also excluded.
 
+\textbf{TODO: update graph walk stats}
 A total of $30,371,121$ graph walk sentences were generated.
 As sources for graph walks the relevant classes were chosen.
 Graph walk sentences cover $97.59\%$ of all relevant classes and $3.62\%$ of all entities.
@@ -112,12 +117,14 @@ Following \fullcite{Ristoski2016}, the graph walk sentences are enriched with th
 
 Due to memory limitations, SGNS is only able to capture a certain vocabulary size. Therefore only $5,000,000$ words are represented by SGNS.
 Less frequent words have therefore no embeddings. This also affects a small number of relevant classes, which occur in the test samples.
+\textbf{TODO: ensure this number is correct}
 Therefore only $8,943$ out of $10,000$ test samples can be used in the evaluation.
 
 \subsection{Results}
 The hybrid algorithms with the previously described parameters were executed.
 The accuracies and average taxonomic overlaps are  listed in Table~\ref{table:evaluation results}.
 
+\textbf{TODO: add missing results}
 \begin{table}[H]
 \center
 \begin{tabular}{| l | c | c |}
@@ -164,55 +171,26 @@ gw+linproj (c=50) & $\%$ & $\%$ \\
 \label{table:evaluation results}
 \end{table}
 
-\begin{figure}
-\center
-\includegraphics[width=0.8\textwidth]{images/evaluation/best_classifier_evaluation-20161107.png}
-\caption{Accuracy and taxonomic overlap of best classifier variations}
-\label{fig:best classifier comparison}
-\end{figure}
 
-Comparing the algorithms using triple sentences, shows that ts+distknn algorithms outperform ts+linproj in all configurations.
-ts+distknn(k=20) is the best performing algorithm with an accuracy of $22.83\%$ and a taxonomic overlap of $47.10\%$.
-An increasing $k$ seems to  improve the performance of the kNN classifier.
-However,  the improvements are only minimal, as only an accuracy increase of $\approx 1.5\%$ can be observed from $k=5$ to $k=20$.
+\textbf{TODO: compare algorithm performances between classifiers for triple sentences}
 
-The best performing ts+linproj algorithm is ts+linproj(c=25) with an accuracy of $12.88\%$ and an taxonomic overlap of $36.06\%$.
-The clustering parameter $c$ has a relevant influence on the performance of the linear projection algorithms.
-With no clustering $c=1$ the algorithm performs worst. More clusters seem to improve the performance of the algorithm.
-However, a maximum can be found between $c=1$ and $c=50$. Choosing $c$ too high worsens the performance.
-A high number of clusters implies that less training samples per projection matrix are available,
-which consequently means that each separate projection get more inaccurate, if more clusters exist.
-Therefore the trade-off between increasing the overall performance by separating classes into similar topic clusters
-and decreasing the performance of each projection by lowering the number of training samples has to be considered.
-For the given data set a optimal clustering can likely be found between $c=1$ and $c=50$.
+\textbf{TODO: compare algorithm performances between classifiers for graph walk sentences}
 
-The accuracy and taxonomic overlap are to some degree related measures, since the taxonomic overlap can never be worse than the accuracy.
-For the best kNN algorithm ts+distknn(k=20), the ratio of taxonomic overlap to accuracy to p is $\approx 206\%$, while the for the best linear projection algorithm ts+linproj(c=25)
-the ratio is approximately $280\%$. Linear projection seems to have some type of advantage in choosing the correct location in the taxonomy in comparison to kNN.
-Observing the distribution of local taxonomic overlaps in Figures~\ref{fig:ts+distknn overlap histogram} and~\ref{fig:ts+linproj overlap histogram} shows
-that both classification approaches generally fail at placing a prediction in the correct section of the taxonomy,
-since the for both classifiers the majority of predictions has a taxonomic overlap of less than $10\%$.
+\textbf{TODO: interpret results}
 
-\begin{figure}
-\centering
-\includegraphics[width=0.8\textwidth]{images/evaluation/ts_knn_overlaps_distr-20161107.png}
-\caption{Local taxonomic overlaps for ts+distknn algorithms.}
-\label{fig:ts+distknn overlap histogram}
+\textbf{TODO: compare algorithm performances between sequence gens}
 
-\centering
-\includegraphics[width=0.8\textwidth]{images/evaluation/ts_linproj_overlaps_distr-20161107.png}
-\caption{Local taxonomic overlaps for ts+linproj algorithms.}
-\label{fig:ts+linproj overlap histogram}
-\end{figure}
+\textbf{TODO: Explain taxonomic overlap histogram}
+\textbf{TODO: Show significant histograms of best performing algorithms}
+
+\textbf{TODO: Interpret low performance in regards to taxonomic overlap}
+
 
 \subsection{Discussion}
 
 The problem of classification with a very high number of labels ($>100,000$) is very difficult.
 No easily comparable problem was found in literature, therefore no comparison with state-of-the-art methods was possible.
-The worst case in classification occurs, if there is no difference between classifiying and randomly picking a label.
-In this evaluation, every relevant class other than the classes in the test set are possible labels.
-Given $195,124-1,000=194,124$ possible labels, the accuracy for randomly choosing the correct label is $5.15e4\%$.
-All evaluated methods return significantly higher accuracies than the worst case.
+\textbf{TODO: Repeat motivation for most-common classifier}.
 Therefore it is at least possible to confirm that the hybrid algorithms proposed in this work could help users in identifying appropiate superclasses for given orphan classes.
 
 The following  problems could be identified, which future work could attempt to solve.
@@ -234,3 +212,7 @@ therefore it may be applicable to only consider classes with distance $5$ to $9$
 A topic-based reduction of possible superclasses may have benefits, since classes with similar topics are closely related in the taxonomy,
 it may be sensible to only observe a certain excerpt of the taxonomy for each classification decision.
 This approach would however require a method of clustering the taxonomy into topic-based subgraphs and also identifying the correct topic for a given unknown class.
+\textbf{TODO: Motivate use of taxonomy-based classifiers}
+
+
+\textbf{TODO: Motivate more extensive use of neural networks for classification/regression}
