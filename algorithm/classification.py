@@ -241,18 +241,16 @@ class ConcatFFRegressionClassifier(NeuralNetworkClassifier):
             self.__model = load_model(model_path)
             return
 
-        inputs = [Input(name='input' + str(idx), shape=(embedding_size,)) for idx in range(n_networks)]
-        # Init first hidden layer on input layer.
-        hidden_layers = [Dense(activation=self.__activation, units=n_hidden_neurons)(inp) for inp in inputs]
+        inp = Input(name='input', shape=(embedding_size,))
+        # Init first hidden layers on input layer.
+        hidden_layers = [Dense(activation=self.__activation, units=n_hidden_neurons)(inp) for _ in range(n_networks)]
         # Init all other hidden layers on previous hidden layer.
         for _ in range(1, n_hidden_layers):
             hidden_layers = [Dense(activation=self.__activation, units=n_hidden_neurons)(hidden_layer)
                              for hidden_layer in hidden_layers]
-        outputs = [Dense(name='combine' + str(idx), activation='linear', units=self.__n_outputs)(hidden_layer)
-                   for idx, hidden_layer in enumerate(hidden_layers)]
-        concat = Concatenate(name='concat')(outputs)
+        concat = Concatenate(name='concat')(hidden_layers)
         linear_output = Dense(name='output', activation='linear', units=embedding_size)(concat)
-        self.__model = Model(inputs=inputs, outputs=linear_output)
+        self.__model = Model(inputs=inp, outputs=linear_output)
         self.__model.compile(optimizer='adam', loss='mean_squared_error', metrics=['accuracy'])
 
     def train(self, training_data: Tuple[np.array, np.array, List[str]]):
@@ -260,11 +258,11 @@ class ConcatFFRegressionClassifier(NeuralNetworkClassifier):
 
         self.__nearest_neighbors.fit(self.__superclass_embeddings)
 
-        self.__model.fit([x for _ in range(self.__n_networks)], self.__superclass_embeddings, verbose=1,
-                         batch_size=self.__batch_size, epochs=self.__epochs, shuffle=True)
+        self.__model.fit(x, self.__superclass_embeddings, verbose=1, batch_size=self.__batch_size, epochs=self.__epochs,
+                         shuffle=True)
 
     def classify(self, unknowns: np.array) -> List[str]:
-        predictions = self.__model.predict([unknowns for _ in range(self.__n_networks)])
+        predictions = self.__model.predict(unknowns)
         _, indexes = self.__nearest_neighbors.kneighbors(predictions, return_distance=True)
         labels = list()
         for index in indexes:
