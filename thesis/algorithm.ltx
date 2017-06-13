@@ -261,3 +261,16 @@ and to what degree it benefits from word embeddings using graph walk sentences i
 
 \subsubsection{Non-linear regression via neural nets}
 \textbf{TODO: describe neural net architecture for simple non-linear regression task}
+
+\cite{Hornik1991} approximation capability depends on number of neurons and hidden layers
+
+\cite{Leshno1993} nn wiith non polynomial activation can approximate any  function
+
+\cite{Maas2013}: using ReLU for non-linear function, no vanishing gradient problem since partial derivate for values above 0 is 1.
+
+
+
+ReLU layer:
+\begin{align*}
+& h = \max(W\vec{x} + b, 0) = \begin{cases} W\vec{x} + b \text{ for } W\vec{x} + b > 0 \\ 0 \text{ else }\end{cases}
+\end{align*}
