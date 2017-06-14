@@ -19,7 +19,7 @@
     "negative sampling": 15,
     "iterations": 5,
     "max vocab": 5000000,
-    "embeddings path": "/home/alex/PycharmProjects/thesis/data/algorithm_io/simple_sentence_class_embeddings-20161107"
+    "embeddings path": "/home/alex/PycharmProjects/thesis/data/algorithm_io/simple_sentence_class_embeddings-20161107.csv"
   },
   "graph walk sentence sgns": {
     "embedding size": 300,
@@ -30,7 +30,7 @@
     "negative sampling": 50,
     "iterations": 5,
     "max vocab": 5000000,
-    "embeddings path": "/home/alex/PycharmProjects/thesis/data/algorithm_io/graph_walk_class_embeddings-20161107"
+    "embeddings path": "/home/alex/PycharmProjects/thesis/data/algorithm_io/graph_walk_class_embeddings-20161107.csv"
   },
   "most-common": {
   },
