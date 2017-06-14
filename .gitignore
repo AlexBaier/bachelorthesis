@@ -3,6 +3,8 @@ __pycache__/
 
 # Pycharm
 .idea/*
+:memory
+:memory-journal
 
 # algorithm out- and input
 data/*
@@ -13,6 +15,7 @@ data/*
 *.blg
 *.lof
 *.log
+*.lot
 *.out
 *.synctex.gz
 *.toc
