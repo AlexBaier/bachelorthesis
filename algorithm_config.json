@@ -155,11 +155,6 @@
       "sgns": "triple sentence sgns",
       "classification": "concat neural network (act=relu, net=20, h=2, n=2400)"
     },
-    "ts+concatnn(act=linear,net=30,n=2400)": {
-      "sequences": "triple sentences",
-      "sgns": "triple sentence sgns",
-      "classification": "concat neural network (act=linear, net=30, h=2, n=2400)"
-    },
     "gw+distknn(k=5)": {
       "sequences": "graph walk sentences",
       "sgns": "graph walk sentence sgns",
@@ -194,6 +189,11 @@
       "sequences": "graph walk sentences",
       "sgns": "graph walk sentence sgns",
       "classification": "linear projection (c=50)"
+    },
+    "gw+concatnn(act=relu,net=20,n=2400)": {
+      "sequences": "graph walk sentences",
+      "sgns": "graph walk sentence sgns",
+      "classification": "concat neural network (act=relu, net=20, h=2, n=2400)"
     }
   }
 }

@@ -9,9 +9,10 @@ from evaluation.utils import load_test_data
 def main():
     logging.basicConfig(format='%(asctime)s : %(levelname)s : %(message)s', level=logging.DEBUG)
 
-    algorithms = ['baseline',
-                  'ts+distknn(k=5)', 'ts+distknn(k=10)', 'ts+distknn(k=15)', 'ts+distknn(k=20)',
+    algorithms = ['baseline', 'ts+dnn(h=4,n=3600)', 'ts+dnn(h=8,n=2400)', 'ts+concatnn(act=relu,net=20,n=2400)',
+                  'ts+distknn(k=10)', 'ts+distknn(k=15)', 'ts+distknn(k=20)',
                   'ts+linproj(c=1)', 'ts+linproj(c=25)', 'ts+linproj(c=50)',
+                  'gw+concatnn(act=relu,net=20,n=2400)',
                   'gw+distknn(k=5)', 'gw+distknn(k=10)', 'gw+distknn(k=15)', 'gw+distknn(k=20)',
                   'gw+linproj(c=1)', 'gw+linproj(c=25)', 'gw+linproj(c=50)']
 
