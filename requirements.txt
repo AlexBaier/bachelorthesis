@@ -1,3 +1,5 @@
+IPython
+pandas
 keras
 adjustText
 pathos
