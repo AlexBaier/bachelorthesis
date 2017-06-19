@@ -1,4 +1,4 @@
-algorithm,test samples,TPs,accuracy,average taxonomic overlap
+algorithm;test samples;TPs;accuracy;average taxonomic overlap
 baseline;10000;880;0.088;0.31256
 ts+dnn(h=4,n=3600);8943;1522;0.17019;0.29847
 ts+dnn(h=8,n=2400);8943;1565;0.175;0.30543

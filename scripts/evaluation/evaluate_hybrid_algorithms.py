@@ -63,7 +63,7 @@ def main():
         logging.log(level=logging.INFO, msg='computed average taxonomic overlap for {}'.format(algorithm))
 
     with open(evaluation_output, mode='w') as f:
-        f.write(','.join(['algorithm',
+        f.write(';'.join(['algorithm',
                           'test samples',
                           'TPs',
                           'accuracy',
