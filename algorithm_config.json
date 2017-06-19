@@ -94,6 +94,15 @@
     "activation": "linear",
     "model path": "data/algorithm_io/concatnn_linear_30_2400.h5"
   },
+  "concat neural network (act=relu, net=10, h=3, n=1200)": {
+    "networks": 10,
+    "hidden layers": 3,
+    "hidden neurons": 1200,
+    "epochs": 8,
+    "batch size": 64,
+    "activation": "relu",
+    "model path": "data/algorithm_io/concatnn_relu_10_3_1200.h5"
+  },
   "combinations": {
     "baseline": {
       "sequences": "no sequences",
@@ -154,6 +163,11 @@
       "sequences": "triple sentences",
       "sgns": "triple sentence sgns",
       "classification": "concat neural network (act=relu, net=20, h=2, n=2400)"
+    },
+    "ts+concatnn(act=relu,net=10,h=3,n=1200)": {
+      "sequences": "triple sentences",
+      "sgns": "triple sentence sgns",
+      "classification": "concat neural network (act=relu, net=10, h=3, n=1200)"
     },
     "gw+distknn(k=5)": {
       "sequences": "graph walk sentences",
