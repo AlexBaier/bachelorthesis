@@ -4,7 +4,7 @@ For each component, possible implementations are proposed and implemented.
 Additionally, only relevant classes, as described in Section~\ref{section:relevant classes}, are considered in this chapter.
 Therefore training of the algorithm uses only of relevant classes and their corresponding instances.
 
-\subsection{Components}
+\subsection{Components}\label{section:components}
 The hybrid algorithm exploits neural word embeddings to solve the classification task,
 which is motivated by the power of word embeddings in similarity tasks \cite{Mikolov2013} and in taxonomy construction \cite{Fu2014}.
 
@@ -121,6 +121,23 @@ The output of graph walk sentences with $2$ maximum walks and depth $4$ with sou
 \caption{Two random graph walks in Wikidata with depth $4$.}
 \label{fig:graph walk sentences}
 \end{figure}
+
+Multiple test runs with graph walk-based classification have shown that embeddings trained on
+graph walks produced worse results than the trivial baseline algorithm described in 
+Section~\ref{section:evaluation method}.
+This stands in contradiction to intuition and experiments by \fullcite{Ristoski2016}.
+The following is a list of possible issues, which may be responsible for the unexpected bad results:
+\begin{itemize}
+\item Erroneous implementation of random graph walk. The most likely reason at this time is errors in
+the implementation of the random graph walk, which lead to the generation of ''bad'', duplicate or otherwise
+suboptimal walks.
+\item Common words are dis-proportionally overrepresented. Random graph walks are more likely to
+capture common words like properties such as \textit{instance of (P31)}. Classes are relatively rare words,
+and will therefore occur even less often in the graph walk sentences than in triple sentences,
+because they are captured less often by the graph walks.
+Consequently the generated embeddings for classes are less expressive and contain less semantic information.
+\end{itemize}
+Due to time constraints, the graph walk sentence component is dropped in the following evaluation.
 
 \subsection{Classification}
 
@@ -260,17 +277,94 @@ The thesis' evaluation will show whether linear projection is superior to the di
 and to what degree it benefits from word embeddings using graph walk sentences instead of triple sentences.
 
 \subsubsection{Non-linear regression via neural nets}
-\textbf{TODO: describe neural net architecture for simple non-linear regression task}
+The linear projection approach uses linear regression to predict a superclass embedding from a
+given unknown embedding. The complexity of the subclass-of relation is simplified
+by clustering the embeddings and computing a linear regression for each cluster.
+However, it is possible that a linear regression is not sufficient for capturing
+all correlations between the input and output embeddings.
+\fullcite{Leshno1993} states that a neural network with a non-polynomial activation function
+is able to approximate any function. Therefore it is possible to use a neural network to
+implement a non-linear regression, which is able to better model the subclass-of relation.
+The expressiveness of such a network is dependent on the number of neurons and hidden layers
+of the network \cite{Hornik1991}. Increasing the number of layers and neurons can theoretically
+maximize the expressiveness of a deep neural network \cite{Raghu2017}, but also increases
+the memory usage and runtime, as well as the required amount of training data necessary to train the model
+\cite{Raghu2017}. In the following a multi-network model for non-linear multi-variate, multi-target regression
+is proposed.
 
-\cite{Hornik1991} approximation capability depends on number of neurons and hidden layers
+The rectifier is well-suited as an activation function for non-linear regression, as it has multiple favorable
+characteristics in comparison to the classically used sigmoid and tanh functions \cite{Maas2013} \cite{Glorot2011}. 
+The rectifier is defined as a maximum function $f(x)=\max(0,x)$, which either returns the input or zero.
+\fullcite{Glorot2011} states that this function allows the network to learn sparse representation
+of inputs, since only a subset of neurons are activated for each input, because the rectifier returns $0$
+for all negative inputs. The remaining active neurons describe a linear function, which prevents gradient
+vanishing \cite{Glorot2011} and makes computations and backpropagation cheaper \cite{Glorot2011} \cite{Maas2013}.
 
-\cite{Leshno1993} nn wiith non polynomial activation can approximate any  function
-
-\cite{Maas2013}: using ReLU for non-linear function, no vanishing gradient problem since partial derivate for values above 0 is 1.
-
-
-
-ReLU layer:
+Neurons using rectifier as activation are called Rectified Linear Units (ReLU).
+The output of a densely connected layer of ReLU neurons is computed, as follows:
 \begin{align*}
-& h = \max(W\vec{x} + b, 0) = \begin{cases} W\vec{x} + b \text{ for } W\vec{x} + b > 0 \\ 0 \text{ else }\end{cases}
+& ReLU(\vec{x}) = \max(W\vec{x} + b, 0) = \begin{cases} W\vec{x} + \vec{b} \text{ for } W\vec{x} + b > 0 \\ 0 \text{ else }\end{cases}
 \end{align*}
+where $\vec{x}$ is the input,  the output, $W$ the input edge weights and $\vec{b}$ the corresponding bias.
+
+Regression tasks involve predicting a single target value from a given input vector.
+The thesis' tasks however requires the prediction of a $d$-dimensional vector from a given $d$-dimensional vector,
+where $d$ is the dimension of the word embeddings.
+The recommended configuration, as stated in Section~\ref{section:components}, sets $d$ as $300$.
+Training $300$ networks to predict each of the single targets to a suitable accuracy requires either
+a high memory capacity to train $300$ networks in parallel or a long training time to train the networks
+sequentially. A compromise can be reached by training a smaller number of networks to predict
+multiple targets at once and then combining the results into the final $d$ dimensional output.
+
+The multi-network model (see Figure~\ref{fig:multinet}) consists of $N$ hidden deep neural networks
+with $H$ ReLU layers (including input and output layer). Each hidden network predicts $o = \frac{d}{N}$
+targets of the complete target vector. The output of each hidden network is concatenated,
+which results in the model's $d$ dimensional output.
+
+\begin{figure}
+\centering
+\includegraphics[width=0.4\textwidth]{images/algorithm/concat_nn_model.png}
+\caption{Multi-network regression model}
+\label{fig:multinet}
+\end{figure}
+
+The model is defined by the following parameters:
+\begin{itemize}
+\item $N \in \mathbb{N}$: number of hidden networks
+\item $H \in \mathbb{N}$: number of layers per hidden network
+\item $d \in \mathbb{N}$: dimension of  word embeddings (input and output dimensions of full model)
+\item $h \in \mathbb{N}$: dimension of hidden layers of hidden networks (number of neurons in each hidden layer)
+\item $o = \frac{d}{N} \in \mathbb{N}$: output dimension of hidden networks
+\end{itemize}
+
+The trainable variables are the weights and biases of the fully connected layers of the hidden networks
+and the output layer, which are defined as follows:
+\begin{itemize}
+\item $W_{i,1} \in \mathbb{R}^{h \times d}, i \in \{1,\cdots,N\}$: input weights of hidden networks, maps word embeddings to hidden layer, with corresponding biases $\vec{b}_{i,1} \in \mathbb{R}^h$.
+\item $W_{i,j} \in \mathbb{R}^{h \times h}, i \in \{1,\cdots,N\}, j \in \{2,\cdots,H-1\}$: weights between hidden layers
+with corresponding biases $\vec{b}_{i,j} \in \mathbb{R}^h$.
+\item $W_{i,H} \in \mathbb{R}^{o \times h}, i \in \{1,\cdots,N\}$: output weights for hidden networks
+with corresponding biases $\vec{b}_{i,H} \in \mathbb{R}^o$.
+\item $W_{con} \in \mathbb{R}^{d \times d}$: concatenation output layer with corresponding bias
+$\vec{b}_{con} \in \mathbb{R}^d$.
+\end{itemize}
+
+Let $\vec{u} \in \mathbb{R}^d$ be the input word embedding and $\vec{s} \in \mathbb{R}^d$ the predicted
+superclass embedding.
+$\vec{s}$ is computed from $\vec{u}$, using $ReLU$ as activation, as follows:
+\begin{align*}
+&\vec{v}_{i,1} = \max(0, W_{i,1} \cdot \vec{u} + \vec{b}_{i,1})\\
+&\vec{v}_{i,j} = \max(0, W_{i,j} \cdot \vec{v}_{i,j-1} + \vec{b}_{i,j}) \text{ for } j \in \{2, \cdots, H-1\}\\
+&\vec{v}_{i,H} = \max(0, W_{i,H} \cdot \vec{v}_{i,H-1} + \vec{b}_{i,H})\\
+&\vec{s} = W_{con} \cdot \begin{bmatrix}\vec{v}_{1,H} & \cdots & \vec{v}_{N,H}\end{bmatrix} + \vec{b}_{con}
+\end{align*}
+with $i \in \{1, \cdots, N\}$.
+
+The proposed network has a higher expressiveness than the previously described linear projection approach.
+The expressiveness of the model can be experimentally optimized by adjusting the different hyperparameters
+like depth and width of the hidden networks \cite{Raghu2017} \cite{Hornik1991}.
+Additionally the network uses rectifier as activation function, which is non-polynomial, and therefore,
+according to \fullcite{Leshno1993}, able to model an arbitrary function.
+In comparison, the linear projection approach can only model a linear function and has limited
+reconfigurability with only one hyperparameter, the number of clusters.
+Therefore it is predicted that the non-linear neural regression model will perform better than linear projection.
