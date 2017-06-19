@@ -43,6 +43,8 @@ def map_to_proj_training_input(training_samples: List[MultiLabelSample[str]], id
                 superclass = id2embedding(label)
                 training_data.append((obj, superclass))
                 labels.append(label)
+                # Only one superclass per subclass.
+                break
             except KeyError as e:
                 logging.log(level=logging.DEBUG, msg='no embedding for {}'.format(e))
         valid_sample_count += 1
