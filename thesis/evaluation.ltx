@@ -54,24 +54,33 @@ Consequently, hybrid algorithms have the following name format:
 &\text{<Classification>}(\text{<hyperparameters>})
 \end{align*}
 To shorten the identifiers, the following abbreviations for components are used:
-\textbf{TODO: add new component names}
 \begin{table}[H]
 \center
 \begin{tabular}{l l}
 component & abbreviation \\
 \hline
 distance-based kNN & distknn \\
-piecewise linear projection & linproj 
+piecewise linear projection & linproj \\
+non-linear regression  multi-network & concatnn \\
 \end{tabular}
 \caption{Abbreviations for components}
 \end{table}
+Algorithms are implemented as described in Chapter~\ref{section:algorithm}.
+The non-linear regression multi-network model is called concatnn due to its concatenation layer.
+
 The following hybrid algorithms are evaluated:
-\textbf{TODO: add new algorithms}
 \begin{itemize}
 \item distknn($k=?$) with $k=5,10,15,20$
 \item linproj($c=?$) with $c=1,25,50$
+\item concatnn($net=20, h=2, n=2400$)
+\item concatnn($net=20, h=3, n=1200$)
 \end{itemize} 
-where $k$ is the number of neighbors in kNN and $c$ is the number of clusters in piecewise linear projection.
+where $k, c, net, h, n$ are hyperparameters of classification algorithms.
+For kNN, $k$ is the number of nearest neighbors.
+For linear projection, $c$ is the number of clusters used.
+For non-linear regression multi-network model, $net$ is the number of hidden networks,
+$h$ is the number of hidden layers for each hidden network, and $n$ is the number of neurons per hidden 
+layer.
 
 \subsection{About the dataset}
 % How gold standard was retrieved? (What dump?)
@@ -103,7 +112,6 @@ All sentences representing test sample subclass-of relations were also excluded.
 
 Due to memory limitations, SGNS is only able to capture a certain vocabulary size. Therefore only $5,000,000$ words are represented by SGNS.
 Less frequent words have therefore no embeddings. This also affects a small number of relevant classes, which occur in the test samples.
-\textbf{TODO: ensure this number is correct}
 Therefore only $8,943$ out of $10,000$ test samples can be used in the evaluation.
 
 \subsection{Results}
@@ -121,20 +129,25 @@ algorithm & accuracy & taxonomic overlap \\
 baseline & $8.8\%$ & $31.26\%$ \\
 \hline
 \hline
-ts+distknn (k=5) & $21.38\%$ & $45.17\%$ \\
+distknn ($k=5$) & $\%$ & $\%$ \\
 \hline
-ts+distknn (k=10) & $22.26\%$ & $46.17\%$ \\
+distknn ($k=10$) & $22.26\%$ & $46.17\%$ \\
 \hline
-ts+distknn (k=15) & $22.62\%$ & $46.56\%$ \\
+distknn ($k=15$) & $22.62\%$ & $46.56\%$ \\
 \hline
-ts+distknn (k=20) & $22.83\%$ & $47.10\%$ \\
+distknn ($k=20$) & $22.83\%$ & $47.10\%$ \\
 \hline
 \hline
-ts+linproj (c=1) & $7.84\%$ & $31.76\%$ \\
+linproj ($c=1$) & $8.54\%$ & $20.04\%$ \\
 \hline
-ts+linproj (c=25) & $11.06\%$ & $32.14\%$\\
+linproj ($c=25$) & $11.90\%$ & $26.68\%$\\
 \hline
-ts+linproj (c=50) & $11.99\%$ & $32.82\%$\\
+linproj ($c=50$) & $13.09\%$ & $28.65\%$\\
+\hline
+\hline
+concatnn ($net=20, h=2, n=2400$) & $18.54\%$ & $35.34\%$ \\
+\hline
+concatnn ($net=20, h=3, n=1200$) & $18.92\%$ & $36.46\%$ \\
 \hline
 \end{tabular}
 \caption{Evaluation results for all hybrid algorithms}
