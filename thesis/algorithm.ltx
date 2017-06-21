@@ -61,6 +61,7 @@ The classification component should implement a single-label multiclass classifi
 \end{enumerate}
 
 \subsection{SequenceGen}\label{section:sequencegen}
+\textbf{TODO: write short introduction}
 
 \subsubsection{Triple sentences}\label{section:triple sentences}
 Triple sentences uses Wikidata as input data set.
@@ -76,7 +77,7 @@ while edges between an entity and a literal, e.g. $(Q42, P1559, \textit{''Dougla
 and are therefore double sentences, e.g. ''Q$42$ P$1559$''.
 \begin{figure}[H]
 \centering
-\includegraphics[width=0.8\textwidth]{images/algorithm/triple_sentences.pdf}
+\includegraphics[width=0.6\textwidth]{images/algorithm/triple_sentences.pdf}
 \caption{Generation of triple sentences from Wikidata}
 \label{fig:triple sentences}
 \end{figure}
@@ -117,7 +118,7 @@ The output of graph walk sentences with $2$ maximum walks and depth $4$ with sou
 
 \begin{figure}[H]
 \centering
-\includegraphics[width=0.8\textwidth]{images/algorithm/graph_walk_sentences.pdf}
+\includegraphics[width=0.6\textwidth]{images/algorithm/graph_walk_sentences.pdf}
 \caption{Two random graph walks in Wikidata with depth $4$.}
 \label{fig:graph walk sentences}
 \end{figure}
@@ -140,6 +141,7 @@ Consequently the generated embeddings for classes are less expressive and contai
 Due to time constraints, the graph walk sentence component is dropped in the following evaluation.
 
 \subsection{Classification}
+\textbf{TODO: write short introduction}
 
 \subsubsection{k-nearest-neighbors}
 Similar classes are grouped close to each other in the embedding vector space.
@@ -149,22 +151,6 @@ Distance-based kNN using the euclidean norm is implemented as classification com
 The kNN implementation provided by the scikit-learn library \cite{scikit-learn} is used.
 
 \subsubsection{Vector offset}\label{section:vector offset}
-
-\begin{figure}
-\begin{mdframed}
-\centering
-\includegraphics[width=\textwidth]{images/algorithm/2d_subclass_offsets.png}
-\caption{Subclass-of offsets of $240,789$ subclass-superclass pairs.}
-\medskip
-$204,158$ subclass-superclass pairs were retrieved from the set of relevant classes (Section~\ref{section:relevant classes}).
-For each pair, the offset $\vec{\textit{superclass}} - \vec{\textit{subclass}} \in \mathbb{R}^{300}$ was computed 
-using triple sentence word embeddings (Section~\ref{section:triple sentences}).
-The offsets were clustered into $15$ clusters using KMeans clustering.
-PCA was applied on the clustered offsets for plotting.
-The legend indicates the color of each cluster $k \in [0, 14]$.
-\label{fig:2d offsets}
-\end{mdframed}
-\end{figure}
 
 A possible approach for classification is to exploit the linear regularities encoded in the word embeddings.
 As shown in Section~\ref{section:word2vec}, it is possible to answer semantic questions by applying algebraic operations on word embeddings \cite{Mikolov2013}.
@@ -185,10 +171,26 @@ Using the word embeddings created by SGNS trained on triple sentences,
 the subclass-of offsets for $204,158$ subclass-superclass pairs were computed.
 The subclass-superclass pairs were extracted from the set of relevant classes (Section~\ref{section:relevant classes}).
 The offsets were clustered using KMeans with $K=15$ clusters.
+
 Using Principal Component Analysis (PCA), the 300-dimensional vectors were reduced to  2-dimensional vectors,
 which are shown in Figure~\ref{fig:2d offsets}.
+$204,158$ subclass-superclass pairs were retrieved from the set of relevant classes (Section~\ref{section:relevant classes}).
+For each pair, the offset $\vec{\textit{superclass}} - \vec{\textit{subclass}} \in \mathbb{R}^{300}$ was computed 
+using triple sentence word embeddings (Section~\ref{section:triple sentences}).
+The offsets were clustered into $15$ clusters using KMeans clustering.
+PCA was applied on the clustered offsets for plotting.
+The legend indicates the color of each cluster $k \in [0, 14]$.
 Table~\ref{table:offset cluster} shows the corresponding percentage of offsets in each cluster,
 as well as the type of offsets in the cluster.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{images/algorithm/2d_subclass_offsets.png}
+\caption{Subclass-of offsets of $240,789$ subclass-superclass pairs. Each cluster is identified by a specific color.
+The offsets are clustered into $15$ clusters using KMeans clustering.}
+
+\label{fig:2d offsets}
+\end{figure}
 
 The clusters $1$ ($9.9\%$), $6$ ($23.27\%$)  and $13$ ($45.06\%$), 
 which attribute to $78.23\%$ of all offsets, contain a variation  of different subclass-of relation types,
