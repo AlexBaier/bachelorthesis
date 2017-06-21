@@ -21,14 +21,9 @@ Most importantly, an item is described by \textbf{statements}.
 Statements are in their simplest form a pair of property and value, assigned to a specific item. A value is either a literal value or another item.
 It should be noted that an item can have multiple statements with the same property. The set of statements with the same property is called statement group.
 Statements can be annotated with qualifiers, which specify the context of the statement, e.g. population at a certain point of time.
-Additionally, references can be used for statements to include its source. See Figure~\ref{fig:class example} for an example of a Wikidata item.
+Additionally, references can be used for statements to include its source. 
 
-\begin{figure}
-\begin{mdframed}
-\centering
-\includegraphics[width=\textwidth]{images/foundations/item_example.png}
-\caption{Example excerpt of Wikidata item: photographic film (Q6239).}
-\medskip
+Figure~\ref{fig:class example} shows an example for a Wikidata item.
 The item has the \textbf{label} "photographic film" and the \textbf{unique identifier} "Q6239".
 Below the label and identifier, the \textbf{description} (short sentence describing the item) can be found.
 The \textbf{alias} "film" follows in the next line. An item can have multiple aliases.
@@ -38,10 +33,16 @@ Each \textbf{statement} can have a value (orange box), \textbf{references} (gree
 In this example, the only statement with property \textit{topic's main category (P910)} has the value \textit{Category: Photographic film (Q8363301)} and a reference, which consists of
 a property \textit{imported from (P143)} and a value \textit{Chinese Wikipedia (Q30239)}. References represent the sources and other meta-data about the source of the statement.
 In this example, no qualifiers exist. Qualifiers are used to give additional details to statements.
-A common use for qualifiers is the annotation of statements with time stamps, if the a different value is true for different points in time
-e.g. population of a country over time.
+A common use for qualifiers is the annotation of statements with time stamps, if the a different value is true for different points in time e.g. population of a country over time.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{images/foundations/item_example.png}
+\caption{Example excerpt of Wikidata item: photographic film (Q6239). An item consists of a label, aliases,
+description, and statement group. Each statement group is associated with a specific property such as 
+\textit{subclass of (P270)} and can have multiple statements. The provenance of a statement can be
+signified by one or multiple references.}
 \label{fig:class example}
-\end{mdframed}
 \end{figure}
 
 Following, the concepts item and statement are formally defined:
@@ -212,12 +213,8 @@ All other classes, which are not subclasses of \entity{}, are therefore either o
 In Chapter~\ref{section:taxonomy analysis}, it is shown that $97\%$ of all classes are subclasses of the root class \entity{}.
 This set $R = \{ c \in C | c \subclassof{T} \mathit{root}_T \lor c = \mathit{root}_T \}$ will be referred to as \textbf{root taxonomy} in later sections.
 
-\begin{figure}[H]
-\begin{mdframed}
-\centering
-\includegraphics[width=0.8\textwidth]{images/foundations/taxonomy_dag_example.pdf}
-\caption{Example: Taxonomy DAG}
-\medskip
+In Figure~\ref{fig:taxonomy dag} the defined concepts of taxonomy, subclass-of relation, root class, orphan class
+and root taxonomy are illustrated.
 A \textbf{taxonomy} $T = (C, S)$ with \textbf{root class} $root_T = 1$ can be defined as DAG (see Definition~\ref{def:taxonomy}).
 Each node represents a class with its class identifier.
 The directed edges represent the \textbf{subclass-of} relation between the classes.
@@ -225,8 +222,14 @@ Node $1$ is the root of the taxonomy.
 All gray-colored nodes are connected to $root_T$ and therefore part of the \textbf{root taxonomy}.
 It can be seen that the white-colored classes $7$ and $8$ are not connected to $root_T = 1$, therefore they do not belong to the root taxonomy.
 Class $7$ is an \textbf{orphan class}, since it is not the root class and has no outgoing edges.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.5\textwidth]{images/foundations/taxonomy_dag_example.pdf}
+\caption{Example: Taxonomy DAG with root class $1$ and orphan class $7$. The classes $7$ and $8$ don't belong
+to the root taxonomy.}
+\medskip
 \label{fig:taxonomy dag}
-\end{mdframed}
 \end{figure}
 
 %%%%%%
@@ -311,7 +314,7 @@ therefore no dimensionality reduction is necessary, if neural embeddings are use
 %%%%%%%%%%%
 \subsection{Problem statement}\label{section:problem statement}
 The task of this thesis is the classification of orphan classes in Wikidata. In other words a function is needed, 
-which given an orphan class $u$ of a taxonomy $T = (C, S)$ with a root class $root_T$, find an appropriate superclass for $u$.
+which given an orphan class $u$ of a taxonomy $T = (C, S)$ with a root class $root_T$, finds an appropriate superclass for $u$.
 
 An optimal similarity function $\mathit{sim}_\mathit{opt}$ is assumed for the definition of the problem statement.
 Let $s \in C$ be the most specific, appropiate superclass of $u$.
@@ -373,15 +376,27 @@ The class, which has the majority vote, is then chosen as the class of $\vec{u}$
 
 The votes of each neighbor can be weighted based on different criteria.
 Uniform weights give each vote the same weight, therefore the distance between the neighbors to the unknown is not relevant for this weighting scheme.
-Figure~\ref{fig:knn example} describes a classification using kNN with uniform weights.
 
-\begin{figure}
-\begin{mdframed}
+Results produced by uniform weighted kNN are not always desirable.
+Assume the case, in which the parameter $k$ was chosen too high for a given unknown, which leads to the problem that very dissimilar objects
+could be part of the $k$ nearest neighbors.
+Using uniform weighting would be problematic, since the dissimilar objects would negatively influence the majority vote.
+Votes of distant objects are not as relevant to the classification as close objects \cite{Chen2009}.
+This leads to the criteria of \textbf{affinity}, which states that similar neighbor should be given larger weights \cite{Chen2009}.
+A typical weighting approach to achieve affinity is distance-based weighting.
+The distance between each neighbor and the unknown is computed.
+For example in $\mathbb{R}^n$, the euclidean norm $\delta_2$ could be used.
+Each neighbor $\vec{n_i}$ of $\vec{u}$ is assigned the inverse distance as weight $w_i = \delta_2(\vec{u}, \vec{n_i})^{-1}$.
+Therefore the weight of each neighbor is directly proportional to its similarity to $\vec{u}$.
+
+\begin{figure}[H]
 \centering
 \includegraphics[width=0.5\textwidth]{images/foundations/knn_example.pdf}
 \caption{Example for kNN with uniform weights.}
 \label{fig:knn example}
-\begin{flushleft}
+\end{figure}
+
+Figure~\ref{fig:knn example} describes a classification using kNN with uniform weights.
 kNN considers only the closest k neighbors in its classification decision.
 In this example, the circle with name $u$ is the unknown class, which has to be classified.
 $10$ other objects, where each belongs to one of the $3$ classes (square, pentagon, octagon), are present.
@@ -406,20 +421,5 @@ It could be argued that the classification result using $k=10$ may be inaccurate
  in comparison to the objects in class pentagon.
 Therefore the decision made by $k=4$ may be more accurate.
 This problem can be solved by applying other weighting schemes than uniform weights to kNN.
-A typical approach, described in Section~\ref{section:knn}, is distance-based weights.
+A typical approach, which was described in this section, is distance-based weights.
 This approach assigns higher weights to closer neighbors and could therefore solve the previously mentioned inaccuracy.
-\end{flushleft}
-\end{mdframed}
-\end{figure}
-
-Results produced by uniform weighted kNN are not always desirable.
-Assume the case, in which the parameter $k$ was chosen too high for a given unknown, which leads to the problem that very dissimilar objects
-could be part of the $k$ nearest neighbors.
-Using uniform weighting would be problematic, since the dissimilar objects would negatively influence the majority vote.
-Votes of distant objects are not as relevant to the classification as close objects \cite{Chen2009}.
-This leads to the criteria of \textbf{affinity}, which states that similar neighbor should be given larger weights \cite{Chen2009}.
-A typical weighting approach to achieve affinity is distance-based weighting.
-The distance between each neighbor and the unknown is computed.
-For example in $\mathbb{R}^n$, the euclidean norm $\delta_2$ could be used.
-Each neighbor $\vec{n_i}$ of $\vec{u}$ is assigned the inverse distance as weight $w_i = \delta_2(\vec{u}, \vec{n_i})^{-1}$.
-Therefore the weight of each neighbor is directly proportional to its similarity to $\vec{u}$.
