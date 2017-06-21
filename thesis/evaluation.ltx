@@ -48,11 +48,10 @@ since the taxonomic overlap is a function, which should be maximized by the algo
 Each possible combination of components is evaluated as a separate hybrid algorithm.
 For each classification component different hyperparameters are tested to find a good configuration.
 A naming scheme is used to uniquely identify each hybrid algorithm with their corresponding hyperparameters.
-Because the SGNS configuration is constant over all hybrid algorithms, an algorithm combination can be identified by their SequenceGen and Classification component,
-as well as their classification parameters.
+Because the SGNS configuration is constant over all hybrid algorithms, an algorithm combination can be identified by their classification component, as well as their  classification hyperparameters.
 Consequently, hybrid algorithms have the following name format:
 \begin{align*}
-&\text{<SequenceGen>}+\text{<Classification>}(\text{<hyperparameters>})
+&\text{<Classification>}(\text{<hyperparameters>})
 \end{align*}
 To shorten the identifiers, the following abbreviations for components are used:
 \textbf{TODO: add new component names}
@@ -61,8 +60,6 @@ To shorten the identifiers, the following abbreviations for components are used:
 \begin{tabular}{l l}
 component & abbreviation \\
 \hline
-triple sentences & ts \\
-graph walk sentences & gw \\
 distance-based kNN & distknn \\
 piecewise linear projection & linproj 
 \end{tabular}
@@ -71,10 +68,8 @@ piecewise linear projection & linproj
 The following hybrid algorithms are evaluated:
 \textbf{TODO: add new algorithms}
 \begin{itemize}
-\item ts+distknn($k=?$) with $k=5,10,15,20$
-\item ts+linproj($c=?$) with $c=1,25,50$
-\item gw+distknn($k=?$) with $k=5,10,15,20$
-\item gw+linproj($c=?$) with $c=1,25,50$
+\item distknn($k=?$) with $k=5,10,15,20$
+\item linproj($c=?$) with $c=1,25,50$
 \end{itemize} 
 where $k$ is the number of neighbors in kNN and $c$ is the number of clusters in piecewise linear projection.
 
@@ -82,7 +77,6 @@ where $k$ is the number of neighbors in kNN and $c$ is the number of clusters in
 % How gold standard was retrieved? (What dump?)
 % Number of training/test samples.
 % Triple sentences
-% Graph walk sentences
 % Problem with embeddings (not all relevant class embeddings are represented in SGNS, because of memory issues, subsampling)
 % => how many are lost for testing
 % characteristic of relevant classes, see Taxonomy analysis.
@@ -90,30 +84,22 @@ The Wikidata dump from \dumpdate{} \cite{WikidataDump} was used in the evaluatio
 The gold standard is retrieved from the set of relevant classes (Section~\ref{section:relevant classes}).
 A total of $178,771$ gold sample tuples $(t_i, S_i)$ was retrieved.
 $10,000$ of the samples are used for testing, the $168,771$ remaining samples are used for training.
+
 Figure~\ref{fig:gold standard example} depicts the extraction of gold samples from the Wikidata taxonomy.
+A subclass, e.g. \textit{province of Ireland (Q202156)}, and its direct superclasses are retrieved from Wikidata.
+The numeric item ids are extracted from these classes, e.g. $\textit{Q202156} \mapsto 202156$, and yields the gold sample $(202156, \{ 3356092, 1620908, 34876 \}) \in G$,
+where $G$ is the set of all gold test samples.
+
 \begin{figure}[H]
-\begin{mdframed}
 \centering
 \includegraphics[width=0.8\textwidth]{images/evaluation/gold_standard_example.pdf}
 \caption{Example for creating a gold standard sample.}
 \label{fig:gold standard example}
-\begin{flushleft}
-A subclass, e.g. \textit{province of Ireland (Q202156)}, and its direct superclasses are retrieved from Wikidata.
-The numeric item ids are extracted from these classes, e.g. $\textit{Q202156} \mapsto 202156$, and yields the gold sample $(202156, \{ 3356092, 1620908, 34876 \}) \in G$,
-where $G$ is the set of all gold test samples.
-\end{flushleft}
-\end{mdframed}
 \end{figure}
 
 A total of $109,267,818$ triple sentences were extracted from the Wikidata dump \cite{WikidataDump}.
 All entities, which have irrelevant properties, as defined in Section~\ref{section:relevant classes}, were excluded.
 All sentences representing test sample subclass-of relations were also excluded.
-
-\textbf{TODO: update graph walk stats}
-A total of $30,371,121$ graph walk sentences were generated.
-As sources for graph walks the relevant classes were chosen.
-Graph walk sentences cover $97.59\%$ of all relevant classes and $3.62\%$ of all entities.
-Following \fullcite{Ristoski2016}, the graph walk sentences are enriched with the previously created triple sentences.
 
 Due to memory limitations, SGNS is only able to capture a certain vocabulary size. Therefore only $5,000,000$ words are represented by SGNS.
 Less frequent words have therefore no embeddings. This also affects a small number of relevant classes, which occur in the test samples.
@@ -150,22 +136,6 @@ ts+linproj (c=25) & $11.06\%$ & $32.14\%$\\
 \hline
 ts+linproj (c=50) & $11.99\%$ & $32.82\%$\\
 \hline
-\hline
-gw+distknn(k=5) & $\%$ & $\%$ \\
-\hline
-gw+distknn(k=10) & $\%$ & $\%$ \\
-\hline
-gw+distknn(k=15) & $\%$ & $\%$ \\
-\hline
-gw+distknn(k=20) & $\%$ & $\%$ \\
-\hline
-\hline
-gw+linproj (c=1) & $\%$ & $\%$ \\
-\hline
-gw+linproj (c=25) & $\%$ & $\%$ \\
-\hline
-gw+linproj (c=50) & $\%$ & $\%$ \\
-\hline
 \end{tabular}
 \caption{Evaluation results for all hybrid algorithms}
 \label{table:evaluation results}
@@ -174,11 +144,9 @@ gw+linproj (c=50) & $\%$ & $\%$ \\
 
 \textbf{TODO: compare algorithm performances between classifiers for triple sentences}
 
-\textbf{TODO: compare algorithm performances between classifiers for graph walk sentences}
 
 \textbf{TODO: interpret results}
 
-\textbf{TODO: compare algorithm performances between sequence gens}
 
 \textbf{TODO: Explain taxonomic overlap histogram}
 \textbf{TODO: Show significant histograms of best performing algorithms}
