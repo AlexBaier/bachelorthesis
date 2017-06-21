@@ -129,7 +129,7 @@ algorithm & accuracy & taxonomic overlap \\
 baseline & $8.8\%$ & $31.26\%$ \\
 \hline
 \hline
-distknn ($k=5$) & $\%$ & $\%$ \\
+distknn ($k=5$) & $21.38\%$ & $45.27\%$ \\
 \hline
 distknn ($k=10$) & $22.26\%$ & $46.17\%$ \\
 \hline
@@ -154,7 +154,20 @@ concatnn ($net=20, h=3, n=1200$) & $18.92\%$ & $36.46\%$ \\
 \label{table:evaluation results}
 \end{table}
 
+\begin{figure}[H]
+\includegraphics[width=0.8\textwidth]{images/evaluation/best_classifier_evaluation-20161107.png}
+\caption{Comparison of best performing classifier of each method. distknn = distknn($k=20$), 
+linproj = linproj($c=50$), concatnn=concatnn($net=20, h=3, n=1200$)}
+\label{fig:best classifiers evaluation}
+\end{figure}
 
+\begin{figure}[H]
+\includegraphics[width=0.8\textwidth]{images/evaluation/best_classifier_overlaps_hist-20161107.png}
+\caption{Comparison of local taxonomic overlaps for best performing classifier of each method.
+distknn = distknn($k=20$), 
+linproj = linproj($c=50$), concatnn=concatnn($net=20, h=3, n=1200$)}
+\label{fig:best classifiers overlaps}
+\end{figure}
 \textbf{TODO: compare algorithm performances between classifiers for triple sentences}
 
 
