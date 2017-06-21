@@ -96,20 +96,13 @@ Therefore only SGSN will be introduced in this thesis.
 The following description is based on work by \fullcite{Mikolov2013} \cite{Mikolov2013a},
 \fullcite{Levy2014} \cite{Levy2014a} \cite{Goldberg2014}, \fullcite{Rong2014}, and \fullcite{Levy2015}.
 
-\begin{figure}
-\centering
-\includegraphics[width=0.5\textwidth]{images/neural_networks/skipgram.pdf}
-\caption{Skip-gram model}
-\label{fig:skipgram}
-\end{figure}
-
 SGNS uses a word corpus $w \in V_W$ and the corresponding context
 corpus $c \in W_C$. $V_W$ and $V_C$ are vocabularies.
 Given a sequence of words $w_1, \dots, w_n$, e.g. a text corpus like a Wikipedia text dump,
 the context to a word $w_i$ are the $2*L$ words around it:
 $w_{i-L}, \dots, w_{i-1}, w_{i+1}, \dots, w_{i+L}$. $L \in \mathbb{N}$ is the size of the context window.
 The network (see Figure~\ref{fig:skipgram}) is trained for the task of predicting the context
-of an input word. Each word $w \in V_W$ is mapped to an embedding vector $\vec{W} \in \mathbb{R}^d$,
+of an input word. Each word $w \in V_W$ is mapped to an embedding vector $\vec{w} \in \mathbb{R}^d$,
 and each context $c \in V_C$ is mapped to an embedding vector $\vec{c} \in \mathbb{R}^d$,
 where $d$ is the embedding size. Both embeddings are parameters, which are learned by the network.
 The embeddings can be represented as matrices $W \in \mathbb{R}^{\abs{V_W} \times d}$ and 
@@ -139,6 +132,16 @@ does not occur in the data $D$. The negative sampling training objective can be 
 where $D'$ is a set of negative training samples, which are not in $D$, and $\sigma(x) = \frac{1}{1 + e^x}$.
 For this objective $p(D=1 | w, c)$ needs to produce small values for $(w, c) \in D'$ and high values for
 $(w, c) \in D$, which counteracts the trivial solution possible for objective~\ref{align:sg objective}.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{images/neural_networks/skipgram.png}
+\caption{Skip-gram model. Given a context window of size $2$ and a word sequence $(w(t+i) | i = -2,\cdots,2)$.
+The skipgram model is trained on the task of predicting the skipgram $(w(t-2), w(t-1), w(t+1), w(t+2))$ given
+the word $w(t)$. An by-product of this training are word embeddings, e.g. $\vec{w}_t$ is the embedding for 
+the word $w(t)$.}
+\label{fig:skipgram}
+\end{figure}
 
 Additionally \fullcite{Mikolov2013} introduces parameters to further influence the
 quality of word embeddings. Rare words that occur less than a certain threshold are not considered as
