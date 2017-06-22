@@ -22,7 +22,7 @@ def main():
 
     algorithms = ['baseline', 'ts+dnn(h=4,n=3600)', 'ts+dnn(h=8,n=2400)', 'ts+concatnn(act=relu,net=20,n=2400)',
                   'ts+concatnn(act=relu,net=10,h=3,n=1200)', 'ts+concatnn(act=relu,net=20,h=3,n=1200)',
-                  'ts+concatnn(act=relu,net=30,h=3,n=600)',
+                  'ts+concatnn(act=relu,net=30,h=3,n=600)', 'ts+concatnn(act=relu,net=20,h=4,n=1200)',
                   'ts+distknn(k=5)', 'ts+distknn(k=10)', 'ts+distknn(k=15)', 'ts+distknn(k=20)',
                   'ts+linproj(c=1)', 'ts+linproj(c=25)', 'ts+linproj(c=50)']
 
