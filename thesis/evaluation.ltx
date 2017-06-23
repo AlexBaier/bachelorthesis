@@ -72,7 +72,6 @@ The following hybrid algorithms are evaluated:
 \begin{itemize}
 \item distknn($k=?$) with $k=5,10,15,20$
 \item linproj($c=?$) with $c=1,25,50$
-\item concatnn($net=20, h=2, n=2400$)
 \item concatnn($net=20, h=3, n=1200$)
 \end{itemize} 
 where $k, c, net, h, n$ are hyperparameters of classification algorithms.
@@ -118,7 +117,6 @@ Therefore only $8,943$ out of $10,000$ test samples can be used in the evaluatio
 The hybrid algorithms with the previously described parameters were executed.
 The accuracies and average taxonomic overlaps are  listed in Table~\ref{table:evaluation results}.
 
-\textbf{TODO: add missing results}
 \begin{table}[H]
 \center
 \begin{tabular}{| l | c | c |}
@@ -145,8 +143,6 @@ linproj ($c=25$) & $11.90\%$ & $26.68\%$\\
 linproj ($c=50$) & $13.09\%$ & $28.65\%$\\
 \hline
 \hline
-concatnn ($net=20, h=2, n=2400$) & $18.54\%$ & $35.34\%$ \\
-\hline
 concatnn ($net=20, h=3, n=1200$) & $18.92\%$ & $36.46\%$ \\
 \hline
 \end{tabular}
@@ -154,31 +150,52 @@ concatnn ($net=20, h=3, n=1200$) & $18.92\%$ & $36.46\%$ \\
 \label{table:evaluation results}
 \end{table}
 
+\textbf{TODO: compare algorithm performances between classifiers for triple sentences}
+
 \begin{figure}[H]
+\centering
 \includegraphics[width=0.8\textwidth]{images/evaluation/best_classifier_evaluation-20161107.png}
 \caption{Comparison of best performing classifier of each method. distknn = distknn($k=20$), 
 linproj = linproj($c=50$), concatnn=concatnn($net=20, h=3, n=1200$)}
 \label{fig:best classifiers evaluation}
 \end{figure}
 
+\textbf{TODO: Explain taxonomic overlap histogram}
+
+\textbf{TODO: Show significant histograms of best performing algorithms}
+
 \begin{figure}[H]
+\centering
 \includegraphics[width=0.8\textwidth]{images/evaluation/best_classifier_overlaps_hist-20161107.png}
 \caption{Comparison of local taxonomic overlaps for best performing classifier of each method.
 distknn = distknn($k=20$), 
 linproj = linproj($c=50$), concatnn=concatnn($net=20, h=3, n=1200$)}
 \label{fig:best classifiers overlaps}
 \end{figure}
-\textbf{TODO: compare algorithm performances between classifiers for triple sentences}
-
 
 \textbf{TODO: interpret results}
 
-
-\textbf{TODO: Explain taxonomic overlap histogram}
-\textbf{TODO: Show significant histograms of best performing algorithms}
-
 \textbf{TODO: Interpret low performance in regards to taxonomic overlap}
 
+\subsection{Influence of hyperparameters on performance}
+
+\textbf{TODO: k neighbors has low influence on performance}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.8\textwidth]{images/evaluation/ts_knn_evaluation-20161107.png}
+\caption{Comparison of kNN classifier with different neighbors $k = 5, 10, 15, 20$)}
+\label{fig:knn classifiers evaluation}
+\end{figure}
+
+\textbf{TODO: clustering is critical to linear projection}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.8\textwidth]{images/evaluation/ts_linproj_evaluation-20161107.png}
+\caption{Comparison of linear projection classifier with different cluster counts $c = 1, 25, 50$)}
+\label{fig:knn classifiers evaluation}
+\end{figure}
 
 \subsection{Discussion}
 
