@@ -43,7 +43,12 @@ where $G$ is gold standard, which samples $(c_i, S_i)$ with $i \in [1, |G|]$ and
 The maximum overlap between prediction and gold is chosen, if there are multiple possible superclass for a sample,
 since the taxonomic overlap is a function, which should be maximized by the algorithm \cite{Kosmopoulos2014}.
 
-\textbf{TODO: Introduce most common classifier and how it should compare to the other methods}
+A trivial \textbf{baseline} algorithm is implemented. Evaluated algorithms should yield better accuracies and
+taxonomic overlaps than the baseline. The baseline algorithm is the \textbf{most-frequent} classifier,
+which assigns the most frequently occurring class from the training data to all unknowns.
+Due to the characteristics of the problem statement, no comparable state-of-the-art methods
+could be found at the time of writing. Therefore no state-of-the-art methods could be used
+as baseline, which would be preferable.
 
 Each possible combination of components is evaluated as a separate hybrid algorithm.
 For each classification component different hyperparameters are tested to find a good configuration.
@@ -59,6 +64,7 @@ To shorten the identifiers, the following abbreviations for components are used:
 \begin{tabular}{l l}
 component & abbreviation \\
 \hline
+most-frequent classifier & baseline \\
 distance-based kNN & distknn \\
 piecewise linear projection & linproj \\
 non-linear regression  multi-network & concatnn \\
@@ -70,6 +76,7 @@ The non-linear regression multi-network model is called concatnn due to its conc
 
 The following hybrid algorithms are evaluated:
 \begin{itemize}
+\item baseline
 \item distknn($k=?$) with $k=5,10,15,20$
 \item linproj($c=?$) with $c=1,25,50$
 \item concatnn($net=20, h=3, n=1200$)
@@ -98,20 +105,26 @@ A subclass, e.g. \textit{province of Ireland (Q202156)}, and its direct supercla
 The numeric item ids are extracted from these classes, e.g. $\textit{Q202156} \mapsto 202156$, and yields the gold sample $(202156, \{ 3356092, 1620908, 34876 \}) \in G$,
 where $G$ is the set of all gold test samples.
 
+The most frequent class in the training data set is \textit{badminton tournament (Q13357858)}.
+This is consistent with the subclass-of offset analysis (Section~\ref{section:vector offset}),
+which has shown that offsets corresponding to \textit{badminton tournament} are the most frequent offsets.
+The baseline will therefore assign \textit{badminton tournament} to all test samples. 
+
+A total of $109,267,818$ triple sentences were extracted from the Wikidata dump \cite{WikidataDump}.
+All entities, which have irrelevant properties, as defined in Section~\ref{section:relevant classes}, were excluded.
+All sentences representing test sample subclass-of relations were also excluded. 
+Figure~\ref{fig:gold standard example} shows an example extraction of a gold standard sample from Wikidata.
+
+Due to memory limitations, SGNS is only able to capture a certain vocabulary size. Therefore only $5,000,000$ words are represented by SGNS.
+Less frequent words have therefore no embeddings. This also affects a small number of relevant classes, which occur in the test samples.
+Therefore only $8,943$ out of $10,000$ test samples can be used in the evaluation.
+
 \begin{figure}[H]
 \centering
 \includegraphics[width=0.8\textwidth]{images/evaluation/gold_standard_example.pdf}
 \caption{Example for creating a gold standard sample.}
 \label{fig:gold standard example}
 \end{figure}
-
-A total of $109,267,818$ triple sentences were extracted from the Wikidata dump \cite{WikidataDump}.
-All entities, which have irrelevant properties, as defined in Section~\ref{section:relevant classes}, were excluded.
-All sentences representing test sample subclass-of relations were also excluded.
-
-Due to memory limitations, SGNS is only able to capture a certain vocabulary size. Therefore only $5,000,000$ words are represented by SGNS.
-Less frequent words have therefore no embeddings. This also affects a small number of relevant classes, which occur in the test samples.
-Therefore only $8,943$ out of $10,000$ test samples can be used in the evaluation.
 
 \subsection{Results}
 The hybrid algorithms with the previously described parameters were executed.
