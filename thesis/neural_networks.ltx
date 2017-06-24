@@ -23,8 +23,8 @@ A \textbf{feedforward neural network} consists of an input layer with $s_i$ inpu
 $h$ neurons per layer. A neural network with many hidden layers is called deep neural network.
 The connections in a feedforward network only connect the neurons of a layer $i$ with the next layer $i+1$.
 This means that a neuron can never influence itself. Networks, which allow this, are called recurrent neural networks.
-See in Figure~\ref{fig:nn example} a feedforward neural network with $s_i =2, s_o=1, d=1, h=2$
-with already initialized weights.
+Figure~\ref{fig:nn example} shows a feedforward neural network with input dimension $s_i =2$, 
+output dimension $s_o=1$, depth $d=1$,  and hidden layers $h=2$. The connection weights are already initialized.
 
 \begin{figure}
 \centering
@@ -114,7 +114,7 @@ Given a word $w$ and a context $c$ the model wants to maximize the probability $
 that $(w, c)$ is in the data $D$. The probability distribution is modeled as \cite{Levy2014}:
 \begin{align}
 &p(D=1 | w, c) = \frac{1}{1 + e^{- \vec{w} \cdot \vec{c}}}
-\end{align},
+\end{align}
 which leads to the maximization objective \cite{Levy2014a}:
 \begin{align}\label{align:sg objective}
 &\max_{\vec{w}, \vec{c}} \sum_{(w, c) \in D} \log \frac{1}{1 + e^{- \vec{w} \cdot \vec{c}}}
