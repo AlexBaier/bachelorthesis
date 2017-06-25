@@ -183,24 +183,29 @@ concatnn ($net=20, h=3, n=1200$) & $18.92\%$ & $36.46\%$ \\
 \label{table:evaluation results}
 \end{table}
 
-\textbf{TODO: compare algorithm performances between classifiers for triple sentences}
 Figure~\ref{fig:best classifiers evaluation} displays the accuracy (green) and taxonomic overlap (blue)
 of the best performing algorithm for each group with distinct classification component.
 distknn($k=20$) is the best performing algorithm with an accuracy of $22.83\%$ and an overlap of $46.56\%$.
 distknn algorithms perform better than the regression-based methods, linproj and concatnn.
-The best performing
+linproj($c=50$) is the best linear projection algorithm with an accuracy of $13.09\%$ and an overlap of $28.65\%$.
+concatnn($net=20, h=3, n=1200$) is the best multi-network model algorithm with an accuracy of $18.92\%$ and an overlap of $36.46\%$.
 
 \begin{figure}[H]
 \centering
-\includegraphics[width=0.8\textwidth]{images/evaluation/best_classifier_evaluation-20161107.png}
-\caption{Comparison of best performing classifier of each method. distknn = distknn($k=20$), 
-linproj = linproj($c=50$), concatnn=concatnn($net=20, h=3, n=1200$)}
+\includegraphics[width=0.7\textwidth]{images/evaluation/best_classifier_evaluation-20161107.png}
+\caption{Comparison of best performing classifier of each method: distknn($k=20$), 
+ linproj($c=50$), concatnn($net=20, h=3, n=1200$)}
 \label{fig:best classifiers evaluation}
 \end{figure}
 
-\textbf{TODO: Explain taxonomic overlap histogram}
-
-\textbf{TODO: Show significant histograms of best performing algorithms}
+As stated in Section~\ref{section:evaluation method}, accuracy and taxonomic overlap are to some degree correlated.
+For the baseline, taxonomic overlap equals $\approx 4$ times the accuracy, while for all other algorithms the taxonomic overlap equals
+$\approx 2$ times the accuracy.
+Additionally, taxonomic overlap for linear projection algorithms is lower than the baseline.
+This implies that the implemented algorithms tend to place an unknown class far from its correct position, if a misclassification occurs.
+Observing the local taxonomic overlaps between all prediction and gold standard pairs supports this hypothesis.
+Figure~\ref{fig:best classifiers overlaps} shows the local taxonomic overlap histogram for the best performing algorithms of each classification component
+and the baseline.
 
 \begin{figure}[H]
 \centering
@@ -211,44 +216,78 @@ linproj = linproj($c=50$), concatnn=concatnn($net=20, h=3, n=1200$)}
 \label{fig:best classifiers overlaps}
 \end{figure}
 
-\textbf{TODO: interpret results}
+It can be seen that classes are either correctly classified and thereby have a local taxonomic overlap of $1$ or are completely misplaced
+and have a local taxonomic overlap between $0$ and $0.1$.
+All methods are able to place $\approx 5\%$ of classes very close to the correct position in the case of misclassification,
+since the values in the bucket of $0.9$ to $1.0$ are $\approx 5\%$ higher than the corresponding accuracy for each algorithm.
 
-\textbf{TODO: Interpret low performance in regards to taxonomic overlap}
+Distance-based kNN is a superior classification component in comparison to the regression-based methods.
+The regression task requires the prediction of multiple targets, while kNN only has to predict a single target, which is the label.
+The corresponding label of the regression is the closest superclass embedding to the predicted embedding.
+Intuitively, the regression-based algorithms have a higher complexity and are therefore more susceptible to errors.
+For example, overfitting may occur for the multiple regression, if not all values in the embedding are required to represent the target fully.
+The corresponding coefficients could in this case randomly affect the target results, and thereby worsen the performance \cite{Hawkins2004}.
 
-\subsection{Influence of hyperparameters on performance}
+Non-linear regression via neural networks may still be a promising approach, if techniques like drop-out or trimming are used.
+These methods reduce the number of active neurons in the network and thereby are able to prevent overfitting \cite{Srivastava2014}.
 
-\textbf{TODO: k neighbors has low influence on performance}
+Because all evaluated algorithms ignore the taxonomy in the classification process, it is unsurprising that the taxonomic overlaps are low.
+Future algorithms may use taxonomy-based classification approaches, which were mentioned in Section~\ref{section:taxonomy learning}.
+Using these classifiers as classification approaches is likely to result in higher taxonomic overlaps and may improve the accuracy.
+
+\subsection{Influence of hyperparameters on classification}
+Choosing good hyperparameters is critical for producing good embeddings with SGNS \cite{Levy2014}.
+Following this notion, choosing good hyperparameters may also be important in the classification process.
+
+Distance-based kNN's hyperparameter $k$ is the number of nearest neighbors. 
+Increasing $k$ shows only little improvements of accuracy and taxonomic overlap, which is shown in Figure~\ref{fig:knn classifiers evaluation}.
+Because class embeddings is very clustered as shown in Section~\ref{section:vector offset}, an unknown class is likely to belong to a cluster.
+Increasing $k$ would either add classes of the same cluster to the neighbors, which does not change the classification decision, or add classes from different distant clusters to the neighbors,
+which would also not change the decision, because weights are distance-based.
 
 \begin{figure}[H]
 \centering
-\includegraphics[width=0.8\textwidth]{images/evaluation/ts_knn_evaluation-20161107.png}
+\includegraphics[width=0.7\textwidth]{images/evaluation/ts_knn_evaluation-20161107.png}
 \caption{Comparison of kNN classifier with different neighbors $k = 5, 10, 15, 20$)}
 \label{fig:knn classifiers evaluation}
 \end{figure}
 
-\textbf{TODO: clustering is critical to linear projection}
+Number of clusters $c$ is the hyperparameter for linear projection.
+Figure~\ref{fig:linproj classifiers evaluation} shows the accuracy and taxonomic overlap for different cluster numbers $c$.
 
 \begin{figure}[H]
 \centering
-\includegraphics[width=0.8\textwidth]{images/evaluation/ts_linproj_evaluation-20161107.png}
+\includegraphics[width=0.7\textwidth]{images/evaluation/ts_linproj_evaluation-20161107.png}
 \caption{Comparison of linear projection classifier with different cluster counts $c = 1, 25, 50$)}
-\label{fig:knn classifiers evaluation}
+\label{fig:linproj classifiers evaluation}
 \end{figure}
+
+As previously predicted, increasing the number of clusters improves the performance of the algorithm.
+Linear projection with $c=1$ performs worse than the baseline algorithm, which implies that the subclass-of relation is not linear.
+This follows the argumentation by \fullcite{Fu2014} and the observed clustering of subclass offsets in Section~\ref{section:vector offset}.
+
+\textbf{TODO: neural network hyperparameters}
 
 \subsection{Discussion}
 
 The problem of classification with a very high number of labels ($>100,000$) is very difficult.
-No easily comparable problem was found in literature, therefore no comparison with state-of-the-art methods was possible.
-\textbf{TODO: Repeat motivation for most-common classifier}.
-Therefore it is at least possible to confirm that the hybrid algorithms proposed in this work could help users in identifying appropiate superclasses for given orphan classes.
+Comparable state-of-the-art methods were not found at the time of writing. 
+Therefore the trivial most-frequent classifier was used as baseline.
+The executed evaluation is able to at show, whether the proposed solutions are able to support users in enriching Wikidata's taxonomy and 
+which of the implemented algorithms should be used in practical application.
+
+With an accuracy of $22.83\%$ in testing, distknn($k=20$) is able to correctly predict the superclass of an orphan class in approximately $1$ out of $4$ cases.
+distknn($k=20$) outperforms the baseline by $14.03\%$.
+Based on these results, it is concluded that the proposed solutions are able to support a user in enriching Wikidata's taxonomy by providing suggestions
+for given orphan classes and if a practical application is implemented to provide such suggestions distknn($k=20$) should be used, as it is the best performing algorithm.
 
 The following  problems could be identified, which future work could attempt to solve.
 
 The implemented linear projection classifier is flawed.
-Because subclass-superclass pairs are clustered by the subclass and one subclass can have multiple superclasses, different types of subclass-of relations are grouped
+Because subclass-superclass pairs are clustered by subclasses and each subclass may have multiple superclasses, different types of subclass-of relations are grouped
 into one cluster.
 This leads to problems in training the corresponding projection, since dissimilar offsets have to represented by a single projection and therefore the projection
-cannot converge to an optimal solution.
+cannot converge to an optimal solution. In the thesis, this is solved by ignoring additional superclasses.
 Instead clustering by subclass-of offsets, as done by \fullcite{Fu2014}, could provide better results, if an effective method for identifying the correct cluster for an unknown class
 can be found.
 Since subclass-of clusters are related to single topics  as shown in Section~\ref{section:vector offset},
@@ -260,8 +299,4 @@ Most classes have a distance of $6$ to $10$ to the root class (Section~\ref{sect
 therefore it may be applicable to only consider classes with distance $5$ to $9$ as superclasses.
 A topic-based reduction of possible superclasses may have benefits, since classes with similar topics are closely related in the taxonomy,
 it may be sensible to only observe a certain excerpt of the taxonomy for each classification decision.
-This approach would however require a method of clustering the taxonomy into topic-based subgraphs and also identifying the correct topic for a given unknown class.
-\textbf{TODO: Motivate use of taxonomy-based classifiers}
-
-
-\textbf{TODO: Motivate more extensive use of neural networks for classification/regression}
+This approach would however require a method of clustering the taxonomy into topic-based subgraphs.
