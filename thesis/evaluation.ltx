@@ -56,7 +56,7 @@ A naming scheme is used to uniquely identify each hybrid algorithm with their co
 Because the SGNS configuration is constant over all hybrid algorithms, an algorithm combination can be identified by their classification component, as well as their  classification hyperparameters.
 Consequently, hybrid algorithms have the following name format:
 \begin{align*}
-&\text{<Classification>}(\text{<hyperparameters>})
+&\text{<classification>}(\text{<hyperparameters>})
 \end{align*}
 To shorten the identifiers, the following abbreviations for components are used:
 \begin{table}[H]
@@ -79,7 +79,7 @@ The following hybrid algorithms are evaluated:
 \item baseline
 \item distknn($k=?$) with $k=5,10,15,20$
 \item linproj($c=?$) with $c=1,25,50$
-\item concatnn($net=20, h=3, n=1200$)
+\item concatnn($net=?, h=3, n=1200$) with $k=1,10,20$
 \end{itemize} 
 where $k, c, net, h, n$ are hyperparameters of classification algorithms.
 For kNN, $k$ is the number of nearest neighbors.
@@ -88,6 +88,22 @@ For non-linear regression multi-network model, $net$ is the number of hidden net
 $h$ is the number of hidden layers for each hidden network, and $n$ is the number of neurons per hidden 
 layer.
 
+By varying hyperparameters for classifiers, their influence on the algorithm's performance can be experimentally
+analyzed, and previously stated hypothesis' can be proven.
+
+It can be answered whether clustering is important to linear projection and how many clusters are
+required to optimize the performance of linear projection. In Section~\ref{section:vector offset},
+it is observed that more than $15$ clusters are needed to fully cluster the subclass offsets.
+Therefore it is assumed that more than $15$ clusters are needed to achieve a good performance with linear
+projection.
+
+Performance of the multi-network model should be correlated to the depth, width and number of networks
+in the model. Existing work has already proven that width and depth can increase the performance
+of networks given an appropriate amount of training data \cite{Raghu2017} \cite{Hornik1991}.
+Therefore the influence of the parameters $h$ and $n$ are not further explored.
+The design decision to use multiple separate networks to compute the non-linear regression
+should be evaluated. This is done by comparing three models with different numbers of hidden networks.
+
 \subsection{About the dataset}
 % How gold standard was retrieved? (What dump?)
 % Number of training/test samples.
@@ -95,7 +111,7 @@ layer.
 % Problem with embeddings (not all relevant class embeddings are represented in SGNS, because of memory issues, subsampling)
 % => how many are lost for testing
 % characteristic of relevant classes, see Taxonomy analysis.
-The Wikidata dump from \dumpdate{} \cite{WikidataDump} was used in the evaluation.
+The Wikidata dump from \dumpdate{} \cite{WikidataDump} was used in the evaluation
 The gold standard is retrieved from the set of relevant classes (Section~\ref{section:relevant classes}).
 A total of $178,771$ gold sample tuples $(t_i, S_i)$ was retrieved.
 $10,000$ of the samples are used for testing, the $168,771$ remaining samples are used for training.
@@ -128,7 +144,7 @@ Therefore only $8,943$ out of $10,000$ test samples can be used in the evaluatio
 
 \subsection{Results}
 The hybrid algorithms with the previously described parameters were executed.
-The accuracies and average taxonomic overlaps are  listed in Table~\ref{table:evaluation results}.
+The accuracies and average taxonomic overlaps are  listed below in Table~\ref{table:evaluation results}:
 
 \begin{table}[H]
 \center
@@ -146,7 +162,7 @@ distknn ($k=10$) & $22.26\%$ & $46.17\%$ \\
 \hline
 distknn ($k=15$) & $22.62\%$ & $46.56\%$ \\
 \hline
-distknn ($k=20$) & $22.83\%$ & $47.10\%$ \\
+\textbf{distknn ($\mathbf{k=20}$)} & $\mathbf{22.83\%}$ & $\mathbf{47.10\%}$ \\
 \hline
 \hline
 linproj ($c=1$) & $8.54\%$ & $20.04\%$ \\
@@ -156,14 +172,23 @@ linproj ($c=25$) & $11.90\%$ & $26.68\%$\\
 linproj ($c=50$) & $13.09\%$ & $28.65\%$\\
 \hline
 \hline
+concatnn ($net=1, h=3, n=1200$) & $\%$ & $\%$ \\
+\hline
+concatnn ($net=10, h=3, n=1200$) & $18.79\%$ & $34.92\%$ \\
+\hline
 concatnn ($net=20, h=3, n=1200$) & $18.92\%$ & $36.46\%$ \\
 \hline
 \end{tabular}
-\caption{Evaluation results for all hybrid algorithms}
+\caption{Evaluation results for all hybrid algorithms. Best performing hybrid algorithm is highlighted.}
 \label{table:evaluation results}
 \end{table}
 
 \textbf{TODO: compare algorithm performances between classifiers for triple sentences}
+Figure~\ref{fig:best classifiers evaluation} displays the accuracy (green) and taxonomic overlap (blue)
+of the best performing algorithm for each group with distinct classification component.
+distknn($k=20$) is the best performing algorithm with an accuracy of $22.83\%$ and an overlap of $46.56\%$.
+distknn algorithms perform better than the regression-based methods, linproj and concatnn.
+The best performing
 
 \begin{figure}[H]
 \centering
