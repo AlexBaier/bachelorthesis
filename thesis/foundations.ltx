@@ -45,7 +45,7 @@ signified by one or multiple references.}
 \label{fig:class example}
 \end{figure}
 
-Following, the concepts item and statement are formally defined:
+Following, the concepts of item and statement are formally defined:
 \begin{definition}[Item]\label{definition:item}
 An \textbf{item} is a tuple $(\mathit{id},  \mathit{label}, \mathit{aliases}, \mathit{description}, \mathit{sitelinks})$:
 	\begin{itemize}
@@ -80,7 +80,7 @@ A \textbf{statement} is a tuple $(\mathit{itemid}, \mathit{pid}, \mathit{value},
 \end{itemize}
 \end{definition}
 
-For example, \textit{photographic film (Q6239)} (Figure~\ref{fig:class example}) can be formally represented, as follows:
+The statement with property \textit{topic's main category (P910)} of the item \textit{photographic film (Q6239)} can be formalized:
 \begin{align*}
 &(6239, 910, \textnormal{Q30239}, \{ \dots \}, \varnothing)
 \end{align*}
@@ -132,7 +132,8 @@ as the only enforced rule for the subclass-of relation is that it should connect
 
 For the purpose of developing a formal definition of the thesis' problem statement the notion of taxonomy needs to be formalized.
 \citeauthor{Cimiano2006} defines a heavyweight ontology, which includes a taxonomy, as follows \cite{Cimiano2006}:
-
+\newpage
+\begin{mdframed}
 \begin{quotation}
 	\begin{definition*}[Ontology]\label{Ontology}
 		An \textbf{ontology} is a structure
@@ -161,6 +162,7 @@ For the purpose of developing a formal definition of the thesis' problem stateme
 	\end{align*}
 	So every two elements have a unique most specific supremum.
 \end{quotation}
+\end{mdframed}
 
 This definition by \fullcite{Cimiano2006} can be mapped to Wikidata.
 In the Wikidata context, $C$ is the set of classes (see Definition~\ref{def:class} (Class)), $R$ is the set of properties, which target other items,
