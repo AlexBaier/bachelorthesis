@@ -1,12 +1,14 @@
 Knowledge bases, such as DBpedia, YAGO, and Wikidata, store information about all significant entities and their relationships.
 An ontology defines data schemas, vocabularies, hierarchies, and rules about the validity and derivability of information.
-This enable the modeling, sharing and exchange of information.
+The ontology enables the modeling, sharing and exchange of information, as well as the derivation of new knowledge.
 The taxonomy, also called concept or class hierarchy, is a fundamental component of an ontology.
 In a taxonomy, classes are arranged hierarchically linked by a subclass-of relation.
-Complete taxonomies have exactly one most common class the root class, which is called \textit{entity} in Wikidata.
-This root class is unique, as it is the only class, which has no superclasses in the taxonomy.
+Complete taxonomies have exactly one most common class, called the root class.
+In Wikidata, the root class is the class \textit{entity}.
+The root class is unique, as it is the only class, which has no superclasses in the taxonomy.
 However, Wikidata's taxonomy is incomplete in regard to this property.
-Orphan classes violate the uniqueness of the root class by also possessing no superclasses.
+Orphan classes are classes, which are not the root class, but still do not have superclasses.
+Thereby, orphan classes violate the uniqueness of the root class.
 
 The aim of the thesis is the development and evaluation of a method for the classification of orphan classes in the Wikidata taxonomy.
 The classification problem poses a particular challenge to the developed solution, since theoretically every other class in the taxonomy represents a possible superclass for a given orphan class.
@@ -14,7 +16,7 @@ In Wikidata, the classification problem therefore has over $100,000$ possible su
 
 The Wikidata taxonomy has a high degree of completeness with regard to the orphan class problem, as only ${\sim} 0.3\%$ of classes are not subclasses of the root class.
 Due the automated addition of classes from foreign sources, such as protein and gene databases, only ${\sim} 15\%$ of the taxonomy are relevant to human users.
-Therefore, the development and evaluation of the algorithms focuses only on this relevant subset.
+Therefore, the development and evaluation of the algorithms focuses only on the relevant subset.
 
 The developed hybrid algorithms use word embeddings to represent entities of the knowledge base.
 Word embeddings encode the semantic and lexicographical properties of words in text as vectors.
