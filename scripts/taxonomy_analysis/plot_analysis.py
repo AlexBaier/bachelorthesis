@@ -1,9 +1,9 @@
 import json
 import logging
+from typing import Dict, List, Set
 
 import matplotlib.pyplot as plt
 import numpy as np
-from typing import Dict, List, Set
 
 
 def main():
@@ -150,7 +150,7 @@ def main():
         plt.xlim([-0.5, count_limit])
         plt.bar(top_x, top_y, color='#2c6fbb', align='center')
         plt.xlabel(count_plot['x'])
-        plt.ylabel('number of classes')
+        plt.ylabel('percetange of classes')
         plt.title(count_plot['title'])
 
         plt.savefig(count_plot['out path'])
