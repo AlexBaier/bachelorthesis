@@ -1,0 +1,25 @@
+Knowledge bases, such as DBpedia, YAGO, and Wikidata, store information about all significant entities and their relationships.
+An ontology defines data schemas, vocabularies, hierarchies, and rules about the validity and derivability of information.
+This enable the modeling, sharing and exchange of information.
+The taxonomy, also called concept or class hierarchy, is a fundamental component of an ontology.
+In a taxonomy, classes are arranged hierarchically linked by a subclass-of relation.
+Complete taxonomies have exactly one most common class the root class, which is called \textit{entity} in Wikidata.
+This root class is unique, as it is the only class, which has no superclasses in the taxonomy.
+However, Wikidata's taxonomy is incomplete in regard to this property.
+Orphan classes violate the uniqueness of the root class by also possessing no superclasses.
+
+The aim of the thesis is the development and evaluation of a method for the classification of orphan classes in the Wikidata taxonomy.
+The classification problem poses a particular challenge to the developed solution, since theoretically every other class in the taxonomy represents a possible superclass for a given orphan class.
+In Wikidata, the classification problem therefore has over $100,000$ possible superclasses.
+
+The Wikidata taxonomy has a high degree of completeness with regard to the orphan class problem, as only ${\sim} 0.3\%$ of classes are not subclasses of the root class.
+Due the automated addition of classes from foreign sources, such as protein and gene databases, only ${\sim} 15\%$ of the taxonomy are relevant to human users.
+Therefore, the development and evaluation of the algorithms focuses only on this relevant subset.
+
+The developed hybrid algorithms use word embeddings to represent entities of the knowledge base.
+Word embeddings encode the semantic and lexicographical properties of words in text as vectors.
+This allows the application of widely used vector-based methods such as regression and neural networks.
+The representation of Wikidata statements in triples enables the application of Word2Vec, which maps Wikidata entities to embeddings.
+The classification of orphan classes can then be performed using embeddings.
+Nearest-neighbors classification, linear projection, and non-linear regression via neural networks were implemented as classifiers.
+With an accuracy of $22.83\%$, nearest-neighbor classification is the best performing hybrid algorithm.
