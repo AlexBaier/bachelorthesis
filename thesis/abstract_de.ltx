@@ -1,26 +1,26 @@
 Wissensdatenbanken, wie DBpedia, YAGO und Wikidata, speichern Informationen über alle nennenswerten Entitäten und deren Beziehungen zueinander.
-Eine Ontologie definiert Datenschema, Konzeptvokabulare, Hierarchien, sowie Regeln über die Gültigkeit und Herleitbarkeit von Informationen.
+Eine Ontologie definiert Datenschemata, Vokabulare, Hierarchien, sowie Regeln über die Gültigkeit und Herleitbarkeit von Informationen.
 Dadurch wird das Modellieren, das Teilen und der Austausch der Informationen ermöglicht.
-Die Konzepthierarchie, auch Klassenhierarchie oder Taxonomie genannt, ist ein grundlegender Bestandteil einer Ontologie.
+Die Taxonomie, auch Konzept- oder Klassenhierarchie genannt, ist ein grundlegender Bestandteil einer Ontologie.
 In einer Taxonomie, werden Klassen hierarchisch angeordnet, und durch eine Unterklassenrelation verbunden.
 Vollständige Taxonomien haben hierbei genau eine allgemeinste Klasse, welche zum Beispiel in Wikidata \textit{Entität} genannt wird.
 Diese Wurzelklasse ist dadurch ausgezeichnet, dass sie als einzige Klasse keine Superklassen besitzt.
 Jedoch ist die Taxonomie von Wikidata in Hinblick auf diese Eigenschaft unvollständig.
-Waisenklassen verstoßen gegen die Einzigartigkeit der Wurzelklasse.
+Waisenklassen verstoßen gegen die Einzigartigkeit der Wurzelklasse, da sie auch keine Superklassen besitzen.
 
 Das Ziel dieser Bachelorarbeit ist die Entwicklung und Evaluation einer Methode zur Klassifikation von Waisenklassen in der Wikidata-Taxonomie.
-Das gestellte Klassifikationsproblem stellt eine besondere Herausforderung an die entwickelte Lösung, da theoretisch jede Klasse in der Taxonomie
+Das gegebene Klassifikationsproblem stellt eine besondere Herausforderung an die entwickelte Lösung, da theoretisch jede Klasse in der Taxonomie
 eine mögliche Superklasse für eine gegebene Waisenklasse darstellt. In Wikidata bedeutet dies ein Klassifikationsproblem
 mit über $100.000$ möglichen Klassen.
 
-Die Wikidata-Taxonomie hat einen hohen Grad an Vollständigkeit in Bezug auf das Waisenklassenproblem. Nur ${\sim} 0.3\%$ der Klassen sind nicht Unterklassen
+Die Wikidata-Taxonomie hat einen hohen Grad an Vollständigkeit in Bezug auf das Waisenklassenproblem. Nur ${\sim} 0,3\%$ der Klassen sind nicht Unterklassen
 der Wurzelklasse. Aufgrund des automatisierten Hinzufügen von Klassen zu Wikidata aus Fremdquellen wie Gen- und Proteindatenbanken, 
-sind nur ${\sim}15\%$ der Taxonomie relevant für menschliche Nutzer. Daher bezieht sich die Entwicklung und Evaluation des Algorithmus nur auf diesen relevanten Teil.
+sind nur ${\sim}15\%$ der Taxonomie relevant für menschliche Nutzer. Daher bezieht sich die Entwicklung und Evaluation des Algorithmus nur auf diese relevante Teilmenge.
 
 Die entwickelten Hybridalgorithmen verwenden Word-Embeddings zur Repräsentation von Entitäten der Wissensdatenbank.
-Word-Embeddings verschlüsseln die semantischen und lexikographischen Eigenschaften von Worten in natürlich-sprachlichem Text als Vektoren.
+Word-Embeddings verschlüsseln die semantischen und lexikographischen Eigenschaften von Worten in Text als Vektoren.
 Dies ermöglicht den Einsatz von weitverbreiteten vektorbasierten Methoden, wie zum Bespiel Regression und neurale Netzwerke.
 Das Repräsentieren der Aussagen in Wikidata als Tripel ermöglicht die Anwendung von Word2Vec, welches Word-Embeddings aus Sequenzen generiert.
-Die Klassifikation wird anschließend mithilfe von Word-Embeddings durchgeführt.
+Die Klassifikation der Waisenklassen wird anschließend mithilfe von Word-Embeddings durchgeführt.
 Nächste-Nachbarn-Klassifikation, lineare Projektion, und nicht-lineare Regression via neuralen Netzwerken wurden als Klassifikatoren implementiert.
-Mit einer Genauigkeit von $22.83\%$ erreicht Nächste-Nachbarn-Klassifikation die beste Performanz.
+Mit einer Genauigkeit von $22,83\%$ erreicht Nächste-Nachbarn-Klassifikation die beste Performanz der entwickelten Hybridalgorithmen.
