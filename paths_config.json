@@ -53,6 +53,7 @@
 
   "ts+distknn evaluation plot": "evaluation/plots/ts_knn_evaluation-20161107.png",
   "ts+linproj evaluation plot": "evaluation/plots/ts_linproj_evaluation-20161107.png",
+  "ts+concat evaluation plot": "evaluation/plots/ts_concat_evaluation-20161107.png",
   "best classifier evaluation plot": "evaluation/plots/best_classifier_evaluation-20161107.png",
   "best classifier overlap hist": "evaluation/plots/best_classifier_overlaps_hist-20161107.png"
 }

@@ -172,7 +172,7 @@ linproj ($c=25$) & $11.90\%$ & $26.68\%$\\
 linproj ($c=50$) & $13.09\%$ & $28.65\%$\\
 \hline
 \hline
-concatnn ($net=1, h=3, n=1200$) & $\%$ & $\%$ \\
+concatnn ($net=1, h=3, n=1200$) & $18.75\%$ & $34.23\%$ \\
 \hline
 concatnn ($net=10, h=3, n=1200$) & $18.79\%$ & $34.92\%$ \\
 \hline
@@ -233,11 +233,19 @@ These methods reduce the number of active neurons in the network and thereby are
 
 Because all evaluated algorithms ignore the taxonomy in the classification process, it is unsurprising that the taxonomic overlaps are low.
 Future algorithms may use taxonomy-based classification approaches, which were mentioned in Section~\ref{section:taxonomy learning}.
-Using these classifiers as classification approaches is likely to result in higher taxonomic overlaps and may improve the accuracy.
+Using  these classifiers as classification components is likely to result in higher taxonomic overlaps and may improve the accuracy.
 
 \subsection{Influence of hyperparameters on classification}
 Choosing good hyperparameters is critical for producing good embeddings with SGNS \cite{Levy2014}.
-Following this notion, choosing good hyperparameters may also be important in the classification process.
+Accordingly, choosing good hyperparameters may also be important in the classification process.
+kNN and linear projection have one hyperparameter each, $k$ neighbors and $c$ clusters.
+The performance (accuracy, taxonomic overlap) can be defined as a function with a single hyperparameter
+as one-dimensional input, which enables a relatively simple analysis of the influence of the hyperparameter.
+For the multi-network model, the hyperparameter depth $h$, width $n$ and number of networks $net$ exist.
+This would therefore require a more extensive analysis. However, existing research already shows
+that increasing width and depth of a network generally improves the performance of a model with diminishing returns 
+\cite{Raghu2017} \cite{Hornik1991}. For this reason, the evaluation only considers the number of networks as
+a variable hyperparameter.
 
 Distance-based kNN's hyperparameter $k$ is the number of nearest neighbors. 
 Increasing $k$ shows only little improvements of accuracy and taxonomic overlap, which is shown in Figure~\ref{fig:knn classifiers evaluation}.
@@ -266,7 +274,34 @@ As previously predicted, increasing the number of clusters improves the performa
 Linear projection with $c=1$ performs worse than the baseline algorithm, which implies that the subclass-of relation is not linear.
 This follows the argumentation by \fullcite{Fu2014} and the observed clustering of subclass offsets in Section~\ref{section:vector offset}.
 
-\textbf{TODO: neural network hyperparameters}
+The multi-network model has the hyperparameters depth $h$, width $n$, and number of networks $net$.
+Because the influence of the first two parameters is already known \cite{Raghu2017} \cite{Hornik1991},
+only the influence of $net$ is analyzed.  Figure~\ref{fig:concat classifiers evaluation} shows the accuracy and taxonomic
+overlap for different numbers of networks $net$.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.7\textwidth]{images/evaluation/ts_concat_evaluation-20161107.png}
+\caption{Comparison of multi-network regression classifier with different network counts $c = 1, 10, 20$)}
+\label{fig:concat classifiers evaluation}
+\end{figure}
+
+Only a minuscule increase of $0.17\%$ in accuracy can be observed for an increase of networks from $1$ to $20$.
+The increase of the taxonomic overlap is comparably higher with $2.23\%$.
+Increasing the number of networks has a very low payoff,
+as it involves a linear increase in memory usage and training time for each added network,
+while almost no increase in performance occurs.
+A simple deep neural network ($net=1$) achieves a performance very similar to a model consisting of 
+$20$ deep networks.
+The proposed multi-network model can therefore be considered a failure,
+since its drawbacks far outweigh its minor benefits.
+
+In conclusion, only the linear projection gains relevant performance improvements with increasing values
+of its hyperparameter.
+Clustering enables the linear projection to model the non-linear subclass-of relation more accurately.
+In contrast, kNN and non-linear regression are already modeling non-linear functions, therefore
+no such performance increase can exist for these classifiers.
+
 
 \subsection{Discussion}
 
