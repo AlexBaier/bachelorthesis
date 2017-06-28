@@ -67,18 +67,18 @@ On the opposite, placing classes into distant levels would indicate incorrectnes
 All $1,299,501$ classes were analyzed. $98.2\%$ of all classes have an English label.
 In Figure~\ref{fig:all instance count}, the percentage of classes with a specific amount of instances is shown.
 It can be seen that a majority of classes have no instances. 
-The median of instances per class is $0$, while the average is $\approx 15$. 
+The median of instances per class is $0$, while the average is ${\sim} 15$. 
 The high average in comparison to the low median implies that there are some classes with a very high amount of instances.
 Figure~\ref{fig:all subclass count} shows the percentage of classes with a specific amount of subclasses.
-The median of subclasses per class $0$, while the average is $\approx 1.3$.
+The median of subclasses per class $0$, while the average is ${\sim} 1.3$.
 Most classes do not have subclasses or instances. 
 Subsequently, this implies that almost all classes should have the \textit{subclass of (P279)},
 since the other two criteria used to identify classes do not apply.
 In Figure~\ref{fig:all property count}, the percentage of classes with a certain amount of properties is shown.
-The median of properties is $7$, while the average is $\approx 6.65$.
+The median of properties is $7$, while the average is ${\sim} 6.65$.
 The similar median and average implies that few outliers exist.
 Figure~\ref{fig:all property frequency} supports this conclusion that the majority of classes have the \textit{subclass of (P279)} property. 
-Other very common properties like \textit{found in taxon (P703)}, \textit{Entrez Gene ID} and \textit{UniProt ID (P637)} indicate that at least $\approx 80\%$ of all classes
+Other very common properties like \textit{found in taxon (P703)}, \textit{Entrez Gene ID} and \textit{UniProt ID (P637)} indicate that at least ${\sim} 80\%$ of all classes
 are related to genes and proteins.
 The set of classes identified with these properties is mostly entered by bots, which map information from other knowledge bases like NCBI Entrez to Wikidata \cite{Putman2017}.
 The characteristics of these classes is dissimilar to the human curated part of Wikidata, which is shown in the following Section~\ref{section:relevant classes}.
@@ -149,15 +149,15 @@ The following properties are irrelevant:
 \end{multicols}
 These properties were handpicked mostly based on the property frequency in Figure~\ref{fig:all property frequency}.
 
-A total of $195,124$ classes are relevant classes, which $\approx 15.01\%$ of all classes.
-Of all relevant classes $87.92\%$ have an English label, which is $\approx 10\%$ percent less than the ratio of all classes.
+A total of $195,124$ classes are relevant classes, which ${\sim} 15.01\%$ of all classes.
+Of all relevant classes $87.92\%$ have an English label, which is ${\sim} 10\%$ percent less than the ratio of all classes.
 The distribution of instances and subclasses is similar to the set of all classes (Figures~\ref{fig:relevant instance count} and~\ref{fig:relevant subclass count}).
 Both the percentage of classes with $0$ instances, as well as the classes with $0$ subclasses, are about $15\%$ lower than all classes. 
-Accordingly the instance average increases from $\approx 15$ to $\approx 99.5$, and the subclass average increases from $\approx 1.3$ to $\approx 7.02$.
+Accordingly the instance average increases from ${\sim} 15$ to ${\sim} 99.5$, and the subclass average increases from ${\sim} 1.3$ to ${\sim} 7.02$.
 The median remains unchanged at $0$ for both instances and subclasses.
 Comparing the distribution of properties of all classes (Figure~\ref{fig:all property count}) to relevant classes (Figure~\ref{fig:relevant property count}) shows a shift to the left,
 which implies a decrease of properties per class in the set of relevant classes.
-The average decreased from $\approx 6.65$ to $4.82$ and the median decreased from $7$ to $4$.
+The average decreased from ${\sim} 6.65$ to $4.82$ and the median decreased from $7$ to $4$.
 Genes have simultaneously occurring properties, e.g. \textit{genomic end (P645)}, \textit{genomic start (P644)}, \textit{strand orientation (P2548)}, and \textit{Entrez Gene ID (P351)},
 which results in a high percentage of classes having a similar number of properties, which is $7$ for the set of all classes.
 Removing these classes consequently lowers the property median.
@@ -200,22 +200,22 @@ Instead a gold standard can be extracted from the set of relevant classes.
 To ensure that the gold standard evaluation is relevant to the given problem, the set of orphan classes has to be analyzed and compared to the set of relevant classes.
 If the characteristics of both sets are similar, the gold standard evaluation is directly relevant to the performance in classifying orphan classes.
 
-$16,373$ classes were identified as orphan classes, which is $\approx 1.26\%$ of all classes.
-$\approx 84.33\%$ of all orphan classes have an English label, which is only $\approx 5\%$ lower than the relevant classes.
+$16,373$ classes were identified as orphan classes, which is ${\sim} 1.26\%$ of all classes.
+${\sim} 84.33\%$ of all orphan classes have an English label, which is only ${\sim} 5\%$ lower than the relevant classes.
 The distribution of instances for orphan classes (Figure~\ref{fig:orphan instance count} is very different to the relevant classes (Figure~\ref{fig:relevant class count}).
 The majority of orphan classes have at least $1$ instance rather than $0$ instances.
-Consequentially, the median of instances per class is $1$ for orphan classes and the average is $\approx 4.66$, which is much lower than the average $\approx 86.34$ of relevant classes.
+Consequentially, the median of instances per class is $1$ for orphan classes and the average is ${\sim} 4.66$, which is much lower than the average ${\sim} 86.34$ of relevant classes.
 This, in combination with the higher median for orphan classes, implies that orphan classes have none to very few outliers in regards to many instances.
 Additionally, it can be hypothesized that orphan classes are often created for the purpose of classifying single instances by human editors, as a mean to provide a better description
 for the instance, but the orphan class itself is not further described.
-The subclass distribution (Figure~\ref{fig:orphan subclass count}) shows that $\approx 25\%$ of orphan classes have at least $1$ subclass, which is $\approx 20\%$ higher than
+The subclass distribution (Figure~\ref{fig:orphan subclass count}) shows that ${\sim} 25\%$ of orphan classes have at least $1$ subclass, which is ${\sim} 20\%$ higher than
 the relevant classes.
-However, the median of subclasses per class remains $0$, while the average is $\approx 0.852$ and therefore lower than the average $6.5$ of relevant classes,
+However, the median of subclasses per class remains $0$, while the average is ${\sim} 0.852$ and therefore lower than the average $6.5$ of relevant classes,
 which indicates very low or not existing amount of outliers in the set of orphan classes. The same behavior was already observed for the instance distribution.
 The distribution of properties per class (Figure~\ref{fig:orphan property count}) is very similar to the relevant classes (Figure~\ref{fig:relevant property count}).
-The only difference is the percentage of classes with $0$ properties, which is $\approx 12.5\%$ for orphan classes and lower than $1\%$ for relevant classes.
+The only difference is the percentage of classes with $0$ properties, which is ${\sim} 12.5\%$ for orphan classes and lower than $1\%$ for relevant classes.
 This observation supports the previously made hypothesis, which claims that orphan classes are mainly created for the purpose of classifying instances,
-since $12.5\%$ of orphan classes is not described at all. The corresponding property median remains at $3$ and the average is  $\approx 4.78$,
+since $12.5\%$ of orphan classes is not described at all. The corresponding property median remains at $3$ and the average is  ${\sim} 4.78$,
 which is almost identical to the relevant classes.
 The most frequent properties for orphan classes, as shown in Figure~\ref{fig:orphan property frequency}, shows very similar properties to the relevant classes
 (Figure~\ref{fig:relevant property frequency}). 

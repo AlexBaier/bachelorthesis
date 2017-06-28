@@ -199,8 +199,8 @@ concatnn($net=20, h=3, n=1200$) is the best multi-network model algorithm with a
 \end{figure}
 
 As stated in Section~\ref{section:evaluation method}, accuracy and taxonomic overlap are to some degree correlated.
-For the baseline, taxonomic overlap equals $\approx 4$ times the accuracy, while for all other algorithms the taxonomic overlap equals
-$\approx 2$ times the accuracy.
+For the baseline, taxonomic overlap equals ${\sim} 4$ times the accuracy, while for all other algorithms the taxonomic overlap equals
+${\sim} 2$ times the accuracy.
 Additionally, taxonomic overlap for linear projection algorithms is lower than the baseline.
 This implies that the implemented algorithms tend to place an unknown class far from its correct position, if a misclassification occurs.
 Observing the local taxonomic overlaps between all prediction and gold standard pairs supports this hypothesis.
@@ -218,8 +218,8 @@ linproj = linproj($c=50$), concatnn=concatnn($net=20, h=3, n=1200$)}
 
 It can be seen that classes are either correctly classified and thereby have a local taxonomic overlap of $1$ or are completely misplaced
 and have a local taxonomic overlap between $0$ and $0.1$.
-All methods are able to place $\approx 5\%$ of classes very close to the correct position in the case of misclassification,
-since the values in the bucket of $0.9$ to $1.0$ are $\approx 5\%$ higher than the corresponding accuracy for each algorithm.
+All methods are able to place ${\sim} 5\%$ of classes very close to the correct position in the case of misclassification,
+since the values in the bucket of $0.9$ to $1.0$ are ${\sim} 5\%$ higher than the corresponding accuracy for each algorithm.
 
 Distance-based kNN is a superior classification component in comparison to the regression-based methods.
 The regression task requires the prediction of multiple targets, while kNN only has to predict a single target, which is the label.
