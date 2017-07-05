@@ -19,7 +19,7 @@ def main():
     col_sep = ','
     row_sep = '\n'
 
-    algorithms = ['gw+concatnn(act=relu,net=20,n=2400)']
+    algorithms = ['ts+concatnn(act=relu,net=1,h=3,n=1200)']
 
     results = execute_combined_algorithms(
         combined_algorithms=algorithms,

@@ -51,6 +51,19 @@
   "evaluation": "evaluation/hybrid_evaluation-20161107.csv",
   "local taxonomic overlaps": "data/evaluation/local_tax_overlaps_{}-20161107.csv",
 
+  "tp class analysis": "data/evaluation/tp_characteristics-20161107.json",
+  "fp class analysis": "data/evaluation/fp_characteristics-20161107.json",
+
+  "tp class property frequency": "evaluation/plots/tp_class_property_frequency.png",
+  "tp class property counts": "evaluation/plots/tp_class_property_counts.png",
+  "tp class subclass counts": "evaluation/plots/tp_class_subclass_counts.png",
+  "tp class instance counts": "evaluation/plots/tp_class_instance_counts.png",
+
+  "fp class property frequency": "evaluation/plots/fp_class_property_frequency.png",
+  "fp class property counts": "evaluation/plots/fp_class_property_counts.png",
+  "fp class subclass counts": "evaluation/plots/fp_class_subclass_counts.png",
+  "fp class instance counts": "evaluation/plots/fp_class_instance_counts.png",
+
   "ts+distknn evaluation plot": "evaluation/plots/ts_knn_evaluation-20161107.png",
   "ts+linproj evaluation plot": "evaluation/plots/ts_linproj_evaluation-20161107.png",
   "ts+concat evaluation plot": "evaluation/plots/ts_concat_evaluation-20161107.png",
