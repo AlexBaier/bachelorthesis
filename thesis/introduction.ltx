@@ -1,10 +1,20 @@
-\textbf{Knowledge bases (KB)} like DBpedia, YAGO and Wikidata store information about every significant real-world entity and the relations between those entities.
+\textbf{Knowledge bases (KB)} like DBpedia, YAGO and Wikidata store information about notable entities and the relations between those entities. For example, in Wikidata entities are considered notable, if
+it either has a sitelink to a Wikimedia page, or is clearly identifiable and has relevant, public references,
+or is required for structural purposes \cite{WikidataNotability}.
 Using different approaches like human collaboration in Wikidata or information from Wikipedia data boxes in YAGO, these KBs are populated \cite{Galarraga2016}.
 The issue of incompleteness arises in this context, as it is not realistic to assume that every bit of knowledge can or should be captured in the KBs.
 \textbf{Ontologies} are necessary for modeling, sharing, and exchanging knowledge \cite{Hazman2011}, and are therefore integral in the functioning of a KB \cite{Wong2012}.
-They provide data schemas, concept vocabularies and rules \cite{Maedche2001} to which a KB has to adhere.
-Therefore, it should be a priority to ensure the completeness of the ontology in a KB.
-Types of ontologies range from lightweight ontologies like glossaries and taxonomies (concept hierarchies) to heavyweight ontologies like data models and description logics
+An ontology is a formal specification of knowledge consisting of concepts, relations and axioms for validation \cite{Maedche2001}. Therefore it describes a domain and how knowledge for the domain can be stored \cite{Wong2012}.
+Each knowledge base explicitly or implicitly follows an ontology and can be considered an instantiation
+of an ontology \cite{Wong2012}.
+A main component of ontologies is the class hierarchy, also called taxonomy.
+A taxonomy describes the subclass-superclass or child-parent relations between classes.
+The superclass of a class is thereby a more general concept.
+Obtaining an ontology with a detailed as possible taxonomy is desirable,
+since it allows more detailed representation of knowledge, as well as better reasoning about this knowledge
+\cite{Wong2012}.
+Types of ontologies range from lightweight ontologies like glossaries and taxonomies 
+to heavyweight ontologies like data models and description logics
 \cite{Wong2012}.
 
 \begin{figure}[H]
@@ -14,9 +24,13 @@ Types of ontologies range from lightweight ontologies like glossaries and taxono
 \label{fig:problem example}
 \end{figure}
 
-The thesis' goal is the development and evaluation of approaches to increase the completeness of ontological taxonomies.
+The goal of this thesis is the development and evaluation of approaches to increase the completeness of ontological taxonomies.
 Specifically, the problem of classifying \textbf{orphan classes} is solved.
 Orphan classes are classes in a taxonomy, which have no superclasses (parents) and are not the root of the taxonomy.
+A class without superclasses is interpreted as a most general concept in a taxonomy,
+since it has to be assumed that no further generalizations are possible.
+Because this is not the case for orphan classes, which are less general than the root class, e.g.\entity{} in Wikidata,
+orphan classes should not exist in a taxonomy.
 An example, for such a classification problem is given in Figure~\ref{fig:problem example}.
 An extract of the Wikidata taxonomy is shown. 
 The class \textit{reversal film} is an orphan class in the taxonomy, since it is has no superclass.
@@ -24,18 +38,21 @@ A possible solution is represented by the dotted arrow, which places \textit{pho
 It has to be noted that additionally all superclasses of \textit{photographic film} are also valid solutions to the problem for the orphan class \textit{reversal film},
 since the subclass-of relationship is transitive.
 A solution to the problem should find the most specific superclass for a given orphan class \cite{Doan2002}.
-An algorithm is developed with the task of classifying such orphan classes into a given taxonomy.
-The algorithm will use neural word embeddings, as developed by \fullcite{Mikolov2013}. This is motivated by the effectiveness of neural networks in other context-sensitive tasks
+I develop an algorithm with the task of classifying such orphan classes into a given taxonomy.
+The algorithm uses neural word embeddings, as developed by \fullcite{Mikolov2013}. This is motivated by the effectiveness of neural networks in other context-sensitive tasks
 like language processing \cite{Mikolov2013} \cite{Kalchbrenner2014} \cite{Arisoy2012}, image generation \cite{Gregor2015} etc.
 Neural word embeddings are especially interesting, since they have been used to great effect in the construction of taxonomies \cite{Fu2014},
 graph representation \cite{Cao2016} and semantic similarity tasks \cite{Mikolov2013a} \cite{Levy2014}.
-Different approaches in using neural word embeddings for classification of orphan classes will be considered and evaluated in this work.
+Different approaches in using neural word embeddings for classification of orphan classes are considered and evaluated in this work.
 
 In this work, the taxonomy of Wikidata is considered as case example, as it provides a high number of entities ($24,507,102$ in \dumpdate{} \cite{WikidataDump}),
 and a big taxonomy consisting of $1,299,501$ classes \cite{WikidataDump}.
 At this time, Wikidata's taxonomy is mostly maintained by human editors.
 The solution developed by the thesis should be able to support the editors in improving the completeness of the taxonomy by reducing the number of orphan classes
 and refining the existing taxonomic relations between classes.
+The refinement process, supported by the algorithm, would be semi-manual. Editors
+would have to confirm or correct the output of the algorithm to ensure that no wrong
+information is added to Wikidata.
 
 The thesis is structured as follows.
 In Chapter~\ref{section:foundations} the problem will be formally defined (\ref{section:wikidata}, \ref{section:taxonomy}, \ref{section:similarity}, \ref{section:problem statement})
@@ -48,11 +65,12 @@ Chapter~\ref{section:algorithm} describes the components of the developed baseli
 Chapter~\ref{section:evaluation} describes the evaluation methodology and presents the results.
 The baseline algorithm and proposed improvements are evaluated.
 
-Formatting of text obeys the following rules. 
+Formatting of text obeys the following rules to distinguish between defined concepts, Wikidata entities,
+and different types of citations.
 Italic text indicates Wikidata entities like \entity{} or \textit{instance of (P31)}.
 Bold text indicates the first occurrence of a relevant concept, such as \textbf{orphan class}.
 Such concepts are described in the following sentences and, if necessary, formally defined.
-Figures with long descriptions are framed to clearly separate continuous text and description of the figure.
 In-line quotes are indicated by quotation marks. The corresponding citation is placed after the quote.
-Multi-line quotes are indented. The quote is introduced by a short sentence, which contains the citation.
+Multi-line quotes are indented and framed with a solid line. 
+The quote is introduced by a short sentence, which contains the reference.
 
