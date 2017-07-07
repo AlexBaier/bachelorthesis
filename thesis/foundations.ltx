@@ -2,20 +2,21 @@
 % Wikidata
 %%%%%%
 \subsection{Wikidata}\label{section:wikidata}
-Wikidata is an open, free, multilingual and collaborative KB. It is a structured knowledge source for other Wikimedia projects. 
-It tries to model the real world, meaning every concept, object, animal, person, etc.
+Wikidata is an open, free, multilingual and collaborative knowledge base (KB). It is a structured knowledge source for other Wikimedia projects. 
+It models the real world, such as concepts, objects, people, events, etc.
 Wikidata is mostly edited and extended by humans, which in general improves the quality of entries compared to fully-automated systems, 
 because different editors can validate and correct occurring errors.
-However, Wikidata, like most knowledge bases, is incomplete in terms of missing facts about different entities \cite{Darari2016}
-and therefore has to be operated under the \textbf{Open World Assumption (OWA)}.
+However, Wikidata, as an continuously growing KB, is incomplete in terms of missing facts about different entities \cite{Darari2016}.
+Due to the inherent incompleteness of Wikidata, as it is never possible to completely model all information, it is operated under the \textbf{Open World Assumption (OWA)}.
 OWA states that if a statement is not contained in a knowledge base, it is not necessarily false but rather unknown \cite{Galarraga2016}.
 
 In Wikidata \textbf{items} and \textbf{properties} exist. Items are the aforementioned concepts, objects, etc. Properties are used to make claims about
 items, e.g. \textit{photographic film (Q6293)} is a \textit{subclass of (P279)} \textit{data storage device (Q193395)} (see Figure~\ref{fig:class example}).
 Each item and property has an unique identifier, which starts with the letter Q for items and the letter P for properties and is followed by a numeric code.
-The identifiers in Wikidata are essential to avoid ambiguity and make items and properties multilingual.
+The identifiers in Wikidata are essential to avoid ambiguity and make it possible to refer to interact with Wikidata independent of language constraints,
+which is a supporting factor in allowing the multilingualism of Wikidata.
 
-Items consist of labels, aliases and descriptions in different languages. 
+Items are described by  labels, aliases and descriptions in different languages. 
 Sitelinks connect items to their corresponding pages of Wikimedia projects like Wikipedia articles.
 Most importantly, an item is described by \textbf{statements}. 
 Statements are in their simplest form a pair of property and value, assigned to a specific item. A value is either a literal value or another item.
@@ -31,7 +32,7 @@ Statements are grouped into \textbf{statement groups} (blue boxes) by their \tex
 In this example, two statement groups with properties \textit{topic's main category (P910)} and \textbf{subclass of (P279)} are shown.
 Each \textbf{statement} can have a value (orange box), \textbf{references} (green box), and \textbf{qualifiers}.
 In this example, the only statement with property \textit{topic's main category (P910)} has the value \textit{Category: Photographic film (Q8363301)} and a reference, which consists of
-a property \textit{imported from (P143)} and a value \textit{Chinese Wikipedia (Q30239)}. References represent the sources and other meta-data about the source of the statement.
+a property \textit{imported from (P143)} and a value \textit{Chinese Wikipedia (Q30239)}. References refer to the sources and other meta-data about the source of the statement.
 In this example, no qualifiers exist. Qualifiers are used to give additional details to statements.
 A common use for qualifiers is the annotation of statements with time stamps, if the a different value is true for different points in time e.g. population of a country over time.
 
@@ -126,7 +127,7 @@ as the only enforced rule for the subclass-of relation is that it should connect
 \begin{figure}[H]
 \centering
 \includegraphics[width=\textwidth]{images/foundations/wong2012_spectrum_of_ontology_kinds.png}
-\caption{The spectrum of ontology kinds \cite{Wong2012}}
+\caption{The spectrum of ontology kinds (extracted from \cite{Wong2012})}
 \label{fig:ontology spectrum}
 \end{figure}
 
@@ -253,7 +254,7 @@ Given two objects $A, B \in \Omega$, $\mathit{sim}(A, B) = 1$ if $A = B$ and $\m
 Therefore a similarity measure $\mathit{sim(A, B)}$ should return $1$ only if $A = B$ and $0$ if the $A$ and $B$ share no commonalities.
 A similarity measure should factor in both commonalities and differences to compute the similarity between objects \cite{Lin1998}.
 
-Many types of information can be encoded as feature vectors in $\mathbb{R}^d$, e.g.
+Different types of information can be encoded as feature vectors in $\mathbb{R}^d$, e.g.
 words \cite{Levy2015} \cite{Mikolov2013}, graphs \cite{Ristoski2016} \cite{Cao2016}, etc., where $d \in \mathbb{N}$ is the dimension of the vector space.
 The similarity between feature vectors can be measured using a distance measure between two vectors $\vec{p}, \vec{q} \in \mathbb{R}^d$ \cite{Weber2000}.
 Distance measures $\delta$ have the signature: $\delta: \mathbb{R}^d \times \mathbb{R}^d \mapsto \mathbb{R}_0^+$.
@@ -339,14 +340,14 @@ fulfilling the following criteria:
 \end{align}
 \end{definition}
 
-The stated problem induces several challenges, which will be listed here, but addressed in later sections.
+The stated problem induces several challenges, which is listed here, but addressed in later sections.
 
 \begin{enumerate}
 \item \textbf{High number of labels}. An orphan class has to be assigned to a class in the root taxonomy.
 The only restricting condition is that the chosen class cannot be a subclass of the orphan class.
-As shown in Section~\ref{section:taxonomy analysis}, $97\%$ of $12999501$ classes are part of the root
-taxonomy. Classification methods, like SVM or neural networks, usually classify with a small number of labels.
-A classification method, which is able to handle over a million labels, is required.
+As shown in Section~\ref{section:taxonomy analysis}, $195,124$ classes of the taxonomy are considered as relevant to the classification task. 
+Classification methods, like SVM or neural networks, usually classify with a small number of labels.
+But in the context of this thesis, a method is required, which is able to handle over $100,000$ labels.
 \item \textbf{Representation of items}. Items in Wikidata are structured information, similar to nodes in RDF graphs
 and Wikidata can be represented as such \cite{Ristoski2016} \cite{Erxleben2014}.
 As motivated in Section~\ref{section:introduction}, the solution should exploit the apparent power of
