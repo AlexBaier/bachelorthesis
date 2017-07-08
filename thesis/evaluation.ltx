@@ -24,17 +24,17 @@ for practical application. But in practice $\mathit{algA}$ would be preferred, s
 not usable.
 Therefore the taxonomy dimension should be included in the evaluation. For this the \textbf{taxonomic overlap} measure, defined by \fullcite{Dellschaft2006}, is also used
 in the evaluation. The taxonomic overlap counts how many superclasses are shared by the prediction and the gold standard for each sample.
-This is called the \textbf{semantic upwards cotopy} $\mathit{sc}$ defined as follows \cite{Dellschaft2006}:
+This is called the \textbf{semantic upwards cotopy} $\mathit{sc}$ defined as follows by \fullcite{Dellschaft2006}:
 \begin{align}
 &\mathit{sc}(c, T) = \{ c_i | c_i, c \in C \land c \subclassof{T} c_i \}
 \end{align}
 where $T=(C, \_)$ is a taxonomy and $c \in C$ is a class in the taxonomy $T$.
-Based on the semantic upwards cotopy, the taxonomic overlap $\mathit{to}_\mathit{sc}$ between classes $c_1$ and $c_2$ in $C$ is defined as follows \cite{Dellschaft2006}:
+Based on the semantic upwards cotopy, the taxonomic overlap $\mathit{to}_\mathit{sc}$ between classes $c_1$ and $c_2$ in $C$ is defined as follows by \fullcite{Dellschaft2006}:
 \begin{align}
 &\mathit{to}_\mathit{sc}(c_1, c_2, T) = \frac{|\mathit{sc}(c_1, T) \cap \mathit{sc}(c_2, T) |}{|\mathit{sc}(c_1, T) \cup \mathit{sc}(c_2, T) |}
 \end{align}
 The taxonomic overlap between two classes ranges between $0$, if the classes have no common superclasses, and $1$ if the classes are identical or all direct superclasses are identical.
-To apply the taxonomic overlap in the evaluation the overlaps for all prediction-gold pairs have to summed up, which leads to the \textbf{average taxonomic overlap} 
+To apply the taxonomic overlap in the evaluation, the overlaps for all prediction-gold pairs have to summed up, which leads to the \textbf{average taxonomic overlap} 
 $\mathit{ato}_{\mathit{sc}, \mathit{alg}}$ for an algorithm $\mathit{alg}$:
 \begin{align}
 &\mathit{ato}_{\mathit{sc}, \mathit{alg}} =\frac{1}{|G|}  \sum_{i = 1}^{|G|} \max_{s \in S_i}(\mathit{to}_\mathit{sc}(p_\mathit{alg}(c_i), s, T))
@@ -71,7 +71,7 @@ non-linear regression  multi-network & concatnn \\
 \end{tabular}
 \caption{Abbreviations for components}
 \end{table}
-Algorithms are implemented as described in Chapter~\ref{section:algorithm}.
+I implemented as described in Chapter~\ref{section:algorithm}.
 The non-linear regression multi-network model is called concatnn due to its concatenation layer.
 
 The following hybrid algorithms are evaluated:
@@ -104,17 +104,17 @@ Therefore the influence of the parameters $h$ and $n$ are not further explored.
 The design decision to use multiple separate networks to compute the non-linear regression
 should be evaluated. This is done by comparing three models with different numbers of hidden networks.
 
-\subsection{About the dataset}
+\subsection{Datat}
 % How gold standard was retrieved? (What dump?)
 % Number of training/test samples.
 % Triple sentences
 % Problem with embeddings (not all relevant class embeddings are represented in SGNS, because of memory issues, subsampling)
 % => how many are lost for testing
 % characteristic of relevant classes, see Taxonomy analysis.
-The Wikidata dump from \dumpdate{} \cite{WikidataDump} was used in the evaluation
+The Wikidata dump from \dumpdate{} \cite{WikidataDump} was used in the evaluation.
 The gold standard is retrieved from the set of relevant classes (Section~\ref{section:relevant classes}).
 A total of $178,771$ gold sample tuples $(t_i, S_i)$ was retrieved.
-$10,000$ of the samples are used for testing, the $168,771$ remaining samples are used for training.
+$10,000$ or $10\%$ of the samples are used for testing, the $168,771$ remaining samples are used for training.
 
 Figure~\ref{fig:gold standard example} depicts the extraction of gold samples from the Wikidata taxonomy.
 A subclass, e.g. \textit{province of Ireland (Q202156)}, and its direct superclasses are retrieved from Wikidata.
@@ -129,9 +129,9 @@ The baseline will therefore assign \textit{badminton tournament} to all test sam
 A total of $109,267,818$ triple sentences were extracted from the Wikidata dump \cite{WikidataDump}.
 All entities, which have irrelevant properties, as defined in Section~\ref{section:relevant classes}, were excluded.
 All sentences representing test sample subclass-of relations were also excluded. 
-Figure~\ref{fig:gold standard example} shows an example extraction of a gold standard sample from Wikidata.
+Figure~\ref{fig:gold standard example} shows an example extraction of a gold standard tuple from Wikidata.
 
-Due to memory limitations, SGNS is only able to capture a certain vocabulary size. Therefore only $5,000,000$ words are represented by SGNS.
+Due to memory limitations, SGNS is only able to capture a certain vocabulary size of $5,000,000$ words.
 Less frequent words have therefore no embeddings. This also affects a small number of relevant classes, which occur in the test samples.
 Therefore only $8,943$ out of $10,000$ test samples can be used in the evaluation.
 
@@ -242,14 +242,14 @@ kNN and linear projection have one hyperparameter each, $k$ neighbors and $c$ cl
 The performance (accuracy, taxonomic overlap) can be defined as a function with a single hyperparameter
 as one-dimensional input, which enables a relatively simple analysis of the influence of the hyperparameter.
 For the multi-network model, the hyperparameter depth $h$, width $n$ and number of networks $net$ exist.
-This would therefore require a more extensive analysis. However, existing research already shows
+Existing research already shows
 that increasing width and depth of a network generally improves the performance of a model with diminishing returns 
 \cite{Raghu2017} \cite{Hornik1991}. For this reason, the evaluation only considers the number of networks as
 a variable hyperparameter.
 
 Distance-based kNN's hyperparameter $k$ is the number of nearest neighbors. 
 Increasing $k$ shows only little improvements of accuracy and taxonomic overlap, which is shown in Figure~\ref{fig:knn classifiers evaluation}.
-Because class embeddings is very clustered as shown in Section~\ref{section:vector offset}, an unknown class is likely to belong to a cluster.
+Because class embeddings are very clustered as shown in Section~\ref{section:vector offset}, an unknown class is likely to belong to a cluster.
 Increasing $k$ would either add classes of the same cluster to the neighbors, which does not change the classification decision, or add classes from different distant clusters to the neighbors,
 which would also not change the decision, because weights are distance-based.
 
@@ -374,13 +374,13 @@ The implemented linear projection classifier is flawed.
 Because subclass-superclass pairs are clustered by subclasses and each subclass may have multiple superclasses, different types of subclass-of relations are grouped
 into one cluster.
 This leads to problems in training the corresponding projection, since dissimilar offsets have to represented by a single projection and therefore the projection
-cannot converge to an optimal solution. In the thesis, this is solved by ignoring additional superclasses.
-Instead clustering by subclass-of offsets, as done by \fullcite{Fu2014}, could provide better results, if an effective method for identifying the correct cluster for an unknown class
+cannot converge to an optimal solution. In the context of this thesis, I decided to solve this  by ignoring additional superclasses in the training data.
+Instead clustering by subclass-of offsets, as suggested by \fullcite{Fu2014}, could provide better results, if an effective method for identifying the correct cluster for an unknown class
 can be found.
 Since subclass-of clusters are related to single topics  as shown in Section~\ref{section:vector offset},
 it may be feasible to identify the correct cluster for an unknown class by analyzing its properties and matching it to the most common properties in a subclass-of cluster.
 
-The problem statement is too difficult. A classification problem with over $100k$ labels is difficult to solve.
+A classification problem with over $100k$ labels is difficult to solve.
 Approaches in reducing the number of possible superclasses should be considered. 
 Most classes have a distance of $6$ to $10$ to the root class (Section~\ref{section:root taxonomy}),
 therefore it may be applicable to only consider classes with distance $5$ to $9$ as superclasses.

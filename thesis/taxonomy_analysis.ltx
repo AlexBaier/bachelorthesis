@@ -35,7 +35,7 @@
 For the task of developing an algorithm, which takes orphan classes as input, it is necessary to know,
 what information the classes carry and if there are common characteristics among classes.
 
-The taxonomy contained in the Wikidata dump of \dumpdate{} was analyzed.
+The taxonomy contained in the Wikidata dump of \dumpdate{} \cite{WikidataDump} was analyzed.
 It contains a total of $24,507,102$ items, of which $1,299,501$ are classes.
 Classes were recognized as defined in Section~\ref{section:wikidata}. 
 
@@ -58,7 +58,7 @@ While the highest distance to the root is $20$.
 The most distant classes generally belong to concepts of biological taxonomies.
 The most distant classes are subclasses of the genus \textit{Homo (Q171283)}.
 
-The developed algorithm will likely place orphan classes into the same levels of the taxonomy, in which most classes already reside.
+The developed algorithm will with high probability place orphan classes into the same levels of the taxonomy, in which most classes already reside.
 If the algorithm places classes in levels close to the root, it would indicate that the classification method is not specific enough.
 On the opposite, placing classes into distant levels would indicate incorrectness of the algorithm, since only a small subset of classes occurs in these levels.
 
@@ -148,8 +148,10 @@ The following properties are irrelevant:
 \end{itemize}
 \end{multicols}
 These properties were handpicked mostly based on the property frequency in Figure~\ref{fig:all property frequency}.
+The properties are considered irrelevant, because they belong to a very specific and narrow domain and due to their high share in the taxonomy
+create an inbalance. The developed algorithm should be applicable on a general taxonomy and therefore the aforementioned properties are removed.
 
-A total of $195,124$ classes are relevant classes, which ${\sim} 15.01\%$ of all classes.
+A total of $195,124$ classes are relevant classes, which is ${\sim} 15.01\%$ of all classes.
 Of all relevant classes $87.92\%$ have an English label, which is ${\sim} 10\%$ percent less than the ratio of all classes.
 The distribution of instances and subclasses is similar to the set of all classes (Figures~\ref{fig:relevant instance count} and~\ref{fig:relevant subclass count}).
 Both the percentage of classes with $0$ instances, as well as the classes with $0$ subclasses, are about $15\%$ lower than all classes. 
@@ -195,14 +197,15 @@ As a result, the hybrid algorithm will be developed and evaluated in regards to 
 \subsection{Orphan classes}
 Orphan classes were identified by checking whether a class does not have the \textit{subclass of (P279)} property.
 The final goal of the thesis is to develop a method, which is able to classify orphan classes with a good accuracy.
-However, orphan classes can not be used for testing the method, because a gold standard for orphan classes is missing.
-Instead a gold standard can be extracted from the set of relevant classes.
+Given the lack of an existing gold standard for orphan classes, they cannot be used for testing the method.
+Classes with existing subclass-of relations can be used for training and testing.
+The existing subclass-of relations can then be considered as gold standard.
 To ensure that the gold standard evaluation is relevant to the given problem, the set of orphan classes has to be analyzed and compared to the set of relevant classes.
 If the characteristics of both sets are similar, the gold standard evaluation is directly relevant to the performance in classifying orphan classes.
 
 $16,373$ classes were identified as orphan classes, which is ${\sim} 1.26\%$ of all classes.
 ${\sim} 84.33\%$ of all orphan classes have an English label, which is only ${\sim} 5\%$ lower than the relevant classes.
-The distribution of instances for orphan classes (Figure~\ref{fig:orphan instance count} is very different to the relevant classes (Figure~\ref{fig:relevant class count}).
+The distribution of instances for orphan classes (Figure~\ref{fig:orphan instance count} is very different to the relevant classes (Figure~\ref{fig:relevant instance count}).
 The majority of orphan classes have at least $1$ instance rather than $0$ instances.
 Consequentially, the median of instances per class is $1$ for orphan classes and the average is ${\sim} 4.66$, which is much lower than the average ${\sim} 86.34$ of relevant classes.
 This, in combination with the higher median for orphan classes, implies that orphan classes have none to very few outliers in regards to many instances.
