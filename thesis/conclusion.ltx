@@ -7,10 +7,10 @@ The work consists of two main results: An analysis of Wikidata's taxonomy and hy
 Insights for possible future work with Wikidata was gained.
 Automated mapping of other specialized knowledge bases like the Entrez Gene knowledge base  \cite{Maglott2005}, 
 which contains information about fully sequenced genomes,  skews the distribution of classes.
-Classes, which are relevant to human editors, have a  low share of $\approx 15\%$ in the taxonomy.
+Classes, which are relevant to human editors, have a  low share of ${\sim} 15\%$ in the taxonomy.
 Future work on Wikidata should therefore consider removing every entitity, which has undesirable properties, as a measure for improving validity of evaluation results.
 An incomplete list of undesirable properties in regards to Wikidata's taxonomy is given in Section~\ref{section:relevant classes}.
-The taxonomy is in a good state, since most classes ($\approx 97\%$) are in the root taxonomy.
+The taxonomy is in a good state, since most classes (${\sim} 97\%$) are in the root taxonomy.
 Additionally, it can be argued that the constant curation by human editors improves the quality of content in Wikidata. 
 Therefore using Wikidata's taxonomy as an easy to retrieve gold standard may be applicable for future work.
 
@@ -26,8 +26,10 @@ Linear projection and multi-network model are regression-based approaches, which
 
 Evaluation has shown that kNN outperforms the other classifiers, which are non-linear regression via neural networks and linear projection. 
 Distance-based kNN with $20$ neighbors achieves an accuracy of $22.83\%$.
-It was concluded that an application using a hybrid algorithm with a kNN classification component would be suitable for supporting
-Wikidata users, as it would correctly predict a superclass in approximately $1$ of $4$ cases.
+Further analysis has shown that the algorithm performs well for classes, which are well described and which have related classes.
+Thereby classes with more frequent properties, such as  \textit{sport (P17)} and \textit{country (P17)}, 
+can be accurately predicted.
+Therefore it can be concluded that the hybrid algorithm can support Wikidata users in orphan class labeling for classes, which have frequently occurring properties.
 
 The use of word embeddings in ontology learning is promising.
 Subclass-of relations in a taxonomy can be represented by embedding offsets.
@@ -45,7 +47,7 @@ or a mapping between Wikidata IDs and words in natural text.
 Ontology learning can benefit from using word embeddings, because they are able to effectively represent entities.
 This abstraction opens ontology learning to an existing wide range of methods, which operate on vectors, such as neural networks, regression methods and general classifiers.
 Insights on the usage of Wikidata for ontology learning were gained.
-Wikidata has a high degree of completeness in regards to connectedness, as only $\approx 3\%$ are not connected to the root taxonomy.
+Wikidata has a high degree of completeness in regards to connectedness, as only ${\sim} 3\%$ are not connected to the root taxonomy.
 Due to automated mapping of specialized knowledge bases, only a small percentage of classes can be considered as relevant for the Wikidata taxonomy.
 
 Future work in regards to improving the algorithm for the given classification task could entail multiple venues, such as improving the generation of input sequences for
@@ -66,3 +68,11 @@ Deep neural graph embeddings may either replace or enrich the word embeddings ge
 All developed hybrid algorithms were performing badly in regards to taxonomic overlap. Improving the taxonomic overlap may also improve the accuracy.
 Using taxonomy-based classifiers as classification component is likely to result in higher taxonomic overlaps,
 since the current algorithms disregard the taxonomy.
+
+In conclusion, the representation of ontological classes and instances is an interesting and promising approach, which enables the application of a variety of existing general purpose algorithms.
+Further research in the capabilities of word embeddings in ontology learning is recommended.
+Wikidata's data is freely available, represents a general ontology, and is of good quality, due to human curation, therefore it is well suited as use case for ontology learning.
+However, filtering of the dataset is necessary to remove automatically added, domain-specific knowledge from third-party KBs, which is irrelevant to most real life applications
+of ontology learning.
+
+

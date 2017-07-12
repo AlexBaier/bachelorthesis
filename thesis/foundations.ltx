@@ -33,7 +33,8 @@ In this example, two statement groups with properties \textit{topic's main categ
 Each \textbf{statement} can have a value (orange box), \textbf{references} (green box), and \textbf{qualifiers}.
 In this example, the only statement with property \textit{topic's main category (P910)} has the value \textit{Category: Photographic film (Q8363301)} and a reference, which consists of
 a property \textit{imported from (P143)} and a value \textit{Chinese Wikipedia (Q30239)}. References refer to the sources and other meta-data about the source of the statement.
-In this example, no qualifiers exist. Qualifiers are used to give additional details to statements.
+The statement with property \textit{image (P18)} has a qualifier with property \textit{media legend (P2096)} and a corresponding string value \textit{"Kodak Porta 160 film (English)"},
+which is a description for the corresponding image \textit{Kodak Portra 160.jpg}.
 A common use for qualifiers is the annotation of statements with time stamps, if the a different value is true for different points in time e.g. population of a country over time.
 
 \begin{figure}[H]
@@ -42,7 +43,7 @@ A common use for qualifiers is the annotation of statements with time stamps, if
 \caption{Example excerpt of Wikidata item: photographic film (Q6239). An item consists of a label, aliases,
 description, and statement group. Each statement group is associated with a specific property such as 
 \textit{subclass of (P270)} and can have multiple statements. The provenance of a statement can be
-signified by one or multiple references.}
+signified by one or multiple references. Qualifiers add additional details about statements.}
 \label{fig:class example}
 \end{figure}
 
@@ -92,6 +93,7 @@ Based on which statements connect two items, a distinction can be made.
 A class is any item, which has instances, subclasses or is the subclass of another class.
 In Wikidata, the properties \textit{instance of (P31)} and \textit{subclass of (P279)} exist, which describe these relations between items.
 Therefore to identify whether an item is a class, it needs to be checked, whether the items fulfills any of the three mentioned criteria.
+These criteria for classes are formally defined, as follows:
 \begin{definition}[Class]\label{def:class}
 Given a set of items $I$ and a set of statements $R$. $c = (\mathit{classid}, \_, \_, \_, \_)  \in I$ is a \textbf{class}, if at least one of the following assertions are true:
 \begin{align*}
@@ -350,9 +352,8 @@ Classification methods, like SVM or neural networks, usually classify with a sma
 But in the context of this thesis, a method is required, which is able to handle over $100,000$ labels.
 \item \textbf{Representation of items}. Items in Wikidata are structured information, similar to nodes in RDF graphs
 and Wikidata can be represented as such \cite{Ristoski2016} \cite{Erxleben2014}.
-As motivated in Section~\ref{section:introduction}, the solution should exploit the apparent power of
-neural networks. Neural networks, which are introduced in Section~\ref{section:neural networks},
-require input to be represented as vectors. Therefore, it will be necessary to map items to vectors.
+Application of existing methods, such as classifiers, like kNN, or regression models, or neural networks, requires the representation
+of items as real-valued vectors. Therefore an approach to map items to vectors is necessary.
 \end{enumerate}
 
 %%%%%%%%%%%%%%%

@@ -6,7 +6,8 @@ $208,502$ classes and their corresponding superclasses were retrieved.
 The gold standard test set $G$ consists of sample tuples $(c_i, S_i)$, where $c_i \in R$ is a subclass and $S_i = \mathit{succ}(c_i)$ is the set of direct superclasses of $c_i$,
 where $R$ is the set of relevant classes and $i \in [1, |G|]$.
 Because it is assumed that every class, except the root class, should have a superclass, $|S_i| > 0$ applies for all gold samples $(c_i, S_i)$ with $i \in [1, |G|]$.
-Therefore the computation of the $F_1$-score as an evaluation measure is applicable, because only correct and false classification can occur.
+Therefore only true positives and false positives may occur during classification, since the algorithm will always predict a superclass.
+Consequently the $F_1$-score is not applicable as an evaluation measure.
 Instead the first applied evaluation measure is the accuracy $\mathit{acc}_\mathit{alg}$, which is calculated as follows for an algorithm $\mathit{alg}$:
 \begin{align}
 &\mathit{acc}_\mathit{alg} = \frac{1}{|G|} \sum_{i=1}^{|G|} \begin{cases} 1, & \textit{for } p_\mathit{alg}(c_i) \in S_i \\ 0, & \textit{for } p_\mathit{alg}(c_i) \notin S_i \end{cases}
@@ -17,11 +18,8 @@ However, accuracy alone is not sufficient in evaluating a classification in a hi
 Accuracy ignores the taxonomy and other possible dimensions, as it only measures how often the algorithm is able to correctly guess the superclass.
 \citeauthor{Dellschaft2006} states that a good measure should "allow[s] to evaluate an ontology along multiple dimensions" \cite{Dellschaft2006}.
 Another dimension, next to the accuracy of the algorithm, which can be observed is the taxonomic relation between the predictions and their corresponding gold standards.
-Given two algorithms $\mathit{algA}$ and $\mathit{algB}$ with equal accuracies $\mathit{acc}_\mathit{algA} = \mathit{acc}_\mathit{algB}$,
-assume $\mathit{algB}$ predicts either correctly or predicts the root class, while $\mathit{algA}$ predicts either correctly or overspecializes by predicting the subclass of the gold standard.
-Which one of the two algorithms performs better? If only the accuracy is considered, both algorithms are equally good and it would not matter, which algorithm would be chosen
-for practical application. But in practice $\mathit{algA}$ would be preferred, since even false predictions are useful to some degree, while $\mathit{algB}$'s false predictions are
-not usable.
+The quality of false predictions can further be assessed in regards to their taxonomic similarity to the gold standard.
+Two algorithms with equal accuracy may differ greatly in their taxonomic dimension. An algorithm, which places false predictions closely to the correct solution, is preferred.
 Therefore the taxonomy dimension should be included in the evaluation. For this the \textbf{taxonomic overlap} measure, defined by \fullcite{Dellschaft2006}, is also used
 in the evaluation. The taxonomic overlap counts how many superclasses are shared by the prediction and the gold standard for each sample.
 This is called the \textbf{semantic upwards cotopy} $\mathit{sc}$ defined as follows by \fullcite{Dellschaft2006}:
@@ -124,7 +122,7 @@ where $G$ is the set of all gold test samples.
 The most frequent class in the training data set is \textit{badminton tournament (Q13357858)}.
 This is consistent with the subclass-of offset analysis (Section~\ref{section:vector offset}),
 which has shown that offsets corresponding to \textit{badminton tournament} are the most frequent offsets.
-The baseline will therefore assign \textit{badminton tournament} to all test samples. 
+The baseline will therefore assign \textit{badminton tournament} to all test samples based on the training data.
 
 A total of $109,267,818$ triple sentences were extracted from the Wikidata dump \cite{WikidataDump}.
 All entities, which have irrelevant properties, as defined in Section~\ref{section:relevant classes}, were excluded.
@@ -228,9 +226,6 @@ Intuitively, the regression-based algorithms have a higher complexity and are th
 For example, overfitting may occur for the multiple regression, if not all values in the embedding are required to represent the target fully.
 The corresponding coefficients could in this case randomly affect the target results, and thereby worsen the performance \cite{Hawkins2004}.
 
-Non-linear regression via neural networks may still be a promising approach, if techniques like drop-out or trimming are used.
-These methods reduce the number of active neurons in the network and thereby are able to prevent overfitting \cite{Srivastava2014}.
-
 Because all evaluated algorithms ignore the taxonomy in the classification process, it is unsurprising that the taxonomic overlaps are low.
 Future algorithms may use taxonomy-based classification approaches, which were mentioned in Section~\ref{section:taxonomy learning}.
 Using  these classifiers as classification components is likely to result in higher taxonomic overlaps and may improve the accuracy.
@@ -304,55 +299,58 @@ no such performance increase can exist for these classifiers.
 
 
 \subsection{Characteristics of correct and incorrect predictions}
+By analysing the characteristics of correctly and incorrectly labeled inputs, insight may be gained on where the application of the developed method is useful.
+The predictions of the best performing algorithm distknn $(k=20)$ were analyzed for this purpose.
+Significant differences between correctly and incorrectly labeled classes can be observed in regards to the number and type of properties.
 
-analysis: tp class analysis
-total: 2042
-labeled: 1859
-enwiki: 400
-property average: 6.080803134182174
-subclass average: 0.7247796278158668
-instance average: 2.1723800195886387
-property median: 5
-subclass median: 0
-instance median: 0
+Correctly labeled classes have an average of ${\sim} 6.08$ and a median of $5$ properties, while incorrectly labeled classes have an average of ${\sim} 4.51$ and a median of $4$.
+Figure~\ref{fig:tp property count} and Figure~\ref{fig:fp property count} show the distribution of properties for both groups of classes.
+For correctly labeled classes, it can be seen that ${\sim} 30\%$  have $4$ properties and ${\sim} 15\%$ have $9$ properties.
+In comparison, ${\sim} 50\%$ of incorrectly labeled classes have $4$ or less properties.
+A higher number of properties is directly related to the number of triple sentences, in which the class occurs.
+Thereby the embedding trained on these triple embeddings can represent the corresponding class more effectively, since more training data is available.
 
 \begin{figure}[H]
 \centering
 \includegraphics[width=0.7\textwidth]{images/evaluation/tp_class_property_counts.png}
-\caption{Percentage of correctly predicted classes with specific amount of unique properties (\dumpdate{})}
+\caption{Percentage of correctly labeled classes with specific amount of unique properties (\dumpdate{})}
 \label{fig:tp property count}
 \end{figure}
 \begin{figure}[H]
 \centering
 \includegraphics[width=0.7\textwidth]{images/evaluation/fp_class_property_counts.png}
-\caption{Percentage of incorrectly predicted classes with specific amount of unique properties (\dumpdate{})}
-\label{fig:tp property count}
+\caption{Percentage of incorrectly labeled classes with specific amount of unique properties (\dumpdate{})}
+\label{fig:fp property count}
 \end{figure}
 
-analysis: fp class analysis
-total: 7958
-labeled: 6951
-enwiki: 4565
-property average: 4.517089721035436
-subclass average: 1.4068861522995728
-instance average: 74.12892686604674
-property median: 4
-subclass median: 0
-instance median: 0
+Analysis of the properties, which occur with high frequency in the correctly labeled classes, shows that subgroups of classes exist, for which the algorithm
+generates good results. Figure~\ref{fig:tp property frequency} and Figure~\ref{fig:fp property frequency} show the frequency of properties
+of correctly and incorrectly labeled classes respectively.
+Other than the \textit{subclass of (P279)} and \textit{instance of (P31)} properties, the two groups do not share significant common properties.
+The temporal properties \textit{follows (P155)}, \textit{point in time (P585)}, \dots indicate events, which in combination with the \textit{sport (P17)} properties, implies
+that sport events are a group of classes, which are predicted correctly with high likelihood. This agrees with the results about subclass-of offset clusters (Section~\ref{section:vector offset})
+and the labeling choice of the most-frequent baseline classifier. Both results show that sport events belong to the most frequent group of classes in the dataset with an ${\sim} 8\%$
+share. Another frequent property is \textit{country (P17)}, events have this property, but other classes such as wines, Alcalde, and ambassadors,
+which are also relatively common classes (as shown in Section~\ref{section:vector offset}),  may also have this property.
+For incorrectly labeled classes, no such observations about very frequent properties can be made. The most common properties, ignoring \textit{subclass of (P279)} and 
+\textit{instance of (P31)}, are \textit{Freebase ID (P646)}, \textit{Commons category (P373)}, and \textit{topic's main category (P910)}, which do not give any information
+about the type of classes, which are labeled incorrectly.
 
 \begin{figure}[H]
 \centering
 \includegraphics[width=0.85\textwidth]{images/evaluation/tp_class_property_frequency.png}
-\caption{Frequency of properties in correctly predicted classes (\dumpdate{}).}
+\caption{Frequency of properties in correctly labeled classes (\dumpdate{}).}
 \label{fig:tp property frequency}
 \end{figure}
 \begin{figure}[H]
 \centering
 \includegraphics[width=0.85\textwidth]{images/evaluation/fp_class_property_frequency.png}
-\caption{Frequency of properties in incorrectly predicted classes (\dumpdate{}).}
+\caption{Frequency of properties in incorrectly labeled classes (\dumpdate{}).}
 \label{fig:fp property frequency}
 \end{figure}
 
+It is concluded, that the algorithm performs well for classes with $4$ or more properties and which have other related classes with shared properties.
+Such classes occur more often in the training data set, thereby allowing SGNS to create more effective embeddings \cite{Ristoski2016}.
 
 
 \subsection{Discussion}

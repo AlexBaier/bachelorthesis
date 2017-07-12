@@ -1,7 +1,9 @@
 \textbf{Knowledge bases (KB)} like DBpedia, YAGO and Wikidata store information about notable entities and the relations between those entities. For example, in Wikidata entities are considered notable, if
 it either has a sitelink to a Wikimedia page, or is clearly identifiable and has relevant, public references,
 or is required for structural purposes \cite{WikidataNotability}.
-Using different approaches like human collaboration in Wikidata or information from Wikipedia data boxes in YAGO, these KBs are populated \cite{Galarraga2016}.
+Approaches in populating the KBs with new information differs.
+Wikidata employs mainly human collaboration for the creation and curation of new information \cite{Galarraga2016}.
+YAGO in comparison extracts data from Wikipedia data boxes \cite{Galarraga2016}.
 The issue of incompleteness arises in this context, as it is not realistic to assume that every bit of knowledge can or should be captured in the KBs.
 \textbf{Ontologies} are necessary for modeling, sharing, and exchanging knowledge \cite{Hazman2011}, and are therefore integral in the functioning of a KB \cite{Wong2012}.
 An ontology is a formal specification of knowledge consisting of concepts, relations and axioms for validation \cite{Maedche2001}. Therefore it describes a domain and how knowledge for the domain can be stored \cite{Wong2012}.
@@ -41,7 +43,11 @@ A solution to the problem should find the most specific superclass for a given o
 I develop an algorithm with the task of classifying such orphan classes into a given taxonomy.
 The algorithm uses neural word embeddings, as developed by \fullcite{Mikolov2013}. This is motivated by the effectiveness of neural networks in other context-sensitive tasks
 like language processing \cite{Mikolov2013} \cite{Kalchbrenner2014} \cite{Arisoy2012}, image generation \cite{Gregor2015} etc.
-Neural word embeddings are especially interesting, since they have been used to great effect in the construction of taxonomies \cite{Fu2014},
+Neural word embeddings are interesting, because they are able to represent the semantics and lexicographic properties of words \cite{Mikolov2013} and graphs \cite{Cao2016} as
+low-dimensional vectors. Thereby application of existing general-purpose methods such as classifiers, like kNN or SVM, regression models, or neural networks
+are enabled for complex, contextual entities.
+Representation of ontological classes with word embeddings is discussed in the thesis to enable the classification of orphan classes. 
+Existing applications of neural word embeddings have shown great effect in the construction of taxonomies \cite{Fu2014},
 graph representation \cite{Cao2016} and semantic similarity tasks \cite{Mikolov2013a} \cite{Levy2014}.
 Different approaches in using neural word embeddings for classification of orphan classes are considered and evaluated in this work.
 
